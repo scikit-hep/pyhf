@@ -1,7 +1,238 @@
 [build-system]
-# Minimum requirements for the build system to execute.
-requires = ["setuptools>=61.0.0", "setuptools_scm>=7.0.1"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyhf"
+dynamic = ["version"]
+description = "pure-Python HistFactory implementation with tensors and autodiff"
+readme = "README.rst"
+license = "Apache"
+requires-python = ">=3.8"
+authors = [
+    { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
+    { name = "Matthew Feickert", email = "matthew.feickert@cern.ch" },
+    { name = "Giordon Stark", email = "gstark@cern.ch" },
+]
+maintainers = [ {name = "The Scikit-HEP admins", email = "scikit-hep-admins@googlegroups.com"} ]
+keywords = [
+    "fitting",
+    "jax",
+    "numpy",
+    "physics",
+    "pytorch",
+    "scipy",
+    "tensorflow",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "click>=8.0.0",
+    "importlib_resources>=1.4.0; python_version < \"3.9\"",
+    "jsonpatch>=1.15",
+    "jsonschema>=4.15.0",
+    "numpy",
+    "pyyaml>=5.1",
+    "scipy>=1.5.1",
+    "tqdm>=4.56.0",
+]
+
+[project.scripts]
+pyhf = "pyhf.cli:cli"
+
+[project.urls]
+Documentation = "https://pyhf.readthedocs.io/"
+Homepage = "https://github.com/scikit-hep/pyhf"
+"Issue Tracker" = "https://github.com/scikit-hep/pyhf/issues"
+"Release Notes" = "https://pyhf.readthedocs.io/en/stable/release-notes.html"
+"Source Code" = "https://github.com/scikit-hep/pyhf"
+
+[project.optional-dependencies]
+backends = [
+    "iminuit>=2.7.0",
+    "jax>=0.4.1",
+    "jaxlib>=0.4.1",
+    "tensorflow-probability>=0.11.0",
+    "tensorflow>=2.7.0",
+    "torch>=1.10.0",
+]
+complete = [
+    "check-manifest",
+    "click_completion",
+    "codemetapy>=2.3.0",
+    "coverage[toml]>=6.0.0",
+    "graphviz",
+    "iminuit>=2.7.0",
+    "ipython",
+    "ipython!=8.7.0",
+    "ipywidgets",
+    "jax>=0.4.1",
+    "jaxlib>=0.4.1",
+    "jupyter",
+    "matplotlib",
+    "nbdime",
+    "nbsphinx!=0.8.8",
+    "nox",
+    "papermill~=2.3.4",
+    "pre-commit",
+    "pydocstyle",
+    "pytest-benchmark[histogram]",
+    "pytest-console-scripts",
+    "pytest-mock",
+    "pytest-mpl",
+    "pytest-socket>=0.2.0",
+    "pytest>=6.0",
+    "requests",
+    "requests-mock>=1.9.0",
+    "scikit-hep-testdata>=0.4.11",
+    "scrapbook~=0.5.0",
+    "sphinx-click",
+    "sphinx-copybutton>=0.3.2",
+    "sphinx-issues",
+    "sphinx-togglebutton>=0.3.0",
+    "sphinx>=5.1.1",
+    "sphinx_rtd_theme",
+    "sphinxcontrib-bibtex~=2.1",
+    "tbump>=6.7.0",
+    "tensorflow-probability>=0.11.0",
+    "tensorflow>=2.7.0",
+    "torch>=1.10.0",
+    "twine",
+    "uproot>=4.1.1",
+]
+contrib = [
+    "matplotlib",
+    "requests",
+]
+develop = [
+    "check-manifest",
+    "click_completion",
+    "codemetapy>=2.3.0",
+    "coverage[toml]>=6.0.0",
+    "graphviz",
+    "iminuit>=2.7.0",
+    "ipython",
+    "ipython!=8.7.0",
+    "ipywidgets",
+    "jax>=0.4.1",
+    "jaxlib>=0.4.1",
+    "jupyter",
+    "matplotlib",
+    "nbdime",
+    "nbsphinx!=0.8.8",
+    "nox",
+    "papermill~=2.3.4",
+    "pre-commit",
+    "pydocstyle",
+    "pytest-benchmark[histogram]",
+    "pytest-console-scripts",
+    "pytest-mock",
+    "pytest-mpl",
+    "pytest-socket>=0.2.0",
+    "pytest>=6.0",
+    "requests",
+    "requests-mock>=1.9.0",
+    "scikit-hep-testdata>=0.4.11",
+    "scrapbook~=0.5.0",
+    "sphinx-click",
+    "sphinx-copybutton>=0.3.2",
+    "sphinx-issues",
+    "sphinx-togglebutton>=0.3.0",
+    "sphinx>=5.1.1",
+    "sphinx_rtd_theme",
+    "sphinxcontrib-bibtex~=2.1",
+    "tbump>=6.7.0",
+    "tensorflow-probability>=0.11.0",
+    "tensorflow>=2.7.0",
+    "torch>=1.10.0",
+    "twine",
+    "uproot>=4.1.1",
+]
+docs = [
+    "ipython!=8.7.0",
+    "ipywidgets",
+    "matplotlib",
+    "nbsphinx!=0.8.8",
+    "requests",
+    "sphinx-click",
+    "sphinx-copybutton>=0.3.2",
+    "sphinx-issues",
+    "sphinx-togglebutton>=0.3.0",
+    "sphinx>=5.1.1",
+    "sphinx_rtd_theme",
+    "sphinxcontrib-bibtex~=2.1",
+    "uproot>=4.1.1",
+]
+jax = [
+    "jax>=0.4.1",
+    "jaxlib>=0.4.1",
+]
+minuit = [
+    "iminuit>=2.7.0",
+]
+shellcomplete = [
+    "click_completion",
+]
+tensorflow = [
+    "tensorflow-probability>=0.11.0",
+    "tensorflow>=2.7.0",
+]
+test = [
+    "click_completion",
+    "coverage[toml]>=6.0.0",
+    "graphviz",
+    "iminuit>=2.7.0",
+    "jax>=0.4.1",
+    "jaxlib>=0.4.1",
+    "jupyter",
+    "matplotlib",
+    "papermill~=2.3.4",
+    "pydocstyle",
+    "pytest-benchmark[histogram]",
+    "pytest-console-scripts",
+    "pytest-mock",
+    "pytest-mpl",
+    "pytest-socket>=0.2.0",
+    "pytest>=6.0",
+    "requests",
+    "requests-mock>=1.9.0",
+    "scikit-hep-testdata>=0.4.11",
+    "scrapbook~=0.5.0",
+    "tensorflow-probability>=0.11.0",
+    "tensorflow>=2.7.0",
+    "torch>=1.10.0",
+    "uproot>=4.1.1",
+]
+torch = [
+    "torch>=1.10.0",
+]
+xmlio = [
+    "uproot>=4.1.1",
+]
+
+[tool.hatch]
+version.source = "vcs"
+build.hooks.vcs.version-file = "src/pyhf/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/ src",
+]
+[tool.hatch.build.targets.wheel]
+packages = [
+    " src/pyhf",
+]
 
 [tool.setuptools_scm]
 write_to = "src/pyhf/_version.py"
