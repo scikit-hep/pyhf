@@ -1,0 +1,5 @@
+# E203: whitespace before ':'
+# E402: module level import not at top of file
+# E501: line too long
+extend-ignore = E203, E402, E501
+max-line-length = 88
