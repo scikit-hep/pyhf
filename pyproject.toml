@@ -228,8 +228,7 @@ build.hooks.vcs.version-file = "src/pyhf/_version.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
-    "/.gitignore",
-    "/src/conftest.py",
+    "/src/conftest.py"
 ]
 include = [
     "/src",
