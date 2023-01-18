@@ -235,10 +235,6 @@ packages = [
     " src/pyhf",
 ]
 
-[tool.setuptools_scm]
-write_to = "src/pyhf/_version.py"
-local_scheme = "no-local-version"
-
 [tool.black]
 line-length = 88
 target-version = ['py38', 'py39', 'py310']
