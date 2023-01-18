@@ -38,14 +38,14 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 dependencies = [
-    "click>=8.0.0",
-    "importlib_resources>=1.4.0; python_version < \"3.9\"",
+    "click>=8.0.0",  # for console scripts
+    "importlib_resources>=1.4.0; python_version < \"3.9\"",  # for resources in schema
     "jsonpatch>=1.15",
-    "jsonschema>=4.15.0",
-    "numpy",
-    "pyyaml>=5.1",
-    "scipy>=1.5.1",
-    "tqdm>=4.56.0",
+    "jsonschema>=4.15.0",  # for utils
+    "pyyaml>=5.1",  # for parsing CLI equal-delimited options
+    "scipy>=1.5.1",  # requires numpy, which is required by pyhf and tensorflow
+    "tqdm>=4.56.0",  # for readxml
+    "numpy",  # compatible versions controlled through scipy
 ]
 
 [project.scripts]
