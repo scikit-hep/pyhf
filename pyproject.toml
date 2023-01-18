@@ -7,7 +7,7 @@ name = "pyhf"
 dynamic = ["version"]
 description = "pure-Python HistFactory implementation with tensors and autodiff"
 readme = "README.rst"
-license = "Apache"
+license = { file = "LICENSE" }
 requires-python = ">=3.8"
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
