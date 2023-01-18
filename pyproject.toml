@@ -228,12 +228,15 @@ build.hooks.vcs.version-file = "src/pyhf/_version.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/ src",
+    "/src",
+    "/LICENSE",
+    "/README.rst",
+    "/pyproject.toml",
+    "/AUTHORS",
+    "/CITATION.cff"
 ]
 [tool.hatch.build.targets.wheel]
-packages = [
-    " src/pyhf",
-]
+packages = ["src/pyhf"]
 
 [tool.black]
 line-length = 88
