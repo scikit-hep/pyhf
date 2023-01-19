@@ -179,24 +179,6 @@ exclude = '''
 )/
 '''
 
-[tool.check-manifest]
-ignore = [
-    'docs*',
-    'validation*',
-    'examples*',
-    'tests*',
-    'docker*',
-    'binder*',
-    '.*',
-    'pyproject.toml',
-    'pytest.ini',
-    'codecov.yml',
-    'codemeta.json',
-    'CODE_OF_CONDUCT.md',
-    'CONTRIBUTING.md',
-    'AUTHORS',
-]
-
 [tool.pytest.ini_options]
 minversion = "6.0"
 xfail_strict = true
