@@ -1,3 +1,4 @@
+[flake8]
 # E203: whitespace before ':'
 # E402: module level import not at top of file
 # E501: line too long
