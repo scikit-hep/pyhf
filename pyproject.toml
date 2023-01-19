@@ -139,32 +139,6 @@ include = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyhf"]
 
-#FIXME: Decide if using hatch envs or staying with lots of extras
-[tool.hatch.envs.test]
-template = "test"
-detached = false
-dependencies = [
-    "scikit-hep-testdata>=0.4.11",
-    "pytest>=6.0",
-    "coverage[toml]>=6.0.0",
-    "pytest-mock",
-    "requests-mock>=1.9.0",
-    "pytest-benchmark[histogram]",
-    "pytest-console-scripts",
-    "pytest-mpl",
-    "pydocstyle",
-    "papermill~=2.3.4",
-    "scrapbook~=0.5.0",
-    "jupyter",
-    "graphviz",
-    "pytest-socket>=0.2.0",  # c.f. PR #1917
-]
-features = ["all"]
-
-[tool.hatch.envs.test.scripts]
-upgrade = "python -m pip install --upgrade {args}"
-test = "pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py"
-
 [tool.black]
 line-length = 88
 target-version = ['py38', 'py39', 'py310']
