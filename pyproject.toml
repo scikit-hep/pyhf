@@ -130,7 +130,7 @@ version-file = "src/pyhf/_version.py"
 exclude = [
     "/src/conftest.py"
 ]
-# Needed to properly include src/pyhf/schemas
+# only-include needed to properly include src/pyhf/schemas
 # c.f. https://github.com/pypa/hatch/pull/299
 only-include = [
     "/src",
