@@ -225,7 +225,7 @@ dependencies = [
 features = ["all"]
 
 [tool.hatch.envs.test.scripts]
-pytest = "pytest"
+test = "pytest"
 
 [tool.black]
 line-length = 88
