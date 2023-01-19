@@ -79,7 +79,6 @@ contrib = [
 ]
 all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
 
-# DEBUG: Keep test extra
 test = [
     "pyhf[all]",
     "scikit-hep-testdata>=0.4.11",
@@ -140,6 +139,7 @@ include = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyhf"]
 
+#FIXME: Decide if using hatch envs or staying with lots of extras
 [tool.hatch.envs.test]
 template = "test"
 detached = false
