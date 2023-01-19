@@ -139,9 +139,6 @@ include = [
     "/CITATION.cff"
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/pyhf"]
-
 [tool.black]
 line-length = 88
 target-version = ['py38', 'py39', 'py310']
