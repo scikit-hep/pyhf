@@ -77,6 +77,8 @@ contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
 ]
+all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
+
 complete = [
     "check-manifest",
     "click_completion",
@@ -180,32 +182,6 @@ docs = [
     "sphinxcontrib-bibtex~=2.1",
     "uproot>=4.1.1",
 ]
-test = [
-    "click_completion",
-    "coverage[toml]>=6.0.0",
-    "graphviz",
-    "iminuit>=2.7.0",
-    "jax>=0.4.1",
-    "jaxlib>=0.4.1",
-    "jupyter",
-    "matplotlib",
-    "papermill~=2.3.4",
-    "pydocstyle",
-    "pytest-benchmark[histogram]",
-    "pytest-console-scripts",
-    "pytest-mock",
-    "pytest-mpl",
-    "pytest-socket>=0.2.0",
-    "pytest>=6.0",
-    "requests",
-    "requests-mock>=1.9.0",
-    "scikit-hep-testdata>=0.4.11",
-    "scrapbook~=0.5.0",
-    "tensorflow-probability>=0.11.0",
-    "tensorflow>=2.7.0",
-    "torch>=1.10.0",
-    "uproot>=4.1.1",
-]
 
 [tool.hatch]
 version.source = "vcs"
@@ -223,8 +199,29 @@ include = [
     "/AUTHORS",
     "/CITATION.cff"
 ]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyhf"]
+
+[tool.hatch.envs.test]
+template = "test"
+detached = false
+dependencies = [
+    "scikit-hep-testdata>=0.4.11",
+    "pytest>=6.0",
+    "coverage[toml]>=6.0.0",
+    "pytest-mock",
+    "requests-mock>=1.9.0",
+    "pytest-benchmark[histogram]",
+    "pytest-console-scripts",
+    "pytest-mpl",
+    "pydocstyle",
+    "papermill~=2.3.4",
+    "scrapbook~=0.5.0",
+    "jupyter",
+    "graphviz",
+    "pytest-socket>=0.2.0",  # c.f. PR #1917
+]
 
 [tool.black]
 line-length = 88
