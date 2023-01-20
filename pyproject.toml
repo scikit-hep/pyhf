@@ -127,9 +127,6 @@ local_scheme = "no-local-version"
 version-file = "src/pyhf/_version.py"
 
 [tool.hatch.build.targets.sdist]
-exclude = [
-    "/src/conftest.py"
-]
 # only-include needed to properly include src/pyhf/schemas
 # c.f. https://github.com/pypa/hatch/pull/299
 only-include = [
@@ -139,6 +136,9 @@ only-include = [
     "/pyproject.toml",
     "/AUTHORS",
     "/CITATION.cff"
+]
+exclude = [
+    "/src/conftest.py"
 ]
 
 [tool.hatch.build.targets.wheel]
