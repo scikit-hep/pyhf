@@ -2,9 +2,11 @@ import os
 import sys
 from pathlib import Path
 
+import nbformat
 import papermill as pm
 import pytest
 import scrapbook as sb
+from nbclient import NotebookClient
 
 # Avoid hanging on with ipywidgets interact by using non-gui backend
 os.environ["MPLBACKEND"] = "agg"
@@ -20,8 +22,15 @@ def common_kwargs(tmpdir):
     }
 
 
-def test_hello_world(common_kwargs):
-    pm.execute_notebook('docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
+# def test_hello_world(common_kwargs):
+#     pm.execute_notebook('docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
+
+
+def test_hello_world():
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
+    test_notebook = nbformat.read(execution_dir / "hello-world.ipynb", as_version=4)
+    client = NotebookClient(test_notebook, timeout=600, kernel_name="python3")
+    assert client.execute()
 
 
 def test_xml_importexport(common_kwargs):
