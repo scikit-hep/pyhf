@@ -1,9 +1,13 @@
+import os
 import sys
 from pathlib import Path
 
 import papermill as pm
 import pytest
 import scrapbook as sb
+
+# Avoid hanging on with ipywidgets interact by using non-gui backend
+os.environ["MPLBACKEND"] = "agg"
 
 
 @pytest.fixture()
