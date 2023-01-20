@@ -1,10 +1,13 @@
+import os
 import sys
 from pathlib import Path
 
-import matplotlib
 import papermill as pm
 import pytest
 import scrapbook as sb
+
+# Avoid problems with interact by using non-gui backend
+os.environ["MPLBACKEND"] = "agg"
 
 
 @pytest.fixture()
@@ -78,8 +81,6 @@ def test_toys(common_kwargs):
 
 
 def test_learn_interpolationcodes(common_kwargs):
-    # Avoid problems with interact by using non-gui backend
-    matplotlib.use("agg")
     pm.execute_notebook(
         'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs
     )
