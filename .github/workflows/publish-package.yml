@@ -37,15 +37,11 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install python-build, check-manifest, and twine
+    - name: Install python-build and twine
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install build check-manifest twine
+        python -m pip install --upgrade pip
+        python -m pip install build twine
         python -m pip list
-
-    - name: Check MANIFEST
-      run: |
-        check-manifest
 
     - name: Build a wheel and a sdist
       run: |
