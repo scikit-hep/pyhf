@@ -6,7 +6,7 @@ import papermill as pm
 import pytest
 import scrapbook as sb
 
-# Avoid problems with interact by using non-gui backend
+# Avoid hanging on with ipywidgets interact by using non-gui backend
 os.environ["MPLBACKEND"] = "agg"
 
 
