@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-import matplotlib as mpl
+import matplotlib
 import papermill as pm
 import pytest
 import scrapbook as sb
@@ -78,10 +78,11 @@ def test_toys(common_kwargs):
 
 
 def test_learn_interpolationcodes(common_kwargs):
-    with mpl.rc_context({"backend": "agg"}):
-        pm.execute_notebook(
-            'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs
-        )
+    # Avoid problems with interact by using non-gui backend
+    matplotlib.use("agg")
+    pm.execute_notebook(
+        'docs/examples/notebooks/learn/InterpolationCodes.ipynb', **common_kwargs
+    )
 
 
 def test_learn_tensorizinginterpolations(common_kwargs):
