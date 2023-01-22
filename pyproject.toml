@@ -26,6 +26,9 @@ keywords = [
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Environment :: WebAssembly",
+    "Environment :: WebAssembly :: Emscripten",
+    "Environment :: WebAssembly :: WASI",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
