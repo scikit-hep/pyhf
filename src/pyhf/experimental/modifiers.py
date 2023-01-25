@@ -19,13 +19,13 @@ def _allocate_new_param(
     p: dict[str, Sequence[float]]
 ) -> dict[str, str | bool | int | Sequence[float]]:
     return {
-        'paramset_type': 'unconstrained',
-        'n_parameters': 1,
-        'is_shared': True,
-        'inits': p['inits'],
-        'bounds': p['bounds'],
-        'is_scalar': True,
-        'fixed': False,
+        "paramset_type": "unconstrained",
+        "n_parameters": 1,
+        "is_shared": True,
+        "inits": p["inits"],
+        "bounds": p["bounds"],
+        "is_scalar": True,
+        "fixed": False,
     }
 
 
@@ -45,30 +45,30 @@ def make_builder(
         is_shared = False
 
         def __init__(self, config):
-            self.builder_data = {'funcs': {}}
+            self.builder_data = {"funcs": {}}
             self.config = config
 
         def collect(self, thismod, nom):
             maskval = True if thismod else False
             mask = [maskval] * len(nom)
-            return {'mask': mask}
+            return {"mask": mask}
 
         def append(self, key, channel, sample, thismod, defined_samp):
             self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
-                'data', {'mask': []}
+                "data", {"mask": []}
             )
             nom = (
-                defined_samp['data']
+                defined_samp["data"]
                 if defined_samp
                 else [0.0] * self.config.channel_nbins[channel]
             )
             moddata = self.collect(thismod, nom)
-            self.builder_data[key][sample]['data']['mask'] += moddata['mask']
+            self.builder_data[key][sample]["data"]["mask"] += moddata["mask"]
             if thismod:
-                if thismod['name'] != funcname:
+                if thismod["name"] != funcname:
                     print(thismod)
-                    self.builder_data['funcs'].setdefault(
-                        thismod['name'], thismod['data']['expr']
+                    self.builder_data["funcs"].setdefault(
+                        thismod["name"], thismod["data"]["expr"]
                     )
                 self.required_parsets = {
                     k: [_allocate_new_param(v)] for k, v in newparams.items()
@@ -85,14 +85,14 @@ def make_applier(
 ) -> BaseApplier:
     class _applier(BaseApplier):
         name = funcname
-        op_code = 'multiplication'
+        op_code = "multiplication"
 
         def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
-            self.funcs = [make_func(v, deps) for v in builder_data['funcs'].values()]
+            self.funcs = [make_func(v, deps) for v in builder_data["funcs"].values()]
 
             self.batch_size = batch_size
             pars_for_applier = deps
-            _modnames = [f'{mtype}/{m}' for m, mtype in modifiers]
+            _modnames = [f"{mtype}/{m}" for m, mtype in modifiers]
 
             parfield_shape = (
                 (self.batch_size, pdfconfig.npars)
@@ -103,11 +103,11 @@ def make_applier(
                 parfield_shape, pdfconfig.par_map, pars_for_applier
             )
             self._custommod_mask = [
-                [[builder_data[modname][s]['data']['mask']] for s in pdfconfig.samples]
+                [[builder_data[modname][s]["data"]["mask"]] for s in pdfconfig.samples]
                 for modname in _modnames
             ]
             self._precompute()
-            events.subscribe('tensorlib_changed')(self._precompute)
+            events.subscribe("tensorlib_changed")(self._precompute)
 
         def _precompute(self):
             tensorlib, _ = get_backend()
@@ -132,15 +132,15 @@ def make_applier(
             tensorlib, _ = get_backend()
             if self.batch_size is None:
                 deps = self.param_viewer.get(pars)
-                print('deps', deps.shape)
+                print("deps", deps.shape)
                 results = tensorlib.astensor([f(deps) for f in self.funcs])
-                results = tensorlib.einsum('msab,m->msab', self.custommod_mask, results)
+                results = tensorlib.einsum("msab,m->msab", self.custommod_mask, results)
             else:
                 deps = self.param_viewer.get(pars)
-                print('deps', deps.shape)
+                print("deps", deps.shape)
                 results = tensorlib.astensor([f(deps) for f in self.funcs])
                 results = tensorlib.einsum(
-                    'msab,ma->msab', self.custommod_mask, results
+                    "msab,ma->msab", self.custommod_mask, results
                 )
             results = tensorlib.where(
                 self.custommod_mask_bool, results, self.custommod_default
