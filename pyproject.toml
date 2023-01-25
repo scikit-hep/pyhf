@@ -82,8 +82,9 @@ contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
 ]
+experimental = ["numexpr>=2.8.0"]
 backends = ["pyhf[tensorflow,torch,jax,minuit]"]
-all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
+all = ["pyhf[backends,xmlio,contrib,experimental,shellcomplete]"]
 
 # Developer extras
 test = [
@@ -105,7 +106,7 @@ test = [
     "pytest-socket>=0.2.0",  # c.f. PR #1917
 ]
 docs = [
-    "pyhf[xmlio,contrib]",
+    "pyhf[xmlio,contrib,experimental]",
     "sphinx>=7.0.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2271
     "sphinxcontrib-bibtex~=2.1",
     "sphinx-click",
