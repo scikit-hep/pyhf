@@ -26,6 +26,7 @@ def common_kwargs(tmpdir):
 #     pm.execute_notebook('docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
 
 
+# c.f. https://nbclient.readthedocs.io/en/latest/client.html
 @pytest.fixture()
 def commons():
     return {
