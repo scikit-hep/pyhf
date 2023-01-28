@@ -2,9 +2,11 @@ import os
 import sys
 from pathlib import Path
 
+import nbformat
 import papermill as pm
 import pytest
 import scrapbook as sb
+from nbclient import NotebookClient
 
 # Avoid hanging on with ipywidgets interact by using non-gui backend
 os.environ["MPLBACKEND"] = "agg"
@@ -20,8 +22,37 @@ def common_kwargs(tmpdir):
     }
 
 
-def test_hello_world(common_kwargs):
-    pm.execute_notebook('docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
+# def test_hello_world(common_kwargs):
+#     pm.execute_notebook('docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
+
+
+@pytest.fixture()
+def commons():
+    return {
+        "timeout": 600,
+        "kernel_name": "python3",
+        "reset_kc": True,
+        "resources": {
+            "metadata": {"path": Path.cwd() / "docs" / "examples" / "notebooks"}
+        },
+    }
+
+
+def test_hello_world(commons):
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
+    test_notebook = nbformat.read(execution_dir / "hello-world.ipynb", as_version=4)
+    client = NotebookClient(test_notebook, **commons)
+    assert client.execute()
+
+
+def test_binder_analysis(commons):
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks" / "binderexample"
+    test_notebook = nbformat.read(
+        execution_dir / "StatisticalAnalysis.ipynb", as_version=4
+    )
+    commons["resources"]["metadata"]["path"] = execution_dir
+    client = NotebookClient(test_notebook, **commons)
+    assert client.execute()
 
 
 def test_xml_importexport(common_kwargs):
