@@ -26,54 +26,51 @@ def common_kwargs(tmpdir):
 #     pm.execute_notebook('docs/examples/notebooks/hello-world.ipynb', **common_kwargs)
 
 
+def get_notebook_client(notebook, commons, execution_dir=None):
+    if execution_dir:
+        commons["resources"]["metadata"]["path"] = execution_dir
+    else:
+        execution_dir = commons["resources"]["metadata"]["path"]
+
+    test_notebook = nbformat.read(execution_dir / notebook, as_version=4)
+    return NotebookClient(test_notebook, **commons)
+
+
 # c.f. https://nbclient.readthedocs.io/en/latest/client.html
 @pytest.fixture()
 def commons():
+    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
     return {
         "timeout": 600,
         "kernel_name": "python3",
         "reset_kc": True,
-        "resources": {
-            "metadata": {"path": Path.cwd() / "docs" / "examples" / "notebooks"}
-        },
+        "resources": {"metadata": {"path": execution_dir}},
     }
 
 
 def test_hello_world(commons):
-    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
-    test_notebook = nbformat.read(execution_dir / "hello-world.ipynb", as_version=4)
-    client = NotebookClient(test_notebook, **commons)
+    client = get_notebook_client("hello-world.ipynb", commons)
     assert client.execute()
 
 
-def test_binder_analysis(commons):
-    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks" / "binderexample"
-    test_notebook = nbformat.read(
-        execution_dir / "StatisticalAnalysis.ipynb", as_version=4
-    )
-    commons["resources"]["metadata"]["path"] = execution_dir
-    client = NotebookClient(test_notebook, **commons)
+def test_xml_importexport(commons):
+    client = get_notebook_client("XML_ImportExport.ipynb", commons)
     assert client.execute()
 
 
-def test_xml_importexport(common_kwargs):
-    # Change directories to make users not have to worry about paths to follow example
-    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks"
-    pm.execute_notebook(
-        execution_dir / "XML_ImportExport.ipynb", cwd=execution_dir, **common_kwargs
-    )
-
-
-def test_statisticalanalysis(common_kwargs):
+def test_statisticalanalysis(commons):
     # The Binder example uses specific relative paths
-    execution_dir = Path.cwd() / "docs" / "examples" / "notebooks" / "binderexample"
-    pm.execute_notebook(
-        execution_dir / "StatisticalAnalysis.ipynb", cwd=execution_dir, **common_kwargs
+    client = get_notebook_client(
+        "StatisticalAnalysis.ipynb",
+        commons,
+        execution_dir=commons["resources"]["metadata"]["path"] / "binderexample",
     )
+    assert client.execute()
 
 
-def test_shapefactor(common_kwargs):
-    pm.execute_notebook('docs/examples/notebooks/ShapeFactor.ipynb', **common_kwargs)
+def test_shapefactor(commons):
+    client = get_notebook_client("ShapeFactor.ipynb", commons)
+    assert client.execute()
 
 
 def test_multichannel_coupled_histos(common_kwargs):
