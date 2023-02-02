@@ -46,7 +46,7 @@ classifiers = [
 dependencies = [
     "click>=8.0.0",  # for console scripts
     "importlib_resources>=1.4.0; python_version < '3.9'",  # for resources in schema
-    "typing_extensions; python_version < '3.11'" # for typing
+    "typing_extensions; python_version < '3.11'", # for typing
     "jsonpatch>=1.15",
     "jsonschema>=4.15.0",  # for utils
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
