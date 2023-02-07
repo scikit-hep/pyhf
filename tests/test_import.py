@@ -308,7 +308,6 @@ def test_import_histosys():
 
 
 def test_import_filecache(mocker):
-
     mocker.patch("pyhf.readxml.uproot.open", wraps=uproot.open)
 
     pyhf.readxml.clear_filecache()
@@ -458,7 +457,6 @@ def test_process_modifiers(mocker, caplog):
 
 
 def test_import_validation_exception(mocker, caplog):
-
     mocker.patch(
         'pyhf.schema.validate',
         side_effect=pyhf.exceptions.InvalidSpecification(
