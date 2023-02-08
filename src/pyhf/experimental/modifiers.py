@@ -153,7 +153,6 @@ def make_applier(
 def add_custom_modifier(
     funcname: str, deps: list[str], newparams: dict[str, dict[str, Sequence[float]]]
 ) -> dict[str, tuple[BaseBuilder, BaseApplier]]:
-
     _builder = make_builder(funcname, deps, newparams)
     _applier = make_applier(funcname, deps, newparams)
 
