@@ -279,6 +279,11 @@ def process_data(
     histopath = sample.attrib.get('HistoPath', histopath)
     histoname = sample.attrib['HistoName']
 
+    if inputfile == "" or histopath == "" or histoname == "":
+        raise NotImplementedError(
+            "conversion of workspaces without data is not currently supported, see issue #566"
+        )
+
     data, _ = import_root_histogram(resolver, inputfile, histopath, histoname)
     return data
 
