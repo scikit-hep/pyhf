@@ -281,7 +281,7 @@ def process_data(
 
     if inputfile == "" or histopath == "" or histoname == "":
         raise NotImplementedError(
-            "conversion of workspaces without data is not currently supported, see issue #566"
+            "conversion of workspaces without data is currently not supported, see issue #566"
         )
 
     data, _ = import_root_histogram(resolver, inputfile, histopath, histoname)
