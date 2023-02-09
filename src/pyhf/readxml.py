@@ -279,7 +279,7 @@ def process_data(
     histopath = sample.attrib.get('HistoPath', histopath)
     histoname = sample.attrib['HistoName']
 
-    if inputfile == "" or histopath == "" or histoname == "":
+    if inputfile == "" or histoname == "":
         raise NotImplementedError(
             "conversion of workspaces without data is currently not supported, see issue #566"
         )
