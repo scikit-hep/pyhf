@@ -72,35 +72,35 @@ Install latest development version from `GitHub <https://github.com/scikit-hep/p
 
 .. code-block:: console
 
-    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf"
+    python -m pip install --upgrade 'pyhf@git+https://github.com/scikit-hep/pyhf.git'
 
 ... with TensorFlow backend
 +++++++++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[tensorflow]"
+    python -m pip install --upgrade 'pyhf[tensorflow]@git+https://github.com/scikit-hep/pyhf.git'
 
 ... with PyTorch backend
 ++++++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[torch]"
+    python -m pip install --upgrade 'pyhf[torch]@git+https://github.com/scikit-hep/pyhf.git'
 
 ... with JAX backend
 ++++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[jax]"
+    python -m pip install --upgrade 'pyhf[jax]@git+https://github.com/scikit-hep/pyhf.git'
 
 ... with all backends
 +++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[backends]"
+    python -m pip install --upgrade 'pyhf[backends]@git+https://github.com/scikit-hep/pyhf.git'
 
 
 ... with xml import/export functionality
@@ -108,7 +108,7 @@ Install latest development version from `GitHub <https://github.com/scikit-hep/p
 
 .. code-block:: console
 
-    python -m pip install --upgrade "git+https://github.com/scikit-hep/pyhf.git#egg=pyhf[xmlio]"
+    python -m pip install --upgrade 'pyhf[xmlio]@git+https://github.com/scikit-hep/pyhf.git'
 
 
 Updating :code:`pyhf`
