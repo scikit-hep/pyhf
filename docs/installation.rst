@@ -32,28 +32,28 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
 
 .. code-block:: console
 
-    python -m pip install pyhf[tensorflow]
+    python -m pip install 'pyhf[tensorflow]'
 
 ... with PyTorch backend
 ++++++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install pyhf[torch]
+    python -m pip install 'pyhf[torch]'
 
 ... with JAX backend
 ++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install pyhf[jax]
+    python -m pip install 'pyhf[jax]'
 
 ... with all backends
 +++++++++++++++++++++
 
 .. code-block:: console
 
-    python -m pip install pyhf[backends]
+    python -m pip install 'pyhf[backends]'
 
 
 ... with xml import/export functionality
@@ -61,7 +61,7 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
 
 .. code-block:: console
 
-    python -m pip install pyhf[xmlio]
+    python -m pip install 'pyhf[xmlio]'
 
 
 Install latest development version from `GitHub <https://github.com/scikit-hep/pyhf>`__...
