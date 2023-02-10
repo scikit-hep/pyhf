@@ -20,7 +20,7 @@ and install all necessary packages for development
 
 .. code-block:: console
 
-    python -m pip install --upgrade --editable '.[complete]'
+    python -m pip install --upgrade --editable '.[develop]'
 
 Then setup the Git `pre-commit <https://pre-commit.com/>`__ hooks by running
 
