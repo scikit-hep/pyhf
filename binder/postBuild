@@ -1,2 +1,2 @@
-python -m pip install --upgrade '.[backends]'
+python -m pip install --upgrade '.[all]'
 python -m pip install altair
