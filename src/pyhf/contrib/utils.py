@@ -128,6 +128,6 @@ try:
 except ModuleNotFoundError:
     log.error(
         "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
-        + "\nPlease install with: python -m pip install pyhf[contrib]\n",
+        + "\nPlease install with: python -m pip install 'pyhf[contrib]'\n",
         exc_info=True,
     )

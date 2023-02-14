@@ -24,7 +24,7 @@ def cli():
 
         .. code-block:: shell
 
-            $ python -m pip install pyhf[contrib]
+            $ python -m pip install 'pyhf[contrib]'
     """
     from pyhf.contrib import utils  # Guard CLI from missing extra # noqa: F401
 
@@ -72,6 +72,6 @@ def download(archive_url, output_directory, verbose, force, compress):
     except AttributeError:
         log.error(
             "\nInstallation of the contrib extra is required to use the contrib CLI API"
-            + "\nPlease install with: python -m pip install pyhf[contrib]\n",
+            + "\nPlease install with: python -m pip install 'pyhf[contrib]'\n",
             exc_info=True,
         )

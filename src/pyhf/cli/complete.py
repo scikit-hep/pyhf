@@ -21,9 +21,9 @@ except ImportError:
     @click.command(help='Generate shell completion code.', name='completions')
     @click.argument('shell', default=None)
     def cli(shell):
-        '''Placeholder for shell completion code generatioon function if necessary dependency is missing.'''
+        """Placeholder for shell completion code generatioon function if necessary dependency is missing."""
         click.secho(
-            'This requires the click_completion module.\n'
-            'You can install it with the shellcomplete extra:\n'
-            'python -m pip install pyhf[shellcomplete]'
+            "This requires the click_completion module.\n"
+            "You can install it with the shellcomplete extra:\n"
+            "python -m pip install 'pyhf[shellcomplete]'"
         )

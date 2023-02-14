@@ -632,7 +632,7 @@ def test_missing_contrib_extra(caplog):
         for line in [
             "import of requests halted; None in sys.modules",
             "Installation of the contrib extra is required to use pyhf.contrib.utils.download",
-            "Please install with: python -m pip install pyhf[contrib]",
+            "Please install with: python -m pip install 'pyhf[contrib]'",
         ]:
             assert line in caplog.text
         caplog.clear()
@@ -672,7 +672,7 @@ def test_missing_contrib_download(caplog):
             for line in [
                 "module 'pyhf.contrib.utils' has no attribute 'download'",
                 "Installation of the contrib extra is required to use the contrib CLI API",
-                "Please install with: python -m pip install pyhf[contrib]",
+                "Please install with: python -m pip install 'pyhf[contrib]'",
             ]:
                 assert line in caplog.text
             caplog.clear()

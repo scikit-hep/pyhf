@@ -50,7 +50,7 @@ def xml2json(
     except ImportError:
         log.error(
             "xml2json requires uproot, please install pyhf using the "
-            "xmlio extra: python -m pip install pyhf[xmlio]",
+            "xmlio extra: python -m pip install 'pyhf[xmlio]'",
             exc_info=True,
         )
     from pyhf import readxml
@@ -86,7 +86,7 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
     except ImportError:
         log.error(
             "json2xml requires uproot, please install pyhf using the "
-            "xmlio extra: python -m pip install pyhf[xmlio]",
+            "xmlio extra: python -m pip install 'pyhf[xmlio]'",
             exc_info=True,
         )
     from pyhf import writexml
