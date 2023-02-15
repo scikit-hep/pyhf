@@ -30,6 +30,25 @@ Use the :code:`--backend` option for :code:`pyhf cls` to specify a tensor backen
 The default backend is NumPy.
 For more information see :code:`pyhf cls --help`.
 
+Why can't ``pip`` find compatible backends on PyPI for Apple silicon Macs?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unfortunately, at this time |tensorflow Issue 57185|_ of ``pyhf``'s backends support
+wheels for Apple silicon Macs (``osx-arm64``).
+So if you are installing wheels from PyPI on an ``osx-arm64`` machine, you will
+only be able to use a subset of all the backends.
+
+An alternative would be to create a |micromamba|_ environment and install the
+backends individually from `conda-forge <https://prefix.dev/channels/conda-forge/>`__
+as all the backends have conda-forge releases compatible with ``linux-64`` and
+``osx-arm64``.
+
+.. |tensorflow Issue 57185| replace:: not all
+.. _`tensorflow Issue 57185`: https://github.com/tensorflow/tensorflow/issues/57185
+
+.. |micromamba| replace:: ``micromamba``
+.. _`micromamba`: https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html
+
 I installed an old ``pyhf`` release from PyPI, why am I getting an error from a dependency?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
