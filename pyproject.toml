@@ -1,5 +1,8 @@
 [build-system]
-requires = ["hatchling>=1.0.0", "hatch-vcs"]
+requires = [
+    "hatchling>=1.13.0",
+    "hatch-vcs>=0.3.0",
+]
 build-backend = "hatchling.build"
 
 [project]
@@ -26,6 +29,7 @@ keywords = [
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Environment :: WebAssembly :: Emscripten",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
