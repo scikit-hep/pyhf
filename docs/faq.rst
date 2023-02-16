@@ -34,9 +34,24 @@ Why can't ``pip`` find compatible backends on PyPI for Apple silicon Macs?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unfortunately, at this time |tensorflow Issue 57185|_ of ``pyhf``'s backends
-support wheels for Apple silicon Macs (``osx-arm64``).
+support wheels for Apple silicon Macs (``osx-arm64``) under common names on PyPI.
 If you are installing wheels from PyPI on an ``osx-arm64`` machine, you will only
-be able to use a subset of all the backends.
+be able to use a subset of all the backends through the provided extras.
+
+To install the dependencies for the TensorFlow backend you'll need to manually
+specify that ``tensorflow-macos`` is required
+
+    .. code-block:: console
+
+        python -m pip install pyhf tensorflow-macos tensorflow-probability
+
+Similarly, if you want to install the TensorFlow backend dependencies along with the
+other backends included in the ``[backends]`` extra you'll need to specify the extras
+as well
+
+    .. code-block:: console
+
+        python -m pip install 'pyhf[torch,jax,minuit]' tensorflow-macos tensorflow-probability
 
 An alternative would be to create a |micromamba|_ environment and install the
 backends individually from `conda-forge <https://prefix.dev/channels/conda-forge/>`__
