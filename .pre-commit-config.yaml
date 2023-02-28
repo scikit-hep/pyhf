@@ -26,16 +26,16 @@ repos:
       # exclude generated files
       exclude: ^validation/|\.dtd$|\.xml$
 
--   repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
-    hooks:
-    - id: pyupgrade
-      args: ["--py38-plus"]
-
 -   repo: https://github.com/MarcoGorelli/absolufy-imports
     rev: v0.3.1
     hooks:
     - id: absolufy-imports
+
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: "v0.0.253"
+  hooks:
+    - id: ruff
+      args: ["--fix", "--show-fixes"]
 
 -   repo: https://github.com/psf/black
     rev: 23.1.0
@@ -47,18 +47,6 @@ repos:
     hooks:
     - id: blacken-docs
       additional_dependencies: [black==23.1.0]
-
--   repo: https://github.com/asottile/yesqa
-    rev: v1.4.0
-    hooks:
-    - id: yesqa
-
--   repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
-    hooks:
-    - id: flake8
-      args: ["--count", "--statistics"]
-      additional_dependencies: [flake8-encodings==0.5.0.post1]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.0.1
@@ -78,8 +66,9 @@ repos:
 -   repo: https://github.com/nbQA-dev/nbQA
     rev: 1.6.3
     hooks:
-    - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==3.3.1]
+    - id: nbqa-ruff
+      additional_dependencies: [ruff==0.0.253]
+      args: ["--extend-ignore=F821,F401,F841,F811"]
 
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.2.2
