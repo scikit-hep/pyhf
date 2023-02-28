@@ -277,11 +277,14 @@ ignore_errors = true
 select = [
   "E", "F", "W", # flake8
   "UP",          # pyupgrade
+  "RUF",         # Ruff-specific
 ]
 line-length = 88
 ignore = [
-    "E402",
-    "E501",
+  "E402",
+  "E501",
+  "RUF001", # String contains ambiguous unicode character
+  "RUF005", # unpack-instead-of-concatenating-to-collection-literal
 ]
 target-version = "py38"
 src = ["src"]
