@@ -26,11 +26,6 @@ repos:
       # exclude generated files
       exclude: ^validation/|\.dtd$|\.xml$
 
--   repo: https://github.com/MarcoGorelli/absolufy-imports
-    rev: v0.3.1
-    hooks:
-    - id: absolufy-imports
-
 - repo: https://github.com/charliermarsh/ruff-pre-commit
   rev: "v0.0.253"
   hooks:

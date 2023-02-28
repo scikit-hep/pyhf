@@ -278,6 +278,7 @@ select = [
   "E", "F", "W", # flake8
   "UP",          # pyupgrade
   "RUF",         # Ruff-specific
+  "TID",         # flake8-tidy-imports
 ]
 line-length = 88
 ignore = [
@@ -292,3 +293,4 @@ typing-modules = ["pyhf.typing"]
 unfixable = [
   "F841", # Removes unused variables
 ]
+flake8-tidy-imports.ban-relative-imports = "all"
