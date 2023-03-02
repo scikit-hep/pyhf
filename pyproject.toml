@@ -137,10 +137,6 @@ version-file = "src/pyhf/_version.py"
 # c.f. https://github.com/pypa/hatch/pull/299
 only-include = [
     "/src",
-    "/LICENSE",
-    "/README.rst",
-    "/pyproject.toml",
-    "/AUTHORS",
     "/CITATION.cff"
 ]
 exclude = [
