@@ -135,12 +135,10 @@ version-file = "src/pyhf/_version.py"
 [tool.hatch.build.targets.sdist]
 # only-include needed to properly include src/pyhf/schemas
 # c.f. https://github.com/pypa/hatch/pull/299
+# hatchling always includes:
+# pyproject.toml, .gitignore, any README, any LICENSE, AUTHORS
 only-include = [
     "/src",
-    "/LICENSE",
-    "/README.rst",
-    "/pyproject.toml",
-    "/AUTHORS",
     "/CITATION.cff"
 ]
 exclude = [
