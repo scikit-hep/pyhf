@@ -4,7 +4,7 @@ import logging
 import click
 
 from pyhf import __version__
-from pyhf.cli import rootio, spec, infer, patchset, utils, complete
+from pyhf.cli import complete, infer, patchset, rootio, spec, utils
 from pyhf.contrib import cli as contrib
 from pyhf.utils import citation
 
