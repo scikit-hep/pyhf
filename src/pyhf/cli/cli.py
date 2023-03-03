@@ -4,9 +4,9 @@ import logging
 import click
 
 from pyhf import __version__
-from pyhf.cli import rootio, spec, infer, patchset, complete
+from pyhf.cli import rootio, spec, infer, patchset, utils, complete
 from pyhf.contrib import cli as contrib
-from pyhf import utils
+from pyhf.utils import citation
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -15,14 +15,7 @@ log = logging.getLogger(__name__)
 def _print_citation(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo(utils.citation())
-    ctx.exit()
-
-
-def _debug(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    click.echo(utils.debug_info())
+    click.echo(citation())
     ctx.exit()
 
 
@@ -35,15 +28,6 @@ def _debug(ctx, param, value):
     default=False,
     is_flag=True,
     callback=_print_citation,
-    expose_value=False,
-    is_eager=True,
-)
-@click.option(
-    "--debug",
-    help="Produce OS / environment information useful for filing a bug report",
-    default=False,
-    is_flag=True,
-    callback=_debug,
     expose_value=False,
     is_eager=True,
 )
@@ -69,8 +53,8 @@ pyhf.add_command(infer.cls)
 
 pyhf.add_command(patchset.cli)
 
+pyhf.add_command(utils.cli)
+
 pyhf.add_command(complete.cli)
 
 pyhf.add_command(contrib.cli)
-
-# pyhf.add_command(utils.cli)
