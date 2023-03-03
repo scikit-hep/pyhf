@@ -703,6 +703,7 @@ class ToyCalculator:
         test_stat="qtilde",
         ntoys=2000,
         track_progress=True,
+        skip_failing_toys = False,
     ):
         r"""
         Toy-based Calculator.
@@ -733,6 +734,7 @@ class ToyCalculator:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
 
         """
+        self.skip_failing_toys = skip_failing_toys
         self.ntoys = ntoys
         self.data = data
         self.pdf = pdf
@@ -782,6 +784,9 @@ class ToyCalculator:
             Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.
 
         """
+
+        print('skip?',self.skip_failing_toys)
+
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
@@ -827,8 +832,8 @@ class ToyCalculator:
             )
             signal_teststat = []
             for sample in signal_sample:
-                signal_teststat.append(
-                    teststat_func(
+                try:
+                    value = teststat_func(
                         poi_test,
                         sample,
                         self.pdf,
@@ -836,7 +841,16 @@ class ToyCalculator:
                         self.par_bounds,
                         self.fixed_params,
                     )
-                )
+                except RuntimeError:
+                    if self.skip_failing_toys:
+                        value = None
+                    else:
+                        raise
+
+                if (value is not None) and (tensorlib.isfinite(value)):
+                    signal_teststat.append(
+                        value
+                    )
                 progress.advance(signal_task, 1)
 
             bkg_task = progress.add_task(
@@ -844,16 +858,25 @@ class ToyCalculator:
             )
             bkg_teststat = []
             for sample in bkg_sample:
-                bkg_teststat.append(
-                    teststat_func(
+                try:
+                    value = teststat_func(
                         poi_test,
                         sample,
                         self.pdf,
                         self.init_pars,
                         self.par_bounds,
                         self.fixed_params,
-                    )
                 )
+                except RuntimeError:
+                    if self.skip_failing_toys:
+                        value = None
+                    else:
+                        raise
+
+                if (value is not None) and (tensorlib.isfinite(value)):
+                    bkg_teststat.append(
+                        value
+                    )
                 progress.advance(bkg_task, 1)
 
         s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
