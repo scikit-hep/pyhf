@@ -19,6 +19,7 @@ else:
 __all__ = [
     "EqDelimStringParamType",
     "citation",
+    "debug_info",
     "digest",
     "options_from_eqdelimstring",
 ]
