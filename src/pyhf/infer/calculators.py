@@ -703,7 +703,7 @@ class ToyCalculator:
         test_stat="qtilde",
         ntoys=2000,
         track_progress=True,
-        skip_failing_toys = False,
+        skip_failing_toys=False,
     ):
         r"""
         Toy-based Calculator.
@@ -785,7 +785,7 @@ class ToyCalculator:
 
         """
 
-        print('skip?',self.skip_failing_toys)
+        print('skip?', self.skip_failing_toys)
 
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
