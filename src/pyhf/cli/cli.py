@@ -19,6 +19,13 @@ def _print_citation(ctx, param, value):
     ctx.exit()
 
 
+def _debug(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo(utils.debug_os_info())
+    ctx.exit()
+
+
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option(version=__version__)
 @click.option(
@@ -28,6 +35,15 @@ def _print_citation(ctx, param, value):
     default=False,
     is_flag=True,
     callback=_print_citation,
+    expose_value=False,
+    is_eager=True,
+)
+@click.option(
+    "--debug",
+    help="Produce OS / environment information useful for filing a bug report",
+    default=False,
+    is_flag=True,
+    callback=_debug,
     expose_value=False,
     is_eager=True,
 )
@@ -56,3 +72,5 @@ pyhf.add_command(patchset.cli)
 pyhf.add_command(complete.cli)
 
 pyhf.add_command(contrib.cli)
+
+# pyhf.add_command(utils.cli)

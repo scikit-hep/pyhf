@@ -126,3 +126,40 @@ def citation(oneline=False):
     if oneline:
         data = ''.join(data.splitlines())
     return data
+
+
+# # Linux
+# $ cat /etc/os-release
+# NAME="Ubuntu"
+# VERSION="20.04.2 LTS (Focal Fossa)"
+# ID=ubuntu
+# ID_LIKE=debian
+# PRETTY_NAME="Ubuntu 20.04.2 LTS"
+# VERSION_ID="20.04"
+# HOME_URL="https://www.ubuntu.com/"
+# SUPPORT_URL="https://help.ubuntu.com/"
+# BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+# PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+# VERSION_CODENAME=focal
+# UBUNTU_CODENAME=focal
+
+
+def debug_os_info():
+    """
+    Produce OS / environment information useful for filing a bug report
+
+    Example:
+
+        >>> import pyhf
+        >>> pyhf.utils.debug_os_info()
+
+    Returns:
+        os_info (:obj:`str`): The operating system and environment information
+        for the host machine.
+    """
+    import os
+    from pyhf import __version__
+
+    pyhf_version = f"pyhf version: {__version__}\n"
+    summary = pyhf_version + "hi"
+    return summary
