@@ -162,7 +162,8 @@ def debug_info():
                     with open(os_release_path, encoding="utf8") as read_file:
                         os_release_file = read_file.read()
                     os_release_list = os_release_file.split("\n")
-                    os_release_list.remove("")  # Remove trailing line
+                    # Remove all trailing lines
+                    os_release_list = list(filter(("").__ne__, os_release_list))
                     return {
                         token.split("=")[0]: token.split("=")[1].replace('"', '')
                         for token in os_release_list
