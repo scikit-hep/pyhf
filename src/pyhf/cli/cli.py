@@ -22,7 +22,7 @@ def _print_citation(ctx, param, value):
 def _debug(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo(utils.debug_os_info())
+    click.echo(utils.debug_info())
     ctx.exit()
 
 
