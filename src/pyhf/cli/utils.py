@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 
 import click
+
 from pyhf import utils
 
 log = logging.getLogger(__name__)
