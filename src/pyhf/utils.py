@@ -19,7 +19,7 @@ else:
 __all__ = [
     "EqDelimStringParamType",
     "citation",
-    "debug_info",
+    "environment_info",
     "digest",
     "options_from_eqdelimstring",
 ]
@@ -132,14 +132,14 @@ def citation(oneline=False):
     return data
 
 
-def debug_info():
+def environment_info():
     """
     Produce OS / environment information useful for filing a bug report
 
     Example:
 
         >>> import pyhf
-        >>> pyhf.utils.debug_info()
+        >>> pyhf.utils.environment_info()
 
     Returns:
         os_info (:obj:`str`): The operating system and environment information
