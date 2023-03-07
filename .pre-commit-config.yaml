@@ -61,7 +61,7 @@ repos:
       additional_dependencies: [flake8-encodings==0.5.0.post1]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.991
+    rev: v1.0.1
     # check the oldest and newest supported Pythons
     hooks:
       - &mypy
@@ -76,7 +76,7 @@ repos:
         args: ["--python-version=3.10"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.6.1
+    rev: 1.6.3
     hooks:
     - id: nbqa-pyupgrade
       additional_dependencies: [pyupgrade==3.3.1]
