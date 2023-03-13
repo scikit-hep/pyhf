@@ -4,7 +4,7 @@ import urllib.parse
 def main():
     code = """\
 import piplite
-await piplite.install(["pyhf==0.7.0"])
+await piplite.install(["pyhf==0.7.0", "matplotlib>=3.0.0"])
 %matplotlib inline
 import pyhf\
 """
