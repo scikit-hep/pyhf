@@ -216,13 +216,13 @@ class jax_backend:
             Array([[1., 2., 3.],
                    [4., 5., 6.]], dtype=float64)
             >>> type(tensor) # doctest:+ELLIPSIS
-            <class '...Array'>
+            <class '...ArrayImpl'>
 
         Args:
             tensor_in (Number or Tensor): Tensor object
 
         Returns:
-            `jaxlib.xla_extension.Array`: A multi-dimensional, fixed-size homogeneous array.
+            `jaxlib.xla_extension.ArrayImpl`: A multi-dimensional, fixed-size homogeneous array.
         """
         # TODO: Remove doctest:+ELLIPSIS when JAX API stabilized
         try:
