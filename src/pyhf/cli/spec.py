@@ -108,7 +108,7 @@ def inspect(workspace, output_file, measurement):
     )
 
     # summary
-    fmtStr = '{{0: >{0:d}s}}  {{1:s}}'.format(maxlen + len('Summary'))
+    fmtStr = '{{: >{:d}s}}  {{:s}}'.format(maxlen + len('Summary'))
     click.echo(fmtStr.format('     Summary     ', ''))
     click.echo(fmtStr.format('-' * 18, ''))
     fmtStr = f'{{0: >{maxlen:d}s}}  {{1:s}}'
