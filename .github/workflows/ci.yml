@@ -26,10 +26,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
         include:
           - os: macos-latest
-            python-version: '3.10'
+            python-version: '3.11'
 
     steps:
     - uses: actions/checkout@v3
@@ -80,30 +80,30 @@ jobs:
         coverage xml
 
     - name: Report contrib coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
         flags: contrib
 
     - name: Test docstring examples with doctest
-      if: matrix.python-version == '3.10'
+      if: matrix.python-version == '3.11'
       run: coverage run --data-file=.coverage-doctest --module pytest src/ README.rst
 
     - name: Coverage report for doctest only
-      if: matrix.python-version == '3.10'
+      if: matrix.python-version == '3.11'
       run: |
         coverage report --data-file=.coverage-doctest
         coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
 
     - name: Report doctest coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.10' && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v3
       with:
         files: doctest-coverage.xml
         flags: doctest
 
     - name: Run benchmarks
-      if: github.event_name == 'schedule' && matrix.python-version == '3.10'
+      if: github.event_name == 'schedule' && matrix.python-version == '3.11'
       run: |
         pytest --benchmark-sort=mean tests/benchmarks/test_benchmark.py
