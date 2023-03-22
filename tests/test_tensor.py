@@ -1,7 +1,9 @@
-import pytest
 import logging
+
 import numpy as np
+import pytest
 import tensorflow as tf
+
 import pyhf
 from pyhf.simplemodels import uncorrelated_background
 
