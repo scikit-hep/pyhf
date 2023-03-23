@@ -602,7 +602,7 @@ def test_trigger_tensorlib_changed_precision(mocker):
 def test_tensorlib_setup(tensorlib, precision, mocker):
     tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
 
-    func = mocker.patch(f'pyhf.tensor.{tensorlib}._setup')
-    assert func.call_count == 0
+    _setup_mock = mocker.patch.object(getattr(pyhf.tensor, tensorlib), "_setup")
+    assert _setup_mock.call_count == 0
     pyhf.set_backend(tb)
-    assert func.call_count == 1
+    assert _setup_mock.call_count == 1
