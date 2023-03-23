@@ -55,8 +55,8 @@ repos:
           ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
         args: ["--python-version=3.8"]
       - <<: *mypy
-        name: mypy with Python 3.10
-        args: ["--python-version=3.10"]
+        name: mypy with Python 3.11
+        args: ["--python-version=3.11"]
 
 -   repo: https://github.com/nbQA-dev/nbQA
     rev: 1.6.3

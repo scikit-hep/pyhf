@@ -37,6 +37,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
@@ -150,7 +151,7 @@ packages = ["src/pyhf"]
 
 [tool.black]
 line-length = 88
-target-version = ['py38', 'py39', 'py310']
+target-version = ['py38', 'py39', 'py310', 'py311']
 skip-string-normalization = true
 include = '\.pyi?$'
 exclude = '''
@@ -210,6 +211,7 @@ filterwarnings = [
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
     'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
+    "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
 ]
 
 [tool.coverage.run]
@@ -224,7 +226,7 @@ show_missing = true
 
 [tool.mypy]
 files = "src"
-python_version = "3.10"
+python_version = "3.11"
 warn_unused_configs = true
 strict = true
 show_error_codes = true
