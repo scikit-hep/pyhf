@@ -63,14 +63,17 @@ repos:
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.0.1
     # check the oldest and newest supported Pythons
+    # Though use Python 3.8 as the oldest Python to run mypy
+    # to avoid positional-only errors from NumPy in Python 3.11
+    # runtime.
     hooks:
       - &mypy
         id: mypy
-        name: mypy with Python 3.7
+        name: mypy with Python 3.8
         files: src
         additional_dependencies:
           ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
-        args: ["--python-version=3.7"]
+        args: ["--python-version=3.8"]
       - <<: *mypy
         name: mypy with Python 3.11
         args: ["--python-version=3.11"]
