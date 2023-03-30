@@ -34,10 +34,12 @@ def xref(typ, rawtext, text, lineno, inliner, options=None, content=None):
 
 
 def get_refs(app):
+
     xref.links = app.config.xref_links
 
 
 def setup(app):
+
     app.add_config_value('xref_links', {}, True)
     app.add_role('xref', xref)
     app.connect("builder-inited", get_refs)

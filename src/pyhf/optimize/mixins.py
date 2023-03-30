@@ -41,6 +41,7 @@ class OptimizerMixin:
         options={},
         par_names=None,
     ):
+
         minimizer = self._get_minimizer(
             func,
             x0,

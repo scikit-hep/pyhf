@@ -136,6 +136,7 @@ class staterror_combined:
     op_code = 'multiplication'
 
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
+
         default_backend = pyhf.default_backend
         self.batch_size = batch_size
 

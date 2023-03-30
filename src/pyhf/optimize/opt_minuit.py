@@ -49,6 +49,7 @@ class minuit_optimizer(OptimizerMixin):
         do_grad=False,
         par_names=None,
     ):
+
         fixed_vals = fixed_vals or []
         # Minuit wants True/False for each parameter
         fixed_bools = [False] * len(init_pars)
@@ -81,6 +82,7 @@ class minuit_optimizer(OptimizerMixin):
         fixed_vals=None,
         options={},
     ):
+
         """
         Same signature as :func:`scipy.optimize.minimize`.
 
