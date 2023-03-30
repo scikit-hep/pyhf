@@ -1,15 +1,159 @@
 [build-system]
-# Minimum requirements for the build system to execute.
-requires = ["setuptools>=61.0.0", "setuptools_scm>=7.0.1"]
-build-backend = "setuptools.build_meta"
+requires = [
+    "hatchling>=1.13.0",
+    "hatch-vcs>=0.3.0",
+]
+build-backend = "hatchling.build"
 
-[tool.setuptools_scm]
-write_to = "src/pyhf/_version.py"
+[project]
+name = "pyhf"
+dynamic = ["version"]
+description = "pure-Python HistFactory implementation with tensors and autodiff"
+readme = "README.rst"
+license = { text = "Apache-2.0" }  # SPDX short identifier
+requires-python = ">=3.7"
+authors = [
+    { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
+    { name = "Matthew Feickert", email = "matthew.feickert@cern.ch" },
+    { name = "Giordon Stark", email = "gstark@cern.ch" },
+]
+maintainers = [ {name = "The Scikit-HEP admins", email = "scikit-hep-admins@googlegroups.com"} ]
+keywords = [
+    "fitting",
+    "jax",
+    "numpy",
+    "physics",
+    "pytorch",
+    "scipy",
+    "tensorflow",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: WebAssembly :: Emscripten",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "click>=8.0.0",  # for console scripts
+    "importlib_resources>=1.4.0; python_version < '3.9'",  # for resources in schema
+    "jsonpatch>=1.15",
+    "jsonschema>=4.15.0",  # for utils
+    "pyyaml>=5.1",  # for parsing CLI equal-delimited options
+    "scipy>=1.2.0",  # requires numpy, which is required by pyhf and tensorflow
+    "tqdm>=4.56.0",  # for readxml
+    "typing_extensions>=3.7.4.3; python_version == '3.7'",  # for SupportsIndex
+    "numpy",  # compatible versions controlled through scipy
+]
+
+[project.scripts]
+pyhf = "pyhf.cli:cli"
+
+[project.urls]
+Documentation = "https://pyhf.readthedocs.io/"
+Homepage = "https://github.com/scikit-hep/pyhf"
+"Issue Tracker" = "https://github.com/scikit-hep/pyhf/issues"
+"Release Notes" = "https://pyhf.readthedocs.io/en/stable/release-notes.html"
+"Releases" = "https://github.com/scikit-hep/pyhf/releases"
+"Source Code" = "https://github.com/scikit-hep/pyhf"
+
+[project.optional-dependencies]
+shellcomplete = ["click_completion"]
+tensorflow = [
+    "tensorflow>=2.7.0; platform_machine != 'arm64'",  # c.f. PR #1962
+    "tensorflow-macos>=2.7.0; platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. PR #2119
+    "tensorflow-probability>=0.11.0",  # c.f. PR #1657
+]
+torch = ["torch>=1.10.0"]  # c.f. PR #1657
+jax = [
+    "jax>=0.4.1",  # c.f. PR #2079
+    "jaxlib>=0.4.1",  # c.f. PR #2079
+]
+xmlio = ["uproot>=4.1.1"]  # c.f. PR #1567
+minuit = ["iminuit>=2.7.0"]  # c.f. PR #1895
+contrib = [
+    "matplotlib>=3.0.0",
+    "requests>=2.22.0",
+]
+backends = ["pyhf[tensorflow,torch,jax,minuit]"]
+all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
+
+# Developer extras
+test = [
+    "pyhf[all]",
+    "scikit-hep-testdata>=0.4.11",
+    "pytest>=6.0",
+    "coverage[toml]>=6.0.0",
+    "pytest-mock",
+    "requests-mock>=1.9.0",
+    "pytest-benchmark[histogram]",
+    "pytest-console-scripts",
+    "pytest-mpl",
+    "pydocstyle",
+    "papermill~=2.3.4",
+    "scrapbook~=0.5.0",
+    "jupyter",
+    "graphviz",
+    "pytest-socket>=0.2.0",  # c.f. PR #1917
+]
+docs = [
+    "pyhf[xmlio,contrib]",
+    "sphinx>=5.1.1",  # c.f. https://github.com/scikit-hep/pyhf/pull/1926
+    "sphinxcontrib-bibtex~=2.1",
+    "sphinx-click",
+    "sphinx_rtd_theme",
+    "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
+    "ipywidgets",
+    "sphinx-issues",
+    "sphinx-copybutton>=0.3.2",
+    "sphinx-togglebutton>=0.3.0",
+    "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
+]
+develop = [
+    "pyhf[test,docs]",
+    "tbump>=6.7.0",
+    "pre-commit",
+    "nox",
+    "codemetapy>=2.3.0",
+]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
 local_scheme = "no-local-version"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/pyhf/_version.py"
+
+[tool.hatch.build.targets.sdist]
+# only-include needed to properly include src/pyhf/schemas
+# c.f. https://github.com/pypa/hatch/pull/299
+# hatchling always includes:
+# pyproject.toml, .gitignore, any README, any LICENSE, AUTHORS
+only-include = [
+    "/src",
+    "/CITATION.cff"
+]
+exclude = [
+    "/src/conftest.py"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pyhf"]
 
 [tool.black]
 line-length = 88
-target-version = ['py37', 'py38']
+target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
 skip-string-normalization = true
 include = '\.pyi?$'
 exclude = '''
@@ -17,40 +161,18 @@ exclude = '''
     \.git
   | .eggs
   | build
+  | .nox
 )/
 '''
-
-[tool.check-manifest]
-ignore = [
-    'docs*',
-    'validation*',
-    'examples*',
-    'tests*',
-    'docker*',
-    'binder*',
-    '.*',
-    'pyproject.toml',
-    'pytest.ini',
-    'codecov.yml',
-    'codemeta.json',
-    'CODE_OF_CONDUCT.md',
-    'CONTRIBUTING.md',
-    'AUTHORS',
-]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
 xfail_strict = true
 addopts = [
     "-ra",
-    "--cov=pyhf",
-    "--cov-branch",
     "--showlocals",
     "--strict-markers",
     "--strict-config",
-    "--cov-report=term-missing",
-    "--cov-report=xml",
-    "--cov-report=html",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
 ]
@@ -90,17 +212,23 @@ filterwarnings = [
     'ignore:divide by zero encountered in (true_)?divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
+    'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
+    "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
 ]
 
-[tool.nbqa.mutate]
-pyupgrade = 1
+[tool.coverage.run]
+source = ["pyhf"]
+branch = true
+omit = ["*/pyhf/typing.py"]
 
-[tool.nbqa.addopts]
-pyupgrade = ["--py37-plus"]
+[tool.coverage.report]
+precision = 1
+sort = "cover"
+show_missing = true
 
 [tool.mypy]
 files = "src"
-python_version = "3.10"
+python_version = "3.11"
 warn_unused_configs = true
 strict = true
 show_error_codes = true
@@ -148,3 +276,25 @@ module = [
   'pyhf.tensor.pytorch_backend.*',
 ]
 ignore_errors = true
+
+[tool.ruff]
+select = [
+  "E", "F", "W", # flake8
+  "UP",          # pyupgrade
+  "RUF",         # Ruff-specific
+  "TID",         # flake8-tidy-imports
+]
+line-length = 88
+ignore = [
+  "E402",
+  "E501",
+  "RUF001", # String contains ambiguous unicode character
+  "RUF005", # unpack-instead-of-concatenating-to-collection-literal
+]
+target-version = "py38"
+src = ["src"]
+typing-modules = ["pyhf.typing"]
+unfixable = [
+  "F841", # Removes unused variables
+]
+flake8-tidy-imports.ban-relative-imports = "all"
