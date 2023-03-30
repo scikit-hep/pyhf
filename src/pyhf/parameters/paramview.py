@@ -58,7 +58,6 @@ class ParamViewer:
     """
 
     def __init__(self, shape, par_map, par_selection):
-
         default_backend = pyhf.default_backend
 
         batch_size = shape[0] if len(shape) > 1 else None
