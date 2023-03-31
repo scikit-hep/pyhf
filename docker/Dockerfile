@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=python:3.10-slim-bullseye
+ARG BASE_IMAGE=python:3.11-slim-bullseye
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE} as base
 
@@ -16,7 +16,7 @@ RUN apt-get -qq -y update && \
     python -m venv /usr/local/venv && \
     cd /code && \
     python -m pip --no-cache-dir install --upgrade pip setuptools wheel && \
-    python -m pip --no-cache-dir install .[xmlio,contrib] && \
+    python -m pip --no-cache-dir install '.[xmlio,contrib]' && \
     python -m pip list
 
 FROM base

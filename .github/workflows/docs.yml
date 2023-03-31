@@ -5,6 +5,9 @@ on:
     branches:
     - main
   pull_request:
+    branches:
+    - main
+    - release/v*
   workflow_dispatch:
 
 concurrency:
@@ -24,7 +27,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Install Python dependencies
       run: |
@@ -102,8 +105,8 @@ jobs:
 
     steps:
     - name: Setup Pages
-      uses: actions/configure-pages@v2
+      uses: actions/configure-pages@v3
 
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v1
+      uses: actions/deploy-pages@v2
