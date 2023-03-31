@@ -23,9 +23,9 @@ on:
         type: string
       target_branch:
         description: 'Branch to push tag to'
+        default: 'main'
         required: true
         type: string
-        default: 'main'
       force:
         type: choice
         description: 'Force override check?'
