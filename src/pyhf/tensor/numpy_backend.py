@@ -203,10 +203,10 @@ class numpy_backend(Generic[T]):
         return np.outer(tensor_in_1, tensor_in_2)  # type: ignore[arg-type]
 
     def gather(self, tensor: Tensor[T], indices: NDArray[np.integer[T]]) -> ArrayLike:
-        return tensor[indices]  # type: ignore[no-any-return]
+        return tensor[indices]
 
     def boolean_mask(self, tensor: Tensor[T], mask: NDArray[np.bool_]) -> ArrayLike:
-        return tensor[mask]  # type: ignore[no-any-return]
+        return tensor[mask]
 
     def isfinite(self, tensor: Tensor[T]) -> NDArray[np.bool_]:
         return np.isfinite(tensor)

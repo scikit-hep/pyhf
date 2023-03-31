@@ -15,7 +15,6 @@ def standard_hypo_test_demo(
     sb_model_name="ModelConfig",
     data_name="obsData",
 ):
-
     file = ROOT.TFile.Open(infile)
     workspace = file.Get(workspace_name)
     sb_model = workspace.obj(sb_model_name)
