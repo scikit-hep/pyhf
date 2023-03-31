@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
     - main
+    - release/v*
   schedule:
     - cron:  '1 0 * * *'
   release:
