@@ -170,9 +170,14 @@ minversion = "6.0"
 xfail_strict = true
 addopts = [
     "-ra",
+    "--cov=pyhf",
+    "--cov-branch",
     "--showlocals",
     "--strict-markers",
     "--strict-config",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-report=html",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
 ]
@@ -217,15 +222,11 @@ filterwarnings = [
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
 ]
 
-[tool.coverage.run]
-source = ["pyhf"]
-branch = true
-omit = ["*/pyhf/typing.py"]
+[tool.nbqa.mutate]
+pyupgrade = 1
 
-[tool.coverage.report]
-precision = 1
-sort = "cover"
-show_missing = true
+[tool.nbqa.addopts]
+pyupgrade = ["--py37-plus"]
 
 [tool.mypy]
 files = "src"
