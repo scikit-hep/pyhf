@@ -53,6 +53,17 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.ACCESS_TOKEN }}
 
+    - name: Check target branch is intended for release
+      if: github.event.inputs.force == 'false'
+      shell: bash
+      run: |
+        git rev-parse --abbrev-ref HEAD | grep 'main\|release/'
+        if [ $? -eq 1 ]; then
+            echo "ERROR: Branch $(git rev-parse --abbrev-ref HEAD) is not intended for release."
+            echo "       Releases are made only from main or release branches."
+            exit 1
+        fi
+
     - name: Verify new version bump step is valid
       if: github.event.inputs.force == 'false'
       id: script
