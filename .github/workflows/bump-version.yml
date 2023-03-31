@@ -20,6 +20,12 @@ on:
       new_version:
         description: 'New version to bump to'
         required: true
+        type: string
+      target_branch:
+        description: 'Branch to push tag to'
+        required: true
+        type: string
+        default: 'main'
       force:
         type: choice
         description: 'Force override check?'
@@ -241,5 +247,5 @@ jobs:
         if [ ${{ github.event.inputs.dry_run }} == 'true' ]; then
             echo "# DRY RUN"
         else
-            git push origin main --tags
+            git push origin ${{ github.event.inputs.target_branch }} --tags
         fi
