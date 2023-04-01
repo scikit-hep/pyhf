@@ -175,7 +175,8 @@ jobs:
             echo "* Bumping version ${current_tag} to ${{ github.event.inputs.part }} version ${{ github.event.inputs.new_version }}"
         fi
 
-        echo ::set-output name=old_tag::v${current_tag}
+        echo "steps.script.outputs.old_tag=v${current_tag}"
+        echo "old_tag=v${current_tag}" >> $GITHUB_OUTPUT
 
     - name: Set up Python 3.11
       if: success()
