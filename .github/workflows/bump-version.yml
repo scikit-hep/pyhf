@@ -20,6 +20,12 @@ on:
       new_version:
         description: 'New version to bump to'
         required: true
+        type: string
+      target_branch:
+        description: 'Branch to push tag to'
+        default: 'main'
+        required: true
+        type: string
       force:
         type: choice
         description: 'Force override check?'
@@ -43,8 +49,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
+        ref: ${{ github.event.inputs.target_branch }}
         fetch-depth: 0
         token: ${{ secrets.ACCESS_TOKEN }}
+
+    - name: Check target branch is intended for release
+      if: github.event.inputs.force == 'false'
+      shell: bash
+      run: |
+        git rev-parse --abbrev-ref HEAD | grep 'main\|release/'
+        if [ $? -eq 1 ]; then
+            echo "ERROR: Branch $(git rev-parse --abbrev-ref HEAD) is not intended for release."
+            echo "       Releases are made only from main or release branches."
+            exit 1
+        fi
 
     - name: Verify new version bump step is valid
       if: github.event.inputs.force == 'false'
@@ -218,6 +236,12 @@ jobs:
         git tag -n99 --list "${NEW_TAG}"
 
         CHANGES=$(git log --pretty=format:'%s' "${OLD_TAG}"..HEAD --regexp-ignore-case --extended-regexp --grep='^([a-z]*?):')
+        # Also include any backported changes
+        BACKPORTED_CHANGES=$(git log --pretty=format:'%s' "${OLD_TAG}"..HEAD --grep='(backport):')
+        if [ ! -z "${BACKPORTED_CHANGES}" ]; then
+            CHANGES=$(printf "${CHANGES}\n${BACKPORTED_CHANGES}")
+        fi
+
         CHANGES_NEWLINE="$(echo "${CHANGES}" | sed -e 's/^/  - /')"
         SANITIZED_CHANGES=$(echo "${CHANGES}" | sed -e 's/^/<li>/' -e 's|$|</li>|' -e 's/(#[0-9]\+)//' -e 's/"/'"'"'/g')
         NUM_CHANGES=$(echo -n "${CHANGES}" | grep -c '^')
@@ -241,5 +265,5 @@ jobs:
         if [ ${{ github.event.inputs.dry_run }} == 'true' ]; then
             echo "# DRY RUN"
         else
-            git push origin main --tags
+            git push origin ${{ github.event.inputs.target_branch }} --tags
         fi
