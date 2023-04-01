@@ -35,7 +35,7 @@ jobs:
           DOCKER_IMAGE=pyhf/pyhf
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/}
+            VERSION=${GITHUB_REF_NAME}
           elif [[ $GITHUB_REF == refs/pull/* ]]; then
             VERSION=pr-${{ github.event.number }}
           fi
@@ -117,7 +117,9 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile
-          tags: pyhf/pyhf:latest,ghcr.io/${{github.repository}}:latest
+          tags: |
+            pyhf/pyhf:latest
+            ghcr.io/${{ github.repository }}:latest
           labels: |
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
