@@ -610,7 +610,7 @@ def test_patchset_download(tmpdir, script_runner, requests_mock, tarfile_path, a
         in ret.stderr
     )
 
-    # httpstat.us is a real wesite that can be used for testing responses
+    # httpstat.us is a real website that can be used for testing responses
     requests_mock.get(
         "https://httpstat.us/404/record/resource/1234567", status_code=404
     )
