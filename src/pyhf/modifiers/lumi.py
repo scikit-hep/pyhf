@@ -20,7 +20,7 @@ def required_parset(sample_data, modifier_data):
 
 
 class lumi_builder:
-    """Builder class for collecting lumi modiifier data"""
+    """Builder class for collecting lumi modifier data"""
 
     is_shared = True
 
