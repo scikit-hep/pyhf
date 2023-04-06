@@ -494,7 +494,7 @@ def test_import_noChannelData(mocker, datadir):
 def test_import_noChannelDataPaths(mocker, datadir):
     _data = [0.0]
     _err = [1.0]
-    mocker.patch('pyhf.readxml.import_root_histogram', return_value=(_data, _err))
+    mocker.patch("pyhf.readxml.import_root_histogram", return_value=(_data, _err))
 
     basedir = datadir.joinpath("xmlimport_noChannelDataPaths")
     with pytest.raises(
