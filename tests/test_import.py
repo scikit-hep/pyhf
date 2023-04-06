@@ -500,7 +500,7 @@ def test_import_noChannelDataPaths(mocker, datadir):
     with pytest.raises(NotImplementedError) as excinfo:
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
     assert (
-        'conversion of workspaces without data is currently not supported, see issue #566'
+        "Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566"
         in str(excinfo.value)
     )
 

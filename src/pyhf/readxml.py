@@ -281,7 +281,7 @@ def process_data(
 
     if inputfile == "" or histoname == "":
         raise NotImplementedError(
-            "conversion of workspaces without data is currently not supported, see issue #566"
+            "Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566"
         )
 
     data, _ = import_root_histogram(resolver, inputfile, histopath, histoname)
