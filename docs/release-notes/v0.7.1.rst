@@ -1,0 +1,96 @@
+|release v0.7.1|_
+=================
+
+This is a patch release from ``v0.7.0`` → ``v0.7.1``.
+
+Important Notes
+---------------
+
+* Please note this release has **API breaking changes** and carefully read these
+  notes while updating your code to the ``v0.7.0`` API.
+* All backends are now fully compatible and tested with
+  `Python 3.10 <https://peps.python.org/pep-0310/>`_.
+  (PR :pr:`1809`)
+* The ``pyhf.tensorlib.poisson`` API now allows for the expected rate parameter
+  ``lam`` to be ``0`` in the case that the observed events ``n`` is ``0`` given
+  that the limit :math:`\lim_{\lambda \to 0} \,\mathrm{Pois}(n | \lambda)` is well defined.
+  (PR :pr:`1657`)
+* :func:`pyhf.readxml.parse` now supports reading of XML configurations with absolute paths.
+  To support this, ``pyhf xlm2json`` now has a ``-v/--mount`` option.
+  (PR :pr:`1909`)
+* Support for model specifications without a parameter of interest defined is added.
+  (PRs :pr:`1638`, :pr:`1636`)
+* The :class:`pyhf.parameters.paramsets` classes ``suggested_fixed`` attribute behavior has
+  been updated.
+  To access the behavior used in ``pyhf`` ``v0.6.x`` use the ``suggested_fixed_as_bool`` attribute.
+  (PR :pr:`1639`)
+* ``pyhf.pdf._ModelConfig.par_names`` is changed to be a property attribute.
+  (PR :pr:`2027`)
+* The order of model parameters is now sorted by model parameter name.
+  (PR :pr:`1625`)
+* Support for writing user custom modifiers is added.
+  (PRs :pr:`1625`, :pr:`1644`)
+* Performance in :class:`pyhf.readxml` is increased by improvements to
+  :func:`pyhf.readxml.import_root_histogram`.
+  (PR :pr:`1691`)
+* :func:`pyhf.contrib.utils.download` is now more robust to different target file types.
+  (PRs :pr:`1697`, :pr:`1704`)
+* A ``pyhf.default_backend`` has been added that is configurable through a
+  ``default`` kwarg in :func:`pyhf.set_backend`.
+  (PR :pr:`1646`)
+  This is part of work to make ``pyhf`` fully automatic differentiable.
+  (Issue :issue:`882`)
+* Schema validation now allows for both :class:`list` and ``pyhf.tensorlib`` objects
+  to exist in the model specification.
+  (PR :pr:`1647`)
+* The minimum required dependencies have been updated to support added features:
+
+   - ``scipy>=1.2.0`` (PR :pr:`1274`)
+   - ``click>=8.0.0`` (PRs :pr:`1909`, :pr:`1958`)
+   - ``jsonschema>=4.15.0`` (PRs :pr:`1976`, :pr:`1979`)
+   - ``importlib_resources>=1.4.0`` (for Python 3.7, 3.8) (PR :pr:`1979`)
+   - ``typing_extensions>=3.7.4.3`` (for Python 3.7 only) (PRs :pr:`1940`, :pr:`1961`)
+
+* The minimum required backend versions have been updated to support added features:
+
+   - JAX backend requires ``jax>=0.2.10``, ``jaxlib>=0.1.61`` (PR :pr:`1962`)
+   - PyTorch backend requires ``torch>=1.10.0`` (PR :pr:`1657`)
+   - TensorFlow backend requires ``tensorflow>=2.7.0``, ``tensorflow-probability>=0.11.0`` (PRs :pr:`1962`, :pr:`1657`)
+   - iminuit optimizer requires ``iminuit>=2.7.0`` (PR :pr:`1895`)
+   - ``'xmlio'`` extra requires ``uproot>=4.1.1`` (PR :pr:`1567`)
+
+Fixes
+-----
+
+* Use improvements to ``jsonschema.RefResolver`` to avoid
+  ``jsonschema.exceptions.RefResolutionError``.
+  (PR :pr:`1976`)
+
+* Use the conditional maximum likelihood estimators of the nuisance parameters
+  to create the sampling distributions for :class:`pyhf.infer.calculators.ToyCalculator`.
+  (PR :pr:`1610`)
+  This follows the joint recommendations of the ATLAS and CMS experiments in
+  |LHC Higgs search combination procedure|_.
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* The following functions have been added to the ``pyhf.tensorlib`` API:
+
+
+   - ``pyhf.tensorlib.transpose`` (PR :pr:`1696`)
+   - ``pyhf.tensorlib.percentile`` (PR :pr:`817`)
+
+
+Contributors
+------------
+
+``v0.7.1`` benefited from contributions from:
+
+* Alexander Held
+
+.. |release v0.7.1| replace:: ``v0.7.1``
+.. _`release v0.7.1`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.1
