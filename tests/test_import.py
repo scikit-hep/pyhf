@@ -26,9 +26,8 @@ def test_dedupe_parameters():
     ]
     assert len(pyhf.readxml.dedupe_parameters(parameters)) == 1
     parameters[1]['bounds'] = [[0.0, 2.0]]
-    with pytest.raises(RuntimeError) as excinfo:
+    with pytest.raises(RuntimeError, match="SigXsecOverSM"):
         pyhf.readxml.dedupe_parameters(parameters)
-        assert 'SigXsecOverSM' in str(excinfo.value)
 
 
 def test_process_normfactor_configs():
@@ -486,9 +485,10 @@ def test_import_noChannelData(mocker, datadir):
     mocker.patch('pyhf.readxml.import_root_histogram', return_value=(_data, _err))
 
     basedir = datadir.joinpath("xmlimport_noChannelData")
-    with pytest.raises(RuntimeError) as excinfo:
+    with pytest.raises(
+        RuntimeError, match="Channel channel1 is missing data. See issue #1911"
+    ):
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
-        assert 'Channel channel1 is missing data. See issue #1911' in str(excinfo.value)
 
 
 def test_import_missingPOI(mocker, datadir):
@@ -497,11 +497,10 @@ def test_import_missingPOI(mocker, datadir):
     mocker.patch('pyhf.readxml.import_root_histogram', return_value=(_data, _err))
 
     basedir = datadir.joinpath("xmlimport_missingPOI")
-    with pytest.raises(RuntimeError) as excinfo:
+    with pytest.raises(
+        RuntimeError, match="Measurement GaussExample is missing POI specification"
+    ):
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
-        assert 'Measurement GaussExample is missing POI specification' in str(
-            excinfo.value
-        )
 
 
 def test_import_resolver():
