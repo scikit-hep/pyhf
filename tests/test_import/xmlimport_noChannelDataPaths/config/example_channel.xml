@@ -1,0 +1,16 @@
+<!DOCTYPE Channel  SYSTEM 'HistFactorySchema.dtd'>
+<Channel Name="channel1" InputFile="./data/example.root" >
+  <Data HistoName="" InputFile="" HistoPath=""/>
+  <Sample Name="signal" HistoPath="" HistoName="signal">
+    <OverallSys Name="syst1" High="1.05" Low="0.95"/>
+    <NormFactor Name="SigXsecOverSM" Val="1" Low="0." High="3."  />
+  </Sample>
+  <Sample Name="background1" HistoPath="" NormalizeByTheory="True" HistoName="background1">
+    <StatError Activate="True" HistoName="background1_statUncert"  />
+    <OverallSys Name="syst2" Low="0.95" High="1.05"/>
+  </Sample>
+  <Sample Name="background2" HistoPath="" NormalizeByTheory="True" HistoName="background2">
+    <StatError Activate="True" /> <!-- Use Default Histogram Errors as input to StatError -->
+    <OverallSys Name="syst3" Low="0.95" High="1.05"/>
+  </Sample>
+</Channel>
