@@ -309,11 +309,11 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.7.0}",
-     version = {0.7.0},
+     title = "{pyhf: v0.7.1}",
+     version = {0.7.1},
      doi = {10.5281/zenodo.1169739},
      url = {https://doi.org/10.5281/zenodo.1169739},
-     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.0}
+     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.1}
    }
 
    @article{pyhf_joss,
@@ -361,7 +361,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.0-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.1-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from main| image:: https://img.shields.io/badge/docs-main-blue.svg
    :target: https://scikit-hep.github.io/pyhf
@@ -376,7 +376,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/conda-forge/pyhf-feedstock
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
-.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.0-blue?logo=Docker
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.1-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
 .. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/cuda/tags
