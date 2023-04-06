@@ -16,7 +16,7 @@ Important Notes
 Fixes
 -----
 
-* Raise :exception:`NotImplementedError` when attempting to convert a XML
+* Raise :class:`NotImplementedError` when attempting to convert a XML
   workspace that contains no data.
   (PR :pr:`2109`)
 
