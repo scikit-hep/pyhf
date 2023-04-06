@@ -1,0 +1,31 @@
+|release v0.7.1|_
+=================
+
+This is a patch release from ``v0.7.0`` → ``v0.7.1``.
+
+Important Notes
+---------------
+
+* All backends are now fully compatible and tested with
+  `Python 3.11 <https://peps.python.org/pep-0664/>`_.
+  (PR :pr:`2145`)
+* The ``tensorflow`` extra (``'pyhf[tensorlfow]'``) now automatically installs
+  ``tensorflow-macos`` for Apple silicon machines.
+  (PR :pr:`2119`)
+
+Fixes
+-----
+
+* Raise :class:`NotImplementedError` when attempting to convert a XML
+  workspace that contains no data.
+  (PR :pr:`2109`)
+
+Contributors
+------------
+
+``v0.7.1`` benefited from contributions from:
+
+* Alexander Held
+
+.. |release v0.7.1| replace:: ``v0.7.1``
+.. _`release v0.7.1`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.1
