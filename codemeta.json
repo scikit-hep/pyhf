@@ -58,78 +58,75 @@
         "Python 3",
         "Python 3 Only",
         "Python 3.10",
+        "Python 3.11",
         "Python 3.7",
         "Python 3.8",
         "Python 3.9",
         "Python Implementation CPython"
     ],
-    "softwareHelp": {
-        "@id": "https://pyhf.readthedocs.io/"
-    },
+    "softwareHelp": "https://pyhf.readthedocs.io/",
     "softwareRequirements": [
         {
-            "@id": "/dependency/click-ge-8.0.0",
             "@type": "SoftwareApplication",
             "identifier": "click",
             "name": "click",
             "runtimePlatform": "Python 3",
-            "version": ">=8.0.0"
+            "version": ">= 8.0.0"
         },
         {
-            "@id": "/dependency/importlib-resources-ge-1.4.0",
             "@type": "SoftwareApplication",
             "identifier": "importlib-resources",
             "name": "importlib-resources",
             "runtimePlatform": "Python 3",
-            "version": ">=1.4.0"
+            "version": ">= 1.4.0"
         },
         {
-            "@id": "/dependency/jsonpatch-ge-1.15",
             "@type": "SoftwareApplication",
             "identifier": "jsonpatch",
             "name": "jsonpatch",
             "runtimePlatform": "Python 3",
-            "version": ">=1.15"
+            "version": ">= 1.15"
         },
         {
-            "@id": "/dependency/jsonschema-ge-4.15.0",
             "@type": "SoftwareApplication",
             "identifier": "jsonschema",
             "name": "jsonschema",
             "runtimePlatform": "Python 3",
-            "version": ">=4.15.0"
+            "version": ">= 4.15.0"
         },
         {
-            "@id": "/dependency/pyyaml-ge-5.1",
+            "@type": "SoftwareApplication",
+            "identifier": "numpy",
+            "name": "numpy",
+            "runtimePlatform": "Python 3"
+        },
+        {
             "@type": "SoftwareApplication",
             "identifier": "pyyaml",
             "name": "pyyaml",
             "runtimePlatform": "Python 3",
-            "version": ">=5.1"
+            "version": ">= 5.1"
         },
         {
-            "@id": "/dependency/scipy-ge-1.2.0",
             "@type": "SoftwareApplication",
             "identifier": "scipy",
             "name": "scipy",
             "runtimePlatform": "Python 3",
-            "version": ">=1.2.0"
+            "version": ">= 1.2.0"
         },
         {
-            "@id": "/dependency/tqdm-ge-4.56.0",
             "@type": "SoftwareApplication",
             "identifier": "tqdm",
             "name": "tqdm",
             "runtimePlatform": "Python 3",
-            "version": ">=4.56.0"
+            "version": ">= 4.56.0"
         },
         {
-            "@id": "/dependency/typing-extensions-ge-3.7.4.3",
             "@type": "SoftwareApplication",
             "identifier": "typing-extensions",
             "name": "typing-extensions",
             "runtimePlatform": "Python 3",
-            "version": ">=3.7.4.3"
+            "version": ">= 3.7.4.3"
         }
     ],
     "targetProduct": {
