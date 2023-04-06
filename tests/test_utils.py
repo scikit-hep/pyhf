@@ -37,15 +37,13 @@ def test_digest(obj, algorithm):
 
 
 def test_digest_bad_obj():
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(ValueError, match="not JSON-serializable"):
         pyhf.utils.digest(object())
-    assert 'not JSON-serializable' in str(excinfo.value)
 
 
 def test_digest_bad_alg():
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(ValueError, match="nonexistent_algorithm"):
         pyhf.utils.digest({}, algorithm='nonexistent_algorithm')
-    assert 'nonexistent_algorithm' in str(excinfo.value)
 
 
 @pytest.mark.parametrize('oneline', [False, True])
