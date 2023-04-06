@@ -218,9 +218,10 @@ def test_optimizer_unsupported_minimizer_options(optimizer):
     pyhf.set_backend(pyhf.default_backend, optimizer())
     m = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [3.5])
     data = pyhf.tensorlib.astensor([10.0] + m.config.auxdata)
-    with pytest.raises(pyhf.exceptions.Unsupported) as excinfo:
+    with pytest.raises(
+        pyhf.exceptions.Unsupported, match="unsupported_minimizer_options"
+    ):
         pyhf.infer.mle.fit(data, m, unsupported_minimizer_options=False)
-    assert 'unsupported_minimizer_options' in str(excinfo.value)
 
 
 @pytest.mark.parametrize('return_result_obj', [False, True], ids=['no_obj', 'obj'])

@@ -74,10 +74,12 @@ def test_patchset_get_patch_by_values(patchset):
 
 
 def test_patchset_get_nonexisting_patch(patchset):
-    with pytest.raises(pyhf.exceptions.InvalidPatchLookup) as excinfo:
+    # Using asserts with str(exc_info.value) over pytest.raises(..., match="...")
+    # to make it easier to check multiple strings.
+    with pytest.raises(pyhf.exceptions.InvalidPatchLookup) as exc_info:
         patchset.__getitem__('nonexisting_patch')
-    assert 'No patch associated with' in str(excinfo.value)
-    assert 'nonexisting_patch' in str(excinfo.value)
+    assert 'No patch associated with' in str(exc_info.value)
+    assert 'nonexisting_patch' in str(exc_info.value)
 
 
 def test_patchset_iterable(patchset):
