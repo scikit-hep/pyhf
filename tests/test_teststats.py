@@ -118,50 +118,45 @@ def test_no_poi_test_stats():
     par_bounds = model.config.suggested_bounds()
     fixed_params = model.config.suggested_fixed()
 
-    with pytest.raises(pyhf.exceptions.UnspecifiedPOI) as excinfo:
+    with pytest.raises(
+        pyhf.exceptions.UnspecifiedPOI,
+        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+    ):
         pyhf.infer.test_statistics.q0(
             test_poi, data, model, init_pars, par_bounds, fixed_params
         )
-    assert (
-        "No POI is defined. A POI is required for profile likelihood based test statistics."
-        in str(excinfo.value)
-    )
 
-    with pytest.raises(pyhf.exceptions.UnspecifiedPOI) as excinfo:
+    with pytest.raises(
+        pyhf.exceptions.UnspecifiedPOI,
+        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+    ):
         pyhf.infer.test_statistics.qmu(
             test_poi, data, model, init_pars, par_bounds, fixed_params
         )
-    assert (
-        "No POI is defined. A POI is required for profile likelihood based test statistics."
-        in str(excinfo.value)
-    )
 
-    with pytest.raises(pyhf.exceptions.UnspecifiedPOI) as excinfo:
+    with pytest.raises(
+        pyhf.exceptions.UnspecifiedPOI,
+        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+    ):
         pyhf.infer.test_statistics.qmu_tilde(
             test_poi, data, model, init_pars, par_bounds, fixed_params
         )
-    assert (
-        "No POI is defined. A POI is required for profile likelihood based test statistics."
-        in str(excinfo.value)
-    )
 
-    with pytest.raises(pyhf.exceptions.UnspecifiedPOI) as excinfo:
+    with pytest.raises(
+        pyhf.exceptions.UnspecifiedPOI,
+        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+    ):
         pyhf.infer.test_statistics.tmu(
             test_poi, data, model, init_pars, par_bounds, fixed_params
         )
-    assert (
-        "No POI is defined. A POI is required for profile likelihood based test statistics."
-        in str(excinfo.value)
-    )
 
-    with pytest.raises(pyhf.exceptions.UnspecifiedPOI) as excinfo:
+    with pytest.raises(
+        pyhf.exceptions.UnspecifiedPOI,
+        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+    ):
         pyhf.infer.test_statistics.tmu_tilde(
             test_poi, data, model, init_pars, par_bounds, fixed_params
         )
-    assert (
-        "No POI is defined. A POI is required for profile likelihood based test statistics."
-        in str(excinfo.value)
-    )
 
 
 @pytest.mark.parametrize("test_stat", ["qtilde", "q"])
