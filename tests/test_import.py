@@ -497,12 +497,11 @@ def test_import_noChannelDataPaths(mocker, datadir):
     mocker.patch('pyhf.readxml.import_root_histogram', return_value=(_data, _err))
 
     basedir = datadir.joinpath("xmlimport_noChannelDataPaths")
-    with pytest.raises(NotImplementedError) as excinfo:
+    with pytest.raises(
+        NotImplementedError,
+        match="Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566",
+    ):
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
-    assert (
-        "Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566"
-        in str(excinfo.value)
-    )
 
 
 def test_import_missingPOI(mocker, datadir):
