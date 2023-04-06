@@ -16,28 +16,9 @@ Important Notes
 Fixes
 -----
 
-* Use improvements to ``jsonschema.RefResolver`` to avoid
-  ``jsonschema.exceptions.RefResolutionError``.
-  (PR :pr:`1976`)
-
-* Use the conditional maximum likelihood estimators of the nuisance parameters
-  to create the sampling distributions for :class:`pyhf.infer.calculators.ToyCalculator`.
-  (PR :pr:`1610`)
-  This follows the joint recommendations of the ATLAS and CMS experiments in
-  |LHC Higgs search combination procedure|_.
-
-Features
---------
-
-Python API
-~~~~~~~~~~
-
-* The following functions have been added to the ``pyhf.tensorlib`` API:
-
-
-   - ``pyhf.tensorlib.transpose`` (PR :pr:`1696`)
-   - ``pyhf.tensorlib.percentile`` (PR :pr:`817`)
-
+* Raise ``NotImplementedError`` when attempting to convert an XML workspace that
+  contains no data.
+  (PR :pr:`2109`)
 
 Contributors
 ------------
