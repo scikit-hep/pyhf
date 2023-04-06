@@ -9,7 +9,7 @@ Important Notes
 * Please note this release has **API breaking changes** and carefully read these
   notes while updating your code to the ``v0.7.0`` API.
 * All backends are now fully compatible and tested with
-  `Python 3.10 <https://peps.python.org/pep-0310/>`_.
+  `Python 3.10 <https://peps.python.org/pep-0619/>`_.
   (PR :pr:`1809`)
 * The ``pyhf.tensorlib.poisson`` API now allows for the expected rate parameter
   ``lam`` to be ``0`` in the case that the observed events ``n`` is ``0`` given
