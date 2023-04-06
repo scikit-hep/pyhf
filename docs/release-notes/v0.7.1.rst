@@ -8,7 +8,10 @@ Important Notes
 
 * All backends are now fully compatible and tested with
   `Python 3.11 <https://peps.python.org/pep-0664/>`_.
-  (PR :pr:`1809`)
+  (PR :pr:`2145`)
+* The ``tensorflow`` extra (``'pyhf[tensorlfow]'``) now automatically installs
+  ``tensorflow-macos`` for Apple silicon machines.
+  (PR :pr:`2119`)
 
 Fixes
 -----
