@@ -466,7 +466,7 @@ def parse(
         'measurements': measurements,
         'channels': channels,
         'observations': observations,
-        'version': schema.version,  # type: ignore[typeddict-item]
+        'version': schema.version,  # type: ignore[typeddict-unknown-key]
     }
     try:
         schema.validate(result, 'workspace.json')
