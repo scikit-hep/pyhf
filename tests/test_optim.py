@@ -438,18 +438,19 @@ def test_minuit_failed_optimization(
     pdf = pyhf.simplemodels.uncorrelated_background([5], [10], [3.5])
     data = [10] + pdf.config.auxdata
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
-    with pytest.raises(pyhf.exceptions.FailedMinimization) as excinfo:
+    with pytest.raises(
+        pyhf.exceptions.FailedMinimization, match="Optimization failed"
+    ) as exc_info:
         pyhf.infer.mle.fit(data, pdf)
 
-    assert isinstance(excinfo.value.result, OptimizeResult)
+    assert isinstance(exc_info.value.result, OptimizeResult)
 
-    assert excinfo.match('Optimization failed')
     assert 'Optimization failed' in spy.spy_return.message
     if has_reached_call_limit:
-        assert excinfo.match('Call limit was reached')
+        assert exc_info.match('Call limit was reached')
         assert 'Call limit was reached' in spy.spy_return.message
     if is_above_max_edm:
-        assert excinfo.match('Estimated distance to minimum too large')
+        assert exc_info.match('Estimated distance to minimum too large')
         assert 'Estimated distance to minimum too large' in spy.spy_return.message
 
 
@@ -467,10 +468,8 @@ def test_minuit_set_options(mocker):
 
 def test_get_tensor_shim(monkeypatch):
     monkeypatch.setattr(pyhf.tensorlib, 'name', 'fake_backend')
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(ValueError, match="No optimizer shim for fake_backend."):
         _get_tensor_shim()
-
-    assert 'No optimizer shim for fake_backend.' == str(excinfo.value)
 
 
 def test_stitch_pars(backend):
