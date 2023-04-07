@@ -97,12 +97,12 @@ jobs:
       uses: pypa/gh-action-pypi-publish@v1.8.5
       with:
         password: ${{ secrets.test_pypi_password }}
-        repository_url: https://test.pypi.org/legacy/
-        print_hash: true
+        repository-url: https://test.pypi.org/legacy/
+        print-hash: true
 
     - name: Publish distribution 📦 to PyPI
       if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
       uses: pypa/gh-action-pypi-publish@v1.8.5
       with:
         password: ${{ secrets.pypi_password }}
-        print_hash: true
+        print-hash: true
