@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number|
+|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number| |NumFOCUS Affiliated Project|
 
 |Docs from latest| |Docs from main| |Jupyter Book tutorial| |Binder|
 
@@ -361,6 +361,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/
 .. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
+.. |NumFOCUS Affiliated Project| image:: https://img.shields.io/badge/NumFOCUS-affiliated%20project-orange.svg?style=flat&colorA=E1523D&colorB=007D8A
+   :target: https://numfocus.org/sponsored-projects/affiliated-projects
 .. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.1-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from main| image:: https://img.shields.io/badge/docs-main-blue.svg
