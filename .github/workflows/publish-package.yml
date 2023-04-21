@@ -28,6 +28,13 @@ jobs:
   build-and-publish:
     name: Build and publish Python distro to (Test)PyPI
     runs-on: ubuntu-latest
+    # Mandatory for publishing with a trusted publisher
+    # c.f. https://docs.pypi.org/trusted-publishers/using-a-publisher/
+    permissions:
+      id-token: write
+    # Restrict to the environment set for the trusted publisher
+    environment:
+      name: publish-package
     steps:
     - uses: actions/checkout@v3
       with:
@@ -96,7 +103,6 @@ jobs:
         || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
       uses: pypa/gh-action-pypi-publish@v1.8.5
       with:
-        password: ${{ secrets.test_pypi_password }}
         repository-url: https://test.pypi.org/legacy/
         print-hash: true
 
@@ -104,5 +110,4 @@ jobs:
       if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
       uses: pypa/gh-action-pypi-publish@v1.8.5
       with:
-        password: ${{ secrets.pypi_password }}
         print-hash: true
