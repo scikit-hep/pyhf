@@ -54,6 +54,7 @@ extensions = [
     'sphinx_copybutton',
     'sphinx_togglebutton',
     'xref',
+    'sphinx_plausible',
 ]
 bibtex_bibfiles = [
     "bib/docs.bib",
@@ -83,6 +84,10 @@ intersphinx_mapping = {
 
 # GitHub repo
 issues_github_path = 'scikit-hep/pyhf'
+
+# c.f. https://github.com/scikit-hep/scikit-hep.github.io/issues/278
+plausible_domain = "pyhf.readthedocs.io"
+plausible_script = "https://views.scientific-python.org/js/plausible.js"
 
 # Generate the API documentation when building
 autosummary_generate = True
