@@ -25,8 +25,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-publish:
-    name: Build and publish Python distro to (Test)PyPI
+  build:
+    name: Build Python distribution
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -88,6 +88,35 @@ jobs:
     - name: List contents of wheel
       run: python -m zipfile --list dist/pyhf-*.whl
 
+    - name: Upload distribution artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist-artifact
+        path: dist
+
+  publish:
+    name: Publish Python distribution to (Test)PyPI
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    # Mandatory for publishing with a trusted publisher
+    # c.f. https://docs.pypi.org/trusted-publishers/using-a-publisher/
+    permissions:
+      id-token: write
+    # Restrict to the environment set for the trusted publisher
+    environment:
+      name: publish-package
+
+    steps:
+    - name: Download distribution artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: dist-artifact
+        path: dist
+
+    - name: List all files
+      run: ls -lh dist
+
     - name: Publish distribution 📦 to Test PyPI
       # Publish to TestPyPI on tag events of if manually triggered
       # Compare to 'true' string as booleans get turned into strings in the console
@@ -96,7 +125,6 @@ jobs:
         || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
       uses: pypa/gh-action-pypi-publish@v1.8.5
       with:
-        password: ${{ secrets.test_pypi_password }}
         repository-url: https://test.pypi.org/legacy/
         print-hash: true
 
@@ -104,5 +132,4 @@ jobs:
       if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
       uses: pypa/gh-action-pypi-publish@v1.8.5
       with:
-        password: ${{ secrets.pypi_password }}
         print-hash: true
