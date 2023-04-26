@@ -9,12 +9,6 @@ Try out now with JupyterLite_
 
      To get going try copying and pasting the "Hello World" example below!
 
-     .. admonition:: Kernel not loading?
-      :class: dropdown
-
-       If the kernel isn't loading you will need your browser to accept cookies
-       from pyhf.readthedocs.io and then reload the page.
-
 ..
   Comment: Use https://github.com/jupyterlite/jupyterlite-sphinx
 
