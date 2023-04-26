@@ -12,23 +12,11 @@ Try out now with JupyterLite_
 ..
   Comment: Use https://github.com/jupyterlite/jupyterlite-sphinx
 
-.. replite::
-   :kernel: python
-   :height: 600px
-   :prompt: Try pyhf!
-   :prompt_color: #dc3545
-
-   import piplite
-   # Install pyhf in the browser
-   await piplite.install(["pyhf==0.7.1", "matplotlib>=3.0.0"])
-   %matplotlib inline
-   import pyhf
-   # You can now use pyhf!
-
 .. retrolite:: lite/jupyterlite.ipynb
    :width: 100%
    :height: 600px
    :prompt: Try pyhf!
+   :prompt_color: #3a77b0
 
 ..
   Comment: Add an extra blank line as a spacer
