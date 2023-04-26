@@ -197,6 +197,7 @@ changes:
 
 .PHONY: linkcheck
 linkcheck:
+	jupytext --to ipynb lite/jupyterlite.py
 	$(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
