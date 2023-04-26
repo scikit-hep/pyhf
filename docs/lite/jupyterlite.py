@@ -5,8 +5,10 @@
 
 # %%
 import piplite
+
 # Install pyhf in the browser
 await piplite.install(["pyhf==0.7.1", "matplotlib>=3.0.0"])
 # %matplotlib inline
 import pyhf
+
 # You can now use pyhf!
