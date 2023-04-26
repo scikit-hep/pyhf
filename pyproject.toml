@@ -299,3 +299,6 @@ unfixable = [
   "F841", # Removes unused variables
 ]
 flake8-tidy-imports.ban-relative-imports = "all"
+
+[tool.ruff.per-file-ignores]
+"docs/lite/jupyterlite.py" = ["F401", "F704"]
