@@ -12,8 +12,8 @@ Try out now with JupyterLite_
      .. admonition:: Kernel not loading?
       :class: dropdown
 
-       If the kernel isn't loading and you just see a blank iframe, you will need your
-       browser to accept cookies from jupyterlite.github.io and then reload the page.
+       If the kernel isn't loading you will need your browser to accept cookies
+       from pyhf.readthedocs.io and then reload the page.
 
 ..
   Comment: Use https://github.com/jupyterlite/jupyterlite-sphinx
