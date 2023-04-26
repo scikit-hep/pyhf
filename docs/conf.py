@@ -518,3 +518,6 @@ linkcheck_ignore = [
     r'https://pyhf.readthedocs.io/en/.*',
 ]
 linkcheck_retries = 50
+
+# JupyterLite configuration
+jupyterlite_dir = "lite"
