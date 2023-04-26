@@ -26,6 +26,17 @@ Try out now with JupyterLite_
       height="500px"
    ></iframe>
 
+.. replite::
+   :kernel: python
+   :height: 600px
+   :prompt: Try Replite!
+   :prompt_color: #dc3545
+
+   import piplite
+   await piplite.install(["pyhf==0.7.1", "matplotlib>=3.0.0"])
+   %matplotlib inline
+   import pyhf
+
 ..
   Comment: Add an extra blank line as a spacer
 
