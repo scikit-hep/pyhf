@@ -54,6 +54,7 @@ clean:
 
 .PHONY: html
 html:
+	jupytext --to ipynb lite/jupyterlite.py
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	#mkdir -p $(BUILDDIR)/html/docs && ln -sfn ../_static $(BUILDDIR)/html/docs/_static
 	mkdir -p $(BUILDDIR)/html/docs && rsync -r $(BUILDDIR)/html/_static $(BUILDDIR)/html/docs/
