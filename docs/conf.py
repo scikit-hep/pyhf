@@ -178,6 +178,7 @@ autodoc_typehints_format = 'fully-qualified'
 exclude_patterns = [
     '_build',
     'JOSS',
+    'lite',
     '**.ipynb_checkpoints',
     'examples/experiments/edwardpyhf.ipynb',
     'examples/notebooks/ImpactPlot.ipynb',
