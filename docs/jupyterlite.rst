@@ -27,7 +27,7 @@ Try out now with JupyterLite_
 
 .. retrolite:: lite/jupyterlite.ipynb
    :width: 100%
-   :height: auto
+   :height: 600px
    :prompt: Try pyhf!
 
 ..
