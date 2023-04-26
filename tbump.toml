@@ -55,9 +55,6 @@ src = "codemeta.json"
 src = "CITATION.cff"
 
 [[file]]
-src = "docs/jupyterlite.rst"
-
-[[file]]
 src = "docs/lite/jupyterlite.py"
 
 [[field]]
