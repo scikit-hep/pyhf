@@ -3,7 +3,7 @@
 #   kernelspec:
 #     display_name: Python (Pyodide)
 #     language: python
-#     name: python3
+#     name: python
 # ---
 
 # %% [markdown]
