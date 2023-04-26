@@ -54,6 +54,7 @@ extensions = [
     'sphinx_copybutton',
     'sphinx_togglebutton',
     'xref',
+    'jupyterlite_sphinx',
 ]
 bibtex_bibfiles = [
     "bib/docs.bib",
