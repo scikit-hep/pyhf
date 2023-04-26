@@ -15,17 +15,20 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 
-import subprocess
 import sys
 from pathlib import Path
 
+import jupytext
 from pkg_resources import get_distribution
 
 sys.path.insert(0, str(Path('./exts').resolve()))
 
 # Convert jupyterlite example to ipynb
 docs_dir = Path(__file__).resolve().parent
-subprocess.run(["jupytext", "--to", "ipynb", docs_dir / "lite" / "jupyterlite.py"])
+py_percent_as_notebook = jupytext.read(docs_dir / "lite" / "jupyterlite.py")
+jupytext.write(
+    py_percent_as_notebook, docs_dir / "lite" / "jupyterlite.ipynb", fmt="ipynb"
+)
 
 
 def setup(app):
