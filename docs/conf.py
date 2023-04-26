@@ -274,6 +274,10 @@ html_css_files = [
 
 html_js_files = [
     'js/custom.js',
+    (
+        'https://views.scientific-python.org/js/plausible.js',
+        {"data-domain": "pyhf.readthedocs.io", "defer": "defer"},
+    ),
 ]
 
 # Add any extra paths that contain custom files (such as robots.txt or
