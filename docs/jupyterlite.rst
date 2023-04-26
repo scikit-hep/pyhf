@@ -1,7 +1,7 @@
 Try out now with JupyterLite_
 -----------------------------
 
-.. admonition:: To try pyhf code in the browser with the Pyolite JupyterLite kernel:
+.. admonition:: Click below to try pyhf in the browser:
     :class: dropdown
 
      #. Type (or copy and paste) code in the input cell.
@@ -29,6 +29,7 @@ Try out now with JupyterLite_
    await piplite.install(["pyhf==0.7.1", "matplotlib>=3.0.0"])
    %matplotlib inline
    import pyhf
+   # You can now use pyhf!
 
 ..
   Comment: Add an extra blank line as a spacer
