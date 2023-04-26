@@ -25,6 +25,11 @@ Try out now with JupyterLite_
    import pyhf
    # You can now use pyhf!
 
+.. retrolite:: lite/jupyterlite.ipynb
+   :width: 100%
+   :height: auto
+   :prompt: Try pyhf!
+
 ..
   Comment: Add an extra blank line as a spacer
 
