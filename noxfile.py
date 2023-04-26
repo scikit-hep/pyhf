@@ -146,6 +146,7 @@ def docs(session):
 
     session.chdir(build_path.parent)
     # https://www.sphinx-doc.org/en/master/man/sphinx-build.html
+    session.run("jupytext", "--to", "ipynb", "lite/jupyterlite.py")
     session.run(
         "sphinx-build", "-M", "html", ".", build_path.name, "-W", "--keep-going"
     )
