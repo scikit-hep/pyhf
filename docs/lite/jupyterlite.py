@@ -23,7 +23,7 @@
 # ---
 
 # %% [markdown]
-# * To run the code, click on the first cell (gray box) and press <kbd>Shift</kbd>+<kbd>Enter</kbd> click on the (Run) ▶ button to run each cell.
+# * To run the code, click on the first cell (gray box) and press <kbd>Shift</kbd>+<kbd>Enter</kbd> or click on the (Run) ▶ button to run each cell.
 # * Or, select `Run All Cells` from the `Run` menu.
 # * Feel free to experiment, but if you need to restore the original code, reload this browser page. Any changes you make will be lost when you reload!
 
