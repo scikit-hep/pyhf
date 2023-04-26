@@ -57,6 +57,9 @@ src = "CITATION.cff"
 [[file]]
 src = "docs/jupyterlite.rst"
 
+[[file]]
+src = "docs/lite/jupyterlite.py"
+
 [[field]]
 # the name of the field
 name = "candidate"
