@@ -15,11 +15,20 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import jupytext
 from pkg_resources import get_distribution
 
 sys.path.insert(0, str(Path('./exts').resolve()))
+
+# Convert jupyterlite example to ipynb
+docs_dir = Path(__file__).resolve().parent
+py_percent_as_notebook = jupytext.read(docs_dir / "lite" / "jupyterlite.py")
+jupytext.write(
+    py_percent_as_notebook, docs_dir / "lite" / "jupyterlite.ipynb", fmt="ipynb"
+)
 
 
 def setup(app):
@@ -54,6 +63,7 @@ extensions = [
     'sphinx_copybutton',
     'sphinx_togglebutton',
     'xref',
+    'jupyterlite_sphinx',
 ]
 bibtex_bibfiles = [
     "bib/docs.bib",
@@ -177,6 +187,7 @@ autodoc_typehints_format = 'fully-qualified'
 exclude_patterns = [
     '_build',
     'JOSS',
+    'lite',
     '**.ipynb_checkpoints',
     'examples/experiments/edwardpyhf.ipynb',
     'examples/notebooks/ImpactPlot.ipynb',
@@ -510,3 +521,6 @@ linkcheck_ignore = [
     r'https://pyhf.readthedocs.io/en/.*',
 ]
 linkcheck_retries = 50
+
+# JupyterLite configuration
+jupyterlite_dir = "lite"

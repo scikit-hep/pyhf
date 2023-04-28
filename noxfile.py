@@ -130,7 +130,7 @@ def docs(session):
 
     Example:
 
-        $ nox --session docs -- serve
+        $ nox --session docs -- serve  # Need for local jupyterlite preview
         $ nox --session docs -- clean
     """
     session.install("--upgrade", "--editable", ".[backends,contrib,docs]")

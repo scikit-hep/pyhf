@@ -114,6 +114,9 @@ docs = [
     "sphinx-issues",
     "sphinx-copybutton>=0.3.2",
     "sphinx-togglebutton>=0.3.0",
+    "jupyterlite-sphinx>=0.8.0",
+    "jupyterlite-pyodide-kernel>=0.0.7",
+    "jupytext>=1.14.0",
     "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
 ]
 develop = [
@@ -296,3 +299,6 @@ unfixable = [
   "F841", # Removes unused variables
 ]
 flake8-tidy-imports.ban-relative-imports = "all"
+
+[tool.ruff.per-file-ignores]
+"docs/lite/jupyterlite.py" = ["F401", "F704"]

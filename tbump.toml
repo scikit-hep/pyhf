@@ -55,10 +55,7 @@ src = "codemeta.json"
 src = "CITATION.cff"
 
 [[file]]
-src = "docs/generate_jupyterlite_iframe.py"
-
-[[file]]
-src = "docs/jupyterlite.rst"
+src = "docs/lite/jupyterlite.py"
 
 [[field]]
 # the name of the field
