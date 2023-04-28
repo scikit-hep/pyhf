@@ -4,3 +4,6 @@
 # E501: line too long
 extend-ignore = E203, E402, E501
 max-line-length = 88
+
+per-file-ignores =
+    docs/lite/jupyterlite.py:F401,F704

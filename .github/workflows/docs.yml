@@ -81,6 +81,8 @@ jobs:
         [ ! -L "docs/_build/html/schemas" ]
         # is not empty
         [ "$(ls -A docs/_build/html/schemas)" ]
+        # is not empty
+        [ "$(ls -A docs/_build/html/lite)" ]
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1

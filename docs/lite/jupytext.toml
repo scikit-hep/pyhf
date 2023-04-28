@@ -1,0 +1,3 @@
+# Always pair ipynb notebooks in the current directory to py:percent files
+formats = ["ipynb", "py:percent"]
+notebook_metadata_filter = "-all,kernelspec"
