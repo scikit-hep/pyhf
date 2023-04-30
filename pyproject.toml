@@ -112,7 +112,7 @@ docs = [
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",
     "sphinx-issues",
-    "sphinx-copybutton>=0.3.2",
+    "sphinx-copybutton>=0.3.2,!=0.5.1",
     "jupyterlite-sphinx>=0.8.0",
     "jupyterlite-pyodide-kernel>=0.0.7",
     "jupytext>=1.14.0",
