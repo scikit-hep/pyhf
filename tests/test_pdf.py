@@ -1329,3 +1329,34 @@ def test_is_shared_paramset_shapesys_same_sample_same_channel():
 
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Workspace(spec).model()
+
+
+def test_shapefactor_as_poi():
+    spec = {
+        "channels": [
+            {
+                "name": "SR",
+                "samples": [
+                    {
+                        "data": [5.0, 10.0],
+                        "modifiers": [
+                            {"data": None, "name": "mu", "type": "shapefactor"}
+                        ],
+                        "name": "Signal",
+                    }
+                ],
+            }
+        ],
+        "measurements": [
+            {"config": {"parameters": [], "poi": "mu"}, "name": "example"}
+        ],
+        "observations": [{"data": [5.0, 10.0], "name": "SR"}],
+        "version": "1.0.0",
+    }
+
+    with pytest.raises(
+        pyhf.exceptions.InvalidModel,
+        match="The parameter 'mu' is of type 'shapefactor' and thus cannot be used as "
+        "parameter of interest.",
+    ):
+        pyhf.Workspace(spec).model()
