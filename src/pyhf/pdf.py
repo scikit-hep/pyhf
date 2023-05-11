@@ -464,7 +464,9 @@ class _ModelConfig(_ChannelSummaryMixin):
             raise exceptions.InvalidModel(
                 f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
             )
-        if dict(self.modifiers)[name] == "shapefactor":
+        if dict(self.modifiers).get(name, "") == "shapefactor":
+            # in the case of custom modifiers, the desired POI is in self.parameters but
+            # not in self.modifiers
             raise exceptions.InvalidModel(
                 f"The parameter '{name:s}' is of type 'shapefactor' and thus cannot be used as parameter of interest."
             )
