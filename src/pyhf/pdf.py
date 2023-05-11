@@ -464,6 +464,10 @@ class _ModelConfig(_ChannelSummaryMixin):
             raise exceptions.InvalidModel(
                 f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
             )
+        if dict(self.modifiers)[name] == "shapefactor":
+            raise exceptions.InvalidModel(
+                f"The parameter '{name:s}' is of type 'shapefactor' and thus cannot be used as parameter of interest."
+            )
         s = self.par_slice(name)
         assert s.stop - s.start == 1
         self._poi_name = name
