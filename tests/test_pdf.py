@@ -1331,7 +1331,7 @@ def test_is_shared_paramset_shapesys_same_sample_same_channel():
         pyhf.Workspace(spec).model()
 
 
-def test_shapefactor_as_poi():
+def test_multi_component_poi():
     spec = {
         "channels": [
             {
