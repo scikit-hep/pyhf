@@ -1356,7 +1356,7 @@ def test_shapefactor_as_poi():
 
     with pytest.raises(
         pyhf.exceptions.InvalidModel,
-        match="The parameter 'mu' is of type 'shapefactor' and thus cannot be used as "
-        "parameter of interest.",
+        match="The parameter 'mu' contains multiple components and is not currently "
+        "supported as parameter of interest.",
     ):
         pyhf.Workspace(spec).model()
