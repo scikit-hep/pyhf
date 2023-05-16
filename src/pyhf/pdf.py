@@ -469,10 +469,8 @@ class _ModelConfig(_ChannelSummaryMixin):
             raise exceptions.InvalidModel(
                 f"The parameter '{name:s}' contains multiple components and is not currently supported as parameter of interest."
             )
-        s = self.par_slice(name)
-        assert s.stop - s.start == 1
         self._poi_name = name
-        self._poi_index = s.start
+        self._poi_index = self.par_slice(name).start
 
     def _create_and_register_paramsets(self, required_paramsets):
         next_index = 0
