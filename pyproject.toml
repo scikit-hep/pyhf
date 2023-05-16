@@ -71,7 +71,7 @@ shellcomplete = ["click_completion"]
 tensorflow = [
     "tensorflow>=2.7.0; platform_machine != 'arm64'",  # c.f. PR #1962
     "tensorflow-macos>=2.7.0; platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. PR #2119
-    "tensorflow-probability>=0.11.0",  # c.f. PR #1657
+    "tensorflow-probability>=0.11.0,!=0.20.0",  # c.f. PR #1657, PR #2203
 ]
 torch = ["torch>=1.10.0"]  # c.f. PR #1657
 jax = [
