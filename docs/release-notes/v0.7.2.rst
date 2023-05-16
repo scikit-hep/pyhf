@@ -7,9 +7,10 @@ Fixes
 -----
 
 * If a multiple component parameter of interest is used raise
-  :class:`exceptions.InvalidModel`.
-  This guards against modifiers like ``shapefactor``, ``shapesys``,
-  and ``staterror`` from being used as POIs.
+  :class:`~pyhf.exceptions.InvalidModel`.
+  This guards against modifiers like :class:`~pyhf.modifiers.shapefactor`,
+  :class:`~pyhf.modifiers.shapesys`, and :class:`~pyhf.modifiers.staterror`
+  from being used as POIs.
   (PR :pr:`2197`)
 
 Contributors
