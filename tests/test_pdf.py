@@ -1356,7 +1356,6 @@ def test_multi_component_poi():
 
     with pytest.raises(
         pyhf.exceptions.InvalidModel,
-        match="The parameter 'mu' contains multiple components and is not currently "
-        "supported as parameter of interest.",
+        match="The parameter 'mu' contains multiple components and is not currently supported as parameter of interest.",
     ):
         pyhf.Workspace(spec).model()
