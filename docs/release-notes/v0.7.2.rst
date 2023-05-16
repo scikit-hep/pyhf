@@ -1,0 +1,23 @@
+|release v0.7.2|_
+=================
+
+This is a patch release from ``v0.7.1`` → ``v0.7.2``.
+
+Fixes
+-----
+
+* If a multiple component parameter of interest is used raise
+  :class:`exceptions.InvalidModel`.
+  This guards against modifiers like ``shapefactor``, ``shapesys``,
+  and ``staterror`` from being used as POIs.
+  (PR :pr:`2197`)
+
+Contributors
+------------
+
+``v0.7.2`` benefited from contributions from:
+
+* Alexander Held
+
+.. |release v0.7.2| replace:: ``v0.7.2``
+.. _`release v0.7.2`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.2
