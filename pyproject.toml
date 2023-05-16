@@ -114,7 +114,7 @@ docs = [
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",
     "sphinx-issues",
-    "sphinx-copybutton>=0.3.2",
+    "sphinx-copybutton>=0.3.2,!=0.5.1",
     "sphinx-togglebutton>=0.3.0",
     "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
 ]
