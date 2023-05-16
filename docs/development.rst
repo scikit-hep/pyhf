@@ -7,7 +7,7 @@ Developer Environment
 
 To develop, we suggest using Python `virtual environments
 <https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments>`__
-together with ``pip``.
+together with ``pip`` and steered by `nox <https://github.com/wntrblm/nox>`__.
 Once the virtual environment is activated and you have `SSH keys setup with GitHub
 <https://docs.github.com/en/authentication/connecting-to-github-with-ssh>`__, clone the
 repo from GitHub
@@ -20,7 +20,7 @@ and install all necessary packages for development
 
 .. code-block:: console
 
-    python -m pip install --upgrade --editable .[complete]
+    python -m pip install --upgrade --editable '.[develop]'
 
 Then setup the Git `pre-commit <https://pre-commit.com/>`__ hooks by running
 
@@ -32,6 +32,30 @@ inside of the virtual environment.
 `pre-commit.ci <https://pre-commit.ci/>`__ keeps the pre-commit hooks updated
 through time, so pre-commit will automatically update itself when you run it
 locally after the hooks were updated.
+
+It is then suggested that you use ``nox`` to actually run all development operations
+in "sessions" defined in ``noxfile.py``.
+To list all of the available sessions run
+
+.. code-block:: console
+
+    nox --list
+
+Linting
+-------
+
+Linting and code formatting is handled by ``pre-commit``.
+To run the linting either run ``pre-commit``
+
+.. code-block:: console
+
+    pre-commit run --all-files
+
+or use ``nox``
+
+.. code-block:: console
+
+    nox --session lint
 
 Testing
 -------
@@ -73,7 +97,7 @@ contrib module, or notebooks, and so instead to test the core codebase a develop
 
 .. code-block:: console
 
-    pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
+    nox --session tests --python 3.11
 
 Contrib module matplotlib image tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -83,7 +107,14 @@ To run the visualization tests for the ``contrib`` module with the ``pytest-mpl`
 
 .. code-block:: console
 
-    pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
+    nox --session tests --python 3.11 -- contrib
+
+If the image files need to be regenerated, run the tests with the
+``--mpl-generate-path=tests/contrib/baseline`` option or just run
+
+.. code-block:: console
+
+    nox --session regenerate
 
 Doctest
 ^^^^^^^
@@ -96,6 +127,52 @@ For example, to run ``doctest`` on the JAX backend run
 .. code-block:: console
 
     pytest src/pyhf/tensor/jax_backend.py
+
+Coverage
+~~~~~~~~
+
+To measure coverage for the codebase run the tests under ``coverage`` with
+
+.. code-block:: console
+
+    coverage run --module pytest
+
+or pass ``coverage`` as a positional argument to the ``nox`` ``tests`` session
+
+.. code-block:: console
+
+    nox --session tests --python 3.11 -- coverage
+
+Coverage Report
+^^^^^^^^^^^^^^^
+
+To generate a coverage report after running the tests under ``coverage`` run
+
+.. code-block:: console
+
+    coverage
+
+or to also generate XML and HTML versions of the report run the coverage ``nox`` session
+
+.. code-block:: console
+
+    nox --session coverage
+
+Documentation
+-------------
+
+To build the docs run
+
+.. code-block:: console
+
+    nox --session docs
+
+To view the built docs locally, open the resulting ``docs/_build/html/index.html`` file
+in a web browser or run
+
+.. code-block:: console
+
+    nox --session docs -- serve
 
 Publishing
 ----------
