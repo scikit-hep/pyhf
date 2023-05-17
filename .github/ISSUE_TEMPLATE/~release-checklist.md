@@ -27,6 +27,10 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the generated PR tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
    - [ ] Before pasting in the release notes copy the changes that the GitHub bot has already queued up and pasted into the tag and place them in the "Changes" section of the release notes. If the release notes are published before these are copied then they will be overwritten and you'll have to add them back in by hand.
 * [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
+* [ ] Verify Docker images with the correct tags have been deployed to all container image registries.
+   - [ ] [Docker Hub](https://hub.docker.com/r/pyhf/pyhf/tags)
+   - [ ] [OSG Harbor](https://hub.opensciencegrid.org/harbor/projects/866/repositories/pyhf/)
+   - [ ] [CERN Harbor](https://registry.cern.ch/harbor/projects/3550/repositories/pyhf/artifacts-tab)
 * [ ] Verify there is a new [Zenodo DOI](https://doi.org/10.5281/zenodo.1169739) minted for the release.
    - [ ] Verify that the new release archive metadata on Zenodo matches is being picked up as expected from [`CITATION.cff`](https://github.com/scikit-hep/pyhf/blob/main/CITATION.cff).
 * [ ] Verify that a Binder has properly built for the new release.
