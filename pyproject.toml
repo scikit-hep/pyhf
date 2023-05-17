@@ -225,8 +225,7 @@ omit = ["*/pyhf/typing.py"]
 precision = 1
 sort = "cover"
 show_missing = true
-exclude_lines = [
-    "pragma: no cover",
+exclude_also = [
     "if TYPE_CHECKING:"
 ]
 
