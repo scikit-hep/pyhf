@@ -44,6 +44,5 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Update the [tutorial](https://github.com/pyhf/pyhf-tutorial) to use the new release number and API.
 * [ ] Make a PR to use the new release in the [CUDA enabled Docker images](https://github.com/pyhf/cuda-images).
 * [ ] Open a ticket on the CERN [Software Process and Infrastructure JIRA](https://sft.its.cern.ch/jira/browse/SPI) to update the version of `pyhf` available in the next LCG release.
-   - c.f. the [`v0.6.3` request ticket](https://sft.its.cern.ch/jira/browse/SPI-2086) as an example.
-* [ ] If the release is a **major** or **minor** release, open a [GitHub Release Radar](https://github.com/github/release-radar) Issue for the release to potentially get featured on GitHub's [Release Radar blog](https://github.blog/?s=release+radar).
+   - c.f. the [`v0.6.3` request ticket](https://sft.its.cern.ch/jira/browse/SPI-2086) and the [`v0.7.0` request ticket](https://sft.its.cern.ch/jira/browse/SPI-2221) as examples.
 * [ ] Close the [release GitHub Project board](https://github.com/scikit-hep/pyhf/projects/).
