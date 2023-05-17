@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar,
 
 import numpy as np
 
+# Needed while numpy lower bound is older than v1.21.0
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
 
