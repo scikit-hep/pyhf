@@ -2,17 +2,20 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
 
 import numpy as np
-from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
+
+if TYPE_CHECKING:
+    from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
+
 from scipy import special
 from scipy.special import gammaln, xlogy
 from scipy.stats import norm, poisson
 
 from pyhf.typing import Literal, Shape
 
-T = TypeVar("T", bound=NBitBase)
+T = TypeVar("T", bound="NBitBase")
 
 Tensor = Union["NDArray[np.number[T]]", "NDArray[np.bool_]"]
 FloatIntOrBool = Literal["float", "int", "bool"]
