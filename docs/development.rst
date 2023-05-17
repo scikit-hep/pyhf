@@ -200,6 +200,7 @@ The maintainer needs to:
 * Select the semantic versioning (SemVer) type (major, minor, patch) of the release tag.
 * Select if the release tag is a release candidate or not.
 * Input the SemVer version number of the release tag.
+* Select the branch to push the new release tag to.
 * Select if to override the SemVer compatibility of the previous options (default
   is to run checks).
 * Select if a dry run should be performed (default is to do a dry run to avoid accidental
