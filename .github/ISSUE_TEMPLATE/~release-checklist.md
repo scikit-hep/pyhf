@@ -10,14 +10,14 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Migrate any unresolved Issues or PRs from the [release GitHub project board](https://github.com/scikit-hep/pyhf/projects/) to a new project board.
 * [ ] Verify that there is a release notes file for the release under [``docs/release-notes``](https://github.com/scikit-hep/pyhf/tree/main/docs/release-notes).
 * [ ] Verify that the release notes files correctly summarize all development changes since the last release.
+* [ ] Update the checklist Issue template in the [``.github/ISSUE_TEMPLATE``](https://github.com/scikit-hep/pyhf/tree/main/.github/ISSUE_TEMPLATE) directory if there are revisions.
 * [ ] Add any new use citations or published statistical models to the [Use and Citations page][citations_page].
 * [ ] Verify that the citations on the [Use and Citations page][citations_page] are up to date with their current [INSPIRE](https://inspirehep.net/) record. Checking the [Dimensions listing of publication citations](https://app.dimensions.ai/discover/publication?or_subset_publication_citations=pub.1135154020) can be helpful to catch citations that are now journal publications.
-* [ ] Draft email to [``pyhf-announcements`` mailing list](https://groups.google.com/group/pyhf-announcements/subscribe) that summarizes the main points of the release notes and circulate it for development team approval.
-* [ ] Update the checklist Issue template in the [``.github/ISSUE_TEMPLATE``](https://github.com/scikit-hep/pyhf/tree/main/.github/ISSUE_TEMPLATE) directory if there are revisions.
+* [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
+* [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
 * [ ] Make a release to [TestPyPI][TestPyPI_pyhf] using the [workflow dispatch event trigger](https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml).
 * [ ] Verify that the project README is displaying correctly on [TestPyPI][TestPyPI_pyhf].
-* [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
-* [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
+* [ ] Draft email to [``pyhf-announcements`` mailing list](https://groups.google.com/group/pyhf-announcements/subscribe) that summarizes the main points of the release notes and circulate it for development team approval.
 
 [TestPyPI_pyhf]: https://test.pypi.org/project/pyhf/
 [citations_page]: https://scikit-hep.org/pyhf/citations.html
