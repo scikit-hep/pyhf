@@ -9,6 +9,8 @@ import numpy as np
 # Needed while numpy lower bound is older than v1.21.0
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
+else:
+    NBitBase = "NBitBase"
 
 from scipy import special
 from scipy.special import gammaln, xlogy
@@ -16,7 +18,7 @@ from scipy.stats import norm, poisson
 
 from pyhf.typing import Literal, Shape
 
-T = TypeVar("T", bound="NBitBase")
+T = TypeVar("T", bound=NBitBase)
 
 Tensor = Union["NDArray[np.number[T]]", "NDArray[np.bool_]"]
 FloatIntOrBool = Literal["float", "int", "bool"]
