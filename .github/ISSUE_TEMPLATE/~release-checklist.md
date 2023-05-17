@@ -22,10 +22,23 @@ about: Checklist for core developers to complete as part of making a release
 [TestPyPI_pyhf]: https://test.pypi.org/project/pyhf/
 [citations_page]: https://scikit-hep.org/pyhf/citations.html
 
+## Create Release Tag
+
+For a video walkthrough consult the [``pyhf`` ``v0.7.1`` release recording](https://youtu.be/ZV20tr3EpTw) on YouTube.
+
+* [ ] Use the [bump version](https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml) GitHub Actions workflow perform a [dry run](https://scikit-hep.org/pyhf/development.html#release-tags) of the bump version to the new release tag.
+* [ ] Check the annotated tag in the dry run workflow logs to make sure it looks correct.
+* [ ] If the dry run passes as expected, run the same workflow with the dry run option set to ``false`` to bump the release tag version and push the new tag back to GitHub.
+* [ ] Verify the release tag was pushed to the correct branch.
+* [ ] Verify the release tag commit has bumped the correct versions.
+* [ ] Watch the CI to verify all tag based jobs finish correctly.
+* [ ] Verify the release for the tag on [TestPyPI][TestPyPI_pyhf] looks correct.
+
 ## After Release Tag Pushed To GitHub
 
-* [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the generated PR tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
+* [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the new release tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
    - [ ] Before pasting in the release notes copy the changes that the GitHub bot has already queued up and pasted into the tag and place them in the "Changes" section of the release notes. If the release notes are published before these are copied then they will be overwritten and you'll have to add them back in by hand.
+   - [ ] Create a corresponding [announcement GitHub Discussion](https://github.com/scikit-hep/pyhf/discussions/categories/announcements) for the release.
 * [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
 * [ ] Verify Docker images with the correct tags have been deployed to all container image registries.
    - [ ] [Docker Hub](https://hub.docker.com/r/pyhf/pyhf/tags)
