@@ -27,7 +27,7 @@ Fixes
   :class:`ModuleNotFoundError` when the version of NumPy installed is older
   than ``v1.21.0``, which is the first NumPy release to include
   :mod:`numpy.typing`.
-  (PR :pr:`2207`)
+  (PR :pr:`2208`)
 
 Contributors
 ------------
