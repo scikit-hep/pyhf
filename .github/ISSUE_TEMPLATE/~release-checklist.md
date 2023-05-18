@@ -10,23 +10,40 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Migrate any unresolved Issues or PRs from the [release GitHub project board](https://github.com/scikit-hep/pyhf/projects/) to a new project board.
 * [ ] Verify that there is a release notes file for the release under [``docs/release-notes``](https://github.com/scikit-hep/pyhf/tree/main/docs/release-notes).
 * [ ] Verify that the release notes files correctly summarize all development changes since the last release.
-* [ ] Draft email to [``pyhf-announcements`` mailing list](https://groups.google.com/group/pyhf-announcements/subscribe) that summarizes the main points of the release notes and circulate it for development team approval.
 * [ ] Update the checklist Issue template in the [``.github/ISSUE_TEMPLATE``](https://github.com/scikit-hep/pyhf/tree/main/.github/ISSUE_TEMPLATE) directory if there are revisions.
+* [ ] Add any new use citations or published statistical models to the [Use and Citations page][citations_page].
+* [ ] Verify that the citations on the [Use and Citations page][citations_page] are up to date with their current [INSPIRE](https://inspirehep.net/) record. Checking the [Dimensions listing of publication citations](https://app.dimensions.ai/discover/publication?or_subset_publication_citations=pub.1135154020) can be helpful to catch citations that are now journal publications.
+* [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
+* [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
 * [ ] Make a release to [TestPyPI][TestPyPI_pyhf] using the [workflow dispatch event trigger](https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml).
 * [ ] Verify that the project README is displaying correctly on [TestPyPI][TestPyPI_pyhf].
-* [ ] Add any new use citations or published statistical models to the [Use and Citations page][citations_page].
-* [ ] Verify that the citations on the [Use and Citations page][citations_page] are up to date with their current [INSPIRE](https://inspirehep.net/) record.
-* [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
-* [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
+* [ ] Draft email to [``pyhf-announcements`` mailing list](https://groups.google.com/group/pyhf-announcements/subscribe) that summarizes the main points of the release notes and circulate it for development team approval.
 
 [TestPyPI_pyhf]: https://test.pypi.org/project/pyhf/
 [citations_page]: https://scikit-hep.org/pyhf/citations.html
 
-## Once Release PR is Merged
+## Create Release Tag
 
-* [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
-* [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the generated PR tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
+For a video walkthrough consult the [``pyhf`` ``v0.7.1`` release recording](https://youtu.be/ZV20tr3EpTw) on YouTube.
+
+* [ ] Use the [bump version](https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml) GitHub Actions workflow perform a [dry run](https://scikit-hep.org/pyhf/development.html#release-tags) of the bump version to the new release tag.
+* [ ] Check the annotated tag in the dry run workflow logs to make sure it looks correct.
+* [ ] If the dry run passes as expected, run the same workflow with the dry run option set to ``false`` to bump the release tag version and push the new tag back to GitHub.
+* [ ] Verify the release tag was pushed to the correct branch.
+* [ ] Verify the release tag commit has bumped the correct versions.
+* [ ] Watch the CI to verify all tag based jobs finish correctly.
+* [ ] Verify the release for the tag on [TestPyPI][TestPyPI_pyhf] looks correct.
+
+## After Release Tag Pushed To GitHub
+
+* [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the new release tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
    - [ ] Before pasting in the release notes copy the changes that the GitHub bot has already queued up and pasted into the tag and place them in the "Changes" section of the release notes. If the release notes are published before these are copied then they will be overwritten and you'll have to add them back in by hand.
+   - [ ] Create a corresponding [announcement GitHub Discussion](https://github.com/scikit-hep/pyhf/discussions/categories/announcements) for the release.
+* [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
+* [ ] Verify Docker images with the correct tags have been deployed to all container image registries.
+   - [ ] [Docker Hub](https://hub.docker.com/r/pyhf/pyhf/tags)
+   - [ ] [OSG Harbor](https://hub.opensciencegrid.org/harbor/projects/866/repositories/pyhf/)
+   - [ ] [CERN Harbor](https://registry.cern.ch/harbor/projects/3550/repositories/pyhf/artifacts-tab)
 * [ ] Verify there is a new [Zenodo DOI](https://doi.org/10.5281/zenodo.1169739) minted for the release.
    - [ ] Verify that the new release archive metadata on Zenodo matches is being picked up as expected from [`CITATION.cff`](https://github.com/scikit-hep/pyhf/blob/main/CITATION.cff).
 * [ ] Verify that a Binder has properly built for the new release.
@@ -44,6 +61,5 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Update the [tutorial](https://github.com/pyhf/pyhf-tutorial) to use the new release number and API.
 * [ ] Make a PR to use the new release in the [CUDA enabled Docker images](https://github.com/pyhf/cuda-images).
 * [ ] Open a ticket on the CERN [Software Process and Infrastructure JIRA](https://sft.its.cern.ch/jira/browse/SPI) to update the version of `pyhf` available in the next LCG release.
-   - c.f. the [`v0.6.3` request ticket](https://sft.its.cern.ch/jira/browse/SPI-2086) as an example.
-* [ ] If the release is a **major** or **minor** release, open a [GitHub Release Radar](https://github.com/github/release-radar) Issue for the release to potentially get featured on GitHub's [Release Radar blog](https://github.blog/?s=release+radar).
+   - c.f. the [`v0.6.3` request ticket](https://sft.its.cern.ch/jira/browse/SPI-2086) and the [`v0.7.1` request ticket](https://sft.its.cern.ch/jira/browse/SPI-2333) as examples.
 * [ ] Close the [release GitHub Project board](https://github.com/scikit-hep/pyhf/projects/).
