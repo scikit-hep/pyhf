@@ -23,6 +23,11 @@ Fixes
   :class:`~pyhf.modifiers.shapesys`, and :class:`~pyhf.modifiers.staterror`
   from being used as POIs.
   (PR :pr:`2197`)
+* Use :data:`typing.TYPE_CHECKING` guard to avoid causing a
+  :class:`ModuleNotFoundError` when the version of NumPy installed is older
+  than ``v1.21.0``, which is the first NumPy release to include
+  :mod:`numpy.typing`.
+  (PR :pr:`2207`)
 
 Contributors
 ------------
