@@ -2,10 +2,16 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
 
 import numpy as np
-from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
+
+# Needed while numpy lower bound is older than v1.21.0
+if TYPE_CHECKING:
+    from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
+else:
+    NBitBase = "NBitBase"
+
 from scipy import special
 from scipy.special import gammaln, xlogy
 from scipy.stats import norm, poisson

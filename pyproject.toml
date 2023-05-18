@@ -225,6 +225,9 @@ omit = ["*/pyhf/typing.py"]
 precision = 1
 sort = "cover"
 show_missing = true
+exclude_also = [
+    "if TYPE_CHECKING:"
+]
 
 [tool.mypy]
 files = "src"
