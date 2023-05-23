@@ -55,6 +55,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
+    'sphinx_rtd_theme',
     'sphinxcontrib.bibtex',
     'sphinx.ext.napoleon',
     'sphinx_click.ext',
