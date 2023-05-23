@@ -96,7 +96,7 @@ test = [
     "pytest-mock",
     "requests-mock>=1.9.0",
     "pytest-benchmark[histogram]",
-    "pytest-console-scripts",
+    "pytest-console-scripts>=1.4.0",
     "pytest-mpl",
     "pydocstyle",
     "papermill~=2.3.4",
