@@ -64,7 +64,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes scipy
-        python -m pip install --upgrade --index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple scipy
+        python -m pip install --upgrade --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple scipy
         python -m pip list
 
     - name: Test with pytest
@@ -143,12 +143,13 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip --no-cache-dir --quiet install --upgrade .[test]
         python -m pip uninstall --yes matplotlib
-        # Need to use --extra-index-url as dependencies aren't on scipy-wheels-nightly package index.
+        # Need to use --extra-index-url as dependencies aren't on scientific-python-nightly-wheels package index.
         # Need to use --pre as dev releases will need priority over stable releases.
         python -m pip install \
           --upgrade \
           --pre \
-          --extra-index-url https://pypi.anaconda.org/scipy-wheels-nightly/simple \
+          --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
+          --extra-index-url https://pypi.org/simple/ \
           matplotlib
 
     - name: List installed Python packages
