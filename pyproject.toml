@@ -214,6 +214,7 @@ filterwarnings = [
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
     'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
+    "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
 ]
 
 [tool.coverage.run]
