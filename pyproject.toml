@@ -153,7 +153,6 @@ packages = ["src/pyhf"]
 
 [tool.black]
 line-length = 88
-target-version = ['py38', 'py39', 'py310', 'py311']
 skip-string-normalization = true
 include = '\.pyi?$'
 exclude = '''
@@ -295,7 +294,6 @@ ignore = [
   "RUF001", # String contains ambiguous unicode character
   "RUF005", # unpack-instead-of-concatenating-to-collection-literal
 ]
-target-version = "py38"
 src = ["src"]
 typing-modules = ["pyhf.typing"]
 unfixable = [
