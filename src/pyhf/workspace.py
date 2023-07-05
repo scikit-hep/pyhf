@@ -5,14 +5,14 @@ pyhf workspaces hold the three data items:
 * the observed data (optional)
 * fit configurations ("measurements")
 """
+import collections
+import copy
 import logging
 import jsonpatch
-import copy
-import collections
-from pyhf import exceptions
-from pyhf import schema
-from pyhf.pdf import Model
+
+from pyhf import exceptions, schema
 from pyhf.mixins import _ChannelSummaryMixin
+from pyhf.pdf import Model
 
 log = logging.getLogger(__name__)
 
