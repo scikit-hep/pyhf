@@ -23,6 +23,7 @@ FROM base
 
 USER root
 
+SHELL [ "/bin/bash", "-c" ]
 ENV PATH=/usr/local/venv/bin:"${PATH}"
 
 RUN apt-get -qq -y update && \
