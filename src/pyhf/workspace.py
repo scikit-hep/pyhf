@@ -5,14 +5,18 @@ pyhf workspaces hold the three data items:
 * the observed data (optional)
 * fit configurations ("measurements")
 """
-import logging
-import jsonpatch
-import copy
+from __future__ import annotations
+
 import collections
-from pyhf import exceptions
-from pyhf import schema
-from pyhf.pdf import Model
+import copy
+import logging
+from typing import ClassVar
+
+import jsonpatch
+
+from pyhf import exceptions, schema
 from pyhf.mixins import _ChannelSummaryMixin
+from pyhf.pdf import Model
 
 log = logging.getLogger(__name__)
 
@@ -284,7 +288,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema <https://scikit-hep.org/pyhf/likelihood.html#workspace>`__.
     """
 
-    valid_joins = ['none', 'outer', 'left outer', 'right outer']
+    valid_joins: ClassVar[list[str]] = ['none', 'outer', 'left outer', 'right outer']
 
     def __init__(self, spec, validate: bool = True, **config_kwargs):
         """
