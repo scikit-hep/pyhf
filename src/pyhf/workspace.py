@@ -5,6 +5,8 @@ pyhf workspaces hold the three data items:
 * the observed data (optional)
 * fit configurations ("measurements")
 """
+from __future__ import annotations
+
 import collections
 import copy
 import logging
