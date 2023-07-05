@@ -44,7 +44,7 @@ RUN adduser \
     chown -R moby /work && \
     printf '\nexport PATH=/usr/local/venv/bin:"${PATH}"\n' >> /home/moby/.bashrc
 
-COPY --from=builder /usr/local/venv /usr/local/venv
+COPY --from=builder --chown=moby /usr/local/venv /usr/local/venv/
 
 USER moby
 
