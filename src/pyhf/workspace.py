@@ -8,6 +8,8 @@ pyhf workspaces hold the three data items:
 import collections
 import copy
 import logging
+from typing import ClassVar
+
 import jsonpatch
 
 from pyhf import exceptions, schema
@@ -284,7 +286,7 @@ class Workspace(_ChannelSummaryMixin, dict):
     A JSON-serializable object that is built from an object that follows the :obj:`workspace.json` `schema <https://scikit-hep.org/pyhf/likelihood.html#workspace>`__.
     """
 
-    valid_joins = ['none', 'outer', 'left outer', 'right outer']
+    valid_joins: ClassVar[list[str]] = ['none', 'outer', 'left outer', 'right outer']
 
     def __init__(self, spec, validate: bool = True, **config_kwargs):
         """
