@@ -1,0 +1,24 @@
+{
+	"name": "pyhf-devcontainer",
+	"build": {
+		"context": "..",
+		"dockerfile": "../docker/Dockerfile"
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/opt/venv/bin/python"
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"GitHub.codespaces",
+				"ms-vscode-remote.remote-containers"
+			]
+		}
+	}
+}
