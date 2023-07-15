@@ -1,2 +1,5 @@
 python -m pip install --upgrade '.[all]'
-python -m pip install altair
+python -m pip install --upgrade \
+    ipywidgets \
+    ipympl \
+    altair
