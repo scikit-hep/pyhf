@@ -15,9 +15,7 @@
 			},
 			"extensions": [
 				"ms-python.python",
-				"ms-toolsai.jupyter",
-				"GitHub.codespaces",
-				"ms-vscode-remote.remote-containers"
+				"ms-toolsai.jupyter"
 			]
 		}
 	}
