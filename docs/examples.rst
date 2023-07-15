@@ -4,7 +4,7 @@ Examples
 Try out in Binder! |Binder|
 
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
-    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/main?urlpath=lab/tree/docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/main?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 
 Notebooks:
 
