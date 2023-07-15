@@ -372,7 +372,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 .. |Jupyter Book tutorial| image:: https://jupyterbook.org/_images/badge.svg
    :target: https://pyhf.github.io/pyhf-tutorial/
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
-   :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/main?filepath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
+   :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/main?labpath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
 
 .. |PyPI version| image:: https://badge.fury.io/py/pyhf.svg
    :target: https://badge.fury.io/py/pyhf
