@@ -70,6 +70,21 @@ class _BackendRetriever:
                     "There was a problem importing TensorFlow. The tensorflow backend cannot be used.",
                     e,
                 )
+        elif name == "array_backend":
+            try:
+                from pyhf.tensor.array_backend import array_backend
+
+                assert array_backend
+                # for autocomplete and dir() calls
+                self.array_backend = array_backend
+                self._array_types.add(array_backend.array_type)
+                self._array_subtypes.add(array_backend.array_subtype)
+                return array_backend
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing array. The array backend cannot be used.",
+                    e,
+                )
 
     @property
     def array_types(self):
