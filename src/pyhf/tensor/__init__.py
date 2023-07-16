@@ -9,6 +9,7 @@ class _BackendRetriever:
         "jax_backend",
         "pytorch_backend",
         "tensorflow_backend",
+        "array_backend",
     ]
 
     def __init__(self):

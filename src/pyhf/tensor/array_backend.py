@@ -1,13 +1,12 @@
 """Array API Tensor Library Module."""
 from __future__ import annotations
 
-
 import array_api_compat
 
-from pyhf import get_backend
+from pyhf.tensor.manager import get_backend
 
+# FIXME: Make work on set_backend call by moving this out of import level executed code
 tensorlib, _ = get_backend()
-
 xp = array_api_compat.array_namespace(tensorlib.astensor([]))
 
 
@@ -19,7 +18,7 @@ class array_backend:
     #: The array type
     array_type = type(xp.tensor([]))
 
-    #: The array content type for jax
+    #: The array content type
     array_subtype = type(xp.tensor([]))
 
     def __init__(self, **kwargs):
@@ -28,13 +27,13 @@ class array_backend:
         self.dtypemap = {
             "float": xp.float64 if self.precision == "64b" else xp.float32,
             "int": xp.int64 if self.precision == "64b" else xp.int32,
-            "bool": xp.bool_,
+            "bool": xp.bool,
         }
         self.default_do_grad = xp.is_grad_enabled()
 
     def _setup(self):
         """
-        Run any global setups for the jax lib.
+        Run any global setups for the array lib.
         """
 
     def astensor(self, array_in, dtype="float"):
