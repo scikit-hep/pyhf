@@ -43,6 +43,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 dependencies = [
+    "array-api-compat>=1.3.0",
     "click>=8.0.0",  # for console scripts
     "importlib_resources>=1.4.0; python_version < '3.9'",  # for resources in schema
     "jsonpatch>=1.15",
