@@ -96,6 +96,7 @@ test = [
     "pytest-benchmark[histogram]",
     "pytest-console-scripts>=1.4.0",
     "pytest-mpl",
+    "ipympl>=0.3.0",
     "pydocstyle",
     "papermill~=2.3.4",
     "scrapbook~=0.5.0",
