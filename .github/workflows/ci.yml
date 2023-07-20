@@ -44,6 +44,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install --upgrade .[test]
+        python -m pip install --upgrade codecov-cli
 
     - name: List installed Python packages
       run: python -m pip list
@@ -66,10 +67,10 @@ jobs:
       if: >-
         github.event_name != 'schedule' &&
         matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage.xml
-        flags: unittests-${{ matrix.python-version }}
+      run: |
+        codecovcli create-commit
+        codecovcli create-report
+        codecovcli do-upload --file ./coverage.xml --flag unittests-${{ matrix.python-version }}
 
     - name: Test Contrib module with pytest
       run: |
@@ -82,10 +83,10 @@ jobs:
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage.xml
-        flags: contrib
+      run: |
+        codecovcli create-commit
+        codecovcli create-report
+        codecovcli do-upload --file ./coverage.xml --flag contrib
 
     - name: Test docstring examples with doctest
       if: matrix.python-version == '3.11'
@@ -99,10 +100,10 @@ jobs:
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
-      with:
-        files: doctest-coverage.xml
-        flags: doctest
+      run: |
+        codecovcli create-commit
+        codecovcli create-report
+        codecovcli do-upload --file ./doctest-coverage.xml --flag doctest
 
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == '3.11'
