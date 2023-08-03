@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/main/docs/_static/img/pyhf-logo.svg
+.. image:: https://raw.githubusercontent.com/scikit-hep/pyhf/docs/change-svg-logo-line-color-to-work-in-dark-mode/docs/_static/img/pyhf-logo.svg
    :alt: pyhf logo
    :width: 320
    :align: center
