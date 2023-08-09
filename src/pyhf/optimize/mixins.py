@@ -49,6 +49,18 @@ class OptimizerMixin:
             do_grad=do_grad,
             par_names=par_names,
         )
+
+        # so we can check if valid for uncertainty calc later
+        try:
+            minimizer_name = minimizer.name
+            if minimizer_name == "minuit":
+                self.using_minuit = True
+            else:
+                self.using_minuit = False
+        except AttributeError as e:
+            self.using_minuit = False
+            
+
         result = self._minimize(
             minimizer,
             func,
@@ -66,7 +78,7 @@ class OptimizerMixin:
             raise exceptions.FailedMinimization(result)
         return result
 
-    def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False):
+    def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False, uncertainties=None, hess_inv=None):
         """
         Post-process the fit result.
 
@@ -79,7 +91,7 @@ class OptimizerMixin:
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
 
         # check if uncertainties were provided (and stitch just in case)
-        uncertainties = getattr(fitresult, 'unc', None)
+        uncertainties = getattr(fitresult, 'unc', None) or uncertainties
         if uncertainties is not None:
             # extract number of fixed parameters
             num_fixed_pars = len(fitted_pars) - len(fitresult.x)
@@ -88,7 +100,8 @@ class OptimizerMixin:
             # https://github.com/scikit-hep/iminuit/issues/762
             # https://github.com/scikit-hep/pyhf/issues/1918
             # https://github.com/scikit-hep/cabinetry/pull/346
-            uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
+            if self.using_minuit:
+                uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
 
             # stitch in zero-uncertainty for fixed values
             uncertainties = stitch_pars(
@@ -112,10 +125,18 @@ class OptimizerMixin:
             ]
             correlations = tensorlib.stack(stitched_rows, axis=1)
 
+        if hess_inv is not None:
+            if hasattr(fitresult, 'hess_inv'):
+                if fitresult.hess_inv is None:
+                    fitresult.hess_inv = hess_inv
+            else:
+                fitresult.hess_inv = hess_inv
+
         fitresult.x = fitted_pars
         fitresult.fun = tensorlib.astensor(fitresult.fun)
         fitresult.unc = uncertainties
         fitresult.corr = correlations
+
 
         return fitresult
 
@@ -193,8 +214,16 @@ class OptimizerMixin:
         result = self._internal_minimize(
             **minimizer_kwargs, options=kwargs, par_names=par_names
         )
+
+        # compute uncertainties with automatic differentiation
+        if not self.using_minuit and tensorlib.name in ['jax', 'pytorch']:
+            hess_inv = tensorlib.fisher_cov(pdf, result.x, data)
+            uncertainties = tensorlib.sqrt(tensorlib.diagonal(hess_inv))
+        else:
+            hess_inv = None
+            uncertainties = None
         result = self._internal_postprocess(
-            result, stitch_pars, return_uncertainties=return_uncertainties
+            result, stitch_pars, pdf, return_uncertainties=return_uncertainties, uncertainties=uncertainties, hess_inv=hess_inv
         )
 
         _returns = [result.x]

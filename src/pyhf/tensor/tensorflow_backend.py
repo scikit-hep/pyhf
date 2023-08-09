@@ -722,3 +722,30 @@ class tensorflow_backend:
         .. versionadded:: 0.7.0
         """
         return tf.transpose(tensor_in)
+
+
+    def fisher_cov(self, model, pars, data):
+        raise NotImplementedError
+    
+    
+    def diagonal(self, tensor_in):
+        """Return the diagonal elements of the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
+            >>> tensor
+            tensor([[1., 0.],
+                    [0., 1.]])
+            >>> pyhf.tensorlib.diagonal(tensor)
+            tensor([1., 1.])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            TensorFlow Tensor: The diagonal elements of the input tensor.
+                
+        """
+        return tf.linalg.diag(tensor_in)

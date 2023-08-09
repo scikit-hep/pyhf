@@ -1,6 +1,7 @@
 """PyTorch Tensor Library Module."""
 import torch
 import torch.autograd
+from torch.func import hessian
 from torch.distributions.utils import broadcast_all
 import logging
 import math
@@ -625,3 +626,41 @@ class pytorch_backend:
         .. versionadded:: 0.7.0
         """
         return tensor_in.transpose(0, 1)
+
+
+    def fisher_cov(self, model, pars, data):
+        """Calculates the inverse of the Fisher information matrix to estimate the covariance of the maximum likelihood estimate.
+        See the Cramér-Rao bound for more details on the derivation of this.
+
+        Args:
+            model (:obj:`pyhf.pdf.Model`): The statistical model adhering to the schema ``model.json``.
+            pars (:obj:`tensor`): The (mle) model parameters at which to evaluate the uncertainty.
+            data (:obj:`tensor`): The observed data.
+
+        Returns:
+            PyTorch FloatTensor: The covariance matrix of the maximum likelihood estimate.
+        """
+        return torch.linalg.inv(-hessian(lambda pars, data: model.logpdf(pars, data)[0])(pars, data))
+
+
+    def diagonal(self, tensor_in):
+        """
+        Return the diagonal elements of the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("pytorch")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
+            >>> tensor
+            tensor([[1., 0.],
+                    [0., 1.]])
+            >>> pyhf.tensorlib.diagonal(tensor)
+            tensor([1., 1.])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            PyTorch FloatTensor: The diagonal of the input tensor.
+        """
+        return torch.diagonal(tensor_in)

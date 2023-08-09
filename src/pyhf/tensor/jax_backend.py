@@ -2,7 +2,7 @@ from jax.config import config
 
 config.update('jax_enable_x64', True)
 
-from jax import Array
+from jax import Array, hessian
 import jax.numpy as jnp
 from jax.scipy.special import gammaln, xlogy
 from jax.scipy import special
@@ -622,3 +622,41 @@ class jax_backend:
         .. versionadded:: 0.7.0
         """
         return tensor_in.transpose()
+
+
+    def fisher_cov(self, model, pars, data):
+        """Calculates the inverse of the Fisher information matrix to estimate the covariance of the maximum likelihood estimate.
+        See the Cramér-Rao bound for more details on the derivation of this.
+
+        Args:
+            model (:obj:`pyhf.pdf.Model`): The statistical model adhering to the schema ``model.json``.
+            pars (:obj:`tensor`): The (mle) model parameters at which to evaluate the uncertainty.
+            data (:obj:`tensor`): The observed data.
+
+        Returns:
+            JAX ndarray: The covariance matrix of the maximum likelihood estimate.
+        """
+        return jnp.linalg.inv(-hessian(lambda pars, data: model.logpdf(pars, data)[0])(pars, data))
+
+
+    def diagonal(self, tensor_in):
+        """
+        Return the diagonal elements of the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("jax")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
+            >>> tensor
+            tensor([[1., 0.],
+                    [0., 1.]])
+            >>> pyhf.tensorlib.diagonal(tensor)
+            tensor([1., 1.])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            JAX ndarray: The diagonal of the input tensor.
+        """
+        return jnp.diag(tensor_in)
