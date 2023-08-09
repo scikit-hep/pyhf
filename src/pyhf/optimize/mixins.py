@@ -57,9 +57,8 @@ class OptimizerMixin:
                 self.using_minuit = True
             else:
                 self.using_minuit = False
-        except AttributeError as e:
+        except AttributeError:
             self.using_minuit = False
-            
 
         result = self._minimize(
             minimizer,
@@ -78,7 +77,14 @@ class OptimizerMixin:
             raise exceptions.FailedMinimization(result)
         return result
 
-    def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False, uncertainties=None, hess_inv=None):
+    def _internal_postprocess(
+        self,
+        fitresult,
+        stitch_pars,
+        return_uncertainties=False,
+        uncertainties=None,
+        hess_inv=None,
+    ):
         """
         Post-process the fit result.
 
@@ -136,7 +142,6 @@ class OptimizerMixin:
         fitresult.fun = tensorlib.astensor(fitresult.fun)
         fitresult.unc = uncertainties
         fitresult.corr = correlations
-
 
         return fitresult
 
@@ -223,7 +228,12 @@ class OptimizerMixin:
             hess_inv = None
             uncertainties = None
         result = self._internal_postprocess(
-            result, stitch_pars, pdf, return_uncertainties=return_uncertainties, uncertainties=uncertainties, hess_inv=hess_inv
+            result,
+            stitch_pars,
+            pdf,
+            return_uncertainties=return_uncertainties,
+            uncertainties=uncertainties,
+            hess_inv=hess_inv,
         )
 
         _returns = [result.x]

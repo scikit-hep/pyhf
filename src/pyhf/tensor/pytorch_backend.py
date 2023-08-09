@@ -627,7 +627,6 @@ class pytorch_backend:
         """
         return tensor_in.transpose(0, 1)
 
-
     def fisher_cov(self, model, pars, data):
         """Calculates the inverse of the Fisher information matrix to estimate the covariance of the maximum likelihood estimate.
         See the Cramér-Rao bound for more details on the derivation of this.
@@ -640,8 +639,9 @@ class pytorch_backend:
         Returns:
             PyTorch FloatTensor: The covariance matrix of the maximum likelihood estimate.
         """
-        return torch.linalg.inv(-hessian(lambda pars, data: model.logpdf(pars, data)[0])(pars, data))
-
+        return torch.linalg.inv(
+            -hessian(lambda pars, data: model.logpdf(pars, data)[0])(pars, data)
+        )
 
     def diagonal(self, tensor_in):
         """

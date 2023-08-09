@@ -623,7 +623,6 @@ class jax_backend:
         """
         return tensor_in.transpose()
 
-
     def fisher_cov(self, model, pars, data):
         """Calculates the inverse of the Fisher information matrix to estimate the covariance of the maximum likelihood estimate.
         See the Cramér-Rao bound for more details on the derivation of this.
@@ -636,8 +635,9 @@ class jax_backend:
         Returns:
             JAX ndarray: The covariance matrix of the maximum likelihood estimate.
         """
-        return jnp.linalg.inv(-hessian(lambda pars, data: model.logpdf(pars, data)[0])(pars, data))
-
+        return jnp.linalg.inv(
+            -hessian(lambda pars, data: model.logpdf(pars, data)[0])(pars, data)
+        )
 
     def diagonal(self, tensor_in):
         """

@@ -2,7 +2,16 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Generic,
+    Mapping,
+    Sequence,
+    TypeVar,
+    Union,
+    Any,
+)
 
 import numpy as np
 
@@ -648,12 +657,10 @@ class numpy_backend(Generic[T]):
         """
         return tensor_in.transpose()
 
-
-    def fisher_cov(self, model, pars, data):
+    def fisher_cov(self, model: Any, pars: Tensor[T], data: Tensor[T]) -> ArrayLike:
         raise NotImplementedError
-    
-    
-    def diagonal(self, tensor_in):
+
+    def diagonal(self, tensor_in: Tensor[T]) -> ArrayLike:
         """Return the diagonal elements of the tensor.
 
         Example:

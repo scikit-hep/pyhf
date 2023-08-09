@@ -723,11 +723,9 @@ class tensorflow_backend:
         """
         return tf.transpose(tensor_in)
 
-
     def fisher_cov(self, model, pars, data):
         raise NotImplementedError
-    
-    
+
     def diagonal(self, tensor_in):
         """Return the diagonal elements of the tensor.
 
@@ -746,6 +744,6 @@ class tensorflow_backend:
 
         Returns:
             TensorFlow Tensor: The diagonal elements of the input tensor.
-                
+
         """
         return tf.linalg.diag(tensor_in)
