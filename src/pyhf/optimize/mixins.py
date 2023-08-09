@@ -228,7 +228,7 @@ class OptimizerMixin:
         )
 
         # compute uncertainties with automatic differentiation
-        if not using_minuit and tensorlib.name in ['jax', 'pytorch']:
+        if not using_minuit and tensorlib.name in ['tensorflow', 'jax', 'pytorch']:
             hess_inv = tensorlib.fisher_cov(pdf, tensorlib.astensor(result.x), data)
             uncertainties = tensorlib.sqrt(tensorlib.diagonal(hess_inv))
         else:

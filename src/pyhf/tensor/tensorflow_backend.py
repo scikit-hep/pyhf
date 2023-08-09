@@ -724,7 +724,25 @@ class tensorflow_backend:
         return tf.transpose(tensor_in)
 
     def fisher_cov(self, model, pars, data):
-        raise NotImplementedError
+        """Calculates the inverse of the Fisher information matrix to estimate the covariance of the maximum likelihood estimate.
+        See the Cramér-Rao bound for more details on the derivation of this.
+
+        Args:
+            model (:obj:`pyhf.pdf.Model`): The statistical model adhering to the schema ``model.json``.
+            pars (:obj:`tensor`): The (mle) model parameters at which to evaluate the uncertainty.
+            data (:obj:`tensor`): The observed data.
+
+        Returns:
+            TensorFlow Tensor: The covariance matrix of the maximum likelihood estimate.
+        """
+        with tf.GradientTape() as t2:
+            t2.watch(pars)
+            with tf.GradientTape() as t1:
+                t1.watch(pars)
+                lhood = model.logpdf(pars, data)[0]
+            g = t1.gradient(lhood, pars)
+        hess = t2.jacobian(g, pars)
+        return tf.linalg.inv(-hess)
 
     def diagonal(self, tensor_in):
         """Return the diagonal elements of the tensor.
