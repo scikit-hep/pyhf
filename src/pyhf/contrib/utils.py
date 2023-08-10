@@ -115,7 +115,7 @@ try:
                         # directory up and then renamed as the name of the
                         # zipfile directory is set at zipfile creation time and
                         # isn't knowable in advance.
-                        child_path = [child for child in output_directory.iterdir()][0]
+                        child_path = next(iter(output_directory.iterdir()))
                         _tmp_path = output_directory.parent.joinpath(
                             Path(output_directory.name + "__tmp__")
                         )
