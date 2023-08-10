@@ -181,3 +181,25 @@ def test_plot_results_components_data_structure(datadir):
         brazil.plot_results(
             data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
         )
+
+
+def test_plot_results_wrong_axis_labels(datadir, mocker):
+    """
+    If the returned labels are different from the expected, then the hardcoded
+    values in label_part will be wrong, causing `next` to fail on the iterator
+    for label_idx.
+    """
+    data = json.load(datadir.joinpath("hypotest_results.json").open(encoding="utf-8"))
+
+    fig = Figure()
+    ax = fig.subplots()
+
+    get_legend_handles_labels = mocker.patch(
+        "matplotlib.axes._axes.Axes.get_legend_handles_labels",
+        return_value=(None, ["fail"]),
+    )
+
+    with pytest.raises(StopIteration):
+        brazil.plot_results(data["testmus"], data["results"], test_size=0.05, ax=ax)
+
+    assert get_legend_handles_labels.called
