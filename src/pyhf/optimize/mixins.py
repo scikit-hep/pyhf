@@ -150,6 +150,7 @@ class OptimizerMixin:
         return_correlations=False,
         do_grad=None,
         do_stitch=False,
+        skip_autodiff_uncerts=False,
         **kwargs,
     ):
         """
@@ -228,10 +229,14 @@ class OptimizerMixin:
         )
 
         # compute uncertainties with automatic differentiation
-        if not using_minuit and tensorlib.name in ['tensorflow', 'jax', 'pytorch']:
+        if (
+            not using_minuit
+            and tensorlib.name in ['tensorflow', 'jax', 'pytorch']
+            and not skip_autodiff_uncerts
+        ):
             # stitch in missing parameters (e.g. fixed parameters)
-            fitted_pars = stitch_pars(tensorlib.astensor(result.x))
-            hess_inv = tensorlib.fisher_cov(pdf, fitted_pars, data)
+            all_pars = stitch_pars(tensorlib.astensor(result.x))
+            hess_inv = tensorlib.fisher_cov(pdf, all_pars, data)
             uncertainties = tensorlib.sqrt(tensorlib.diagonal(hess_inv))
         else:
             hess_inv = None

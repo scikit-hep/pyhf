@@ -123,8 +123,24 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     mocker.patch.object(OptimizerMixin, '_internal_minimize')
     mocker.patch.object(OptimizerMixin, '_internal_postprocess')
 
+    # patch out uncert calculations
+    import_dict = dict(
+        jax=pyhf.tensor.jax_backend,  # .jax_backend,
+        pytorch=pyhf.tensor.pytorch_backend,  # .pytorch_backend,
+        tensorflow=pyhf.tensor.tensorflow_backend,  # .tensorflow_backend,
+        numpy=pyhf.tensor.numpy_backend,
+    )
+
+    def make_backend(backend):
+        class MockedBackend(import_dict[backend]):
+            def fisher_cov(self, *args, **kwargs):
+                return import_dict[backend]().astensor([[1, 0], [0, 1]])
+
+        return MockedBackend()
+
     # start with first backend
-    pyhf.set_backend(backend, 'scipy')
+    pyhf.set_backend(make_backend(backend), 'scipy')
+
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
@@ -135,7 +151,7 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     assert shim.call_args[1]['do_grad'] != pyhf.tensorlib.default_do_grad
 
     # now switch to new backend and see what happens
-    pyhf.set_backend(backend_new)
+    pyhf.set_backend(make_backend(backend_new))
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
