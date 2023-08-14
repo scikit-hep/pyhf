@@ -128,11 +128,8 @@ class OptimizerMixin:
             cov = hess_inv
 
         # we also need to edit the covariance matrix to zero-out uncertainties!
-        if fixed_vals is not None:
-            if using_minuit:
-                fixed_bools = fitresult.minuit.fixed
-            else:
-                fixed_bools = [False] * len(init_pars)
+        if fixed_vals is not None and not using_minuit:  # minuit already does this
+            fixed_bools = [False] * len(init_pars)
             # Convert fixed_bools to a numpy array and reshape to make it a column vector
             fixed_mask = tensorlib.reshape(
                 tensorlib.astensor(fixed_bools, dtype="bool"), (-1, 1)
@@ -158,7 +155,7 @@ class OptimizerMixin:
                 tensorlib.astensor(0.0),
             )
 
-        if correlations_from_fit is not None:
+        if correlations_from_fit is not None and not using_minuit:
             _zeros = tensorlib.zeros(num_fixed_pars)
             # possibly a more elegant way to do this
             stitched_columns = [
