@@ -78,6 +78,7 @@ class OptimizerMixin:
         return_uncertainties=False,
         uncertainties=None,
         hess_inv=None,
+        calc_correlations=False,
         fixed_vals=None,
         init_pars=None,
     ):
@@ -122,31 +123,59 @@ class OptimizerMixin:
             if return_uncertainties:
                 fitted_pars = tensorlib.stack([fitted_pars, uncertainties], axis=1)
 
-        correlations = getattr(fitresult, 'corr', None)
-        if correlations is not None:
+        cov = getattr(fitresult, 'hess_inv', None)
+        if cov is None and hess_inv is not None:
+            cov = hess_inv
+
+        # we also need to edit the covariance matrix to zero-out uncertainties!
+        if fixed_vals is not None:
+            if using_minuit:
+                fixed_bools = fitresult.minuit.fixed
+            else:
+                fixed_bools = [False] * len(init_pars)
+            # Convert fixed_bools to a numpy array and reshape to make it a column vector
+            fixed_mask = tensorlib.reshape(
+                tensorlib.astensor(fixed_bools, dtype="bool"), (-1, 1)
+            )
+            # Create 2D masks for rows and columns
+            row_mask = fixed_mask
+            col_mask = tensorlib.transpose(fixed_mask)
+
+            # Use logical OR to combine the masks
+            final_mask = row_mask | col_mask
+
+            # Use np.where to set elements of the covariance matrix to 0 where the mask is True
+            cov = tensorlib.where(
+                final_mask, tensorlib.astensor(0.0), tensorlib.astensor(cov)
+            )
+
+        correlations_from_fit = getattr(fitresult, 'corr', None)
+        if correlations_from_fit is None and calc_correlations:
+            correlations_from_fit = cov / tensorlib.outer(uncertainties, uncertainties)
+            correlations_from_fit = tensorlib.where(
+                tensorlib.isfinite(correlations_from_fit),
+                correlations_from_fit,
+                tensorlib.astensor(0.0),
+            )
+
+        if correlations_from_fit is not None:
             _zeros = tensorlib.zeros(num_fixed_pars)
             # possibly a more elegant way to do this
             stitched_columns = [
                 stitch_pars(tensorlib.astensor(column), stitch_with=_zeros)
-                for column in zip(*correlations)
+                for column in zip(*correlations_from_fit)
             ]
             stitched_rows = [
                 stitch_pars(tensorlib.astensor(row), stitch_with=_zeros)
                 for row in zip(*stitched_columns)
             ]
-            correlations = tensorlib.stack(stitched_rows, axis=1)
-
-        if hess_inv is not None:
-            if hasattr(fitresult, 'hess_inv'):
-                if fitresult.hess_inv is None:
-                    fitresult.hess_inv = hess_inv
-            else:
-                fitresult.hess_inv = hess_inv
+            correlations_from_fit = tensorlib.stack(stitched_rows, axis=1)
 
         fitresult.x = fitted_pars
         fitresult.fun = tensorlib.astensor(fitresult.fun)
         fitresult.unc = uncertainties
-        fitresult.corr = correlations
+        fitresult.hess_inv = cov
+        fitresult.corr = correlations_from_fit
 
         return fitresult
 
@@ -235,9 +264,11 @@ class OptimizerMixin:
             all_pars = stitch_pars(tensorlib.astensor(result.x))
             hess_inv = tensorlib.fisher_cov(pdf, all_pars, data)
             uncertainties = tensorlib.sqrt(tensorlib.diagonal(hess_inv))
+            calc_correlations = True
         else:
             hess_inv = None
             uncertainties = None
+            calc_correlations = False
 
         # uncerts are set to 0 in here for fixed pars
         result = self._internal_postprocess(
@@ -247,6 +278,7 @@ class OptimizerMixin:
             return_uncertainties=return_uncertainties,
             uncertainties=uncertainties,
             hess_inv=hess_inv,
+            calc_correlations=calc_correlations,
             fixed_vals=fixed_vals,
             init_pars=init_pars,
         )
