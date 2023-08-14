@@ -648,10 +648,10 @@ class jax_backend:
             >>> pyhf.set_backend("jax")
             >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
             >>> tensor
-            tensor([[1., 0.],
-                    [0., 1.]])
+            Array([[1., 0.],
+                   [0., 1.]], dtype=float64)
             >>> pyhf.tensorlib.diagonal(tensor)
-            tensor([1., 1.])
+            Array([1., 1.], dtype=float64)
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object.

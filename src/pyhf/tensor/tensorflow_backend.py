@@ -752,10 +752,11 @@ class tensorflow_backend:
             >>> pyhf.set_backend("tensorflow")
             >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
             >>> tensor
-            tensor([[1., 0.],
-                    [0., 1.]])
+            <tf.Tensor: shape=(2, 2), dtype=float64, numpy=
+            array([[1., 0.],
+                   [0., 1.]])>
             >>> pyhf.tensorlib.diagonal(tensor)
-            tensor([1., 1.])
+            <tf.Tensor: shape=(2), dtype=float64, numpy=array([1., 1.])
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object.

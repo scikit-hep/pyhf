@@ -668,10 +668,10 @@ class numpy_backend(Generic[T]):
             >>> pyhf.set_backend("numpy")
             >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
             >>> tensor
-            tensor([[1., 0.],
-                    [0., 1.]])
+            array([[1., 0.],
+                   [0., 1.]])
             >>> pyhf.tensorlib.diagonal(tensor)
-            tensor([1., 1.])
+            array([1., 1.])
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object.
