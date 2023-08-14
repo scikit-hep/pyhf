@@ -406,6 +406,7 @@ def test_optim_uncerts_minuit(backend, source, spec, mu):
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 @pytest.mark.skip_numpy
+@pytest.mark.skip_numpy_minuit
 def test_optim_uncerts_autodiff(backend, source, spec, mu):
     pdf = pyhf.Model(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
@@ -428,8 +429,10 @@ def test_optim_uncerts_autodiff(backend, source, spec, mu):
         return_uncertainties=True,
     )
     assert result.shape == (2, 2)
-    # TODO: add proper numerical test for autodiff uncerts (does not match minuit at all)
-    # assert pytest.approx([0.26418431, 0.0]) == pyhf.tensorlib.tolist(result[:, 1])
+    # TODO: this does not match minuit at all (0.26418431) -- is that correct here?
+    assert pytest.approx([0.6693815171034548, 0.0]) == pyhf.tensorlib.tolist(
+        result[:, 1]
+    )
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
@@ -465,6 +468,7 @@ def test_optim_correlations_minuit(backend, source, spec, mu):
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 @pytest.mark.skip_numpy
+@pytest.mark.skip_numpy_minuit
 def test_optim_correlations_autodiff(backend, source, spec, mu):
     pdf = pyhf.Model(spec)
     data = source['bindata']['data'] + pdf.config.auxdata
