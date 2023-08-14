@@ -7,7 +7,10 @@ from pyhf import exceptions
 from pyhf.optimize.common import shim
 from pyhf.tensor.manager import get_backend
 
+
 log = logging.getLogger(__name__)
+
+__all__ = ("OptimizerMixin",)
 
 
 class OptimizerMixin:
@@ -75,6 +78,8 @@ class OptimizerMixin:
         return_uncertainties=False,
         uncertainties=None,
         hess_inv=None,
+        fixed_vals=None,
+        init_pars=None,
     ):
         """
         Post-process the fit result.
@@ -97,9 +102,18 @@ class OptimizerMixin:
             # https://github.com/scikit-hep/iminuit/issues/762
             # https://github.com/scikit-hep/pyhf/issues/1918
             # https://github.com/scikit-hep/cabinetry/pull/346
-            if using_minuit:
-                uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
-
+            if fixed_vals is not None:  # check for fixed vals
+                if using_minuit:
+                    uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
+                else:
+                    fixed_bools = [False] * len(init_pars)
+                    for index, _ in fixed_vals:
+                        fixed_bools[index] = True
+                    uncertainties = tensorlib.where(
+                        tensorlib.astensor(fixed_bools, dtype="bool"),
+                        tensorlib.astensor(0.0),
+                        uncertainties,
+                    )
             # stitch in zero-uncertainty for fixed values
             uncertainties = stitch_pars(
                 tensorlib.astensor(uncertainties),
@@ -150,7 +164,6 @@ class OptimizerMixin:
         return_correlations=False,
         do_grad=None,
         do_stitch=False,
-        skip_autodiff_uncerts=False,
         **kwargs,
     ):
         """
@@ -182,20 +195,8 @@ class OptimizerMixin:
                 - result (:class:`scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
         # literally just for the minimizer name to check if we're using minuit
-        _minimizer = self._get_minimizer(
-            lambda x: x,
-            [0],
-            [0, 1],
-        )
-
         # so we can check if valid for uncertainty calc later
-        if hasattr(_minimizer, "name"):
-            if _minimizer.name == "minuit":
-                using_minuit = True
-            else:
-                using_minuit = False
-        else:
-            using_minuit = False
+        using_minuit = hasattr(self, "name") and self.name == "minuit"
 
         # Configure do_grad based on backend "automagically" if not set by user
         tensorlib, _ = get_backend()
@@ -229,11 +230,7 @@ class OptimizerMixin:
         )
 
         # compute uncertainties with automatic differentiation
-        if (
-            not using_minuit
-            and tensorlib.name in ['tensorflow', 'jax', 'pytorch']
-            and not skip_autodiff_uncerts
-        ):
+        if not using_minuit and tensorlib.name in ['tensorflow', 'jax', 'pytorch']:
             # stitch in missing parameters (e.g. fixed parameters)
             all_pars = stitch_pars(tensorlib.astensor(result.x))
             hess_inv = tensorlib.fisher_cov(pdf, all_pars, data)
@@ -241,6 +238,8 @@ class OptimizerMixin:
         else:
             hess_inv = None
             uncertainties = None
+
+        # uncerts are set to 0 in here for fixed pars
         result = self._internal_postprocess(
             result,
             stitch_pars,
@@ -248,6 +247,8 @@ class OptimizerMixin:
             return_uncertainties=return_uncertainties,
             uncertainties=uncertainties,
             hess_inv=hess_inv,
+            fixed_vals=fixed_vals,
+            init_pars=init_pars,
         )
 
         _returns = [result.x]

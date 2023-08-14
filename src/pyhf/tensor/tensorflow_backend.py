@@ -764,4 +764,4 @@ class tensorflow_backend:
             TensorFlow Tensor: The diagonal elements of the input tensor.
 
         """
-        return tf.linalg.diag(tensor_in)
+        return tf.linalg.diag_part(tensor_in)
