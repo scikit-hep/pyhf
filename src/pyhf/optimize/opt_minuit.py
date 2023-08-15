@@ -104,6 +104,9 @@ class minuit_optimizer(OptimizerMixin):
         strategy = options.pop(
             'strategy', self.strategy if self.strategy is not None else int(not do_grad)
         )
+        # Passing strategy=None to options requires another check to guard against None
+        if strategy is None:
+            strategy = int(not do_grad)
         tolerance = options.pop('tolerance', self.tolerance)
         if options:
             raise exceptions.Unsupported(
