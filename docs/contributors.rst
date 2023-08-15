@@ -31,3 +31,4 @@ Contributors include:
 - Jerry Ling
 - Nathan Simpson
 - Beojan Stanislaus
+- Daniel Werner
