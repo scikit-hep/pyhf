@@ -102,7 +102,7 @@ class minuit_optimizer(OptimizerMixin):
         # 0: Fast, user-provided gradient
         # 1: Default, no user-provided gradient
         strategy = options.pop(
-            'strategy', self.strategy if self.strategy else not do_grad
+            'strategy', self.strategy if self.strategy is not None else not do_grad
         )
         tolerance = options.pop('tolerance', self.tolerance)
         if options:
