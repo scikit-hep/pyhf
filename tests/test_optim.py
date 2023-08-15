@@ -173,7 +173,7 @@ def test_minuit_strategy_do_grad(mocker, backend):
     assert spy.spy_return.minuit.strategy == 1
 
 
-@pytest.mark.parametrize('strategy', [0, 1])
+@pytest.mark.parametrize('strategy', [0, 1, 2])
 def test_minuit_strategy_global(mocker, backend, strategy):
     pyhf.set_backend(
         pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy, tolerance=0.2)
@@ -193,6 +193,10 @@ def test_minuit_strategy_global(mocker, backend, strategy):
     pyhf.infer.mle.fit(data, m, strategy=1)
     assert spy.call_count == 3
     assert spy.spy_return.minuit.strategy == 1
+
+    pyhf.infer.mle.fit(data, m, strategy=2)
+    assert spy.call_count == 4
+    assert spy.spy_return.minuit.strategy == 2
 
 
 def test_set_tolerance(backend):
