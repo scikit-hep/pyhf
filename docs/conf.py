@@ -519,6 +519,8 @@ linkcheck_ignore = [
     r'https://indico.desy.de/event/22731/.*',
     # https://indico.belle2.org/event/8470/contributions/55871/ is frequently generating 403 Client Error
     r'https://indico.belle2.org/event/8470/.*',
+    # CERN doesn't maintain its SSL certs well enough to not have SSLErrors
+    r'https://twiki.cern.ch/.*',
     # tags for a release won't exist until it is made, but the release notes
     # and ReadTheDocs need to reference them
     r'https://github.com/scikit-hep/pyhf/releases/tag/.*',
