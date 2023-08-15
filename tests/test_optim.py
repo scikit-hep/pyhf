@@ -182,10 +182,9 @@ def test_minuit_strategy_global(mocker, backend, strategy):
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
-    do_grad = pyhf.tensorlib.default_do_grad
     pyhf.infer.mle.fit(data, m)
     assert spy.call_count == 1
-    assert spy.spy_return.minuit.strategy == strategy if do_grad else 1
+    assert spy.spy_return.minuit.strategy == strategy
 
     pyhf.infer.mle.fit(data, m, strategy=0)
     assert spy.call_count == 2
