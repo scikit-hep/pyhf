@@ -28,7 +28,10 @@ class minuit_optimizer(OptimizerMixin):
         Args:
             errordef (:obj:`float`): See minuit docs. Default is ``1.0``.
             steps (:obj:`int`): Number of steps for the bounds. Default is ``1000``.
-            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is ``None``.
+            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`.
+              Default is ``None``, which results in either
+              :attr:`iminuit.Minuit.strategy` ``0`` or ``1`` from the evaluation of
+              ``int(not pyhf.tensorlib.default_do_grad)``.
             tolerance (:obj:`float`): Tolerance for termination.
               See specific optimizer for detailed meaning.
               Default is ``0.1``.
@@ -99,11 +102,14 @@ class minuit_optimizer(OptimizerMixin):
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
         maxiter = options.pop('maxiter', self.maxiter)
-        # 0: Fast, user-provided gradient
-        # 1: Default, no user-provided gradient
-        strategy = options.pop(
-            'strategy', self.strategy if self.strategy else not do_grad
-        )
+        # do_grad value results in iminuit.Minuit.strategy of either:
+        #   0: Fast. Does not check a user-provided gradient.
+        #   1: Default. Checks user-provided gradient against numerical gradient.
+        strategy = options.pop("strategy", self.strategy)
+        # Guard against None from either self.strategy defaulting to None or
+        # passing strategy=None as options kwarg
+        if strategy is None:
+            strategy = 0 if do_grad else 1
         tolerance = options.pop('tolerance', self.tolerance)
         if options:
             raise exceptions.Unsupported(
