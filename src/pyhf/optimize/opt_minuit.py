@@ -28,7 +28,10 @@ class minuit_optimizer(OptimizerMixin):
         Args:
             errordef (:obj:`float`): See minuit docs. Default is ``1.0``.
             steps (:obj:`int`): Number of steps for the bounds. Default is ``1000``.
-            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`. Default is ``None``.
+            strategy (:obj:`int`): See :attr:`iminuit.Minuit.strategy`.
+              Default is ``None``, which results in either
+              :attr:`iminuit.Minuit.strategy` ``0`` or ``1`` from the evaluation of
+              ``int(not pyhf.tensorlib.default_do_grad)``.
             tolerance (:obj:`float`): Tolerance for termination.
               See specific optimizer for detailed meaning.
               Default is ``0.1``.
