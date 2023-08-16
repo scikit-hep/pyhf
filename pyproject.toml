@@ -52,7 +52,6 @@ dependencies = [
     "scipy>=1.2.0",  # requires numpy, which is required by pyhf and tensorflow
     "tqdm>=4.56.0",  # for readxml
     "typing_extensions>=3.7.4.3; python_version == '3.7'",  # for SupportsIndex
-    "importlib-metadata>=0.1; python_version == '3.7'",  # for importlib.metadata.version
     "numpy",  # compatible versions controlled through scipy
 ]
 
