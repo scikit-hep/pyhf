@@ -1,0 +1,29 @@
+|release v0.7.3|_
+=================
+
+This is a patch release from ``v0.7.2`` → ``v0.7.3``.
+
+Fixes
+-----
+
+* Use :func:`numpy.prod` API over ``numpy.product`` as ``numpy.product`` is
+  |np.product deprecation|_.
+  (PR :pr:`2242`)
+* Guard :class:`pyhf.optimize.opt_minuit.minuit_optimizer` optimizer strategy
+  from :obj:`None` to ensure :attr:`iminuit.Minuit.strategy` strategies
+  are correctly handled.
+  (PRs :pr:`2277`, :pr:`2278`)
+
+Contributors
+------------
+
+``v0.7.3`` benefited from contributions from:
+
+* Alexander Held
+* Daniel Werner
+
+.. |release v0.7.3| replace:: ``v0.7.3``
+.. _`release v0.7.3`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.3
+
+.. |np.product deprecation| replace:: deprecated as of NumPy ``v1.25.0``
+.. _`np.product deprecation`: https://numpy.org/devdocs/release/1.25.0-notes.html#deprecations
