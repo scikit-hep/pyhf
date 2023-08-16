@@ -19,35 +19,36 @@ Fixes
   To determine if you might have been affected by it see if you used a setup
   like the following in any part of your code
 
-  ```python
-  pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(strategy=0))
-  ...
-  fit_result, opt_result = pyhf.infer.mle.fit(
-      data, model, return_result_obj=True, do_grad=False
-  )
-  assert opt_result.minuit.strategy.strategy == 0  # fails
-  ```
+  .. code:: python
 
-  Full example that fails in ``pyhf`` ``v0.7.2``
+    ...
+    pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(strategy=0))
+    ...
+    fit_result, opt_result = pyhf.infer.mle.fit(
+        data, model, return_result_obj=True, do_grad=False
+    )
+    assert opt_result.minuit.strategy.strategy == 0  # fails for pyhf v0.7.2
 
-  ```python
-  import pyhf
+  Full example that fails in ``pyhf`` ``v0.7.2``:
 
-  pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(strategy=0))
+  .. code:: python
 
-  model = pyhf.simplemodels.uncorrelated_background(
-      signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
-  )
-  data = [51, 48] + model.config.auxdata
+    import pyhf
 
-  # strategy kwarg not given
-  fit_result, opt_result = pyhf.infer.mle.fit(
-      data, model, return_result_obj=True, do_grad=False
-  )
-  minuit_strategy = opt_result.minuit.strategy.strategy
-  print(f"# Minuit minimization strategy: {minuit_strategy}")
-  assert minuit_strategy == 0  # fails for pyhf v0.7.2
-  ```
+    pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(strategy=0))
+
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+    )
+    data = [51, 48] + model.config.auxdata
+
+    # strategy kwarg not given
+    fit_result, opt_result = pyhf.infer.mle.fit(
+        data, model, return_result_obj=True, do_grad=False
+    )
+    minuit_strategy = opt_result.minuit.strategy.strategy
+    print(f"# Minuit minimization strategy: {minuit_strategy}")
+    assert minuit_strategy == 0  # fails for pyhf v0.7.2
 
 Contributors
 ------------
