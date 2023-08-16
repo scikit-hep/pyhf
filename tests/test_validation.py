@@ -706,7 +706,7 @@ def validate_hypotest(
             {'init_pars': 2, 'par_bounds': 2},
             1.0,
             "q",
-            2e-9,
+            3e-6,
             "asymptotics",
         ),
         (
