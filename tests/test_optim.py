@@ -173,27 +173,34 @@ def test_minuit_strategy_do_grad(mocker, backend):
     assert spy.spy_return.minuit.strategy == 1
 
 
-@pytest.mark.parametrize('strategy', [0, 1])
+@pytest.mark.parametrize('strategy', [0, 1, 2])
 def test_minuit_strategy_global(mocker, backend, strategy):
     pyhf.set_backend(
         pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy, tolerance=0.2)
     )
     spy = mocker.spy(pyhf.optimize.minuit_optimizer, '_minimize')
-    m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
-    data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
+    model = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
+    data = pyhf.tensorlib.astensor([125.0] + model.config.auxdata)
 
-    do_grad = pyhf.tensorlib.default_do_grad
-    pyhf.infer.mle.fit(data, m)
+    pyhf.infer.mle.fit(data, model)
     assert spy.call_count == 1
-    assert spy.spy_return.minuit.strategy == strategy if do_grad else 1
+    assert spy.spy_return.minuit.strategy == strategy
 
-    pyhf.infer.mle.fit(data, m, strategy=0)
+    pyhf.infer.mle.fit(data, model, strategy=None)
     assert spy.call_count == 2
+    assert spy.spy_return.minuit.strategy == int(not pyhf.tensorlib.default_do_grad)
+
+    pyhf.infer.mle.fit(data, model, strategy=0)
+    assert spy.call_count == 3
     assert spy.spy_return.minuit.strategy == 0
 
-    pyhf.infer.mle.fit(data, m, strategy=1)
-    assert spy.call_count == 3
+    pyhf.infer.mle.fit(data, model, strategy=1)
+    assert spy.call_count == 4
     assert spy.spy_return.minuit.strategy == 1
+
+    pyhf.infer.mle.fit(data, model, strategy=2)
+    assert spy.call_count == 5
+    assert spy.spy_return.minuit.strategy == 2
 
 
 def test_set_tolerance(backend):
