@@ -378,7 +378,7 @@ def test_join_items_outer_deep(join_items):
     joined = pyhf.workspace._join_items(
         'outer', left_items, right_items, key='name', deep_merge_key='deep'
     )
-    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+    assert next(k['deep'] for k in joined if k['name'] == 'common') == [
         {'name': 1},
         {'name': 2},
     ]
@@ -389,7 +389,7 @@ def test_join_items_left_outer_deep(join_items):
     joined = pyhf.workspace._join_items(
         'left outer', left_items, right_items, key='name', deep_merge_key='deep'
     )
-    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+    assert next(k['deep'] for k in joined if k['name'] == 'common') == [
         {'name': 1},
         {'name': 2},
     ]
@@ -400,7 +400,7 @@ def test_join_items_right_outer_deep(join_items):
     joined = pyhf.workspace._join_items(
         'right outer', left_items, right_items, key='name', deep_merge_key='deep'
     )
-    assert [k['deep'] for k in joined if k['name'] == 'common'][0] == [
+    assert next(k['deep'] for k in joined if k['name'] == 'common') == [
         {'name': 2},
         {'name': 1},
     ]

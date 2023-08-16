@@ -361,9 +361,9 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
     handles, labels = ax.get_legend_handles_labels()
     if not no_cls:
         for label_part in ["exp", "pm1", "pm2", "alpha"]:
-            label_idx = [
+            label_idx = next(
                 idx for idx, label in enumerate(labels) if label_part in label
-            ][0]
+            )
             handles.append(handles.pop(label_idx))
             labels.append(labels.pop(label_idx))
 
