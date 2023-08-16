@@ -102,8 +102,9 @@ class minuit_optimizer(OptimizerMixin):
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
         maxiter = options.pop('maxiter', self.maxiter)
-        # 0: Fast, user-provided gradient
-        # 1: Default, no user-provided gradient
+        # int(not do_grad) results in iminuit.Minuit.strategy of either:
+        #   0: Fast. Does not check a user-provided gradient.
+        #   1: Default. Checks user-provided gradient against numerical gradient.
         strategy = options.pop(
             'strategy', self.strategy if self.strategy is not None else int(not do_grad)
         )
