@@ -84,8 +84,14 @@ jobs:
         # is not empty
         [ "$(ls -A docs/_build/html/lite)" ]
 
+    - name: Fix permissions if needed
+      run: |
+        chmod -c -R +rX "docs/_build/html/" | while read line; do
+          echo "::warning title=Invalid file permissions automatically fixed::$line"
+        done
+
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v2
       with:
         path: 'docs/_build/html'
 
