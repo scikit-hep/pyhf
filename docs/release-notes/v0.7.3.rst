@@ -21,9 +21,10 @@ Fixes
 
   .. code:: python
 
-    ...
     pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(strategy=0))
+
     ...
+
     fit_result, opt_result = pyhf.infer.mle.fit(
         data, model, return_result_obj=True, do_grad=False
     )
