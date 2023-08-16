@@ -13,16 +13,15 @@ import logging
 log = logging.getLogger(__name__)
 
 # v0.7.x backport hack
-from sys import version_info
-
-if version_info < (3, 8):
-    import jax
-
-    _jax__version__ = jax.__version__
-else:
+try:
     from importlib.metadata import version
 
     _jax__version__ = version("jax")
+except ModuleNotFoundError:
+    # importlib.metadata added in Python 3.8
+    import jax
+
+    _jax__version__ = jax.__version__
 _jax__version__ = tuple(map(int, (_jax__version__.split("."))))
 _old_jax_version = _jax__version__ < (0, 4, 1)
 
