@@ -7,6 +7,7 @@ jsonpatch==1.15
 pyyaml==5.1
 importlib_resources==1.4.0  # c.f. PR #1979
 typing-extensions==3.7.4.3  # c.f. PR #1961, #1940
+importlib-metadata==0.1  # c.f. PR #2280
 # xmlio
 uproot==4.1.1
 # minuit
