@@ -106,7 +106,8 @@ class minuit_optimizer(OptimizerMixin):
         #   0: Fast. Does not check a user-provided gradient.
         #   1: Default. Checks user-provided gradient against numerical gradient.
         strategy = options.pop("strategy", self.strategy)
-        # Passing strategy=None as options kwarg requires check to guard against None
+        # Guard against None from either self.strategy defaulting to None or
+        # passing strategy=None as options kwarg
         if strategy is None:
             strategy = int(not do_grad)
         tolerance = options.pop('tolerance', self.tolerance)
