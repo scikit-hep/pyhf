@@ -254,7 +254,7 @@ class numpy_backend(Generic[T]):
         return np.sum(tensor_in, axis=axis)
 
     def product(self, tensor_in: Tensor[T], axis: Shape | None = None) -> ArrayLike:
-        return np.product(tensor_in, axis=axis)  # type: ignore[arg-type]
+        return np.prod(tensor_in, axis=axis)  # type: ignore[arg-type]
 
     def abs(self, tensor: Tensor[T]) -> ArrayLike:
         return np.abs(tensor)
