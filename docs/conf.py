@@ -529,4 +529,5 @@ linkcheck_ignore = [
 linkcheck_retries = 50
 
 # JupyterLite configuration
-jupyterlite_dir = "lite"
+# Use Path as jupyterlite-sphinx expects PosixPath
+jupyterlite_dir = Path("lite")
