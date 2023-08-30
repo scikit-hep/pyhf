@@ -36,7 +36,10 @@ jobs:
     - name: Install apt-get dependencies
       run: |
         sudo apt-get update
-        sudo apt-get -qq install pandoc
+        # Ubuntu 22.04's pandoc is too old (2.9.2.x), so install manually
+        # until the ubuntu-latest updates.
+        curl --silent --location --remote-name https://github.com/jgm/pandoc/releases/download/3.1.6.2/pandoc-3.1.6.2-1-amd64.deb
+        sudo apt-get install ./pandoc-*amd64.deb
 
     - name: Check docstrings
       run: |
