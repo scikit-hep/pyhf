@@ -64,12 +64,19 @@ class Callables:
         self._callbacks = _callbacks
 
     def __call__(self, *args, **kwargs):
-        for func, arg in self.callbacks:
+        for func, arg in self._callbacks:
             # weakref: needs to be de-ref'd first before calling
             if arg is not None:
-                func()(arg(), *args, **kwargs)
+                arg_ref = arg()
+                if arg_ref is not None:
+                    func()(arg_ref, *args, **kwargs)
             else:
                 func()(*args, **kwargs)
+        # We have to flush after calling all the callbacks, not before. That's
+        # beacause, earlier callbacks might cause new dead arg weakrefs in
+        # later callbacks. So we check for dead weakrefs in each iteration
+        # and then we flush at the end.
+        self._flush()
 
     def __iter__(self):
         return iter(self.callbacks)
