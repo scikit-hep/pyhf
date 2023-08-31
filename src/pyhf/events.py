@@ -73,7 +73,7 @@ class Callables:
             else:
                 func()(*args, **kwargs)
         # We have to flush after calling all the callbacks, not before. That's
-        # beacause, earlier callbacks might cause new dead arg weakrefs in
+        # because, earlier callbacks might cause new dead arg weakrefs in
         # later callbacks. So we check for dead weakrefs in each iteration
         # and then we flush at the end.
         self._flush()
