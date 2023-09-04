@@ -47,7 +47,7 @@ jobs:
     steps:
     # Use GitHub PAT to authenticate so other workflows trigger
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.target_branch }}
         fetch-depth: 0
