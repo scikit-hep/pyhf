@@ -14,7 +14,7 @@ Fixes
   The fixed bug was subtle and occurred nondeterministically when the
   :class:`pyhf.tensorlib` was changed repeatedly causing dead weakrefs
   to be accessed before Python's garbage collection could remove them.
-  Most users should be unaffected by this.
+  Most users should be unaffected.
 
 Contributors
 ------------
