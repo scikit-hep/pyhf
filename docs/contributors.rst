@@ -32,3 +32,4 @@ Contributors include:
 - Nathan Simpson
 - Beojan Stanislaus
 - Daniel Werner
+- Jonas Rembser
