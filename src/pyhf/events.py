@@ -72,9 +72,11 @@ class Callables:
                     func()(arg_ref, *args, **kwargs)
             else:
                 func()(*args, **kwargs)
-        # flush after calling all the callbacks, not before, as earlier
-        # callbacks might cause new dead arg weakrefs in later callbacks.
-        # So check for dead weakrefs in each iteration and flush at the end.
+        # Flush after calling all the callbacks, not before, as callbacks in the
+        # beginning of the iteration might cause new dead arg weakrefs in
+        # callbacks that are iterated over later.
+        # Checking for dead weakrefs in each iteration and flushing at the end
+        # avoids redundant dead weakref checking in subsequent calls.
         self._flush()
 
     def __iter__(self):
