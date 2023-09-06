@@ -1,0 +1,28 @@
+|release v0.7.4|_
+=================
+
+This is a patch release from ``v0.7.3`` → ``v0.7.4``.
+
+Fixes
+-----
+
+* Skip callbacks with dead weakrefs while iterating over callbacks in ``pyhf``
+  events, like :func:`pyhf.set_backend`, to avoid the possibility of accessing
+  dead weakrefs before they could be garbage collected.
+  (PR :pr:`2310`)
+
+  The fixed bug was subtle and occurred nondeterministically when the
+  :class:`pyhf.tensorlib` was changed repeatedly causing dead weakrefs
+  to be accessed before Python's garbage collection could remove them.
+  Most users should be unaffected by this.
+
+Contributors
+------------
+
+``v0.7.4`` benefited from contributions from:
+
+* Daniel Werner
+* Jonas Rembser
+
+.. |release v0.7.4| replace:: ``v0.7.4``
+.. _`release v0.7.4`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.4
