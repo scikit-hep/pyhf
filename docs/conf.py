@@ -519,6 +519,8 @@ linkcheck_ignore = [
     r'https://indico.desy.de/event/22731/.*',
     # https://indico.belle2.org/event/8470/contributions/55871/ is frequently generating 403 Client Error
     r'https://indico.belle2.org/event/8470/.*',
+    # https://doi.org/10.1142/S0217732321020016 is frequently generating 403 Client Error
+    r'https://doi\.org/10.1142/.*',
     # CERN doesn't maintain its SSL certs well enough to not have SSLErrors
     r'https://twiki.cern.ch/.*',
     # tags for a release won't exist until it is made, but the release notes
@@ -529,4 +531,5 @@ linkcheck_ignore = [
 linkcheck_retries = 50
 
 # JupyterLite configuration
-jupyterlite_dir = "lite"
+# Use Path as jupyterlite-sphinx expects PosixPath
+jupyterlite_dir = Path("lite")
