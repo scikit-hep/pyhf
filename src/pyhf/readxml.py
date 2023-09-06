@@ -340,7 +340,9 @@ def process_measurements(
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
     for x in toplvl.findall('Measurement'):
-        parameter_configs_map: MutableMapping[str, Parameter] = {k['name']: dict(**k) for k in other_parameter_configs}  # type: ignore[misc]
+        parameter_configs_map: MutableMapping[str, Parameter] = {
+            k['name']: dict(**k) for k in other_parameter_configs
+        }
         lumi = float(x.attrib['Lumi'])
         lumierr = lumi * float(x.attrib['LumiRelErr'])
 

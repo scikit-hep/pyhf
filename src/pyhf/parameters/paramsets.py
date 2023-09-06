@@ -30,7 +30,7 @@ class paramset:
 
     @property
     def suggested_fixed(self) -> List[bool]:
-        if type(self._suggested_fixed) == bool:
+        if isinstance(self._suggested_fixed, bool):
             return [self._suggested_fixed] * self.n_parameters
         return self._suggested_fixed
 
@@ -47,11 +47,9 @@ class paramset:
 
     @suggested_fixed.setter
     def suggested_fixed(self, value):
-        if type(value) == bool:
-            self._suggested_fixed = value
-        else:
+        if not isinstance(value, bool):
             assert len(value) == self.n_parameters
-            self._suggested_fixed = value
+        self._suggested_fixed = value
 
 
 class unconstrained(paramset):
