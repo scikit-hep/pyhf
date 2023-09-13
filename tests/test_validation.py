@@ -788,7 +788,9 @@ def test_validation(setup):
     source = setup['source']
 
     pdf = pyhf.Model(
-        setup['spec'], modifier_settings={'normsys': {'interpcode': 'code1'}}
+        setup["spec"],
+        modifier_settings={"normsys": {"interpcode": "code1"}},
+        poi_name="mu",
     )
 
     if 'channels' in source:

@@ -99,7 +99,7 @@ def test_hypotest_qmu_tilde(
         else [signal_sample, background_sample]
     )
     spec = {'channels': [{'name': 'singlechannel', 'samples': samples}]}
-    pdf = pyhf.Model(spec)
+    pdf = pyhf.Model(spec, poi_name="mu")
 
     data = source['bindata']['data'] + pdf.config.auxdata
 
