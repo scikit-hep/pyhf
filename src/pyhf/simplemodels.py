@@ -79,7 +79,7 @@ def correlated_background(
             }
         ]
     }
-    return Model(spec, batch_size=batch_size, validate=validate)
+    return Model(spec, batch_size=batch_size, validate=validate, poi_name="mu")
 
 
 def uncorrelated_background(
@@ -146,7 +146,7 @@ def uncorrelated_background(
             }
         ]
     }
-    return Model(spec, batch_size=batch_size, validate=validate)
+    return Model(spec, batch_size=batch_size, validate=validate, poi_name="mu")
 
 
 # Deprecated APIs
