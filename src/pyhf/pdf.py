@@ -770,7 +770,7 @@ class Model:
         # build up our representation of the specification
         # Default to no POI name
         # https://github.com/scikit-hep/pyhf/issues/2327
-        poi_name = config_kwargs.pop("poi_name", "")
+        poi_name = config_kwargs.pop("poi_name", None)
         self._config = _ModelConfig(self.spec, **config_kwargs)
 
         modifiers, _nominal_rates = _nominal_and_modifiers_from_spec(
