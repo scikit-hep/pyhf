@@ -141,7 +141,7 @@ How did ``pyhf`` get started?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In 2017 Lukas Heinrich was discussing with colleauge Holger Schulz how it would be convenient
-to share and produce statistical results from LHC experiements if they were able to be
+to share and produce statistical results from LHC experiments if they were able to be
 created with tools that didn't require the large ``C++`` dependencies and tooling expertise as
 :math:`\HiFa{}`.
 Around the same time that Lukas began thinking on these ideas, Matthew Feickert was working on

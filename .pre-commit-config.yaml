@@ -26,14 +26,14 @@ repos:
       # exclude generated files
       exclude: ^validation/|\.dtd$|\.xml$
 
--   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.0.287"
-    hooks:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: "v0.0.292"
+  hooks:
     - id: ruff
       args: ["--fix", "--show-fixes"]
 
 -   repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 23.7.0
+    rev: 23.9.1
     hooks:
     - id: black-jupyter
 
@@ -46,9 +46,6 @@ repos:
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.5.1
     # check the oldest and newest supported Pythons
-    # Though use Python 3.8 as the oldest Python to run mypy
-    # to avoid positional-only errors from NumPy in Python 3.11
-    # runtime.
     hooks:
       - &mypy
         id: mypy
@@ -65,11 +62,11 @@ repos:
     rev: 1.7.0
     hooks:
     - id: nbqa-ruff
-      additional_dependencies: [ruff==0.0.287]
+      additional_dependencies: [ruff==0.0.292]
       args: ["--extend-ignore=F821,F401,F841,F811"]
 
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.2.5
+    rev: v2.2.6
     hooks:
     - id: codespell
       files: ^.*\.(py|md|rst)$
