@@ -312,7 +312,7 @@ def spec(source):
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 def test_optim(backend, source, spec, mu):
-    pdf = pyhf.Model(spec)
+    pdf = pyhf.Model(spec, poi_name="mu")
     data = source['bindata']['data'] + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
@@ -336,7 +336,7 @@ def test_optim(backend, source, spec, mu):
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 def test_optim_with_value(backend, source, spec, mu):
-    pdf = pyhf.Model(spec)
+    pdf = pyhf.Model(spec, poi_name="mu")
     data = source['bindata']['data'] + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
@@ -364,7 +364,7 @@ def test_optim_with_value(backend, source, spec, mu):
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 @pytest.mark.only_numpy_minuit
 def test_optim_uncerts(backend, source, spec, mu):
-    pdf = pyhf.Model(spec)
+    pdf = pyhf.Model(spec, poi_name="mu")
     data = source['bindata']['data'] + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
@@ -391,7 +391,7 @@ def test_optim_uncerts(backend, source, spec, mu):
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 @pytest.mark.only_numpy_minuit
 def test_optim_correlations(backend, source, spec, mu):
-    pdf = pyhf.Model(spec)
+    pdf = pyhf.Model(spec, poi_name="mu")
     data = source['bindata']['data'] + pdf.config.auxdata
 
     init_pars = pdf.config.suggested_init()
