@@ -99,7 +99,7 @@ def backend(request):
         pid for pid in param_ids if request.node.get_closest_marker(f'only_{pid}')
     ]
     disable_backend = any(
-        backend in param_id for backend in request.config.disable_backend
+        backend in param_id for backend in request.config.option.disable_backend
     )
 
     if skip_backend and (param_id in only_backends):
@@ -109,7 +109,7 @@ def backend(request):
 
     if disable_backend:
         pytest.skip(
-            f"skipping {func_name} as the backend is disabled: {request.config.disable_backend}"
+            f"skipping {func_name} as the backend is disabled: {request.config.option.disable_backend}"
         )
     elif skip_backend:
         pytest.skip(f"skipping {func_name} as specified")
