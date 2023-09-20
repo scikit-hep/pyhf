@@ -651,6 +651,20 @@ class _MainModel:
         return self.make_pdf(pars).log_prob(maindata)
 
     def modifications(self, pars):
+        """
+        Obtain the additive and multiplicative modifications to the expected
+        event rates for the model parameters.
+
+        Args:
+            pars (:obj:`tensor`): The model parameters
+
+        Returns:
+            Tuple of additive and multiplicative modifications:
+                - deltas (:obj:`list`) is the result of an `apply(pars)` of combined modifiers
+                  with 'addition' op_code
+                - factors (:obj:`list`) is the result of `apply(pars)` of combined modifiers
+                  with 'multiplication' op_code
+        """
         deltas = list(
             filter(
                 lambda x: x is not None,
@@ -827,6 +841,10 @@ class Model:
         return self.make_pdf(pars)[1].expected_data()
 
     def modifications(self, pars):
+        """
+        The modifications applied to the :class:`~pyhf.pdf._MainModel`. See
+        :func:`pyhf.pdf._MainModel.modifications` for details.
+        """
         return self.main_model.modifications(pars)
 
     @property
