@@ -109,7 +109,7 @@ def backend(request):
 
     if disable_backend:
         pytest.skip(
-            f"skipping {func_name} as the backend is disabled: {request.config.option.disable_backend}"
+            f"skipping {func_name} as the backend is disabled via --disable-backend"
         )
     elif skip_backend:
         pytest.skip(f"skipping {func_name} as specified")
@@ -127,10 +127,14 @@ def backend(request):
             pytest.mark.xfail(reason=f"expect {func_name} to fail as specified")
         )
 
-    # actual execution here, after all checks is done
-    pyhf.set_backend(*request.param)
+    tensor_config, optimizer_config = request.param
 
-    yield request.param
+    tensor = getattr(pyhf.tensor, tensor_config[0])(**tensor_config[1])
+    optimizer = getattr(pyhf.optimize, optimizer_config[0])(**optimizer_config[1])
+    # actual execution here, after all checks is done
+    pyhf.set_backend(tensor, optimizer)
+
+    yield (tensor, optimizer)
 
 
 @pytest.fixture(
