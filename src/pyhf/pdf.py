@@ -650,7 +650,7 @@ class _MainModel:
         """
         return self.make_pdf(pars).log_prob(maindata)
 
-    def _modifications(self, pars):
+    def modifications(self, pars):
         deltas = list(
             filter(
                 lambda x: x is not None,
@@ -695,7 +695,7 @@ class _MainModel:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        deltas, factors = self._modifications(pars)
+        deltas, factors = self.modifications(pars)
 
         allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
 
@@ -826,8 +826,8 @@ class Model:
         pars = tensorlib.astensor(pars)
         return self.make_pdf(pars)[1].expected_data()
 
-    def _modifications(self, pars):
-        return self.main_model._modifications(pars)
+    def modifications(self, pars):
+        return self.main_model.modifications(pars)
 
     @property
     def nominal_rates(self):
