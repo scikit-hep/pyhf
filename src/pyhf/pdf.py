@@ -660,10 +660,10 @@ class _MainModel:
 
         Returns:
             Tuple of additive and multiplicative modifications:
-                - deltas (:obj:`list`) is the result of an `apply(pars)` of combined modifiers
-                  with 'addition' op_code
-                - factors (:obj:`list`) is the result of `apply(pars)` of combined modifiers
-                  with 'multiplication' op_code
+                - deltas (:obj:`list`) is the result of an ``apply(pars)`` of combined modifiers
+                  with ``"addition"`` ``op_code``
+                - factors (:obj:`list`) is the result of ``apply(pars)`` of combined modifiers
+                  with ``"multiplication"`` ``op_code`
         """
         deltas = list(
             filter(
