@@ -77,7 +77,7 @@ def test_staterror_holes():
 
     model = pyhf.Model(spec, poi_name="")
     assert model.config.npars == 9
-    _, factors = model._modifications(
+    _, factors = model.modifications(
         pyhf.tensorlib.astensor([2, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 5.0, 6.0])
     )
     assert model.config.param_set("staterror_1").suggested_fixed == [
@@ -151,7 +151,7 @@ def test_shapesys_holes():
     }
 
     model = pyhf.Model(spec, poi_name="mu")
-    _, factors = model._modifications(
+    _, factors = model.modifications(
         pyhf.tensorlib.astensor([1.0, 2.0, 1.0, 1.0, 3.0, 4.0, 1.0, 1.0, 5.0])
     )
     assert (factors[1][0, 0, 0, :] == [2.0, 1.0, 1.0, 3.0, 1.0, 1.0, 1.0, 1.0]).all()
