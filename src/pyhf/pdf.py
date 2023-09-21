@@ -650,7 +650,21 @@ class _MainModel:
         """
         return self.make_pdf(pars).log_prob(maindata)
 
-    def _modifications(self, pars):
+    def modifications(self, pars):
+        """
+        Obtain the additive and multiplicative modifications to the expected
+        event rates for the model parameters.
+
+        Args:
+            pars (:obj:`tensor`): The model parameters
+
+        Returns:
+            Tuple of additive and multiplicative modifications:
+                - deltas (:obj:`list`) is the result of an ``apply(pars)`` of combined modifiers
+                  with ``"addition"`` ``op_code``
+                - factors (:obj:`list`) is the result of ``apply(pars)`` of combined modifiers
+                  with ``"multiplication"`` ``op_code``
+        """
         deltas = list(
             filter(
                 lambda x: x is not None,
@@ -695,7 +709,7 @@ class _MainModel:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        deltas, factors = self._modifications(pars)
+        deltas, factors = self.modifications(pars)
 
         allsum = tensorlib.concatenate(deltas + [self.nominal_rates])
 
@@ -826,8 +840,12 @@ class Model:
         pars = tensorlib.astensor(pars)
         return self.make_pdf(pars)[1].expected_data()
 
-    def _modifications(self, pars):
-        return self.main_model._modifications(pars)
+    def modifications(self, pars):
+        """
+        The modifications applied to the :class:`~pyhf.pdf._MainModel`. See
+        :func:`pyhf.pdf._MainModel.modifications` for details.
+        """
+        return self.main_model.modifications(pars)
 
     @property
     def nominal_rates(self):
