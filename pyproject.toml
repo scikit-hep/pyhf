@@ -67,8 +67,8 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 [project.optional-dependencies]
 shellcomplete = ["click_completion"]
 tensorflow = [
-    "tensorflow>=2.7.0,!=2.14.0; platform_machine != 'arm64'",  # c.f. PR #1962
-    "tensorflow-macos>=2.7.0,!=2.14.0; platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. PR #2119
+    "tensorflow>=2.7.0; platform_machine != 'arm64'",  # c.f. PR #1962
+    "tensorflow-macos>=2.7.0; platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. PR #2119
     "tensorflow-probability>=0.11.0",  # c.f. PR #1657
 ]
 torch = ["torch>=1.10.0"]  # c.f. PR #1657
