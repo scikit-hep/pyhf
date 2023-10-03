@@ -62,7 +62,7 @@ repos:
     rev: 1.7.0
     hooks:
     - id: nbqa-ruff
-      additional_dependencies: [ruff==0.0.287]
+      additional_dependencies: [ruff==0.0.292]
       args: ["--extend-ignore=F821,F401,F841,F811"]
 
 -   repo: https://github.com/codespell-project/codespell
