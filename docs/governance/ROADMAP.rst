@@ -7,7 +7,7 @@ This is the pyhf 2019 into 2020 Roadmap (Issue
 Overview and Goals
 ------------------
 
-We will follow loosely Seibert’s `Heirarchy of
+We will follow loosely Seibert’s `Hierarchy of
 Needs <https://twitter.com/FRoscheck/status/1159158552298229763>`__
 
 |Seibert Hierarchy of Needs SciPy 2019| (`Stan

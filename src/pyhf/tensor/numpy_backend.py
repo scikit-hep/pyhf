@@ -98,8 +98,8 @@ class numpy_backend(Generic[T]):
 
         Args:
             tensor_in (:obj:`tensor`): The input tensor object
-            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be cliped to
-            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be cliped to
+            min_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The minimum value to be clipped to
+            max_value (:obj:`scalar` or :obj:`tensor` or :obj:`None`): The maximum value to be clipped to
 
         Returns:
             NumPy ndarray: A clipped `tensor`

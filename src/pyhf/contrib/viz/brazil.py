@@ -112,7 +112,7 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
         ax (:obj:`matplotlib.axes.Axes`): The matplotlib axis object to plot on.
 
     Returns:
-        :obj:`tuple`: The :obj:`matplotlib.aritst` objects drawn.
+        :obj:`tuple`: The :obj:`matplotlib.artist` objects drawn.
     """
     line_color = kwargs.pop("color", "black")
     (cls_obs_line,) = ax.plot(
