@@ -109,7 +109,13 @@ def backend(request):
 
     if disable_backend:
         pytest.skip(
-            f"skipping {func_name} as the backend is disabled via --disable-backend"
+            f"skipping {func_name} as the backend is disabled via "
+            + " ".join(
+                [
+                    f"--disable-backend {choice}"
+                    for choice in request.config.option.disable_backend
+                ]
+            )
         )
     elif skip_backend:
         pytest.skip(f"skipping {func_name} as specified")
