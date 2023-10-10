@@ -67,7 +67,7 @@ def make_builder(
             self.config = config
 
         def collect(self, thismod, nom):
-            maskval = True if thismod else False
+            maskval = bool(thismod)
             mask = [maskval] * len(nom)
             return {"mask": mask}
 
