@@ -1,10 +1,10 @@
 from __future__ import annotations
-import pyhf
-from pyhf.parameters import ParamViewer
-from pyhf import get_backend
-from pyhf import events
 
-from typing import Sequence, Callable, Any
+from typing import Any, Callable, Sequence
+
+import pyhf
+from pyhf import events, get_backend
+from pyhf.parameters import ParamViewer
 
 
 class BaseApplier:
