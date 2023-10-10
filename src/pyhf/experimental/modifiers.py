@@ -71,17 +71,17 @@ def make_builder(
             mask = [maskval] * len(nom)
             return {"mask": mask}
 
-        def append(self, key, channel, sample, thismod, defined_samp):
+        def append(self, key, channel, sample, thismod, defined_sample):
             self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
                 "data", {"mask": []}
             )
             nom = (
-                defined_samp["data"]
-                if defined_samp
+                defined_sample["data"]
+                if defined_sample
                 else [0.0] * self.config.channel_nbins[channel]
             )
-            moddata = self.collect(thismod, nom)
-            self.builder_data[key][sample]["data"]["mask"] += moddata["mask"]
+            mod_data = self.collect(thismod, nom)
+            self.builder_data[key][sample]["data"]["mask"] += mod_data["mask"]
             if thismod:
                 if thismod["name"] != func_name:
                     print(thismod)
@@ -110,7 +110,7 @@ def make_applier(
 
             self.batch_size = batch_size
             pars_for_applier = deps
-            _modnames = [f"{mtype}/{m}" for m, mtype in modifiers]
+            _mod_names = [f"{mtype}/{m}" for m, mtype in modifiers]
 
             parfield_shape = (
                 (self.batch_size, pdfconfig.npars)
@@ -121,8 +121,8 @@ def make_applier(
                 parfield_shape, pdfconfig.par_map, pars_for_applier
             )
             self._custom_mod_mask = [
-                [[builder_data[modname][s]["data"]["mask"]] for s in pdfconfig.samples]
-                for modname in _modnames
+                [[builder_data[mod_name][s]["data"]["mask"]] for s in pdfconfig.samples]
+                for mod_name in _mod_names
             ]
             self._precompute()
             events.subscribe("tensorlib_changed")(self._precompute)
