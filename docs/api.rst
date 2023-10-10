@@ -226,6 +226,17 @@ Utilities
    digest
    citation
 
+Experimental
+------------
+
+.. currentmodule:: pyhf.experimental
+
+.. autosummary::
+   :toctree: _generated/
+   :nosignatures:
+
+   modifiers
+
 Contrib
 -------
 

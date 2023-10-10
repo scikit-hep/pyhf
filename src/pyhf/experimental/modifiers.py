@@ -173,6 +173,72 @@ def make_applier(
 def add_custom_modifier(
     func_name: str, deps: list[str], new_params: dict[str, dict[str, Sequence[float]]]
 ) -> dict[str, tuple[BaseBuilder, BaseApplier]]:
+    r"""
+    Add a custom modifier type with the modifier data defined through a custom
+    numexpr string expression.
+
+    Example:
+
+        >>> import pyhf
+        >>> import pyhf.experimental.modifiers
+        >>> pyhf.set_backend("numpy")
+        >>> new_params = {
+        ...     "m1": {"inits": (1.0,), "bounds": ((-5.0, 5.0),)},
+        ...     "m2": {"inits": (1.0,), "bounds": ((-5.0, 5.0),)},
+        ... }
+        >>> expanded_pyhf = pyhf.experimental.modifiers.add_custom_modifier(
+        ...     "custom", ["m1", "m2"], new_params
+        ... )
+        >>> model = pyhf.Model(
+        ...     {
+        ...         "channels": [
+        ...             {
+        ...                 "name": "singlechannel",
+        ...                 "samples": [
+        ...                     {
+        ...                         "name": "signal",
+        ...                         "data": [10, 20],
+        ...                         "modifiers": [
+        ...                             {
+        ...                                 "name": "f2",
+        ...                                 "type": "custom",
+        ...                                 "data": {"expr": "m1"},
+        ...                             },
+        ...                         ],
+        ...                     },
+        ...                     {
+        ...                         "name": "background",
+        ...                         "data": [100, 150],
+        ...                         "modifiers": [
+        ...                             {
+        ...                                 "name": "f1",
+        ...                                 "type": "custom",
+        ...                                 "data": {"expr": "m1+(m2**2)"},
+        ...                             },
+        ...                         ],
+        ...                     },
+        ...                 ],
+        ...             }
+        ...         ]
+        ...     },
+        ...     modifier_set=expanded_pyhf,
+        ...     poi_name="m1",
+        ...     validate=False,
+        ...     batch_size=1,
+        ... )
+        >>> model.config.modifiers
+        [('f1', 'custom'), ('f2', 'custom')]
+
+    Args:
+        func_name (:obj:`str`): The name of the custom modifier type.
+        deps (:obj:`list`): The names of the new parameters of the modifier
+         function.
+        new_params (:obj:`dict`): The new parameters.
+
+    Returns:
+        :obj:`dict`: The updated ``pyhf.modifiers.histfactory_set`` with the added
+        custom modifier type.
+    """
     _builder = make_builder(func_name, deps, new_params)
     _applier = make_applier(func_name, deps, new_params)
 
