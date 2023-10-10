@@ -1,10 +1,29 @@
 from __future__ import annotations
 
+import logging
 from typing import Any, Callable, Sequence
 
 import pyhf
 from pyhf import events, get_backend
 from pyhf.parameters import ParamViewer
+
+log = logging.getLogger(__name__)
+
+__all__ = ["add_custom_modifier"]
+
+
+def __dir__():
+    return __all__
+
+
+try:
+    import numexpr as ne
+except ModuleNotFoundError:
+    log.error(
+        "\nInstallation of the experimental extra is required to use pyhf.experimental.modifiers"
+        + "\nPlease install with: python -m pip install 'pyhf[experimental]'\n",
+        exc_info=True,
+    )
 
 
 class BaseApplier:
@@ -31,8 +50,6 @@ def _allocate_new_param(
 
 def make_func(expression: str, deps: list[str]) -> Callable[[Sequence[float]], Any]:
     def func(d: Sequence[float]) -> Any:
-        import numexpr as ne
-
         return ne.evaluate(expression, local_dict=dict(zip(deps, d)))
 
     return func
