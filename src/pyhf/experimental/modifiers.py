@@ -24,6 +24,7 @@ except ModuleNotFoundError:
         + "\nPlease install with: python -m pip install 'pyhf[experimental]'\n",
         exc_info=True,
     )
+    raise
 
 
 class BaseApplier:

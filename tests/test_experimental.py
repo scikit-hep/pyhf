@@ -1,5 +1,25 @@
+import sys
+from importlib import import_module, reload
+from unittest import mock
+
+import pytest
+
 import pyhf
 import pyhf.experimental.modifiers
+
+
+def test_missing_experimental_extra():
+    """
+    Verify ModuleNotFoundError if dependencies required of the experimental
+    extra are not installed.
+    """
+    with mock.patch.dict(sys.modules):
+        sys.modules["numexpr"] = None
+        with pytest.raises(ModuleNotFoundError):
+            if "pyhf.experimental.modifiers" in sys.modules:
+                reload(sys.modules["pyhf.experimental.modifiers"])
+            else:
+                import_module("pyhf.experimental.modifiers")
 
 
 def test_add_custom_modifier(backend):
