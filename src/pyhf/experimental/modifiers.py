@@ -238,6 +238,8 @@ def add_custom_modifier(
     Returns:
         :obj:`dict`: The updated ``pyhf.modifiers.histfactory_set`` with the added
         custom modifier type.
+
+    .. versionadded:: 0.8.0
     """
     _builder = make_builder(func_name, deps, new_params)
     _applier = make_applier(func_name, deps, new_params)
