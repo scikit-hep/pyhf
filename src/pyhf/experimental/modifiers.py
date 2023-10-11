@@ -84,7 +84,6 @@ def make_builder(
             self.builder_data[key][sample]["data"]["mask"] += mod_data["mask"]
             if thismod:
                 if thismod["name"] != func_name:
-                    print(thismod)
                     self.builder_data["funcs"].setdefault(
                         thismod["name"], thismod["data"]["expr"]
                     )
@@ -150,14 +149,12 @@ def make_applier(
             tensorlib, _ = get_backend()
             if self.batch_size is None:
                 deps = self.param_viewer.get(pars)
-                print("deps", deps.shape)
                 results = tensorlib.astensor([f(deps) for f in self.funcs])
                 results = tensorlib.einsum(
                     "msab,m->msab", self.custom_mod_mask, results
                 )
             else:
                 deps = self.param_viewer.get(pars)
-                print("deps", deps.shape)
                 results = tensorlib.astensor([f(deps) for f in self.funcs])
                 results = tensorlib.einsum(
                     "msab,ma->msab", self.custom_mod_mask, results
