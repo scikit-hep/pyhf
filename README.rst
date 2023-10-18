@@ -348,7 +348,8 @@ Acknowledgements
 ----------------
 
 Matthew Feickert has received support to work on ``pyhf`` provided by NSF
-cooperative agreement `OAC-1836650 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1836650>`__ (IRIS-HEP)
+cooperative agreements `OAC-1836650 <https://nsf.gov/awardsearch/showAward?AWD_ID=1836650>`__
+and `PHY-2323298 <https://nsf.gov/awardsearch/showAward?AWD_ID=2323298>`__ (IRIS-HEP)
 and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377>`__ (DIANA/HEP).
 
 ``pyhf`` is a `NumFOCUS Affiliated Project <https://numfocus.org/sponsored-projects/affiliated-projects>`__.
@@ -361,8 +362,10 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://doi.org/10.21105/joss.02823
 .. |Scikit-HEP| image:: https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
    :target: https://scikit-hep.org/
-.. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
+.. |NSF Award Number 1| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
+.. |NSF Award Number 2| image:: https://img.shields.io/badge/PHY-2323298-blue.svg
+   :target: https://nsf.gov/awardsearch/showAward?AWD_ID=2323298
 .. |NumFOCUS Affiliated Project| image:: https://img.shields.io/badge/NumFOCUS-Affiliated%20Project-orange.svg?style=flat&colorA=E1523D&colorB=007D8A
    :target: https://numfocus.org/sponsored-projects/affiliated-projects
 .. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.4-blue.svg
