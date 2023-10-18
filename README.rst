@@ -364,7 +364,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://scikit-hep.org/
 .. |NSF Award Number 1| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
-.. |NSF Award Number 2| image:: https://img.shields.io/badge/PHY-2323298-blue.svg
+.. |NSF Award Number 2| image:: https://img.shields.io/badge/NSF-2323298-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=2323298
 .. |NumFOCUS Affiliated Project| image:: https://img.shields.io/badge/NumFOCUS-Affiliated%20Project-orange.svg?style=flat&colorA=E1523D&colorB=007D8A
    :target: https://numfocus.org/sponsored-projects/affiliated-projects
