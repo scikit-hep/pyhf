@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number| |NumFOCUS Affiliated Project|
+|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number 1| |NSF Award Number 2| |NumFOCUS Affiliated Project|
 
 |Docs from latest| |Docs from main| |Jupyter Book tutorial| |Binder|
 
