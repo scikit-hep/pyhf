@@ -429,7 +429,8 @@ def test_optim_uncerts_autodiff(backend, source, spec, mu):
         return_uncertainties=True,
     )
     assert result.shape == (2, 2)
-    # TODO: this does not match minuit at all (0.26418431) -- is that correct here?
+    # NOTE: this does not match minuit at all (0.26418431), and is probably an artefact of doing a fixed POI fit on this particular model?
+    # see discussion in https://github.com/scikit-hep/pyhf/pull/2269 for more details. differences disappear in global fit uncertainties.
     assert pytest.approx([0.6693815171034548, 0.0]) == pyhf.tensorlib.tolist(
         result[:, 1]
     )

@@ -99,14 +99,16 @@ class OptimizerMixin:
             # extract number of fixed parameters
             num_fixed_pars = len(fitted_pars) - len(fitresult.x)
 
-            # FIXME: Set uncertainties for fixed parameters to 0 manually
-            # https://github.com/scikit-hep/iminuit/issues/762
-            # https://github.com/scikit-hep/pyhf/issues/1918
-            # https://github.com/scikit-hep/cabinetry/pull/346
+            # Set uncertainties for fixed parameters to 0 manually
             if fixed_vals is not None:  # check for fixed vals
                 if using_minuit:
+                    # See related discussion here:
+                    # https://github.com/scikit-hep/iminuit/issues/762
+                    # https://github.com/scikit-hep/pyhf/issues/1918
+                    # https://github.com/scikit-hep/cabinetry/pull/346
                     uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
                 else:
+                    # Not using minuit, so don't have `fitresult.minuit.fixed` here: do it manually
                     fixed_bools = [False] * len(init_pars)
                     for index, _ in fixed_vals:
                         fixed_bools[index] = True
@@ -128,7 +130,8 @@ class OptimizerMixin:
             cov = hess_inv
 
         # we also need to edit the covariance matrix to zero-out uncertainties!
-        if fixed_vals is not None and not using_minuit:  # minuit already does this
+        # NOTE: minuit already does this (https://github.com/scikit-hep/iminuit/issues/762#issuecomment-1207436406)
+        if fixed_vals is not None and not using_minuit:  
             fixed_bools = [False] * len(init_pars)
             # Convert fixed_bools to a numpy array and reshape to make it a column vector
             fixed_mask = tensorlib.reshape(
