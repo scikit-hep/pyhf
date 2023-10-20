@@ -131,7 +131,7 @@ class OptimizerMixin:
 
         # we also need to edit the covariance matrix to zero-out uncertainties!
         # NOTE: minuit already does this (https://github.com/scikit-hep/iminuit/issues/762#issuecomment-1207436406)
-        if fixed_vals is not None and not using_minuit:  
+        if fixed_vals is not None and not using_minuit:
             fixed_bools = [False] * len(init_pars)
             # Convert fixed_bools to a numpy array and reshape to make it a column vector
             fixed_mask = tensorlib.reshape(
