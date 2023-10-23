@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number 1| |NSF Award Number 2| |NumFOCUS Affiliated Project|
+|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number IRIS-HEP v1| |NSF Award Number IRIS-HEP v2| |NumFOCUS Affiliated Project|
 
 |Docs from latest| |Docs from main| |Jupyter Book tutorial| |Binder|
 
@@ -362,9 +362,9 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://doi.org/10.21105/joss.02823
 .. |Scikit-HEP| image:: https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
    :target: https://scikit-hep.org/
-.. |NSF Award Number 1| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
+.. |NSF Award Number IRIS-HEP v1| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
-.. |NSF Award Number 2| image:: https://img.shields.io/badge/NSF-2323298-blue.svg
+.. |NSF Award Number IRIS-HEP v2| image:: https://img.shields.io/badge/NSF-2323298-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=2323298
 .. |NumFOCUS Affiliated Project| image:: https://img.shields.io/badge/NumFOCUS-Affiliated%20Project-orange.svg?style=flat&colorA=E1523D&colorB=007D8A
    :target: https://numfocus.org/sponsored-projects/affiliated-projects
