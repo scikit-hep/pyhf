@@ -19,7 +19,7 @@ def load_schema(schema_id: str):
     Args:
         schema_id (str): Relative path to schema from :attr:`pyhf.schema.path`
 
-    Examples:
+    Example:
         >>> import pyhf
         >>> schema = pyhf.schema.load_schema("1.0.0/defs.json")
         >>> type(schema)
@@ -27,18 +27,6 @@ def load_schema(schema_id: str):
         >>> schema.keys()
         dict_keys(['$schema', '$id', 'definitions'])
         >>> pyhf.schema.load_schema("0.0.0/defs.json")  # doctest: +ELLIPSIS
-        Traceback (most recent call last):
-            ...
-        pyhf.exceptions.SchemaNotFound: ...
-
-        >>> import pyhf
-        >>> import os
-        >>> schema = pyhf.schema.load_schema(f"1.0.0{os.sep}defs.json")
-        >>> type(schema)
-        <class 'dict'>
-        >>> schema.keys()
-        dict_keys(['$schema', '$id', 'definitions'])
-        >>> pyhf.schema.load_schema(f"0.0.0{os.sep}defs.json")  # doctest: +ELLIPSIS
         Traceback (most recent call last):
             ...
         pyhf.exceptions.SchemaNotFound: ...
