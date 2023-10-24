@@ -1,5 +1,4 @@
 import numbers
-import os
 from pathlib import Path
 from typing import Mapping, Union
 
@@ -79,7 +78,7 @@ def validate(
     # * https://bugs.python.org/issue21039
     # * https://github.com/python/cpython/issues/65238
     resolver = jsonschema.RefResolver(
-        base_uri=f"{Path(variables.schemas).joinpath(version).as_uri()}{os.sep}",
+        base_uri=f"{Path(variables.schemas).joinpath(version).as_uri()}/",
         referrer=schema_name,
         store=variables.SCHEMA_CACHE,
     )
