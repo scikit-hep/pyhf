@@ -7,6 +7,8 @@ import pyhf.exceptions
 from pyhf import tensor
 from pyhf.schema import variables
 from pyhf.schema.loader import load_schema
+from pathlib import Path
+import os
 
 
 def _is_array_or_tensor(checker, instance):
@@ -70,12 +72,14 @@ def validate(
 
     version = version or variables.SCHEMA_VERSION
 
-    schema = load_schema(f'{version}/{schema_name}')
+    schema = load_schema(str(Path(version).joinpath(schema_name)))
 
-    # note: trailing slash needed for RefResolver to resolve correctly
+    # note: trailing slash needed for RefResolver to resolve correctly and by
+    # design, pathlib strips trailing slashes. See ref bewlow:
+    # - https://bugs.python.org/issue21039
     resolver = jsonschema.RefResolver(
-        base_uri=f"file://{variables.schemas}/{version}/",
-        referrer=f"{schema_name}",
+        base_uri=f"{Path(variables.schemas).joinpath(version).as_uri()}{os.sep}",
+        referrer=schema_name,
         store=variables.SCHEMA_CACHE,
     )
 
