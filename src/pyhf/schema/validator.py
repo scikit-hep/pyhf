@@ -75,8 +75,9 @@ def validate(
     schema = load_schema(str(Path(version).joinpath(schema_name)))
 
     # note: trailing slash needed for RefResolver to resolve correctly and by
-    # design, pathlib strips trailing slashes. See ref bewlow:
-    # - https://bugs.python.org/issue21039
+    # design, pathlib strips trailing slashes. See ref below:
+    # * https://bugs.python.org/issue21039
+    # * https://github.com/python/cpython/issues/65238
     resolver = jsonschema.RefResolver(
         base_uri=f"{Path(variables.schemas).joinpath(version).as_uri()}{os.sep}",
         referrer=schema_name,
