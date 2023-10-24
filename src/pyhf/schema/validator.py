@@ -1,4 +1,6 @@
 import numbers
+import os
+from pathlib import Path
 from typing import Mapping, Union
 
 import jsonschema
@@ -7,8 +9,6 @@ import pyhf.exceptions
 from pyhf import tensor
 from pyhf.schema import variables
 from pyhf.schema.loader import load_schema
-from pathlib import Path
-import os
 
 
 def _is_array_or_tensor(checker, instance):
