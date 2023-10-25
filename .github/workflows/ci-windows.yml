@@ -1,0 +1,59 @@
+name: CI on Windows
+
+on:
+  push:
+  pull_request:
+    branches:
+    - main
+    - release/v*
+  # Run daily at 0:01 UTC
+  schedule:
+  - cron:  '1 0 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+
+    runs-on: ${{ matrix.os }}
+    # On push events run the CI only on main by default, but run on any branch if the commit message contains '[ci all]'
+    # if: >-
+    #   github.event_name != 'push'
+    #   || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    #   || (github.event_name == 'push' && github.ref != 'refs/heads/main' && contains(github.event.head_commit.message, '[ci all]'))
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install --upgrade .[test]
+
+    - name: List installed Python packages
+      run: python -m pip list
+
+    - name: Test with pytest and coverage
+      run: |
+        coverage run --module pytest \
+          --ignore tests/contrib \
+          --ignore tests/benchmarks \
+          --ignore tests/test_notebooks.py \
+          --ignore tests/test_scripts.py
+
+    - name: Coverage report for core project
+      run: |
+        coverage report
+        coverage xml
