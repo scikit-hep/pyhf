@@ -1,7 +1,6 @@
 name: CI on Windows
 
 on:
-  push:
   # Run daily at 1:23 UTC
   schedule:
   - cron:  '23 1 * * *'
