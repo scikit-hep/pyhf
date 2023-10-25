@@ -2,6 +2,7 @@
 Release Notes
 =============
 
+.. include:: release-notes/v0.7.5.rst
 .. include:: release-notes/v0.7.4.rst
 .. include:: release-notes/v0.7.3.rst
 .. include:: release-notes/v0.7.2.rst
