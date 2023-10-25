@@ -1,14 +1,10 @@
 name: CI on Windows
 
 on:
-  push:
-  pull_request:
-    branches:
-    - main
-    - release/v*
-  # Run daily at 0:01 UTC
+  # push:
+  # Run daily at 1:23 UTC
   schedule:
-  - cron:  '1 0 * * *'
+  - cron:  '23 1 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -19,11 +15,6 @@ jobs:
   test:
 
     runs-on: ${{ matrix.os }}
-    # On push events run the CI only on main by default, but run on any branch if the commit message contains '[ci all]'
-    # if: >-
-    #   github.event_name != 'push'
-    #   || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-    #   || (github.event_name == 'push' && github.ref != 'refs/heads/main' && contains(github.event.head_commit.message, '[ci all]'))
     strategy:
       matrix:
         os: [windows-latest]
