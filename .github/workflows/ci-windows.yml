@@ -1,0 +1,46 @@
+name: CI on Windows
+
+on:
+  # Run daily at 1:23 UTC
+  schedule:
+  - cron:  '23 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install --upgrade '.[test]'
+
+    - name: List installed Python packages
+      run: python -m pip list
+
+    - name: Test with pytest and coverage
+      # FIXME: ignore tests/test_scripts.py as runner breaks on Windows currently
+      run: |
+        coverage run --module pytest --ignore tests/test_scripts.py --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
+
+    - name: Coverage report for core project
+      run: |
+        coverage report
+        coverage xml
