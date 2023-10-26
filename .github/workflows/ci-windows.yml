@@ -35,10 +35,13 @@ jobs:
     - name: List installed Python packages
       run: python -m pip list
 
-    - name: Test with pytest and coverage
-      # FIXME: ignore tests/test_scripts.py as runner breaks on Windows currently
+    - name: Test possible failure first
       run: |
-        coverage run --module pytest --ignore tests/test_scripts.py --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
+        coverage run --module pytest tests/test_scripts.py
+
+    - name: Test with pytest and coverage
+      run: |
+        coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
     - name: Coverage report for core project
       run: |
