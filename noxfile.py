@@ -35,7 +35,7 @@ def tests(session):
         $ nox --session tests --python 3.11 -- tests/test_tensor.py  # run specific tests
         $ nox --session tests --python 3.11 -- coverage  # run with coverage but slower
     """
-    session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "--editable", ".[all,test]")
     session.install("--upgrade", "pytest")
 
     # Allow tests to be run with coverage
@@ -107,7 +107,7 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "--editable", ".[all,test]")
     session.install("--upgrade", "pytest", "matplotlib")
     if not sys.platform.startswith("linux"):
         session.error(
@@ -182,7 +182,7 @@ def notebooks(session: nox.Session):
     """
     Run the notebook tests.
     """
-    session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "--editable", ".[all,test]")
     session.run(
         "pytest",
         "--override-ini",
