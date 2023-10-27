@@ -88,7 +88,6 @@ all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
 
 # Developer extras
 test = [
-    "pyhf[all]",
     "scikit-hep-testdata>=0.4.11",
     "pytest>=6.0",
     "coverage[toml]>=6.0.0",
@@ -121,7 +120,7 @@ docs = [
     "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
 ]
 develop = [
-    "pyhf[test,docs]",
+    "pyhf[all,test,docs]",
     "tbump>=6.7.0",
     "pre-commit",
     "nox",
