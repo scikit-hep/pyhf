@@ -172,7 +172,8 @@ def test_import_usingMounts(datadir, tmpdir, script_runner):
     data = datadir.joinpath("xmlimport_absolutePaths")
 
     temp = tmpdir.join("parsed_output.json")
-    command = f'pyhf xml2json --hide-progress -v {data}:/absolute/path/to -v {data}:/another/absolute/path/to --output-file {temp.strpath:s} {data.joinpath("config/example.xml")}'
+    # command = f'pyhf xml2json --hide-progress -v {data}:/absolute/path/to -v {data}:/another/absolute/path/to --output-file {temp.strpath:s} {data.joinpath("config/example.xml")}'
+    command = f'pyhf xml2json --hide-progress -v {data}:{Path("/absolute/path/to")} -v {data}:{Path("/another/absolute/path/to")} --output-file {temp.strpath:s} {data.joinpath("config/example.xml")}'
 
     ret = script_runner.run(shlex.split(command, posix=(os.name == "posix")))
     assert ret.success
@@ -532,7 +533,7 @@ def test_combine_outfile(tmpdir, script_runner):
 def test_combine_merge_channels(tmpdir, script_runner):
     temp_1 = tmpdir.join("parsed_output.json")
     temp_2 = tmpdir.join("renamed_output.json")
-    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath} --hide-progress'
+    command = f'pyhf xml2json {Path("validation/xmlimport_input/config/example.xml")} --basedir {Path("validation/xmlimport_input/")} --output-file {temp_1.strpath} --hide-progress'
     ret = script_runner.run(shlex.split(command, posix=(os.name == "posix")))
     assert ret.success
 
