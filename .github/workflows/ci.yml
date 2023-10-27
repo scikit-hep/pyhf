@@ -118,3 +118,42 @@ jobs:
       if: github.event_name == 'schedule' && matrix.python-version == '3.11'
       run: |
         pytest --benchmark-sort=mean tests/benchmarks/test_benchmark.py
+
+  test-new-cpython-support:
+
+    runs-on: ${{ matrix.os }}
+    # On push events run the CI only on main by default, but run on any branch if the commit message contains '[ci all]'
+    if: >-
+      github.event_name != 'push'
+      || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+      || (github.event_name == 'push' && github.ref != 'refs/heads/main' && contains(github.event.head_commit.message, '[ci all]'))
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ['3.12']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        # No PyTorch or TensorFlow for Python 3.12 yet
+        python -m pip install --upgrade ".[jax,minuit,xmlio,contrib,shellcomplete,test]"
+
+    - name: List installed Python packages
+      run: python -m pip list
+
+    - name: Test with pytest and coverage
+      run: |
+        coverage run --module pytest --disable-backend tensorflow --disable-backend pytorch --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
+
+    - name: Coverage report for core project
+      run: |
+        coverage report
+        coverage xml
