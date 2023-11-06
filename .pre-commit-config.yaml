@@ -22,6 +22,7 @@ repos:
     - id: name-tests-test
       args: ["--pytest-test-first"]
     - id: requirements-txt-fixer
+      exclude: tests/constraints.txt
     - id: trailing-whitespace
       # exclude generated files
       exclude: ^validation/|\.dtd$|\.xml$
@@ -41,7 +42,7 @@ repos:
     rev: 1.16.0
     hooks:
     - id: blacken-docs
-      additional_dependencies: [black==23.7.0]
+      additional_dependencies: [black==23.10.1]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.6.1
@@ -62,7 +63,7 @@ repos:
     rev: 1.7.0
     hooks:
     - id: nbqa-ruff
-      additional_dependencies: [ruff==0.0.292]
+      additional_dependencies: [ruff==v0.1.4]
       args: ["--extend-ignore=F821,F401,F841,F811"]
 
 -   repo: https://github.com/codespell-project/codespell
