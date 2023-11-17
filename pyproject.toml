@@ -284,25 +284,27 @@ module = [
 ignore_errors = true
 
 [tool.ruff]
+src = ["src"]
+line-length = 88
+
+[tool.ruff.lint]
 select = [
   "E", "F", "W", # flake8
   "UP",          # pyupgrade
   "RUF",         # Ruff-specific
   "TID",         # flake8-tidy-imports
 ]
-line-length = 88
 ignore = [
   "E402",
   "E501",
   "RUF001", # String contains ambiguous unicode character
   "RUF005", # unpack-instead-of-concatenating-to-collection-literal
 ]
-src = ["src"]
 typing-modules = ["pyhf.typing"]
 unfixable = [
   "F841", # Removes unused variables
 ]
 flake8-tidy-imports.ban-relative-imports = "all"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
