@@ -216,6 +216,7 @@ filterwarnings = [
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
     "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
     "ignore:jsonschema.RefResolver is deprecated as of v4.18.0, in favor of the:DeprecationWarning",  # Issue #2139
+    "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
 ]
 
 [tool.coverage.run]
