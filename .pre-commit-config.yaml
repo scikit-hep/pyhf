@@ -27,6 +27,13 @@ repos:
       # exclude generated files
       exclude: ^validation/|\.dtd$|\.xml$
 
+- repo: https://github.com/pre-commit/pygrep-hooks
+  rev: "v1.10.0"
+  hooks:
+    - id: rst-backticks
+    - id: rst-directive-colons
+    - id: rst-inline-touching-normal
+
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: "v0.1.4"
   hooks:
