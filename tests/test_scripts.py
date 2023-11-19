@@ -62,7 +62,7 @@ def test_import_prepHistFactory(tmp_path, script_runner):
     assert ret.stdout == ''
     assert ret.stderr == ''
 
-    parsed_xml = json.loads(temp.read())
+    parsed_xml = json.loads(temp.read_text())
     spec = {'channels': parsed_xml['channels']}
     pyhf.schema.validate(spec, 'model.json')
 
@@ -175,7 +175,7 @@ def test_import_usingMounts(datadir, tmp_path, script_runner):
     assert ret.stdout == ''
     assert ret.stderr == ''
 
-    parsed_xml = json.loads(temp.read())
+    parsed_xml = json.loads(temp.read_text())
     spec = {'channels': parsed_xml['channels']}
     pyhf.schema.validate(spec, 'model.json')
 
@@ -236,7 +236,7 @@ def test_import_and_export(tmp_path, script_runner):
 def test_patch(tmp_path, script_runner):
     patch = tmp_path.joinpath('patch.json')
 
-    patch.write(
+    patch.write_text(
         '''
 [{"op": "replace", "path": "/channels/0/samples/0/data", "value": [5,6]}]
     '''
@@ -269,7 +269,7 @@ def test_patch(tmp_path, script_runner):
 def test_patch_fail(tmp_path, script_runner):
     patch = tmp_path.joinpath('patch.json')
 
-    patch.write('''not,json''')
+    patch.write_text('''not,json''')
 
     temp = tmp_path.joinpath("parsed_output.json")
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
@@ -380,7 +380,7 @@ def test_inspect_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    summary = json.loads(tempout.read())
+    summary = json.loads(tempout.read_text())
     assert [
         'channels',
         'measurements',
@@ -417,11 +417,11 @@ def test_prune_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    spec = json.loads(temp.read())
+    spec = json.loads(temp.read_text())
     ws = pyhf.Workspace(spec)
     assert 'GammaExample' in ws.measurement_names
     assert 'staterror_channel1' in ws.model().config.parameters
-    pruned_spec = json.loads(tempout.read())
+    pruned_spec = json.loads(tempout.read_text())
     pruned_ws = pyhf.Workspace(pruned_spec)
     assert 'GammaExample' not in pruned_ws.measurement_names
     assert 'staterror_channel1' not in pruned_ws.model().config.parameters
@@ -447,13 +447,13 @@ def test_rename_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    spec = json.loads(temp.read())
+    spec = json.loads(temp.read_text())
     ws = pyhf.Workspace(spec)
     assert 'GammaExample' in ws.measurement_names
     assert 'GamEx' not in ws.measurement_names
     assert 'staterror_channel1' in ws.model().config.parameters
     assert 'staterror_channelone' not in ws.model().config.parameters
-    renamed_spec = json.loads(tempout.read())
+    renamed_spec = json.loads(tempout.read_text())
     renamed_ws = pyhf.Workspace(renamed_spec)
     assert 'GammaExample' not in renamed_ws.measurement_names
     assert 'GamEx' in renamed_ws.measurement_names
@@ -517,7 +517,7 @@ def test_combine_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    combined_spec = json.loads(tempout.read())
+    combined_spec = json.loads(tempout.read_text())
     combined_ws = pyhf.Workspace(combined_spec)
     assert combined_ws.channels == ['channel1', 'channel2']
     assert len(combined_ws.measurement_names) == 8
@@ -699,7 +699,7 @@ def test_patchset_extract(datadir, tmp_path, script_runner, output_file, with_me
 
     assert ret.success
     if output_file:
-        extracted_output = json.loads(temp.read())
+        extracted_output = json.loads(temp.read_text())
     else:
         extracted_output = json.loads(ret.stdout)
     if with_metadata:
@@ -732,7 +732,7 @@ def test_patchset_apply(datadir, tmp_path, script_runner, output_file):
 
     assert ret.success
     if output_file:
-        extracted_output = json.loads(temp.read())
+        extracted_output = json.loads(temp.read_text())
     else:
         extracted_output = json.loads(ret.stdout)
     assert extracted_output['channels'][0]['samples'][0]['modifiers'][0]['data'] == {
