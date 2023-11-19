@@ -117,7 +117,7 @@ def test_import_prepHistFactory_and_fit(tmp_path, script_runner):
 
         tmp_out = tmp_path.joinpath(f"{measurement:s}_output.json")
         # make sure output file works too
-        command += f" --output-file {tmp_out.strpath:s}"
+        command += f" --output-file {tmp_out}"
         ret = script_runner.run(shlex.split(command))
         assert ret.success
         ret_json = json.load(tmp_out)
@@ -156,7 +156,7 @@ def test_import_prepHistFactory_and_cls(tmp_path, script_runner):
 
         tmp_out = tmp_path.joinpath(f'{measurement:s}_output.json')
         # make sure output file works too
-        command += f' --output-file {tmp_out.strpath:s}'
+        command += f' --output-file {tmp_out}'
         ret = script_runner.run(shlex.split(command))
         assert ret.success
         d = json.load(tmp_out)
@@ -228,7 +228,7 @@ def test_import_and_export(tmp_path, script_runner):
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
     ret = script_runner.run(shlex.split(command))
 
-    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output').strpath:s}"
+    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output')}"
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -246,11 +246,11 @@ def test_patch(tmp_path, script_runner):
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
     ret = script_runner.run(shlex.split(command))
 
-    command = f'pyhf cls {temp} --patch {patch.strpath:s}'
+    command = f'pyhf cls {temp} --patch {patch}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output_1').strpath:s} --patch {patch.strpath:s}"
+    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output_1')} --patch {patch}"
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -259,7 +259,9 @@ def test_patch(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command), stdin=patch)
     assert ret.success
 
-    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output_2').strpath:s} --patch -"
+    command = (
+        f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output_2')} --patch -"
+    )
     ret = script_runner.run(shlex.split(command), stdin=patch)
     assert ret.success
 
@@ -273,11 +275,13 @@ def test_patch_fail(tmp_path, script_runner):
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
     ret = script_runner.run(shlex.split(command))
 
-    command = f'pyhf cls {temp} --patch {patch.strpath:s}'
+    command = f'pyhf cls {temp} --patch {patch}'
     ret = script_runner.run(shlex.split(command))
     assert not ret.success
 
-    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output').strpath:s} --patch {patch.strpath:s}"
+    command = (
+        f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output')} --patch {patch}"
+    )
     ret = script_runner.run(shlex.split(command))
     assert not ret.success
 
@@ -460,7 +464,7 @@ def test_rename_outfile(tmp_path, script_runner):
 def test_combine(tmp_path, script_runner):
     temp_1 = tmp_path.joinpath("parsed_output.json")
     temp_2 = tmp_path.joinpath("renamed_output.json")
-    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath:s} --hide-progress'
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1} --hide-progress'
     ret = script_runner.run(shlex.split(command))
 
     rename_channels = {'channel1': 'channel2'}
@@ -477,10 +481,10 @@ def test_combine(tmp_path, script_runner):
     _opts_measurements = ''.join(
         ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
     )
-    command = f"pyhf rename {temp_1.strpath:s} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2.strpath:s}"
+    command = f"pyhf rename {temp_1} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2}"
     ret = script_runner.run(shlex.split(command))
 
-    command = f'pyhf combine {temp_1.strpath:s} {temp_2.strpath:s}'
+    command = f'pyhf combine {temp_1} {temp_2}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -488,7 +492,7 @@ def test_combine(tmp_path, script_runner):
 def test_combine_outfile(tmp_path, script_runner):
     temp_1 = tmp_path.joinpath("parsed_output.json")
     temp_2 = tmp_path.joinpath("renamed_output.json")
-    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath:s} --hide-progress'
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1} --hide-progress'
     ret = script_runner.run(shlex.split(command))
 
     rename_channels = {'channel1': 'channel2'}
@@ -505,13 +509,11 @@ def test_combine_outfile(tmp_path, script_runner):
     _opts_measurements = ''.join(
         ' --measurement ' + ' '.join(item) for item in rename_measurements.items()
     )
-    command = f"pyhf rename {temp_1.strpath:s} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2.strpath:s}"
+    command = f"pyhf rename {temp_1} {_opts_channels:s} {_opts_measurements:s} --output-file {temp_2}"
     ret = script_runner.run(shlex.split(command))
 
     tempout = tmp_path.joinpath("combined_output.json")
-    command = (
-        f'pyhf combine {temp_1.strpath:s} {temp_2.strpath:s} --output-file {tempout}'
-    )
+    command = f'pyhf combine {temp_1} {temp_2} --output-file {tempout}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
