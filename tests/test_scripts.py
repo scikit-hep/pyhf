@@ -372,7 +372,7 @@ def test_inspect_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
 
     tempout = tmp_path.joinpath("inspect_output.json")
-    command = f'pyhf inspect {temp} --output-file {tempout.strpath:s}'
+    command = f'pyhf inspect {temp} --output-file {tempout}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -409,7 +409,7 @@ def test_prune_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
 
     tempout = tmp_path.joinpath("prune_output.json")
-    command = f'pyhf prune -m staterror_channel1 --measurement GammaExample {temp} --output-file {tempout.strpath:s}'
+    command = f'pyhf prune -m staterror_channel1 --measurement GammaExample {temp} --output-file {tempout}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -439,7 +439,7 @@ def test_rename_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
 
     tempout = tmp_path.joinpath("rename_output.json")
-    command = f'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {temp} --output-file {tempout.strpath:s}'
+    command = f'pyhf rename -m staterror_channel1 staterror_channelone --measurement GammaExample GamEx {temp} --output-file {tempout}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -509,7 +509,9 @@ def test_combine_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
 
     tempout = tmp_path.joinpath("combined_output.json")
-    command = f'pyhf combine {temp_1.strpath:s} {temp_2.strpath:s} --output-file {tempout.strpath:s}'
+    command = (
+        f'pyhf combine {temp_1.strpath:s} {temp_2.strpath:s} --output-file {tempout}'
+    )
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
