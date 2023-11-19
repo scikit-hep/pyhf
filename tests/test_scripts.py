@@ -338,7 +338,7 @@ def test_fit_optimizer(tmp_path, script_runner, optimizer, opts, success):
     ret = script_runner.run(shlex.split(command))
 
     optconf = " ".join(f"--optconf {opt}" for opt in opts)
-    command = f"pyhf fit --optimizer {optimizer} {optconf} {temp.strpath}"
+    command = f"pyhf fit --optimizer {optimizer} {optconf} {temp}"
     ret = script_runner.run(shlex.split(command))
 
     assert ret.success == success
@@ -354,7 +354,7 @@ def test_cls_optimizer(tmp_path, script_runner, optimizer, opts, success):
     ret = script_runner.run(shlex.split(command))
 
     optconf = " ".join(f"--optconf {opt}" for opt in opts)
-    command = f'pyhf cls {temp.strpath} --optimizer {optimizer} {optconf}'
+    command = f'pyhf cls {temp} --optimizer {optimizer} {optconf}'
     ret = script_runner.run(shlex.split(command))
 
     assert ret.success == success
@@ -526,18 +526,16 @@ def test_combine_outfile(tmp_path, script_runner):
 def test_combine_merge_channels(tmp_path, script_runner):
     temp_1 = tmp_path.joinpath("parsed_output.json")
     temp_2 = tmp_path.joinpath("renamed_output.json")
-    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1.strpath} --hide-progress'
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp_1} --hide-progress'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    command = (
-        f'pyhf prune {temp_1.strpath} --sample signal --output-file {temp_2.strpath}'
-    )
+    command = f'pyhf prune {temp_1} --sample signal --output-file {temp_2}'
 
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    command = f'pyhf combine --merge-channels --join "left outer" {temp_1.strpath} {temp_2.strpath}'
+    command = f'pyhf combine --merge-channels --join "left outer" {temp_1} {temp_2}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -553,10 +551,12 @@ def test_workspace_digest(tmp_path, script_runner, algorithms, do_json):
     }
 
     temp = tmp_path.joinpath("parsed_output.json")
-    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp.strpath} --hide-progress'
+    command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp} --hide-progress'
     ret = script_runner.run(shlex.split(command))
 
-    command = f"pyhf digest {temp.strpath} -a {' -a '.join(algorithms)}{' -j' if do_json else ''}"
+    command = (
+        f"pyhf digest {temp} -a {' -a '.join(algorithms)}{' -j' if do_json else ''}"
+    )
     ret = script_runner.run(shlex.split(command))
     assert ret.success
     assert all(algorithm in ret.stdout for algorithm in algorithms)
@@ -591,21 +591,19 @@ def test_patchset_download(
     tmp_path, script_runner, requests_mock, tarfile_path, archive
 ):
     requests_mock.get(archive, content=open(tarfile_path, "rb").read())
-    command = (
-        f'pyhf contrib download {archive} {tmp_path.joinpath("likelihoods").strpath}'
-    )
+    command = f'pyhf contrib download {archive} {tmp_path.joinpath("likelihoods")}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
     # Run with all optional flags
-    command = f'pyhf contrib download --verbose --force {archive} {tmp_path.joinpath("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose --force {archive} {tmp_path.joinpath("likelihoods")}'
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
     requests_mock.get(
         "https://www.pyhfthisdoesnotexist.org/record/resource/1234567", status_code=200
     )
-    command = f'pyhf contrib download --verbose https://www.pyhfthisdoesnotexist.org/record/resource/1234567 {tmp_path.joinpath("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose https://www.pyhfthisdoesnotexist.org/record/resource/1234567 {tmp_path.joinpath("likelihoods")}'
     ret = script_runner.run(shlex.split(command))
     assert not ret.success
     assert (
@@ -617,7 +615,7 @@ def test_patchset_download(
     requests_mock.get(
         "https://httpstat.us/404/record/resource/1234567", status_code=404
     )
-    command = f'pyhf contrib download --verbose --force https://httpstat.us/404/record/resource/1234567 {tmp_path.joinpath("likelihoods").strpath}'
+    command = f'pyhf contrib download --verbose --force https://httpstat.us/404/record/resource/1234567 {tmp_path.joinpath("likelihoods")}'
     ret = script_runner.run(shlex.split(command))
     assert not ret.success
     assert "gives a response code of 404" in ret.stderr
@@ -693,7 +691,7 @@ def test_patchset_extract(datadir, tmp_path, script_runner, output_file, with_me
     temp = tmp_path.joinpath("extracted_output.json")
     command = f'pyhf patchset extract {datadir.joinpath("example_patchset.json")} --name patch_channel1_signal_syst1'
     if output_file:
-        command += f" --output-file {temp.strpath}"
+        command += f" --output-file {temp}"
     if with_metadata:
         command += " --with-metadata"
 
@@ -728,7 +726,7 @@ def test_patchset_apply(datadir, tmp_path, script_runner, output_file):
     temp = tmp_path.joinpath("patched_output.json")
     command = f'pyhf patchset apply {datadir.joinpath("example_bkgonly.json")} {datadir.joinpath("example_patchset.json")} --name patch_channel1_signal_syst1'
     if output_file:
-        command += f" --output-file {temp.strpath}"
+        command += f" --output-file {temp}"
 
     ret = script_runner.run(shlex.split(command))
 
@@ -748,7 +746,7 @@ def test_sort(tmp_path, script_runner):
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp} --hide-progress'
     ret = script_runner.run(shlex.split(command))
 
-    command = f'pyhf sort {temp.strpath}'
+    command = f'pyhf sort {temp}'
 
     ret = script_runner.run(shlex.split(command))
     assert ret.success
@@ -760,7 +758,7 @@ def test_sort_outfile(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
 
     tempout = tmp_path.joinpath("sort_output.json")
-    command = f'pyhf sort {temp.strpath} --output-file {tempout.strpath}'
+    command = f'pyhf sort {temp} --output-file {tempout}'
 
     ret = script_runner.run(shlex.split(command))
     assert ret.success
