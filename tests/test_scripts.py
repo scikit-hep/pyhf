@@ -228,7 +228,10 @@ def test_import_and_export(tmp_path, script_runner):
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
     ret = script_runner.run(shlex.split(command))
 
-    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output')}"
+    output_dir_path = tmp_path / "output"
+    output_dir_path.mkdir()
+
+    command = f"pyhf json2xml {temp} --output-dir {output_dir_path}"
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
@@ -250,19 +253,23 @@ def test_patch(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
-    command = f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output_1')} --patch {patch}"
+    output_dir_path = tmp_path / "output_1"
+    output_dir_path.mkdir()
+
+    command = f"pyhf json2xml {temp} --output-dir {output_dir_path} --patch {patch}"
     ret = script_runner.run(shlex.split(command))
     assert ret.success
 
     command = f'pyhf cls {temp} --patch -'
 
-    ret = script_runner.run(shlex.split(command), stdin=patch)
+    ret = script_runner.run(shlex.split(command), stdin=patch.read_text())
     assert ret.success
 
-    command = (
-        f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output_2')} --patch -"
-    )
-    ret = script_runner.run(shlex.split(command), stdin=patch)
+    output_dir_path = tmp_path / "output_2"
+    output_dir_path.mkdir()
+
+    command = f"pyhf json2xml {temp} --output-dir {output_dir_path} --patch -"
+    ret = script_runner.run(shlex.split(command), stdin=patch.read_text())
     assert ret.success
 
 
@@ -279,9 +286,10 @@ def test_patch_fail(tmp_path, script_runner):
     ret = script_runner.run(shlex.split(command))
     assert not ret.success
 
-    command = (
-        f"pyhf json2xml {temp} --output-dir {tmp_path.mkdir('output')} --patch {patch}"
-    )
+    output_dir_path = tmp_path / "output"
+    output_dir_path.mkdir()
+
+    command = f"pyhf json2xml {temp} --output-dir {output_dir_path} --patch {patch}"
     ret = script_runner.run(shlex.split(command))
     assert not ret.success
 
