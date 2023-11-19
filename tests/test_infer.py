@@ -23,7 +23,7 @@ def check_uniform_type(in_list):
     )
 
 
-def test_toms748_scan(tmpdir, hypotest_args):
+def test_toms748_scan(tmp_path, hypotest_args):
     """
     Test the upper limit toms748 scan returns the correct structure and values
     """
@@ -166,7 +166,7 @@ def test_upper_limit_with_kwargs(hypotest_args):
     )
 
 
-def test_mle_fit_default(tmpdir, hypotest_args):
+def test_mle_fit_default(tmp_path, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.mle.fit is as expected
     """
@@ -180,7 +180,7 @@ def test_mle_fit_default(tmpdir, hypotest_args):
     assert pyhf.tensorlib.shape(result) == (model.config.npars,)
 
 
-def test_mle_fit_return_fitted_val(tmpdir, hypotest_args):
+def test_mle_fit_return_fitted_val(tmp_path, hypotest_args):
     """
     Check that the return structure of pyhf.infer.mle.fit with the
     return_fitted_val keyword arg is as expected
@@ -196,7 +196,7 @@ def test_mle_fit_return_fitted_val(tmpdir, hypotest_args):
     assert pyhf.tensorlib.shape(result[1]) == ()
 
 
-def test_hypotest_default(tmpdir, hypotest_args):
+def test_hypotest_default(tmp_path, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
@@ -209,7 +209,7 @@ def test_hypotest_default(tmpdir, hypotest_args):
     assert isinstance(result, type(tb.astensor(result)))
 
 
-def test_hypotest_poi_outofbounds(tmpdir, hypotest_args):
+def test_hypotest_poi_outofbounds(tmp_path, hypotest_args):
     """
     Check that the fit errors for POI outside of parameter bounds
     """
@@ -226,7 +226,7 @@ def test_hypotest_poi_outofbounds(tmpdir, hypotest_args):
 
 
 @pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
-def test_hypotest_return_tail_probs(tmpdir, hypotest_args, test_stat):
+def test_hypotest_return_tail_probs(tmp_path, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     return_tail_probs keyword arg is as expected
@@ -243,7 +243,7 @@ def test_hypotest_return_tail_probs(tmpdir, hypotest_args, test_stat):
 
 
 @pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
-def test_hypotest_return_expected(tmpdir, hypotest_args, test_stat):
+def test_hypotest_return_expected(tmp_path, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     addition of the return_expected keyword arg is as expected
@@ -265,7 +265,7 @@ def test_hypotest_return_expected(tmpdir, hypotest_args, test_stat):
 
 
 @pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
-def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
+def test_hypotest_return_expected_set(tmp_path, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     addition of the return_expected_set keyword arg is as expected
@@ -300,7 +300,7 @@ def test_hypotest_return_expected_set(tmpdir, hypotest_args, test_stat):
 @pytest.mark.parametrize('return_expected', [True, False])
 @pytest.mark.parametrize('return_expected_set', [True, False])
 def test_hypotest_return_calculator(
-    tmpdir,
+    tmp_path,
     hypotest_args,
     calctype,
     kwargs,
@@ -491,7 +491,7 @@ def test_significance_to_pvalue_roundtrip(backend):
     assert np.allclose(sigma, back_to_sigma, atol=0, rtol=rtol)
 
 
-def test_emperical_distribution(tmpdir, hypotest_args):
+def test_emperical_distribution(tmp_path, hypotest_args):
     """
     Check that the empirical distribution of the test statistic gives
     expected results
@@ -537,7 +537,7 @@ def test_emperical_distribution(tmpdir, hypotest_args):
     )
 
 
-def test_toy_calculator(tmpdir, hypotest_args):
+def test_toy_calculator(tmp_path, hypotest_args):
     """
     Check that the toy calculator is performing as expected
     """
