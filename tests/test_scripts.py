@@ -120,7 +120,7 @@ def test_import_prepHistFactory_and_fit(tmp_path, script_runner):
         command += f" --output-file {tmp_out}"
         ret = script_runner.run(shlex.split(command))
         assert ret.success
-        ret_json = json.load(tmp_out)
+        ret_json = json.load(tmp_out.open())
         assert "mle_parameters" in ret_json
         assert "twice_nll" in ret_json
 
@@ -159,7 +159,7 @@ def test_import_prepHistFactory_and_cls(tmp_path, script_runner):
         command += f' --output-file {tmp_out}'
         ret = script_runner.run(shlex.split(command))
         assert ret.success
-        d = json.load(tmp_out)
+        d = json.load(tmp_out.open())
         assert 'CLs_obs' in d
         assert 'CLs_exp' in d
 
@@ -262,14 +262,14 @@ def test_patch(tmp_path, script_runner):
 
     command = f'pyhf cls {temp} --patch -'
 
-    ret = script_runner.run(shlex.split(command), stdin=patch.read_text())
+    ret = script_runner.run(shlex.split(command), stdin=patch.open())
     assert ret.success
 
     output_dir_path = tmp_path / "output_2"
     output_dir_path.mkdir(exist_ok=True)
 
     command = f"pyhf json2xml {temp} --output-dir {output_dir_path} --patch -"
-    ret = script_runner.run(shlex.split(command), stdin=patch.read_text())
+    ret = script_runner.run(shlex.split(command), stdin=patch.open())
     assert ret.success
 
 
