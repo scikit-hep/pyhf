@@ -254,7 +254,7 @@ def test_patch(tmp_path, script_runner):
     assert ret.success
 
     output_dir_path = tmp_path / "output_1"
-    output_dir_path.mkdir()
+    output_dir_path.mkdir(exist_ok=True)
 
     command = f"pyhf json2xml {temp} --output-dir {output_dir_path} --patch {patch}"
     ret = script_runner.run(shlex.split(command))
@@ -266,7 +266,7 @@ def test_patch(tmp_path, script_runner):
     assert ret.success
 
     output_dir_path = tmp_path / "output_2"
-    output_dir_path.mkdir()
+    output_dir_path.mkdir(exist_ok=True)
 
     command = f"pyhf json2xml {temp} --output-dir {output_dir_path} --patch -"
     ret = script_runner.run(shlex.split(command), stdin=patch.read_text())
