@@ -12,7 +12,7 @@ os.environ["MPLBACKEND"] = "agg"
 
 @pytest.fixture()
 def common_kwargs(tmp_path):
-    outputnb = tmp_path.join('output.ipynb')
+    outputnb = tmp_path.joinpath('output.ipynb')
     return {
         'output_path': str(outputnb),
         'kernel_name': f'python{sys.version_info.major}',
