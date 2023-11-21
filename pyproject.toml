@@ -175,7 +175,6 @@ addopts = [
     "--strict-config",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
-    "-p no:legacypath",
 ]
 log_cli_level = "info"
 testpaths = "tests"
