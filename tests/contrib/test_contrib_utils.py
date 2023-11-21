@@ -11,33 +11,33 @@ from pyhf.exceptions import InvalidArchive, InvalidArchiveHost
 
 @pytest.fixture(scope="function")
 def tarfile_path(tmp_path):
-    with open(tmp_path.join("test_file.txt"), "w", encoding="utf-8") as write_file:
+    with open(tmp_path.joinpath("test_file.txt"), "w", encoding="utf-8") as write_file:
         write_file.write("test file")
     with tarfile.open(
-        tmp_path.join("test_tar.tar.gz"), mode="w:gz", encoding="utf-8"
+        tmp_path.joinpath("test_tar.tar.gz"), mode="w:gz", encoding="utf-8"
     ) as archive:
-        archive.add(tmp_path.join("test_file.txt"))
-    return Path(tmp_path.join("test_tar.tar.gz"))
+        archive.add(tmp_path.joinpath("test_file.txt"))
+    return Path(tmp_path.joinpath("test_tar.tar.gz"))
 
 
 @pytest.fixture(scope="function")
 def tarfile_uncompressed_path(tmp_path):
-    with open(tmp_path.join("test_file.txt"), "w", encoding="utf-8") as write_file:
+    with open(tmp_path.joinpath("test_file.txt"), "w", encoding="utf-8") as write_file:
         write_file.write("test file")
     with tarfile.open(
-        tmp_path.join("test_tar.tar"), mode="w", encoding="utf-8"
+        tmp_path.joinpath("test_tar.tar"), mode="w", encoding="utf-8"
     ) as archive:
-        archive.add(tmp_path.join("test_file.txt"))
-    return Path(tmp_path.join("test_tar.tar"))
+        archive.add(tmp_path.joinpath("test_file.txt"))
+    return Path(tmp_path.joinpath("test_tar.tar"))
 
 
 @pytest.fixture(scope="function")
 def zipfile_path(tmp_path):
-    with open(tmp_path.join("test_file.txt"), "w", encoding="utf-8") as write_file:
+    with open(tmp_path.joinpath("test_file.txt"), "w", encoding="utf-8") as write_file:
         write_file.write("test file")
-    with zipfile.ZipFile(tmp_path.join("test_zip.zip"), "w") as archive:
-        archive.write(tmp_path.join("test_file.txt"))
-    return Path(tmp_path.join("test_zip.zip"))
+    with zipfile.ZipFile(tmp_path.joinpath("test_zip.zip"), "w") as archive:
+        archive.write(tmp_path.joinpath("test_file.txt"))
+    return Path(tmp_path.joinpath("test_zip.zip"))
 
 
 def test_download_untrusted_archive_host(tmp_path, requests_mock):
@@ -45,7 +45,7 @@ def test_download_untrusted_archive_host(tmp_path, requests_mock):
     requests_mock.get(archive_url)
 
     with pytest.raises(InvalidArchiveHost):
-        download(archive_url, tmp_path.join("likelihoods"))
+        download(archive_url, tmp_path.joinpath("likelihoods"))
 
 
 def test_download_invalid_archive(tmp_path, requests_mock):
@@ -53,14 +53,14 @@ def test_download_invalid_archive(tmp_path, requests_mock):
     requests_mock.get(archive_url, status_code=404)
 
     with pytest.raises(InvalidArchive):
-        download(archive_url, tmp_path.join("likelihoods"))
+        download(archive_url, tmp_path.joinpath("likelihoods"))
 
 
 def test_download_compress(tmp_path, requests_mock):
     archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
     requests_mock.get(archive_url)
 
-    download(archive_url, tmp_path.join("likelihoods"), compress=True)
+    download(archive_url, tmp_path.joinpath("likelihoods"), compress=True)
 
 
 def test_download_archive_type(
@@ -72,7 +72,7 @@ def test_download_archive_type(
     zipfile_path,
 ):
     archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
-    output_directory = tmp_path.join("likelihoods")
+    output_directory = tmp_path.joinpath("likelihoods")
     # Give BytesIO a tarfile
     requests_mock.get(archive_url, content=open(tarfile_path, "rb").read())
     download(archive_url, output_directory)
@@ -103,6 +103,6 @@ def test_download_archive_force(tmp_path, requests_mock, tarfile_path):
     )
 
     with pytest.raises(InvalidArchiveHost):
-        download(archive_url, tmp_path.join("likelihoods"), force=False)
+        download(archive_url, tmp_path.joinpath("likelihoods"), force=False)
 
-    download(archive_url, tmp_path.join("likelihoods"), force=True)
+    download(archive_url, tmp_path.joinpath("likelihoods"), force=True)

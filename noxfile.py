@@ -35,8 +35,8 @@ def tests(session):
         $ nox --session tests --python 3.11 -- tests/test_tensor.py  # run specific tests
         $ nox --session tests --python 3.11 -- coverage  # run with coverage but slower
     """
-    session.install("--upgrade", "--editable", ".[all,test]")
-    session.install("--upgrade", "pytest")
+    # session.install("--upgrade", "--editable", ".[all,test]")
+    # session.install("--upgrade", "pytest")
 
     # Allow tests to be run with coverage
     if "coverage" in session.posargs:
