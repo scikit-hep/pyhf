@@ -1,6 +1,5 @@
 import tarfile
 import zipfile
-from pathlib import Path
 from shutil import rmtree
 
 import pytest
@@ -17,7 +16,7 @@ def tarfile_path(tmp_path):
         tmp_path.joinpath("test_tar.tar.gz"), mode="w:gz", encoding="utf-8"
     ) as archive:
         archive.add(tmp_path.joinpath("test_file.txt"))
-    return Path(tmp_path.joinpath("test_tar.tar.gz"))
+    return tmp_path.joinpath("test_tar.tar.gz")
 
 
 @pytest.fixture(scope="function")
@@ -28,7 +27,7 @@ def tarfile_uncompressed_path(tmp_path):
         tmp_path.joinpath("test_tar.tar"), mode="w", encoding="utf-8"
     ) as archive:
         archive.add(tmp_path.joinpath("test_file.txt"))
-    return Path(tmp_path.joinpath("test_tar.tar"))
+    return tmp_path.joinpath("test_tar.tar")
 
 
 @pytest.fixture(scope="function")
@@ -37,7 +36,7 @@ def zipfile_path(tmp_path):
         write_file.write("test file")
     with zipfile.ZipFile(tmp_path.joinpath("test_zip.zip"), "w") as archive:
         archive.write(tmp_path.joinpath("test_file.txt"))
-    return Path(tmp_path.joinpath("test_zip.zip"))
+    return tmp_path.joinpath("test_zip.zip")
 
 
 def test_download_untrusted_archive_host(tmp_path, requests_mock):
@@ -85,7 +84,7 @@ def test_download_archive_type(
     requests_mock.get(archive_url, content=open(zipfile_path, "rb").read())
     # Run without and with existing output_directory to cover both
     # cases of the shutil.rmtree logic
-    rmtree(Path(output_directory))
+    rmtree(output_directory)
     download(archive_url, output_directory)  # without
     download(archive_url, output_directory)  # with
 
