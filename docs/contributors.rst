@@ -33,3 +33,4 @@ Contributors include:
 - Beojan Stanislaus
 - Daniel Werner
 - Jonas Rembser
+- Lorenz Gaertner
