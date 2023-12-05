@@ -41,7 +41,7 @@ repos:
       args: ["--fix", "--show-fixes"]
 
 -   repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 23.10.1
+    rev: 23.11.0
     hooks:
     - id: black-jupyter
       types_or: [python, pyi, jupyter]
@@ -50,10 +50,10 @@ repos:
     rev: 1.16.0
     hooks:
     - id: blacken-docs
-      additional_dependencies: [black==23.10.1]
+      additional_dependencies: [black==23.11.0]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
+    rev: v1.7.1
     # check the oldest and newest supported Pythons
     hooks:
       - &mypy
