@@ -706,7 +706,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         )
 
     @classmethod
-    def combine(cls, left, right, join='none', merge_channels=False):
+    def combine(
+        cls, left, right, join='none', merge_channels=False, validate: bool = True
+    ):
         """
         Return a new workspace specification that is the combination of the two workspaces.
 
@@ -733,6 +735,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             right (~pyhf.workspace.Workspace): Another workspace
             join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
             merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "outer", "left outer", and "right outer" options.
+            validate (:obj:`bool`): Whether to validate against a JSON schema.
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
@@ -770,7 +773,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             'observations': new_observations,
             'version': new_version,
         }
-        return cls(newspec)
+        return cls(newspec, validate=validate)
 
     @classmethod
     def sorted(cls, workspace):
