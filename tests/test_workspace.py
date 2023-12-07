@@ -791,6 +791,28 @@ def test_combine_workspace(workspace_factory, join):
     )
 
 
+@pytest.mark.parametrize("join", pyhf.Workspace.valid_joins)
+def test_combine_workspace_without_validation(mocker, workspace_factory, join):
+    ws = workspace_factory()
+    new_ws = ws.rename(
+        channels={channel: f'renamed_{channel}' for channel in ws.channels},
+        samples={sample: f'renamed_{sample}' for sample in ws.samples},
+        modifiers={
+            modifier: f'renamed_{modifier}'
+            for modifier, _ in ws.modifiers
+            if not modifier == 'lumi'
+        },
+        measurements={
+            measurement: f'renamed_{measurement}'
+            for measurement in ws.measurement_names
+        },
+    )
+
+    mocker.patch('pyhf.schema.validate')
+    pyhf.Workspace.combine(ws, new_ws, join=join, validate=False)
+    assert pyhf.schema.validate.called is False
+
+
 def test_workspace_equality(workspace_factory):
     ws = workspace_factory()
     ws_other = workspace_factory()
