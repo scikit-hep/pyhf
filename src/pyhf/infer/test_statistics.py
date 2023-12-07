@@ -134,7 +134,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
             'qmu test statistic used for fit configuration with POI bounded at zero.\n'
-            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.'
+            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead. Set test_stat="qtilde".'
         )
     return _qmu_like(
         mu,
@@ -229,7 +229,7 @@ def qmu_tilde(
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
             'qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
-            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.'
+            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead. Set test_stat="q".'
         )
     return _qmu_like(
         mu,
