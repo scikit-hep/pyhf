@@ -795,20 +795,20 @@ def test_combine_workspace(workspace_factory, join):
 def test_combine_workspace_without_validation(mocker, workspace_factory, join):
     ws = workspace_factory()
     new_ws = ws.rename(
-        channels={channel: f'renamed_{channel}' for channel in ws.channels},
-        samples={sample: f'renamed_{sample}' for sample in ws.samples},
+        channels={channel: f"renamed_{channel}" for channel in ws.channels},
+        samples={sample: f"renamed_{sample}" for sample in ws.samples},
         modifiers={
-            modifier: f'renamed_{modifier}'
+            modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == 'lumi'
+            if not modifier == "lumi"
         },
         measurements={
-            measurement: f'renamed_{measurement}'
+            measurement: f"renamed_{measurement}"
             for measurement in ws.measurement_names
         },
     )
 
-    mocker.patch('pyhf.schema.validate')
+    mocker.patch("pyhf.schema.validate")
     pyhf.Workspace.combine(ws, new_ws, join=join, validate=False)
     assert pyhf.schema.validate.called is False
 

@@ -735,7 +735,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             right (~pyhf.workspace.Workspace): Another workspace
             join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
             merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "outer", "left outer", and "right outer" options.
-            validate (:obj:`bool`): Whether to validate against a JSON schema
+            validate (:obj:`bool`): Whether to validate against a JSON schema.
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
