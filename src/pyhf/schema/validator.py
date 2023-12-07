@@ -103,10 +103,12 @@ def validate(
         # design, pathlib strips trailing slashes. See ref below:
         # * https://bugs.python.org/issue21039
         # * https://github.com/python/cpython/issues/65238
+
+        # for type ignores below, see https://github.com/python-jsonschema/jsonschema/issues/997
         resolver = jsonschema.RefResolver(
             base_uri=f"{path.joinpath(version).as_uri()}/",
-            referrer=schema_name,
-            store=variables.SCHEMA_CACHE,
+            referrer=schema_name,  # type: ignore[arg-type]
+            store=variables.SCHEMA_CACHE,  # type: ignore[arg-type]
         )
 
         Validator = jsonschema.Draft202012Validator
