@@ -7,8 +7,10 @@ from typing import Any
 from pyhf.schema.loader import load_schema
 from pyhf.schema.validator import validate
 from pyhf.schema import variables
-from pyhf.typing import Self, SchemaVersion, Traversable
+from pyhf.typing import Self, SchemaVersion, PathOrStr, Traversable
 from pyhf.schema.upgrader import upgrade
+
+from pathlib import Path
 
 __all__ = [
     "load_schema",
@@ -65,8 +67,7 @@ class Schema(sys.modules[__name__].__class__):  # type: ignore[misc]
 
     """
 
-    # type ignore below, see https://github.com/python/mypy/pull/11666
-    def __call__(self, new_path: Traversable) -> Self:  # type: ignore[valid-type]
+    def __call__(self, new_path: PathOrStr) -> Self:
         """
         Change the local search path for finding schemas locally.
 
@@ -76,7 +77,7 @@ class Schema(sys.modules[__name__].__class__):  # type: ignore[misc]
         Returns:
             self (pyhf.schema.Schema): Returns itself (for contextlib management)
         """
-        self.orig_path, variables.schemas = variables.schemas, new_path
+        self.orig_path, variables.schemas = variables.schemas, Path(new_path)
         self.orig_cache = dict(variables.SCHEMA_CACHE)
         variables.SCHEMA_CACHE.clear()
         return self
@@ -95,7 +96,7 @@ class Schema(sys.modules[__name__].__class__):  # type: ignore[misc]
         variables.SCHEMA_CACHE = self.orig_cache
 
     @property
-    def path(self) -> Traversable:
+    def path(self) -> Traversable | Path:
         """
         The local path for schemas.
         """
