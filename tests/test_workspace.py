@@ -800,7 +800,7 @@ def test_combine_workspace_without_validation(mocker, workspace_factory, join):
         modifiers={
             modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == "lumi"
+            if modifier != "lumi"
         },
         measurements={
             measurement: f"renamed_{measurement}"
