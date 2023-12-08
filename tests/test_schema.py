@@ -727,5 +727,5 @@ def test_schema_tensor_type_disallowed(mocker, backend):
 def test_schema_catch_duplicates(datadir, model_file):
     with open(datadir.joinpath(model_file), encoding="utf-8") as spec_file:
         model_spec = json.load(spec_file)
-    with pytest.raises(pyhf.exceptions.InvalidNameReuse):
+    with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(model_spec)

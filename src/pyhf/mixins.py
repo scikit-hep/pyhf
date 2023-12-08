@@ -106,7 +106,7 @@ class _ChannelSummaryMixin:
             duplicates = sorted(
                 set([f"'{x}'" for x in channel_names if channel_names.count(x) > 1])
             )
-            raise exceptions.InvalidNameReuse(
+            raise exceptions.InvalidModel(
                 "Duplicate channels "
                 + ", ".join(duplicates)
                 + " found in the model. Rename one of them."
@@ -117,7 +117,7 @@ class _ChannelSummaryMixin:
                 duplicates = sorted(
                     set([f"'{x}'" for x in sample_names if sample_names.count(x) > 1])
                 )
-                raise exceptions.InvalidNameReuse(
+                raise exceptions.InvalidModel(
                     "Duplicate samples "
                     + ", ".join(duplicates)
                     + f" found in the channel '{channel['name']}'. Rename one of them."
@@ -131,7 +131,7 @@ class _ChannelSummaryMixin:
                     duplicates = sorted(
                         set([f"'{x[0]}'" for x in modifiers if modifiers.count(x) > 1])
                     )
-                    raise exceptions.InvalidNameReuse(
+                    raise exceptions.InvalidModel(
                         "Duplicate modifiers "
                         + ", ".join(duplicates)
                         + f" of the same type found in channel '{channel['name']}' and sample '{sample['name']}'. Rename one of them."
