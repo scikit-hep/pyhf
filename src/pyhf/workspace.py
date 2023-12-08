@@ -714,6 +714,10 @@ class Workspace(_ChannelSummaryMixin, dict):
                 raise ValueError(
                     "Pruning of measurements and samples cannot be run with mode `logical_and`."
                 )
+            if channels != [] and measurements != []:
+                raise ValueError(
+                    "Pruning of measurements and channels cannot be run with mode `logical_and`."
+                )
             if modifier_types != [] and measurements != []:
                 raise ValueError(
                     "Pruning of measurements and modifier_types cannot be run with mode `logical_and`."
