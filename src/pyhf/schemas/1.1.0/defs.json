@@ -6,13 +6,16 @@
           "type": "object",
           "properties": {
               "distributions": { "type": "array", "items": {"$ref": "#/definitions/distribution"}, "minItems": 1 },
+              "domains": { "type": "array", "items": {"$ref": "#/definitions/domain"}, "minItems": 1 },
+              "inits": { "type": "array", "items": {"$ref": "#/definitions/init"}, "minItems": 1 },
+              "likelihoods": { "type": "array", "items": {"$ref": "#/definitions/likelihood"}, "minItems": 1 },
               "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"}, "minItems": 1 },
-              "observations": { "type": "array", "items": {"$ref": "#/definitions/observation" }, "minItems": 1 },
+              "datasets": { "type": "array", "items": {"$ref": "#/definitions/dataset" }, "minItems": 1 },
               "type": { "const": "histfactory_dist" },
               "version": { "const": "1.1.0" }
           },
           "additionalProperties": false,
-          "required": ["distributions", "measurements", "observations", "version"]
+          "required": ["distributions", "measurements", "datasets", "version"]
         },
         "model": {
           "type": "object",
@@ -23,43 +26,66 @@
           "additionalProperties": false,
           "required": ["channels"]
         },
-        "observation": {
+        "domain": {
+          "type": "object",
+          "properties": {
+            "name": { "type" : "string" },
+            "type": { "const": "product_domain" },
+            "axes": { "type": "array", "items": {"$ref": "#/definitions/unbinnedAxis"}, "minItems": 1}
+          },
+          "additionalProperties": false,
+          "required": ["name", "type", "axes"]
+        },
+        "init": {
+          "type": "object",
+          "properties": {
+            "name": { "type" : "string" },
+            "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+            "fixed": { "type": "boolean" }
+          },
+          "additionalProperties": false,
+          "required": ["name", "type", "axes"]
+        },
+        "dataset": {
+            "type": "object",
+            "properties": {
+                "axes": { "type": "array", "items": {"$ref": "#/definitions/binnedAxis"}, "minItems": 1, "maxItems": 1},
+                "name": { "type": "string" },
+                "type": { "const": "binned" },
+                "contents": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+            },
+            "required": ["name", "type", "contents"],
+            "additionalProperties": false
+        },
+        "likelihood": {
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                "distributions": { "type": "array", "items": { "type": "string" } },
+                "datasets": { "type": "array", "items": { "type": "string" } }
             },
-            "required": ["name", "data"],
+            "required": ["name", "distributions", "datasets"],
             "additionalProperties": false
         },
         "measurement": {
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "config": { "$ref": "#/definitions/config" }
-            },
-            "required": ["name", "config"],
-            "additionalProperties": false
-        },
-        "config": {
-            "type": "object",
-            "properties": {
                 "poi": { "type" : "string" },
-                "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+                "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} },
+                "domains": { "type": "array", "items": {"type": "string"}},
+                "likelihood": { "type": "string" }
             },
-            "required": ["poi", "parameters"],
+            "required": ["name", "poi", "parameters", "likelihood"],
             "additionalProperties": false
         },
         "parameter": {
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "inits": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
-                "bounds": { "type": "array", "items": {"type": "array", "items": {"type": "number", "minItems": 2, "maxItems": 2}}, "minItems": 1 },
                 "auxdata": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
                 "factors": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
-                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1},
-                "fixed": { "type": "boolean" }
+                "sigmas": { "type": "array", "items": {"type": "number"}, "minItems": 1}
             },
             "required": ["name"],
             "additionalProperties": false
@@ -69,7 +95,7 @@
             "properties": {
                 "name": { "type": "string" },
                 "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"}, "minItems": 1 },
-                "axes": { "type": "array", "items": {"$ref": "#/definitions/axis"}, "minItems": 1, "maxItems": 1}
+                "axes": { "type": "array", "items": {"$ref": "#/definitions/binnedAxis"}, "minItems": 1, "maxItems": 1}
             },
             "required": ["name", "samples"],
             "additionalProperties": false
@@ -77,22 +103,42 @@
         "axis": {
             "type": "object",
             "oneOf": [
+                { "$ref": "#/definitions/unbinnedAxis" },
+                { "$ref": "#/definitions/binnedAxis" }
+              ]
+        },
+        "binnedAxis": {
+            "type": "object",
+            "oneOf": [
                 {
-                    "required": [ "value" ],
                     "properties": {
                         "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
                         "max": { "type": "number" },
                         "min": { "type": "number" },
                         "nbins": { "type": "number" }
-                    }
+                    },
+                    "required": [ "name", "max", "min", "nbins" ],
+                    "additionalProperties": false
                   },
                 {
                   "properties": {
                       "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
                       "edges": { "type": "array", "items": { "type": "number", "minItems": 2 } }
-                  }
+                  },
+                  "required": [ "name", "edges" ],
+                  "additionalProperties": false
                 }
               ]
+        },
+        "unbinnedAxis": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                "max": { "type": "number" },
+                "min": { "type": "number" }
+            },
+            "required": [ "name", "max", "min" ],
+            "additionalProperties": false
         },
         "histogram": {
             "type": "object",
