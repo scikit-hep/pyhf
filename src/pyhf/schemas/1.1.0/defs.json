@@ -11,11 +11,10 @@
               "likelihoods": { "type": "array", "items": {"$ref": "#/definitions/likelihood"}, "minItems": 1 },
               "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"}, "minItems": 1 },
               "datasets": { "type": "array", "items": {"$ref": "#/definitions/dataset" }, "minItems": 1 },
-              "type": { "const": "histfactory_dist" },
               "version": { "const": "1.1.0" }
           },
           "additionalProperties": false,
-          "required": ["distributions", "measurements", "datasets", "version"]
+          "required": ["distributions", "likelihoods", "measurements", "datasets", "version"]
         },
         "model": {
           "type": "object",
@@ -44,7 +43,7 @@
             "fixed": { "type": "boolean" }
           },
           "additionalProperties": false,
-          "required": ["name", "type", "axes"]
+          "required": ["name", "data"]
         },
         "dataset": {
             "type": "object",
@@ -54,7 +53,7 @@
                 "type": { "const": "binned" },
                 "contents": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
             },
-            "required": ["name", "type", "contents"],
+            "required": ["axes", "name", "type", "contents"],
             "additionalProperties": false
         },
         "likelihood": {
@@ -95,9 +94,10 @@
             "properties": {
                 "name": { "type": "string" },
                 "samples": { "type": "array", "items": {"$ref": "#/definitions/sample"}, "minItems": 1 },
-                "axes": { "type": "array", "items": {"$ref": "#/definitions/binnedAxis"}, "minItems": 1, "maxItems": 1}
+                "axes": { "type": "array", "items": {"$ref": "#/definitions/binnedAxis"}, "minItems": 1, "maxItems": 1},
+                "type": { "const": "histfactory_dist" }
             },
-            "required": ["name", "samples"],
+            "required": ["name", "samples", "axes", "type"],
             "additionalProperties": false
         },
         "axis": {
