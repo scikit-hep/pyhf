@@ -76,25 +76,46 @@
         },
         "axis": {
             "type": "object",
-            "MAKE THIS ONEOF": "",
-            "(A)": "",
-              "properties_oneof": {
-                  "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
-                  "max": { "type": "number" },
-                  "min": { "type": "number" },
-                  "nbins": { "type": "number" }
-              },
-            "(B)": "",
-              "properties": {
-                  "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
-                  "edges": { "type": "array", "items": { "type": "number", "minItems": 2 } }
-              }
+            "oneOf": [
+                {
+                    "required": [ "value" ],
+                    "properties": {
+                        "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                        "max": { "type": "number" },
+                        "min": { "type": "number" },
+                        "nbins": { "type": "number" }
+                    }
+                  },
+                {
+                  "properties": {
+                      "name": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                      "edges": { "type": "array", "items": { "type": "number", "minItems": 2 } }
+                  }
+                }
+              ]
+        },
+        "histogram": {
+            "type": "object",
+            "properties": {
+              "contents": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+            },
+            "required": ["contents"],
+            "additionalProperties": false
+        },
+        "histogramWithErrors": {
+            "type": "object",
+            "properties": {
+              "contents": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+              "errors": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+            },
+            "required": ["contents"],
+            "additionalProperties": false
         },
         "sample": {
             "type": "object",
             "properties": {
                 "name": { "type": "string" },
-                "data": { "type": "object", "properties": { "contents": { "type": "array", "items": {"type": "number"}, "minItems": 1 }} },
+                "data": { "type": "object", "$ref": "#/definitions/histogramWithErrors" },
                 "modifiers": {
                     "type": "array",
                     "items": {
@@ -122,12 +143,13 @@
                     "data": {
                         "type": "object",
                         "properties": {
-                            "lo_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
-                            "hi_data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                            "lo": { "type": "object", "$ref": "#/definitions/histogram" },
+                            "hi": { "type": "object", "$ref": "#/definitions/histogram" }
                         },
                         "required": ["lo_data", "hi_data"],
                         "additionalProperties": false
-                    }
+                    },
+                    "parameter": { "type": "string" }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -137,7 +159,8 @@
                 "properties": {
                     "name": { "const": "lumi" },
                     "type": { "const": "lumi" },
-                    "data": { "type": "null" }
+                    "data": { "type": "null" },
+                    "parameter": { "type": "string" }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -147,9 +170,10 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "normfactor" },
-                    "data": { "type": "null" }
+                    "data": { "type": "null" },
+                    "parameter": { "type": "string" }
                 },
-                "required": ["name", "type", "data"],
+                "required": ["name", "type"],
                 "additionalProperties": false
             },
             "normsys": {
@@ -165,7 +189,8 @@
                         },
                         "required": ["lo", "hi"],
                         "additionalProperties": false
-                    }
+                    },
+                    "parameter": { "type": "string" }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -175,9 +200,10 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "shapefactor" },
-                    "data": { "type": "null" }
+                    "data": { "type": "null" },
+                    "parameters": { "type": "array", "items": { "type": "string" }}
                 },
-                "required": ["name", "type", "data"],
+                "required": ["name", "type"],
                 "additionalProperties": false
             },
             "shapesys": {
@@ -185,7 +211,8 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "shapesys" },
-                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                    "data": { "type": "object", "$ref": "#/definitions/histogram" },
+                    "parameters": { "type": "array", "items": { "type": "string" }}
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -195,9 +222,9 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "staterror" },
-                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                    "parameters": { "type": "array", "items": { "type": "string" }}
                 },
-                "required": ["name", "type", "data"],
+                "required": ["name", "type"],
                 "additionalProperties": false
             }
         },
