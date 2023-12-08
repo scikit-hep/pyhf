@@ -146,7 +146,7 @@
                             "lo": { "type": "object", "$ref": "#/definitions/histogram" },
                             "hi": { "type": "object", "$ref": "#/definitions/histogram" }
                         },
-                        "required": ["lo_data", "hi_data"],
+                        "required": ["lo", "hi"],
                         "additionalProperties": false
                     },
                     "parameter": { "type": "string" }
