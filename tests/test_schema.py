@@ -714,3 +714,18 @@ def test_schema_tensor_type_disallowed(mocker, backend):
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(spec, "model.json")
+
+
+@pytest.mark.parametrize(
+    'model_file',
+    [
+        'model_duplicate_channels.json',
+        'model_duplicate_samples.json',
+        'model_duplicate_modifiers.json',
+    ],
+)
+def test_schema_catch_duplicates(datadir, model_file):
+    with open(datadir.joinpath(model_file), encoding="utf-8") as spec_file:
+        model_spec = json.load(spec_file)
+    with pytest.raises(pyhf.exceptions.InvalidNameReuse):
+        pyhf.Model(model_spec)
