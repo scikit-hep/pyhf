@@ -583,40 +583,39 @@ class Workspace(_ChannelSummaryMixin, dict):
                                     ),
                                 )
                                 for modifier in sample['modifiers']
+                                # we want to remove modifiers only if channel is not in list of channels to keep,
+                                # we want to remove modifiers only if sample is not in list of samples to keep
                                 if (
-                                    channel['name'] not in prune_channels
-                                    and prune_channels != []
-                                )  # want to remove only if channel is in prune_channels or if prune_channels is empty, i.e. we want to prune this modifier for every channel
+                                    prune_channels
+                                    and channel['name'] not in prune_channels
+                                )
                                 or (
-                                    sample['name'] not in prune_samples
-                                    and prune_samples != []
-                                )  # want to remove only if sample is in prune_samples or if prune_samples is empty, i.e. we want to prune this modifier for every sample
+                                    prune_samples
+                                    and sample['name'] not in prune_samples
+                                )
                                 or (
                                     modifier['name'] not in prune_modifiers
                                     and modifier['type'] not in prune_modifier_types
                                 )
+                                # need to keep the modifier in case it is used in another measurement
                                 or prune_measurements
-                                != []  # need to keep the modifier in case it is used in another measurement
                             ],
                         }
                         for sample in channel['samples']
-                        if (
-                            channel['name'] not in prune_channels
-                            and prune_channels != []
-                        )  # want to remove only if channel is in prune_channels or if prune_channels is empty, i.e. we want to prune this sample for every channel
+                        # we want to remove samples only if channel is not in list of channels to keep,
+                        # we want to remove samples only if no modifiers are to be pruned
+                        if (prune_channels and channel['name'] not in prune_channels)
                         or sample['name'] not in prune_samples
                         or prune_modifiers
-                        != []  # we only want to remove this sample if we did not specify modifiers to prune
-                        or prune_modifier_types != []
+                        or prune_modifier_types
                     ],
                 }
                 for channel in self['channels']
+                # we want to remove channels only if no samples or modifiers are to be pruned
                 if channel['name'] not in prune_channels
-                or (  # we only want to remove this channel if we did not specify any samples or modifiers to prune
-                    prune_samples != []
-                    or prune_modifiers != []
-                    or prune_modifier_types != []
-                )
+                or prune_samples
+                or prune_modifiers
+                or prune_modifier_types
             ],
             'measurements': [
                 {
@@ -634,9 +633,11 @@ class Workspace(_ChannelSummaryMixin, dict):
                             for parameter in measurement['config'][
                                 'parameters'
                             ]  # we only want to remove this parameter if measurement is in prune_measurements or if prune_measurements is empty
+                            # we want to remove parameters from a measurement only
+                            # if measurement is not in keep_measurements
                             if (
-                                measurement['name'] not in prune_measurements
-                                and prune_measurements != []
+                                prune_measurements
+                                and measurement['name'] not in prune_measurements
                             )
                             or parameter['name'] not in prune_modifiers
                         ],
@@ -646,9 +647,8 @@ class Workspace(_ChannelSummaryMixin, dict):
                     },
                 }
                 for measurement in self['measurements']
-                if measurement['name'] not in prune_measurements
-                or prune_modifiers
-                != []  # we only want to remove this measurement if we did not specify parameters to remove
+                # we want to remove measurements only if no parameters are to be pruned
+                if measurement['name'] not in prune_measurements or prune_modifiers
             ],
             'observations': [
                 dict(
@@ -656,12 +656,12 @@ class Workspace(_ChannelSummaryMixin, dict):
                     name=rename_channels.get(observation['name'], observation['name']),
                 )
                 for observation in self['observations']
+                # we want to remove this channels only
+                # if no samples or modifiers are to be pruned
                 if observation['name'] not in prune_channels
-                or (  # we only want to remove this channel if we did not specify any samples or modifiers to prune
-                    prune_samples != []
-                    or prune_modifiers != []
-                    or prune_modifier_types != []
-                )
+                or prune_samples
+                or prune_modifiers
+                or prune_modifier_types
             ],
             'version': self['version'],
         }
