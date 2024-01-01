@@ -35,13 +35,13 @@ repos:
     - id: rst-inline-touching-normal
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.1.6"
+  rev: "v0.1.9"
   hooks:
     - id: ruff
       args: ["--fix", "--show-fixes"]
 
 -   repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 23.11.0
+    rev: 23.12.1
     hooks:
     - id: black-jupyter
       types_or: [python, pyi, jupyter]
@@ -53,7 +53,7 @@ repos:
       additional_dependencies: [black==23.11.0]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.1
+    rev: v1.8.0
     # check the oldest and newest supported Pythons
     hooks:
       - &mypy
