@@ -129,14 +129,14 @@ def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
             label=None if idx != 2 else r"$\mathrm{CL}_{s,\mathrm{exp}}$",
         )
         cls_exp_lines.append(_cls_exp_line)
-    one_sigma_band = ax.fill_between(
+    two_sigma_band = ax.fill_between(
         test_pois,
         cls_exp[0],
         cls_exp[-1],
         facecolor="yellow",
         label=r"$\pm2\sigma$ $\mathrm{CL}_{s,\mathrm{exp}}$",
     )
-    two_sigma_band = ax.fill_between(
+    one_sigma_band = ax.fill_between(
         test_pois,
         cls_exp[1],
         cls_exp[-2],
