@@ -399,10 +399,10 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://github.com/psf/black
 
 .. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml?query=branch%3Amain
 .. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml?query=branch%3Amain
 .. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml?query=branch%3Amain
 .. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amain
