@@ -98,7 +98,7 @@ jobs:
       run: python -m zipfile --list dist/pyhf-*.whl
 
     - name: Upload distribution artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist-artifact
         path: dist
@@ -118,7 +118,7 @@ jobs:
 
     steps:
     - name: Download distribution artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist-artifact
         path: dist
