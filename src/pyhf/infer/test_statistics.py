@@ -112,8 +112,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -207,8 +207,8 @@ def qmu_tilde(
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -290,8 +290,8 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -380,8 +380,8 @@ def tmu_tilde(
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -458,8 +458,8 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
