@@ -19,7 +19,7 @@ Fixes
   (PR :pr:`2411`)
 * In the ``pyhf.infer`` module, correct the ``fixed_params`` type in the docs
   to be to :obj:`tuple` or :obj:`list`.
-  (PR :pr:`2428`)
+  (PR :pr:`2420`)
 
 Contributors
 ------------
