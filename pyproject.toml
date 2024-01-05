@@ -222,6 +222,8 @@ filterwarnings = [
     'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
     'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
+    "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
+    "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
 ]
 
 [tool.mypy]
@@ -229,7 +231,6 @@ files = "src"
 python_version = "3.11"
 warn_unused_configs = true
 strict = true
-show_error_codes = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
 
@@ -276,25 +277,28 @@ module = [
 ignore_errors = true
 
 [tool.ruff]
+src = ["src"]
+line-length = 88
+
+[tool.ruff.lint]
 select = [
   "E", "F", "W", # flake8
   "UP",          # pyupgrade
   "RUF",         # Ruff-specific
   "TID",         # flake8-tidy-imports
 ]
-line-length = 88
 ignore = [
   "E402",
   "E501",
   "RUF001", # String contains ambiguous unicode character
   "RUF005", # unpack-instead-of-concatenating-to-collection-literal
 ]
-src = ["src"]
 typing-modules = ["pyhf.typing"]
 unfixable = [
   "F841", # Removes unused variables
 ]
 flake8-tidy-imports.ban-relative-imports = "all"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
+"**.ipynb" = ["F821", "F401", "F841", "F811", "E703"]
