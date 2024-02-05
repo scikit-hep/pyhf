@@ -1,6 +1,7 @@
 """
 See :class:`~pyhf.schema.Schema` for documentation.
 """
+
 import pathlib
 import sys
 from pyhf.schema.loader import load_schema

@@ -1,4 +1,5 @@
 """Module for Maximum Likelihood Estimation."""
+
 from pyhf import get_backend
 from pyhf.exceptions import UnspecifiedPOI
 

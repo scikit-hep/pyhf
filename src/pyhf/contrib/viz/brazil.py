@@ -1,4 +1,5 @@
 """Brazil Band Plots."""
+
 from collections import namedtuple
 
 import matplotlib.pyplot as plt

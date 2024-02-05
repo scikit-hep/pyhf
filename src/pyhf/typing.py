@@ -150,8 +150,7 @@ class TensorBackend(Protocol):
     precision: str
     default_do_grad: bool
 
-    def _setup(self) -> None:
-        ...
+    def _setup(self) -> None: ...
 
 
 class Optimizer(Protocol):
@@ -159,8 +158,6 @@ class Optimizer(Protocol):
 
 
 class PDF(Protocol):
-    def sample(self, sample_shape: Shape) -> Any:
-        ...
+    def sample(self, sample_shape: Shape) -> Any: ...
 
-    def log_prob(self, value: Any) -> Any:
-        ...
+    def log_prob(self, value: Any) -> Any: ...

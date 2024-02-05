@@ -7,6 +7,7 @@ hypotheses.
 
 Using the calculators hypothesis tests can then be performed.
 """
+
 from pyhf.infer.mle import fixed_poi_fit
 from pyhf import get_backend
 from pyhf.infer import utils

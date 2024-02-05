@@ -1,4 +1,5 @@
 """CLI for functionality that will get migrated out eventually."""
+
 import logging
 import click
 from pathlib import Path
