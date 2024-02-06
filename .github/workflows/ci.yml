@@ -66,10 +66,12 @@ jobs:
       if: >-
         github.event_name != 'schedule' &&
         matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
+        fail_ci_if_error: true
         files: ./coverage.xml
         flags: unittests-${{ matrix.python-version }}
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Test Contrib module with pytest
       run: |
@@ -82,10 +84,12 @@ jobs:
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
+        fail_ci_if_error: true
         files: ./coverage.xml
         flags: contrib
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Test docstring examples with doctest
       if: matrix.python-version == '3.11'
@@ -99,10 +103,12 @@ jobs:
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
+        fail_ci_if_error: true
         files: doctest-coverage.xml
         flags: doctest
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Run benchmarks
       if: github.event_name == 'schedule' && matrix.python-version == '3.11'
