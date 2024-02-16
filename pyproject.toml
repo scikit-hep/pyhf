@@ -134,6 +134,7 @@ develop = [
     "pre-commit",
     "nox",
     "codemetapy>=2.3.0",
+    "uv>=0.1.2"
 ]
 
 [tool.hatch.version]
