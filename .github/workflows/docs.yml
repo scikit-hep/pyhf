@@ -28,9 +28,9 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
+        python -m uv pip install --upgrade pip setuptools wheel
         python -m pip --quiet install --upgrade .[docs,test]
-        python -m pip install yq
+        python -m uv pip install yq
         python -m pip list
 
     - name: Install apt-get dependencies
