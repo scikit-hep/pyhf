@@ -31,7 +31,7 @@ jobs:
         python -m pip install uv
         python -m uv pip install --system --upgrade pip setuptools wheel
         # FIXME: c.f. https://github.com/scikit-hep/pyhf/issues/2104
-        python -m uv pip install --system --upgrade ".[all,test]" 'jupyter-client<8.0.0'
+        python -m uv pip install --system --upgrade "pyhf[all,test] @ ." 'jupyter-client<8.0.0'
 
     - name: List installed Python packages
       run: python -m pip list
