@@ -27,8 +27,8 @@ jobs:
     - name: Install dependencies and force lowest bound
       run: |
         python -m pip install uv
-        python -m uv pip install --upgrade pip setuptools wheel
-        python -m uv pip --no-cache-dir install --constraint tests/constraints.txt ".[all,test]"
+        python -m uv pip install --system --upgrade pip setuptools wheel
+        python -m uv pip --no-cache-dir install --system --constraint tests/constraints.txt ".[all,test]"
 
     - name: List installed Python packages
       run: python -m pip list
