@@ -123,10 +123,11 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     # On push events run the CI only on main by default, but run on any branch if the commit message contains '[ci all]'
-    if: >-
-      github.event_name != 'push'
-      || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-      || (github.event_name == 'push' && github.ref != 'refs/heads/main' && contains(github.event.head_commit.message, '[ci all]'))
+    # if: >-
+    #   github.event_name != 'push'
+    #   || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    #   || (github.event_name == 'push' && github.ref != 'refs/heads/main' && contains(github.event.head_commit.message, '[ci all]'))
+    if: github.event_name == 'push'
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
