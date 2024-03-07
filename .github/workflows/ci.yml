@@ -144,8 +144,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        # No PyTorch or TensorFlow for Python 3.12 yet
-        python -m pip install --upgrade ".[jax,minuit,xmlio,contrib,shellcomplete,test]"
+        # No TensorFlow for Python 3.12 yet
+        python -m pip install --upgrade ".[jax,torch,minuit,xmlio,contrib,shellcomplete,test]"
 
     - name: List installed Python packages
       run: python -m pip list
