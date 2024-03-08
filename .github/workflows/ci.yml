@@ -95,11 +95,12 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Test docstring examples with doctest
-      if: matrix.python-version == '3.11'
+      # TODO: Don't currently try to match amd64 and arm64 floating point for docs, but will in the future.
+      if: matrix.python-version == '3.11' && matrix.os != 'macos-14'
       run: coverage run --data-file=.coverage-doctest --module pytest src/ README.rst
 
     - name: Coverage report for doctest only
-      if: matrix.python-version == '3.11'
+      if: matrix.python-version == '3.11' && matrix.os != 'macos-14'
       run: |
         coverage report --data-file=.coverage-doctest
         coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
