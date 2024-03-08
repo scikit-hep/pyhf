@@ -152,7 +152,7 @@ jobs:
 
     - name: Test with pytest and coverage
       run: |
-        coverage run --module pytest --disable-backend tensorflow --disable-backend pytorch --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
+        coverage run --module pytest --disable-backend tensorflow --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
     - name: Coverage report for core project
       run: |
