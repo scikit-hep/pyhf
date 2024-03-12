@@ -130,7 +130,7 @@ jobs:
     if: github.event_name == 'push'
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-14]
         python-version: ['3.12']
 
     steps:
