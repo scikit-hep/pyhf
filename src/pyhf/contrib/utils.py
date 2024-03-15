@@ -91,7 +91,12 @@ try:
                     with tarfile.open(
                         mode="r:*", fileobj=BytesIO(response.content)
                     ) as archive:
-                        archive.extractall(output_directory)
+                        # TODO: Simplify after pyhf is Python 3.12+ only
+                        # c.f. https://docs.python.org/3.12/library/tarfile.html#extraction-filters
+                        if hasattr(tarfile, "data_filter"):
+                            archive.extractall(output_directory, filter="data")
+                        else:
+                            archive.extractall(output_directory)
                 except tarfile.ReadError:
                     if not zipfile.is_zipfile(BytesIO(response.content)):
                         raise exceptions.InvalidArchive(
