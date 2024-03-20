@@ -1,6 +1,6 @@
 {
-    "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "1.1.0/defs.json",
+    "$schema": "http://json-schema.org/draft/2020-12/schema#",
+    "$id": "https://scikit-hep.org/pyhf/schemas/1.1.0/defs.json",
     "definitions": {
         "workspace": {
           "type": "object",

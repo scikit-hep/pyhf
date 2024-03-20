@@ -8,12 +8,25 @@ from pytest_socket import socket_disabled  # noqa: F401
 import pyhf
 
 
-@pytest.mark.parametrize('version', ['1.0.0'])
 @pytest.mark.parametrize(
-    'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
+    'schema',
+    [
+        "1.0.0/model.json",
+        "1.0.0/workspace.json",
+        "1.0.0/defs.json",
+        "1.0.0/jsonpatch.json",
+        "1.0.0/measurement.json",
+        "1.0.0/patchset.json",
+        "1.1.0/model.json",
+        "1.1.0/workspace.json",
+        "1.1.0/defs.json",
+        "1.1.0/jsonpatch.json",
+        "1.1.0/measurement.json",
+        "1.1.0/patchset.json",
+    ],
 )
-def test_get_schema(version, schema):
-    assert pyhf.schema.load_schema(f'{version}/{schema}')
+def test_get_schema(schema):
+    assert pyhf.schema.load_schema(schema)
 
 
 def test_load_missing_schema():
@@ -22,9 +35,9 @@ def test_load_missing_schema():
 
 
 def test_schema_attributes():
-    assert hasattr(pyhf.schema, 'version')
+    assert hasattr(pyhf.schema, 'versions')
     assert hasattr(pyhf.schema, 'path')
-    assert pyhf.schema.version
+    assert pyhf.schema.versions
     assert pyhf.schema.path
 
 
@@ -61,7 +74,11 @@ def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
     with open(new_path / "custom.json", encoding="utf-8") as spec_file:
         assert pyhf.Workspace(json.load(spec_file))
-    assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
+    assert len(pyhf.schema.variables.SCHEMA_CACHE) == 2
+    assert list(pyhf.schema.variables.SCHEMA_CACHE) == [
+        'https://scikit-hep.org/pyhf/schemas/0.1.0/workspace.json',
+        'https://scikit-hep.org/pyhf/schemas/0.1.0/defs.json',
+    ]
 
 
 def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_globals):
@@ -79,7 +96,11 @@ def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_g
         assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
         with open(new_path / "custom.json", encoding="utf-8") as spec_file:
             assert pyhf.Workspace(json.load(spec_file))
-        assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
+        assert len(pyhf.schema.variables.SCHEMA_CACHE) == 2
+        assert list(pyhf.schema.variables.SCHEMA_CACHE) == [
+            'https://scikit-hep.org/pyhf/schemas/0.1.0/workspace.json',
+            'https://scikit-hep.org/pyhf/schemas/0.1.0/defs.json',
+        ]
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
@@ -543,8 +564,9 @@ def test_normsys_additional_properties():
     ],
     ids=['add', 'replace', 'test', 'remove', 'move', 'copy'],
 )
-def test_jsonpatch(patch):
-    pyhf.schema.validate([patch], 'jsonpatch.json')
+@pytest.mark.parametrize('version', ['1.0.0'])
+def test_jsonpatch(patch, version):
+    pyhf.schema.validate([patch], 'jsonpatch.json', version=version)
 
 
 @pytest.mark.parametrize(
@@ -568,16 +590,18 @@ def test_jsonpatch(patch):
         'move_nopath',
     ],
 )
-def test_jsonpatch_fail(patch):
+@pytest.mark.parametrize('version', ['1.0.0'])
+def test_jsonpatch_fail(patch, version):
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.schema.validate([patch], 'jsonpatch.json')
+        pyhf.schema.validate([patch], 'jsonpatch.json', version=version)
 
 
 @pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
-def test_patchset(datadir, patchset_file):
+@pytest.mark.parametrize('version', ['1.0.0'])
+def test_patchset(datadir, patchset_file, version):
     with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
         patchset = json.load(patch_file)
-    pyhf.schema.validate(patchset, 'patchset.json')
+    pyhf.schema.validate(patchset, 'patchset.json', version=version)
 
 
 @pytest.mark.parametrize(

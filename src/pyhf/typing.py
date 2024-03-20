@@ -1,15 +1,28 @@
 import os
+import sys
 from typing import (
     Any,
     Literal,
+    Mapping,
     MutableSequence,
     Protocol,
     Sequence,
+    SupportsFloat as Numeric,
     SupportsIndex,
     Tuple,
     TypedDict,
     Union,
 )
+
+if sys.version_info >= (3, 9):
+    from importlib.abc import Traversable
+else:
+    from importlib_resources.abc import Traversable
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Self
+else:
+    from typing_extensions import NotRequired, Self
 
 __all__ = (
     "PathOrStr",
@@ -27,11 +40,15 @@ __all__ = (
     "Modifier",
     "Sample",
     "Channel",
+    "Model",
     "Observation",
+    "PatchSet",
     "Workspace",
     "Literal",
-    "TypedDict",
     "Protocol",
+    "Self",
+    "Traversable",
+    "TypedDict",
 )
 
 
@@ -40,6 +57,9 @@ PathOrStr = Union[str, "os.PathLike[str]"]
 
 Shape = Tuple[int, ...]
 ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
+
+Schema = Mapping[str, Any]
+SchemaVersion = Literal['1.0.1', '1.0.0']
 
 
 class ParameterBase(TypedDict, total=False):
@@ -119,14 +139,11 @@ Modifier = Union[
 ]
 
 
-class SampleBase(TypedDict, total=False):
-    parameter_configs: Sequence[Parameter]
-
-
-class Sample(SampleBase):
+class Sample(TypedDict):
     name: str
     data: Sequence[float]
     modifiers: Sequence[Modifier]
+    parameter_configs: NotRequired[Sequence[Parameter]]
 
 
 class Channel(TypedDict):
@@ -139,10 +156,39 @@ class Observation(TypedDict):
     data: Sequence[float]
 
 
+class Model(TypedDict):
+    channels: Sequence[Channel]
+    parameters: NotRequired[Sequence[Parameter]]
+
+
 class Workspace(TypedDict):
     measurements: Sequence[Measurement]
     channels: Sequence[Channel]
     observations: Sequence[Observation]
+    version: SchemaVersion
+
+
+class PatchMetadata(TypedDict):
+    name: str
+    values: Sequence[Union[Numeric, str]]
+
+
+class Patch(TypedDict):
+    patch: Sequence[Mapping[str, Any]]
+    metadata: PatchMetadata
+
+
+class PatchSetMetadata(TypedDict):
+    digests: Mapping[str, str]
+    labels: Sequence[str]
+    description: str
+    references: Mapping[str, str]
+
+
+class PatchSet(TypedDict):
+    patches: Sequence[Patch]
+    metadata: PatchSetMetadata
+    version: SchemaVersion
 
 
 class TensorBackend(Protocol):
@@ -163,4 +209,16 @@ class PDF(Protocol):
         ...
 
     def log_prob(self, value: Any) -> Any:
+        ...
+
+
+class UpgradeProtocol(Protocol):
+    version: SchemaVersion
+
+    @classmethod
+    def workspace(cls, spec: Workspace) -> Workspace:
+        ...
+
+    @classmethod
+    def patchset(cls, spec: PatchSet) -> PatchSet:
         ...

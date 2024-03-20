@@ -4,7 +4,7 @@ import logging
 import click
 
 from pyhf import __version__
-from pyhf.cli import rootio, spec, infer, patchset, complete
+from pyhf.cli import rootio, spec, infer, patchset, complete, upgrade
 from pyhf.contrib import cli as contrib
 from pyhf import utils
 
@@ -56,3 +56,5 @@ pyhf.add_command(patchset.cli)
 pyhf.add_command(complete.cli)
 
 pyhf.add_command(contrib.cli)
+
+pyhf.add_command(upgrade.cli)

@@ -770,3 +770,39 @@ def test_sort_outfile(tmp_path, script_runner):
 
     ret = script_runner.run(shlex.split(command))
     assert ret.success
+
+
+@pytest.mark.parametrize('output_file', [False, True])
+def test_upgrade_workspace(tmpdir, datadir, script_runner, output_file):
+    temp = tmpdir.join("upgraded_output.json")
+    command = f'pyhf upgrade workspace {datadir.joinpath("workspace_1.0.0.json")} --version 1.0.1'
+    if output_file:
+        command += f" --output-file {temp.strpath}"
+
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    if output_file:
+        extracted_output = json.loads(temp.read())
+    else:
+        extracted_output = json.loads(ret.stdout)
+
+    assert extracted_output['version'] == '1.0.1'
+
+
+@pytest.mark.parametrize('output_file', [False, True])
+def test_upgrade_patchset(tmpdir, datadir, script_runner, output_file):
+    temp = tmpdir.join("upgraded_output.json")
+    command = f'pyhf upgrade patchset {datadir.joinpath("patchset_1.0.0.json")} --version 1.0.1'
+    if output_file:
+        command += f" --output-file {temp.strpath}"
+
+    ret = script_runner.run(*shlex.split(command))
+
+    assert ret.success
+    if output_file:
+        extracted_output = json.loads(temp.read())
+    else:
+        extracted_output = json.loads(ret.stdout)
+
+    assert extracted_output['version'] == '1.0.1'

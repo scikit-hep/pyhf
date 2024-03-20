@@ -1,25 +1,31 @@
 """
 See :class:`~pyhf.schema.Schema` for documentation.
 """
-import pathlib
+from __future__ import annotations
 import sys
+from typing import Any
 from pyhf.schema.loader import load_schema
 from pyhf.schema.validator import validate
 from pyhf.schema import variables
+from pyhf.typing import Self, SchemaVersion, PathOrStr, Traversable
+from pyhf.schema.upgrader import upgrade
+
+from pathlib import Path
 
 __all__ = [
     "load_schema",
     "validate",
     "path",
     "version",
+    "upgrade",
 ]
 
 
-def __dir__():
+def __dir__() -> list[str]:
     return __all__
 
 
-class Schema(sys.modules[__name__].__class__):
+class Schema(sys.modules[__name__].__class__):  # type: ignore[misc]
     """
     A module-level wrapper around :mod:`pyhf.schema` which will provide additional functionality for interacting with schemas.
 
@@ -61,7 +67,7 @@ class Schema(sys.modules[__name__].__class__):
 
     """
 
-    def __call__(self, new_path: pathlib.Path):
+    def __call__(self, new_path: PathOrStr) -> Self:
         """
         Change the local search path for finding schemas locally.
 
@@ -71,15 +77,15 @@ class Schema(sys.modules[__name__].__class__):
         Returns:
             self (pyhf.schema.Schema): Returns itself (for contextlib management)
         """
-        self.orig_path, variables.schemas = variables.schemas, new_path
+        self.orig_path, variables.schemas = variables.schemas, Path(new_path)
         self.orig_cache = dict(variables.SCHEMA_CACHE)
         variables.SCHEMA_CACHE.clear()
         return self
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         pass
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         """
         Reset the local search path for finding schemas locally.
 
@@ -90,14 +96,14 @@ class Schema(sys.modules[__name__].__class__):
         variables.SCHEMA_CACHE = self.orig_cache
 
     @property
-    def path(self):
+    def path(self) -> Traversable | Path:
         """
         The local path for schemas.
         """
         return variables.schemas
 
     @property
-    def version(self):
+    def versions(self) -> dict[str, SchemaVersion]:
         """
         The default version used for finding schemas.
         """
