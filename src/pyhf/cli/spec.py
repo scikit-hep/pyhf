@@ -1,4 +1,5 @@
 """The pyhf spec CLI subcommand."""
+
 import logging
 
 import click
@@ -149,9 +150,11 @@ def inspect(workspace, output_file, measurement):
                 ('(*) ' if measurement_name == default_measurement['name'] else '')
                 + measurement_name,
                 measurement_poi,
-                ','.join(measurement_parameters)
-                if measurement_parameters
-                else '(none)',
+                (
+                    ','.join(measurement_parameters)
+                    if measurement_parameters
+                    else '(none)'
+                ),
             )
         )
 

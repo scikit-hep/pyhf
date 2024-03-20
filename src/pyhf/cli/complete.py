@@ -1,4 +1,5 @@
 '''Shell completions for pyhf.'''
+
 import click
 
 try:
