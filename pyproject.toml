@@ -107,7 +107,7 @@ test = [
     "pytest-mpl",
     "ipympl>=0.3.0",
     "pydocstyle",
-    "papermill~=2.3.4",
+    "papermill~=2.5.0",
     "scrapbook~=0.5.0",
     "jupyter",
     "graphviz",
