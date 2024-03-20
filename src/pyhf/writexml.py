@@ -56,7 +56,7 @@ def _export_root_histogram(hist_name, data):
 # https://stackoverflow.com/a/4590052
 def indent(elem, level=0):
     i = "\n" + level * "  "
-    if elem:
+    if elem is not None:
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
         if not elem.tail or not elem.tail.strip():
