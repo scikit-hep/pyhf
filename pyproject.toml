@@ -39,6 +39,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
@@ -106,7 +107,7 @@ test = [
     "pytest-mpl",
     "ipympl>=0.3.0",
     "pydocstyle",
-    "papermill~=2.3.4",
+    "papermill~=2.5.0",
     "scrapbook~=0.5.0",
     "jupyter",
     "graphviz",
@@ -225,6 +226,7 @@ filterwarnings = [
     "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
     "ignore:jsonschema.RefResolver is deprecated as of v4.18.0, in favor of the:DeprecationWarning",  # Issue #2139
     "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
+    'ignore:Type google._upb._message.[A-Z]+ uses PyType_Spec with a metaclass that has custom:DeprecationWarning',  # protobuf via tensorflow
 ]
 
 [tool.coverage.run]
