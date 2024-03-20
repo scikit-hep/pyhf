@@ -18,6 +18,8 @@ import jsonpatch
 from pyhf import exceptions, schema
 from pyhf.mixins import _ChannelSummaryMixin
 from pyhf.pdf import Model
+import functools
+import operator
 
 log = logging.getLogger(__name__)
 
@@ -465,8 +467,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         try:
-            observed_data = sum(
-                (self.observations[c] for c in model.config.channels), []
+            observed_data = functools.reduce(
+                operator.iadd, (self.observations[c] for c in model.config.channels), []
             )
         except KeyError:
             log.error(
