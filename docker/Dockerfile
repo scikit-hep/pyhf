@@ -16,7 +16,7 @@ RUN apt-get -qq -y update && \
     python -m venv /usr/local/venv && \
     cd /code && \
     python -m pip --no-cache-dir install --upgrade pip setuptools wheel && \
-    python -m pip --no-cache-dir install '.[xmlio,contrib]' && \
+    python -m pip --no-cache-dir install '.[xmlio,contrib,experimental]' && \
     python -m pip list
 
 FROM base
