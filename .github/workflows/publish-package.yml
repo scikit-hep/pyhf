@@ -51,12 +51,12 @@ jobs:
     - name: Build a sdist and wheel
       if: github.event_name != 'schedule'
       run: |
-        python -m build .
+        python -m build --installer uv .
 
     - name: Build a sdist and wheel and check for warnings
       if: github.event_name == 'schedule'
       run: |
-        PYTHONWARNINGS=error,default::DeprecationWarning python -m build .
+        PYTHONWARNINGS=error,default::DeprecationWarning build --installer uv -m build .
 
     - name: Verify untagged commits have dev versions
       if: "!startsWith(github.ref, 'refs/tags/')"
