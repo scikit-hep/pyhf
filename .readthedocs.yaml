@@ -21,7 +21,7 @@ sphinx:
 # If using Sphinx, optionally build your docs in additional formats such as PDF and ePub
 formats: all
 
-# python -m pip install .[docs]
+# python -m pip install '.[docs]'
 python:
   install:
     - method: pip
