@@ -15,7 +15,8 @@ def __dir__():
 
 def _interp(x, xp, fp):
     tb, _ = get_backend()
-    return tb.astensor(np.interp(x, xp.tolist(), fp.tolist()))
+    # xp has already been turned into a list at this point
+    return tb.astensor(np.interp(x, xp, fp.tolist()))
 
 
 def toms748_scan(
@@ -79,13 +80,19 @@ def toms748_scan(
 
     def f_cached(poi):
         if poi not in cache:
-            cache[poi] = hypotest(
+            # FIXME: scipy.optimize.toms748 still operates on floats,
+            # not any form of ndarray, so want everything in the
+            # cache to be a float.
+            # This may change with the Python array API standard
+            # in the future.
+            cls_obs, cls_exp_band = hypotest(
                 poi,
                 data,
                 model,
                 return_expected_set=True,
                 **hypotest_kwargs,
             )
+            cache[poi] = (float(cls_obs), [float(x) for x in cls_exp_band])
         return cache[poi]
 
     def f(poi, level, limit=0):
@@ -198,7 +205,9 @@ def linear_grid_scan(
     obs = tb.astensor([[r[0]] for r in results])
     exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
 
-    result_array = tb.concatenate([obs, exp], axis=1).T
+    # TODO: Can use `.T` after TensorFlow support is removed.
+    result_array = tb.transpose(tb.concatenate([obs, exp], axis=1))
+    result_array = tb.tolist(result_array)
 
     # observed limit and the (0, +-1, +-2)sigma expected limits
     limits = [_interp(level, result_array[idx][::-1], scan[::-1]) for idx in range(6)]
