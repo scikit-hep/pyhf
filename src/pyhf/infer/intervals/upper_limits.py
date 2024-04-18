@@ -92,6 +92,10 @@ def toms748_scan(
         # Use integers for limit so we don't need a string comparison
         # limit == 0: Observed
         # else: expected
+
+        # Arrays are not hashable types, so cast to float
+        poi = float(poi)
+
         return (
             f_cached(poi)[0] - level
             if limit == 0
