@@ -23,7 +23,7 @@ def check_uniform_type(in_list):
     )
 
 
-def test_toms748_scan(tmp_path, hypotest_args):
+def test_toms748_scan(backend, tmp_path, hypotest_args):
     """
     Test the upper limit toms748 scan returns the correct structure and values
     """
@@ -53,11 +53,12 @@ def test_toms748_scan(tmp_path, hypotest_args):
             for i in range(5)
         ]
     )
-    assert observed_cls == pytest.approx(0.05)
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_cls) == pytest.approx(0.05)
     assert expected_cls == pytest.approx(0.05)
 
 
-def test_toms748_scan_bounds_extension(hypotest_args):
+def test_toms748_scan_bounds_extension(backend, hypotest_args):
     """
     Test the upper limit toms748 scan bounds can correctly extend to bracket the CLs level
     """
@@ -72,18 +73,20 @@ def test_toms748_scan_bounds_extension(hypotest_args):
         data, model, 3, 5, rtol=1e-8
     )
 
-    assert observed_limit == pytest.approx(observed_limit_default)
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_limit) == pytest.approx(observed_limit_default)
     assert np.allclose(np.asarray(expected_limits), np.asarray(expected_limits_default))
 
     # Force bounds_up to expand
     observed_limit, expected_limits = pyhf.infer.intervals.upper_limits.toms748_scan(
         data, model, 0, 1, rtol=1e-8
     )
-    assert observed_limit == pytest.approx(observed_limit_default)
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_limit) == pytest.approx(observed_limit_default)
     assert np.allclose(np.asarray(expected_limits), np.asarray(expected_limits_default))
 
 
-def test_upper_limit_against_auto(hypotest_args):
+def test_upper_limit_against_auto(backend, hypotest_args):
     """
     Test upper_limit linear scan and toms748_scan return similar results
     """
@@ -97,11 +100,13 @@ def test_upper_limit_against_auto(hypotest_args):
     )
     obs_linear, exp_linear = results_linear
     # Can't expect these to be much closer given the low granularity of the linear scan
-    assert obs_auto == pytest.approx(obs_linear, abs=0.1)
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(obs_auto) == pytest.approx(obs_linear, abs=0.1)
     assert np.allclose(exp_auto, exp_linear, atol=0.1)
 
 
-def test_upper_limit(hypotest_args):
+@pytest.mark.skip_numpy_minuit
+def test_upper_limit(backend, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
@@ -110,22 +115,27 @@ def test_upper_limit(hypotest_args):
     results = pyhf.infer.intervals.upper_limits.upper_limit(data, model, scan=scan)
     assert len(results) == 2
     observed_limit, expected_limits = results
-    assert observed_limit == pytest.approx(1.0262704738584554)
-    assert expected_limits == pytest.approx(
-        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_limit) == pytest.approx(1.0262704738584554)
+    # FIXME: Can use expected_limits == pytest.approx([...]) after TensorFlow support removed
+    assert np.allclose(
+        expected_limits, [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
     # tighter relative tolerance needed for macos
     results = pyhf.infer.intervals.upper_limits.upper_limit(data, model, rtol=1e-6)
     assert len(results) == 2
     observed_limit, expected_limits = results
-    assert observed_limit == pytest.approx(1.01156939)
-    assert expected_limits == pytest.approx(
-        [0.55988001, 0.75702336, 1.06234693, 1.50116923, 2.05078596]
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_limit) == pytest.approx(1.01156939)
+    # FIXME: Can use expected_limits == pytest.approx([...]) after TensorFlow support removed
+    assert np.allclose(
+        expected_limits, [0.55988001, 0.75702336, 1.06234693, 1.50116923, 2.05078596]
     )
 
 
-def test_upper_limit_with_kwargs(hypotest_args):
+@pytest.mark.skip_numpy_minuit
+def test_upper_limit_with_kwargs(backend, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
@@ -136,9 +146,11 @@ def test_upper_limit_with_kwargs(hypotest_args):
     )
     assert len(results) == 2
     observed_limit, expected_limits = results
-    assert observed_limit == pytest.approx(1.0262704738584554)
-    assert expected_limits == pytest.approx(
-        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_limit) == pytest.approx(1.0262704738584554)
+    # FIXME: Can use expected_limits == pytest.approx([...]) after TensorFlow support removed
+    assert np.allclose(
+        expected_limits, [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
 
     # linear_grid_scan
@@ -147,9 +159,11 @@ def test_upper_limit_with_kwargs(hypotest_args):
     )
     assert len(results) == 3
     observed_limit, expected_limits, (_scan, point_results) = results
-    assert observed_limit == pytest.approx(1.0262704738584554)
-    assert expected_limits == pytest.approx(
-        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_limit) == pytest.approx(1.0262704738584554)
+    # FIXME: Can use expected_limits == pytest.approx([...]) after TensorFlow support removed
+    assert np.allclose(
+        expected_limits, [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
     )
     assert _scan.tolist() == scan.tolist()
     assert len(_scan) == len(point_results)
@@ -160,9 +174,11 @@ def test_upper_limit_with_kwargs(hypotest_args):
     )
     assert len(results) == 3
     observed_limit, expected_limits, (_scan, point_results) = results
-    assert observed_limit == pytest.approx(1.01156939)
-    assert expected_limits == pytest.approx(
-        [0.55988001, 0.75702336, 1.06234693, 1.50116923, 2.05078596]
+    # FIXME: Remove float cast after TensorFlow support removed
+    assert float(observed_limit) == pytest.approx(1.01156939)
+    # FIXME: Can use expected_limits == pytest.approx([...]) after TensorFlow support removed
+    assert np.allclose(
+        expected_limits, [0.55988001, 0.75702336, 1.06234693, 1.50116923, 2.05078596]
     )
 
 
