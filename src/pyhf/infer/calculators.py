@@ -7,6 +7,7 @@ hypotheses.
 
 Using the calculators hypothesis tests can then be performed.
 """
+
 from pyhf.infer.mle import fixed_poi_fit
 from pyhf import get_backend
 from pyhf.infer import utils
@@ -61,8 +62,8 @@ def generate_asimov_data(
         par_bounds (:obj:`tensor`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter values for the given ``asimov_mu``.
 
 
@@ -241,8 +242,8 @@ class AsymptoticCalculator:
             par_bounds (:obj:`tensor`): The extrema of values the model parameters
                 are allowed to reach in the fit.
                 The shape should be ``(n, 2)`` for ``n`` model parameters.
-            fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
-                value during minimization.
+            fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+                constant to its starting value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
               data: ``'qtilde'``, ``'q'``, or ``'q0'``.
 
@@ -685,8 +686,8 @@ class ToyCalculator:
             par_bounds (:obj:`tensor`): The extrema of values the model parameters
                 are allowed to reach in the fit.
                 The shape should be ``(n, 2)`` for ``n`` model parameters.
-            fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
-                value during minimization.
+            fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+                constant to its starting value during minimization.
             test_stat (:obj:`str`): The test statistic to use as a numerical summary of the
               data: ``'qtilde'``, ``'q'``, or ``'q0'``.
 

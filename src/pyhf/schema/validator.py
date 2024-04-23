@@ -1,4 +1,5 @@
 import numbers
+from pathlib import Path
 from typing import Mapping, Union
 
 import jsonschema
@@ -70,12 +71,15 @@ def validate(
 
     version = version or variables.SCHEMA_VERSION
 
-    schema = load_schema(f'{version}/{schema_name}')
+    schema = load_schema(str(Path(version).joinpath(schema_name)))
 
-    # note: trailing slash needed for RefResolver to resolve correctly
+    # note: trailing slash needed for RefResolver to resolve correctly and by
+    # design, pathlib strips trailing slashes. See ref below:
+    # * https://bugs.python.org/issue21039
+    # * https://github.com/python/cpython/issues/65238
     resolver = jsonschema.RefResolver(
-        base_uri=f"file://{variables.schemas}/{version}/",
-        referrer=f"{schema_name}",
+        base_uri=f"{Path(variables.schemas).joinpath(version).as_uri()}/",
+        referrer=schema_name,
         store=variables.SCHEMA_CACHE,
     )
 

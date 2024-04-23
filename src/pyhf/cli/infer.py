@@ -1,4 +1,5 @@
 """The inference CLI group."""
+
 import logging
 
 import click

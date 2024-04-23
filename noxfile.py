@@ -4,10 +4,10 @@ from pathlib import Path
 
 import nox
 
-ALL_PYTHONS = ["3.8", "3.9", "3.10", "3.11"]
+ALL_PYTHONS = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
 # Default sessions to run if no session handles are passed
-nox.options.sessions = ["lint", "tests-3.11"]
+nox.options.sessions = ["lint", "tests-3.12"]
 
 
 DIR = Path(__file__).parent.resolve()
@@ -30,12 +30,12 @@ def tests(session):
 
     Examples:
 
-        $ nox --session tests --python 3.11
-        $ nox --session tests --python 3.11 -- contrib  # run the contrib module tests
-        $ nox --session tests --python 3.11 -- tests/test_tensor.py  # run specific tests
-        $ nox --session tests --python 3.11 -- coverage  # run with coverage but slower
+        $ nox --session tests --python 3.12
+        $ nox --session tests --python 3.12 -- contrib  # run the contrib module tests
+        $ nox --session tests --python 3.12 -- tests/test_tensor.py  # run specific tests
+        $ nox --session tests --python 3.12 -- coverage  # run with coverage but slower
     """
-    session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "--editable", ".[all,test]")
     session.install("--upgrade", "pytest")
 
     # Allow tests to be run with coverage
@@ -107,7 +107,7 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "--editable", ".[all,test]")
     session.install("--upgrade", "pytest", "matplotlib")
     if not sys.platform.startswith("linux"):
         session.error(
@@ -182,7 +182,7 @@ def notebooks(session: nox.Session):
     """
     Run the notebook tests.
     """
-    session.install("--upgrade", "--editable", ".[test]")
+    session.install("--upgrade", "--editable", ".[all,test]")
     session.run(
         "pytest",
         "--override-ini",

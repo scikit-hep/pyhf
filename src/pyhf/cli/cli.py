@@ -1,4 +1,5 @@
 """The pyhf Command Line Interface."""
+
 import logging
 
 import click

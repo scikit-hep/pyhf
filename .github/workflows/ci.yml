@@ -27,23 +27,26 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         include:
           - os: macos-latest
-            python-version: '3.11'
+            python-version: '3.12'
+          # Apple silicon runner
+          - os: macos-14
+            python-version: '3.12'
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --upgrade .[test]
+        python -m pip install --upgrade ".[all,test]"
 
     - name: List installed Python packages
       run: python -m pip list
@@ -66,10 +69,12 @@ jobs:
       if: >-
         github.event_name != 'schedule' &&
         matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
+        fail_ci_if_error: true
         files: ./coverage.xml
         flags: unittests-${{ matrix.python-version }}
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Test Contrib module with pytest
       run: |
@@ -81,30 +86,35 @@ jobs:
         coverage xml
 
     - name: Report contrib coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
+      if: github.event_name != 'schedule' && matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v4
       with:
+        fail_ci_if_error: true
         files: ./coverage.xml
         flags: contrib
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Test docstring examples with doctest
-      if: matrix.python-version == '3.11'
+      # TODO: Don't currently try to match amd64 and arm64 floating point for docs, but will in the future.
+      if: matrix.python-version == '3.12' && matrix.os != 'macos-14'
       run: coverage run --data-file=.coverage-doctest --module pytest src/ README.rst
 
     - name: Coverage report for doctest only
-      if: matrix.python-version == '3.11'
+      if: matrix.python-version == '3.12' && matrix.os != 'macos-14'
       run: |
         coverage report --data-file=.coverage-doctest
         coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
 
     - name: Report doctest coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
+      if: github.event_name != 'schedule' && matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v4
       with:
+        fail_ci_if_error: true
         files: doctest-coverage.xml
         flags: doctest
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Run benchmarks
-      if: github.event_name == 'schedule' && matrix.python-version == '3.11'
+      if: github.event_name == 'schedule' && matrix.python-version == '3.12'
       run: |
         pytest --benchmark-sort=mean tests/benchmarks/test_benchmark.py

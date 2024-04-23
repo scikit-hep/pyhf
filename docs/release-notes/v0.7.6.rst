@@ -1,0 +1,32 @@
+|release v0.7.6|_
+=================
+
+This is a patch release from ``v0.7.5`` → ``v0.7.6``.
+
+Fixes
+-----
+
+* For the JAX backend access ``jax.config`` from the ``jax`` top level API to
+  avoid support issues with ``jax`` and ``jaxlib`` ``v0.4.20+``.
+  (PR :pr:`2376`)
+* Add information in the warnings for :func:`pyhf.infer.test_statistics.qmu` and
+  :func:`pyhf.infer.test_statistics.qmu_tilde` that provides users with the
+  higher level ``pyhf.infer`` APIs ``kwarg`` to set the correct test statistic.
+  (PR :pr:`2390`)
+* Correct the variable assignment for the one-sigma and two-sigma limit band
+  artists in :func:`pyhf.contrib.viz.brazil.plot_brazil_band` to match the
+  stated return structure.
+  (PR :pr:`2411`)
+* In the ``pyhf.infer`` module, correct the ``fixed_params`` type in the docs
+  to be to :obj:`tuple` or :obj:`list`.
+  (PR :pr:`2420`)
+
+Contributors
+------------
+
+``v0.7.6`` benefited from contributions from:
+
+* Lorenz Gaertner
+
+.. |release v0.7.6| replace:: ``v0.7.6``
+.. _`release v0.7.6`: https://github.com/scikit-hep/pyhf/releases/tag/v0.7.6

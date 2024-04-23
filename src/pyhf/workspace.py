@@ -5,6 +5,7 @@ pyhf workspaces hold the three data items:
 * the observed data (optional)
 * fit configurations ("measurements")
 """
+
 from __future__ import annotations
 
 import collections
@@ -17,6 +18,8 @@ import jsonpatch
 from pyhf import exceptions, schema
 from pyhf.mixins import _ChannelSummaryMixin
 from pyhf.pdf import Model
+import functools
+import operator
 
 log = logging.getLogger(__name__)
 
@@ -464,8 +467,8 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         try:
-            observed_data = sum(
-                (self.observations[c] for c in model.config.channels), []
+            observed_data = functools.reduce(
+                operator.iadd, (self.observations[c] for c in model.config.channels), []
             )
         except KeyError:
             log.error(
@@ -706,7 +709,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         )
 
     @classmethod
-    def combine(cls, left, right, join='none', merge_channels=False):
+    def combine(
+        cls, left, right, join='none', merge_channels=False, validate: bool = True
+    ):
         """
         Return a new workspace specification that is the combination of the two workspaces.
 
@@ -733,6 +738,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             right (~pyhf.workspace.Workspace): Another workspace
             join (:obj:`str`): How to join the two workspaces. Pick from "none", "outer", "left outer", or "right outer".
             merge_channels (:obj:`bool`): Whether or not to merge channels when performing the combine. This is only done with "outer", "left outer", and "right outer" options.
+            validate (:obj:`bool`): Whether to validate against a JSON schema.
 
         Returns:
             ~pyhf.workspace.Workspace: A new combined workspace object
@@ -770,7 +776,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             'observations': new_observations,
             'version': new_version,
         }
-        return cls(newspec)
+        return cls(newspec, validate=validate)
 
     @classmethod
     def sorted(cls, workspace):

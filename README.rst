@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number| |NumFOCUS Affiliated Project|
+|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number IRIS-HEP v1| |NSF Award Number IRIS-HEP v2| |NumFOCUS Affiliated Project|
 
 |Docs from latest| |Docs from main| |Jupyter Book tutorial| |Binder|
 
@@ -309,11 +309,11 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.7.4}",
-     version = {0.7.4},
+     title = "{pyhf: v0.7.6}",
+     version = {0.7.6},
      doi = {10.5281/zenodo.1169739},
      url = {https://doi.org/10.5281/zenodo.1169739},
-     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.4}
+     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.6}
    }
 
    @article{pyhf_joss,
@@ -348,7 +348,8 @@ Acknowledgements
 ----------------
 
 Matthew Feickert has received support to work on ``pyhf`` provided by NSF
-cooperative agreement `OAC-1836650 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1836650>`__ (IRIS-HEP)
+cooperative agreements `OAC-1836650 <https://nsf.gov/awardsearch/showAward?AWD_ID=1836650>`__
+and `PHY-2323298 <https://nsf.gov/awardsearch/showAward?AWD_ID=2323298>`__ (IRIS-HEP)
 and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377>`__ (DIANA/HEP).
 
 ``pyhf`` is a `NumFOCUS Affiliated Project <https://numfocus.org/sponsored-projects/affiliated-projects>`__.
@@ -361,11 +362,13 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://doi.org/10.21105/joss.02823
 .. |Scikit-HEP| image:: https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
    :target: https://scikit-hep.org/
-.. |NSF Award Number| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
+.. |NSF Award Number IRIS-HEP v1| image:: https://img.shields.io/badge/NSF-1836650-blue.svg
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=1836650
+.. |NSF Award Number IRIS-HEP v2| image:: https://img.shields.io/badge/NSF-2323298-blue.svg
+   :target: https://nsf.gov/awardsearch/showAward?AWD_ID=2323298
 .. |NumFOCUS Affiliated Project| image:: https://img.shields.io/badge/NumFOCUS-Affiliated%20Project-orange.svg?style=flat&colorA=E1523D&colorB=007D8A
    :target: https://numfocus.org/sponsored-projects/affiliated-projects
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.4-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.6-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from main| image:: https://img.shields.io/badge/docs-main-blue.svg
    :target: https://scikit-hep.github.io/pyhf
@@ -380,7 +383,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://prefix.dev/channels/conda-forge/packages/pyhf
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
-.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.4-blue?logo=Docker
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.6-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
 .. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/cuda/tags
@@ -395,11 +398,11 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
 
-.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg?branch=main
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amain
-.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/workflows/Docs/badge.svg?branch=main
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amain
-.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=main
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amain
-.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg?branch=main
+.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml?query=branch%3Amain
+.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml?query=branch%3Amain
+.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml?query=branch%3Amain
+.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg
    :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amain
