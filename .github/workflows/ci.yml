@@ -29,7 +29,8 @@ jobs:
         os: [ubuntu-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         include:
-          - os: macos-latest
+          # macos-latest runners are Apple silicon
+          - os: macos-13
             python-version: '3.12'
           # Apple silicon runner
           - os: macos-14
