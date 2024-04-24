@@ -50,7 +50,7 @@ dependencies = [
     "jsonpatch>=1.15",
     "jsonschema>=4.15.0",  # for utils
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
-    "scipy>=1.5.1",  # requires numpy, which is required by pyhf and tensorflow
+    "scipy>=1.5.2",  # requires numpy, which is required by pyhf and tensorflow
     "tqdm>=4.56.0",  # for readxml
     "numpy",  # compatible versions controlled through scipy
 ]
