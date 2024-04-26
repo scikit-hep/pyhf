@@ -20,7 +20,9 @@ jobs:
         os: [ubuntu-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         include:
-          # macos-latest runners are Apple silicon
+          - os: macos-latest
+            python-version: '3.12'
+          # Intel runner
           - os: macos-13
             python-version: '3.12'
 
@@ -35,7 +37,7 @@ jobs:
     - name: Install from PyPI
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install --pre pyhf[backends,xmlio]
+        python -m pip install --pre 'pyhf[backends,xmlio]'
         python -m pip install pytest
         python -m pip list
 
