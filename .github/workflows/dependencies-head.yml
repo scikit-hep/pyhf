@@ -147,13 +147,14 @@ jobs:
         uv pip install --system --upgrade pip setuptools wheel
         uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
         uv pip uninstall --system matplotlib
-        # Need to use --extra-index-url as dependencies aren't on scientific-python-nightly-wheels package index.
+        # Need to use --extra-index-url as all dependencies aren't on scientific-python-nightly-wheels package index.
         # Need to use --pre as dev releases will need priority over stable releases.
+        # Note that uv and pip differ on --extra-index-url priority
+        # c.f. https://github.com/scientific-python/upload-nightly-action/issues/76
         uv pip install --system \
-          --upgrade \
           --pre \
-          --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
-          --extra-index-url https://pypi.org/simple/ \
+          --index-url https://pypi.org/simple/ \
+          --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
           matplotlib
 
     - name: List installed Python packages
