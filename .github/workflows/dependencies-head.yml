@@ -65,7 +65,7 @@ jobs:
         python -m pip install uv
         uv pip install --system --upgrade pip setuptools wheel
         uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        uv pip uninstall --yes scipy
+        uv pip uninstall --system scipy
         uv pip install --system --upgrade --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple scipy
         python -m pip list
 
@@ -92,7 +92,7 @@ jobs:
         python -m pip install uv
         uv pip install --system --upgrade pip setuptools wheel
         uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        uv pip uninstall --yes iminuit
+        uv pip uninstall --system iminuit
         uv pip install --system --upgrade cython
         uv pip install --system --upgrade git+https://github.com/scikit-hep/iminuit.git
         python -m pip list
@@ -119,7 +119,7 @@ jobs:
         python -m pip install uv
         uv pip install --system --upgrade pip setuptools wheel
         uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        uv pip uninstall --yes uproot
+        uv pip uninstall --system uproot
         uv pip install --system --upgrade git+https://github.com/scikit-hep/uproot5.git
         python -m pip list
     - name: Test with pytest
@@ -147,7 +147,7 @@ jobs:
         python -m pip install uv
         uv pip install --system --upgrade pip setuptools wheel
         uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        uv pip uninstall --yes matplotlib
+        uv pip uninstall --system matplotlib
         # Need to use --extra-index-url as dependencies aren't on scientific-python-nightly-wheels package index.
         # Need to use --pre as dev releases will need priority over stable releases.
         uv pip install --system \
@@ -183,7 +183,7 @@ jobs:
         python -m pip install uv
         uv pip install --system --upgrade pip setuptools wheel
         uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        uv pip uninstall --yes pytest
+        uv pip uninstall --system pytest
         uv pip install --system --upgrade git+https://github.com/pytest-dev/pytest.git
         python -m pip list
     - name: Test with pytest
