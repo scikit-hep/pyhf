@@ -30,8 +30,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        python -m uv pip install --system --upgrade pip setuptools wheel
-        python -m uv pip --no-cache --quiet install --system --upgrade --pre ".[all,test]"
+        uv pip install --system --upgrade pip setuptools wheel
+        uv pip --no-cache --quiet install --system --upgrade --pre ".[all,test]"
         python -m pip list
 
     - name: List release candidates, alpha, and beta releases
@@ -63,10 +63,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        python -m uv pip install --system --upgrade pip setuptools wheel
-        python -m uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        python -m uv pip uninstall --yes scipy
-        python -m uv pip install --system --upgrade --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple scipy
+        uv pip install --system --upgrade pip setuptools wheel
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --yes scipy
+        uv pip install --system --upgrade --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple scipy
         python -m pip list
 
     - name: Test with pytest
@@ -90,11 +90,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        python -m uv pip install --system --upgrade pip setuptools wheel
-        python -m uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        python -m uv pip uninstall --yes iminuit
-        python -m uv pip install --system --upgrade cython
-        python -m uv pip install --system --upgrade git+https://github.com/scikit-hep/iminuit.git
+        uv pip install --system --upgrade pip setuptools wheel
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --yes iminuit
+        uv pip install --system --upgrade cython
+        uv pip install --system --upgrade git+https://github.com/scikit-hep/iminuit.git
         python -m pip list
     - name: Test with pytest
       run: |
@@ -117,10 +117,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        python -m uv pip install --system --upgrade pip setuptools wheel
-        python -m uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        python -m uv pip uninstall --yes uproot
-        python -m uv pip install --system --upgrade git+https://github.com/scikit-hep/uproot5.git
+        uv pip install --system --upgrade pip setuptools wheel
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --yes uproot
+        uv pip install --system --upgrade git+https://github.com/scikit-hep/uproot5.git
         python -m pip list
     - name: Test with pytest
       run: |
@@ -145,12 +145,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        python -m uv pip install --system --upgrade pip setuptools wheel
-        python -m uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        python -m uv pip uninstall --yes matplotlib
+        uv pip install --system --upgrade pip setuptools wheel
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --yes matplotlib
         # Need to use --extra-index-url as dependencies aren't on scientific-python-nightly-wheels package index.
         # Need to use --pre as dev releases will need priority over stable releases.
-        python -m uv pip install --system \
+        uv pip install --system \
           --upgrade \
           --pre \
           --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
@@ -181,10 +181,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        python -m uv pip install --system --upgrade pip setuptools wheel
-        python -m uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
-        python -m uv pip uninstall --yes pytest
-        python -m uv pip install --system --upgrade git+https://github.com/pytest-dev/pytest.git
+        uv pip install --system --upgrade pip setuptools wheel
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --yes pytest
+        uv pip install --system --upgrade git+https://github.com/pytest-dev/pytest.git
         python -m pip list
     - name: Test with pytest
       run: |
