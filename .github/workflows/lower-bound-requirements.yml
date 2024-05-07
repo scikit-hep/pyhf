@@ -52,6 +52,7 @@ jobs:
         --resolution lowest-direct
         ".[all]"
         "numpy>=1.21.0"
+        "protobuf==3.20.3"
 
     - name: Fixup numpy install?
       run: uv pip install --system --upgrade 'scipy==1.5.2'
