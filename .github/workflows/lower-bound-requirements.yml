@@ -31,7 +31,7 @@ jobs:
         uv pip --no-cache install --system --constraint tests/constraints.txt ".[all,test]"
 
     - name: List installed Python packages
-      run: python -m pip list
+      run: uv pip list --system
 
     - name: Test with pytest
       run: |
@@ -40,4 +40,21 @@ jobs:
         # free. Though still show warnings by setting warning control to 'default'.
         export PYTHONWARNINGS='default'
         # Run on tests/ to skip doctests of src given examples are for latest APIs
+        pytest --override-ini filterwarnings= --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py tests/
+
+    - name: Validate lower bound values
+      run: >-
+        uv pip --no-cache install
+        --system
+        --find-links https://storage.googleapis.com/jax-releases/jax_releases.html
+        --upgrade
+        --resolution lowest-direct
+        ".[all]"
+
+    - name: List installed Python packages
+      run: uv pip list --system
+
+    - name: Test with pytest
+      run: |
+        export PYTHONWARNINGS='default'
         pytest --override-ini filterwarnings= --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py tests/
