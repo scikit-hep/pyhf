@@ -51,6 +51,7 @@ jobs:
         --upgrade
         --resolution lowest-direct
         ".[all]"
+        "numpy>=1.21.0"
 
     - name: List installed Python packages
       run: uv pip list --system
