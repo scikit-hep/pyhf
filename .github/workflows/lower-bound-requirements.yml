@@ -53,6 +53,9 @@ jobs:
         ".[all]"
         "numpy>=1.21.0"
 
+    - name: Fixup numpy install?
+      run: uv pip install --system --upgrade 'scipy==1.5.2'
+
     - name: List installed Python packages
       run: uv pip list --system
 
