@@ -29,7 +29,7 @@ jobs:
       run: |
         python -m pip install uv
         uv pip install --system --upgrade pip setuptools wheel
-        uv pip --no-cache install --system --constraint tests/constraints.txt ".[all,test]"
+        uv pip install --system --constraint tests/constraints.txt ".[all,test]"
 
     - name: List installed Python packages
       run: uv pip list --system
@@ -45,7 +45,7 @@ jobs:
 
     - name: Validate lower bound values
       run: >-
-        uv pip --no-cache install
+        uv pip install
         --system
         --find-links https://storage.googleapis.com/jax-releases/jax_releases.html
         --upgrade
