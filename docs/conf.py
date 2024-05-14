@@ -15,11 +15,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 
+import importlib.metadata
 import sys
 from pathlib import Path
 
 import jupytext
-from pkg_resources import get_distribution
 
 sys.path.insert(0, str(Path('./exts').resolve()))
 
@@ -123,7 +123,7 @@ author = 'Lukas Heinrich, Matthew Feickert, Giordon Stark'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 # The full version, including alpha/beta/rc tags.
-release = get_distribution('pyhf').version
+release = importlib.metadata.version("pyhf")
 # for example take major/minor/patch
 version = '.'.join(release.split('.')[:3])
 
