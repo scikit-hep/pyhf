@@ -113,20 +113,6 @@ jobs:
       with:
         subject-path: "dist/pyhf-*"
 
-    # DEBUG
-    - name: Verify sdist artifact attestation
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh --version
-        gh attestation verify dist/pyhf-*.tar.gz --repo ${{ github.repository }}
-
-    - name: Verify wheel artifact attestation
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh attestation verify dist/pyhf-*.whl --repo ${{ github.repository }}
-
     - name: Upload distribution artifact
       uses: actions/upload-artifact@v4
       with:
@@ -158,20 +144,20 @@ jobs:
 
     - name: Verify sdist artifact attestation
       # If publishing to TestPyPI or PyPI
-      if: >-
-        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf')
+      # if: >-
+      #   (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
+      #   || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
+      #   || (github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf')
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh attestation verify dist/pyhf-*.tar.gz --repo ${{ github.repository }}
 
     - name: Verify wheel artifact attestation
       # If publishing to TestPyPI or PyPI
-      if: >-
-        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf')
+      # if: >-
+      #   (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
+      #   || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
+      #   || (github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf')
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh attestation verify dist/pyhf-*.whl --repo ${{ github.repository }}
