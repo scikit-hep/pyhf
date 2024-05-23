@@ -13,7 +13,7 @@ on:
         - major
       release_candidate:
         type: boolean
-        description: 'Release candidate?'
+        description: 'Release candidate'
         default: false
       new_version:
         description: 'New version to bump to'
@@ -26,11 +26,11 @@ on:
         type: string
       force:
         type: boolean
-        description: 'Force override check?'
+        description: 'Force override check'
         default: false
       dry_run:
         type: boolean
-        description: 'Perform a dry run to check?'
+        description: 'Perform a dry run to check'
         default: true
 
 jobs:
