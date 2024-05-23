@@ -73,3 +73,11 @@ repos:
     - id: codespell
       files: ^.*\.(py|md|rst)$
       args: ["-w", "-L", "hist,gaus"]
+
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.28.4
+  hooks:
+    - id: check-readthedocs
+      args: ["--verbose"]
+    - id: check-github-workflows
+      args: ["--verbose"]

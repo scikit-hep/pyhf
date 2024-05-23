@@ -12,11 +12,8 @@ on:
         - minor
         - major
       release_candidate:
-        type: choice
+        type: boolean
         description: 'Release candidate?'
-        options:
-        - false
-        - true
       new_version:
         description: 'New version to bump to'
         required: true
@@ -27,17 +24,11 @@ on:
         required: true
         type: string
       force:
-        type: choice
+        type: boolean
         description: 'Force override check?'
-        options:
-        - false
-        - true
       dry_run:
-        type: choice
+        type: boolean
         description: 'Perform a dry run to check?'
-        options:
-        - true
-        - false
 
 jobs:
   bump-version:
