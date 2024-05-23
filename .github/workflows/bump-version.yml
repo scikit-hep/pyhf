@@ -14,6 +14,7 @@ on:
       release_candidate:
         type: boolean
         description: 'Release candidate?'
+        default: false
       new_version:
         description: 'New version to bump to'
         required: true
@@ -26,9 +27,11 @@ on:
       force:
         type: boolean
         description: 'Force override check?'
+        default: false
       dry_run:
         type: boolean
         description: 'Perform a dry run to check?'
+        default: true
 
 jobs:
   bump-version:
