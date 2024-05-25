@@ -26,8 +26,8 @@ jobs:
   docker:
     name: Build, test, and publish Docker images to Docker Hub
     permissions:
-      actions: write  # for docker to push to registry
       contents: read
+      packages: write  # for docker to push to registry
     runs-on: ubuntu-latest
 
     steps:
