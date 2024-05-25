@@ -61,4 +61,8 @@ ENV LANG=C.UTF-8
 
 ENV PATH=${HOME}/.local/bin:${PATH}
 
+# The first ever run of the CLI API incurs some overhead so do that during the
+# build instead of making the user wait
+RUN pyhf --version
+
 ENTRYPOINT ["/usr/local/venv/bin/pyhf"]
