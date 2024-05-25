@@ -6,7 +6,7 @@ FROM base as builder
 # Set PATH to pickup virtual environment by default
 ENV PATH=/usr/local/venv/bin:"${PATH}"
 COPY . /code
-# hadolint ignore=DL3003,SC2102
+# hadolint ignore=DL3003,SC2102,SC1091
 RUN apt-get -qq -y update && \
     apt-get -qq -y install --no-install-recommends \
         git && \
