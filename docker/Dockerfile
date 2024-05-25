@@ -6,7 +6,7 @@ FROM base as builder
 # Set PATH to pickup virtual environment by default
 ENV PATH=/usr/local/venv/bin:"${PATH}"
 COPY . /code
-# hadolint ignore=DL3003,SC2102
+# hadolint ignore=DL3003,SC2102,SC1091
 RUN apt-get -qq -y update && \
     apt-get -qq -y install --no-install-recommends \
         git && \
@@ -14,10 +14,12 @@ RUN apt-get -qq -y update && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* && \
     python -m venv /usr/local/venv && \
+    . /usr/local/venv/bin/activate && \
     cd /code && \
-    python -m pip --no-cache-dir install --upgrade pip setuptools wheel && \
-    python -m pip --no-cache-dir install '.[xmlio,contrib]' && \
-    python -m pip list
+    python -m pip --no-cache-dir install --upgrade uv && \
+    uv pip install --no-cache --upgrade pip setuptools wheel && \
+    uv pip install --no-cache '.[xmlio,contrib]' && \
+    uv pip list
 
 FROM base
 
