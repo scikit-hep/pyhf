@@ -14,6 +14,7 @@ RUN apt-get -qq -y update && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/* && \
     python -m venv /usr/local/venv && \
+    . /usr/local/venv/bin/activate && \
     cd /code && \
     python -m pip --no-cache-dir install --upgrade uv && \
     uv pip install --no-cache --upgrade pip setuptools wheel && \
