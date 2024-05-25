@@ -15,9 +15,10 @@ RUN apt-get -qq -y update && \
     rm -rf /var/lib/apt/lists/* && \
     python -m venv /usr/local/venv && \
     cd /code && \
-    python -m pip --no-cache-dir install --upgrade pip setuptools wheel && \
-    python -m pip --no-cache-dir install '.[xmlio,contrib]' && \
-    python -m pip list
+    python -m pip --no-cache-dir install --upgrade uv && \
+    uv pip install --no-cache --upgrade pip setuptools wheel && \
+    uv pip install --no-cache '.[xmlio,contrib]' && \
+    uv pip list
 
 FROM base
 
