@@ -33,8 +33,13 @@ on:
         description: 'Perform a dry run to check'
         default: true
 
+permissions:
+  contents: read
+
 jobs:
   bump-version:
+    permissions:
+      contents: write  # for Git to git push
     runs-on: ubuntu-latest
     if: github.repository == 'scikit-hep/pyhf'
 

@@ -5,6 +5,9 @@ on:
     types: [closed]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   binder:
     name: Trigger Binder build
