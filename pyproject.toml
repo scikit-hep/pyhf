@@ -133,7 +133,6 @@ develop = [
     "tbump>=6.7.0",
     "pre-commit",
     "nox",
-    "codemetapy>=2.3.0",
     "uv>=0.1.39"
 ]
 

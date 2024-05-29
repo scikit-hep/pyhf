@@ -13,7 +13,6 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Verify that the release notes files correctly summarize all development changes since the last release.
 * [ ] Add any new use citations or published statistical models to the [Use and Citations page][citations_page].
 * [ ] Verify that the citations on the [Use and Citations page][citations_page] are up to date with their current [INSPIRE](https://inspirehep.net/) record. Checking the [Dimensions listing of publication citations](https://app.dimensions.ai/discover/publication?or_subset_publication_citations=pub.1135154020) can be helpful to catch citations that are now journal publications.
-* [ ] Update the ``codemeta.json`` file in the release PR if its requirements have updated.
 * [ ] Update the [pypa/gh-action-pypi-publish](https://github.com/pypa/gh-action-pypi-publish) GitHub Action used for deployment to TestPyPI and PyPI to the latest stable release.
 * [ ] Make a release to [TestPyPI][TestPyPI_pyhf] using the [workflow dispatch event trigger](https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml).
 * [ ] Verify that the project README is displaying correctly on [TestPyPI][TestPyPI_pyhf].
