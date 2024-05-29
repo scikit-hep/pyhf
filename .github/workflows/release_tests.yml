@@ -28,6 +28,7 @@ jobs:
           # Intel runner
           - os: macos-13
             python-version: '3.12'
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
@@ -47,6 +48,10 @@ jobs:
 
     - name: Canary test public API
       run: |
+        # Override the ini option for filterwarnings with an empty list to disable error on filterwarnings
+        # as testing the latest release API still works, not the release is warning free.
+        # Though still show warnings by setting warning control to 'default'.
+        export PYTHONWARNINGS='default'
         pytest tests/test_public_api.py
 
       # FIXME: c.f. https://github.com/proycon/codemetapy/issues/24
