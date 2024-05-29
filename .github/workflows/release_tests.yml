@@ -52,7 +52,7 @@ jobs:
         # as testing the latest release API still works, not the release is warning free.
         # Though still show warnings by setting warning control to 'default'.
         export PYTHONWARNINGS='default'
-        pytest tests/test_public_api.py
+        pytest --disable-backend tensorflow tests/test_public_api.py
 
       # FIXME: c.f. https://github.com/proycon/codemetapy/issues/24
     - name: Verify requirements in codemeta.json
