@@ -17,11 +17,9 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        type: choice
-        description: 'Publish to TestPyPI?'
-        options:
-        - false
-        - true
+        type: boolean
+        description: 'Publish to TestPyPI'
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
