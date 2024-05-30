@@ -16,8 +16,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ['3.10']
+        os: [ubuntu-latest, macos-latest, macos-13]
+        python-version: ['3.12']
 
     steps:
     - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.10']
+        python-version: ['3.12']
 
     steps:
     - uses: actions/checkout@v4
@@ -73,7 +73,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.10']
+        python-version: ['3.12']
 
     steps:
     - uses: actions/checkout@v4
@@ -93,13 +93,13 @@ jobs:
       run: |
         pytest --ignore tests/benchmarks/ --ignore tests/contrib --ignore tests/test_notebooks.py
 
-  uproot4:
+  uproot5:
 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.10']
+        python-version: ['3.12']
 
     steps:
     - uses: actions/checkout@v4
@@ -124,7 +124,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.10']
+        python-version: ['3.12']
 
     steps:
     - uses: actions/checkout@v4
@@ -160,7 +160,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.10']
+        python-version: ['3.12']
 
     steps:
     - uses: actions/checkout@v4

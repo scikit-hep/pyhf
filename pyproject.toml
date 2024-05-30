@@ -39,6 +39,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
@@ -108,8 +109,8 @@ test = [
     "pytest-mpl",
     "ipympl>=0.3.0",
     "pydocstyle",
-    "papermill~=2.3.4",
-    "scrapbook~=0.5.0",
+    "papermill>=2.3.4",
+    "scrapbook>=0.5.0",
     "jupyter",
     "graphviz",
     "pytest-socket>=0.2.0",  # c.f. PR #1917
@@ -117,14 +118,14 @@ test = [
 docs = [
     "pyhf[xmlio,contrib]",
     "sphinx>=7.0.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2271
-    "sphinxcontrib-bibtex~=2.1",
+    "sphinxcontrib-bibtex>=2.1",
     "sphinx-click",
     "sphinx-rtd-theme>=1.3.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2271
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",
     "sphinx-issues",
     "sphinx-copybutton>=0.3.2,!=0.5.1",
-    "jupyterlite-sphinx>=0.8.0",
+    "jupyterlite-sphinx>=0.13.1",  # c.f. https://github.com/scikit-hep/pyhf/pull/2458
     "jupyterlite-pyodide-kernel>=0.0.7",
     "jupytext>=1.14.0",
     "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
@@ -236,7 +237,7 @@ filterwarnings = [
 
 [tool.mypy]
 files = "src"
-python_version = "3.11"
+python_version = "3.12"
 warn_unused_configs = true
 strict = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
