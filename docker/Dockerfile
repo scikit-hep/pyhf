@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=python:3.11-slim-bullseye
+ARG BASE_IMAGE=python:3.12-slim-bullseye
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE} as base
 
@@ -60,5 +60,9 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 ENV PATH=${HOME}/.local/bin:${PATH}
+
+# The first ever run of the CLI API incurs some overhead so do that during the
+# build instead of making the user wait
+RUN pyhf --version
 
 ENTRYPOINT ["/usr/local/venv/bin/pyhf"]
