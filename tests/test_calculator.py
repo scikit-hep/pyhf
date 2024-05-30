@@ -84,6 +84,7 @@ def test_asymptotic_calculator_has_fitted_pars(test_stat):
         assert pytest.approx([1.0, 1.0], rel=rtol) == pyhf.tensorlib.tolist(
             fitted_pars.free_fit_to_data
         )
+        # lower tolerance for amd64 and arm64 to agree
         assert pytest.approx(
-            [7.6470499e-05, 1.4997178], rel=rtol
+            [7.6470499e-05, 1.4997178], rel=1e-3
         ) == pyhf.tensorlib.tolist(fitted_pars.free_fit_to_asimov)
