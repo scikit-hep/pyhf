@@ -25,6 +25,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build Python distribution
@@ -32,7 +35,6 @@ jobs:
     permissions:
       id-token: write
       attestations: write
-      contents: read
 
     steps:
     - uses: actions/checkout@v4
