@@ -1,4 +1,5 @@
 """Common Backend Shim to prepare minimization for optimizer."""
+
 from pyhf.tensor.manager import get_backend
 from pyhf.tensor.common import _TensorViewer
 
