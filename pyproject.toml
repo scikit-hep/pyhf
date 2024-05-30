@@ -98,10 +98,9 @@ all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
 
 # Developer extras
 test = [
-    "pyhf[all]",
     "scikit-hep-testdata>=0.4.11",
     "pytest>=6.0",
-    "pytest-cov>=2.5.1",
+    "coverage[toml]>=6.0.0",
     "pytest-mock",
     "requests-mock>=1.9.0",
     "pytest-benchmark[histogram]",
@@ -131,7 +130,7 @@ docs = [
     "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
 ]
 develop = [
-    "pyhf[test,docs]",
+    "pyhf[all,test,docs]",
     "tbump>=6.7.0",
     "pre-commit",
     "nox",
@@ -181,14 +180,9 @@ minversion = "6.0"
 xfail_strict = true
 addopts = [
     "-ra",
-    "--cov=pyhf",
-    "--cov-branch",
     "--showlocals",
     "--strict-markers",
     "--strict-config",
-    "--cov-report=term-missing",
-    "--cov-report=xml",
-    "--cov-report=html",
     "--doctest-modules",
     "--doctest-glob='*.rst'",
 ]
@@ -232,7 +226,22 @@ filterwarnings = [
     'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
     "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
     "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
+    "ignore:jsonschema.RefResolver is deprecated as of v4.18.0, in favor of the:DeprecationWarning",  # Issue #2139
     "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
+    'ignore:Type google._upb._message.[A-Z]+ uses PyType_Spec with a metaclass that has custom:DeprecationWarning',  # protobuf via tensorflow
+]
+
+[tool.coverage.run]
+source = ["pyhf"]
+branch = true
+omit = ["*/pyhf/typing.py"]
+
+[tool.coverage.report]
+precision = 1
+sort = "cover"
+show_missing = true
+exclude_also = [
+    "if TYPE_CHECKING:"
 ]
 
 [tool.mypy]
