@@ -53,10 +53,3 @@ jobs:
         # Though still show warnings by setting warning control to 'default'.
         export PYTHONWARNINGS='default'
         pytest tests/test_public_api.py
-
-      # FIXME: c.f. https://github.com/proycon/codemetapy/issues/24
-    - name: Verify requirements in codemeta.json
-      run: |
-        uv pip install --system jq "codemetapy>=2.3.0"
-        codemetapy --inputtype python --no-extras pyhf > codemeta_generated.json
-        diff <(jq -S .softwareRequirements codemeta.json) <(jq -S .softwareRequirements codemeta_generated.json)
