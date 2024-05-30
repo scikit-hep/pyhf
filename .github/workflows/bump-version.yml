@@ -198,8 +198,9 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install tbump
+        python -m pip install uv
+        uv pip install --system --upgrade pip setuptools wheel
+        uv pip install --system tbump
         python -m pip list
 
     - name: Setup Git user to push new tag
