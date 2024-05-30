@@ -49,9 +49,6 @@ src = "src/pyhf/data/citation.bib"
 src = ".zenodo.json"
 
 [[file]]
-src = "codemeta.json"
-
-[[file]]
 src = "CITATION.cff"
 
 [[file]]
