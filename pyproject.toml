@@ -111,7 +111,7 @@ test = [
     "pydocstyle",
     "papermill>=2.3.4",
     "scrapbook>=0.5.0",
-    "jupyter",
+    "notebook>=6.5.7",
     "graphviz",
     "pytest-socket>=0.2.0",  # c.f. PR #1917
 ]
