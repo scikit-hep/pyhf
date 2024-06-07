@@ -34,3 +34,4 @@ Contributors include:
 - Daniel Werner
 - Jonas Rembser
 - Lorenz Gaertner
+- Melissa Weber Mendonça
