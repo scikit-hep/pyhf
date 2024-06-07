@@ -8,15 +8,15 @@
 
    intro
    likelihood
-   learn
    examples
-   outreach
    api
+   cli
    installation
    development
    faq
+   learn
    babel
-   cli
+   outreach
    citations
    governance/ROADMAP
    release-notes
