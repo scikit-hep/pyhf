@@ -11,12 +11,12 @@
    learn
    examples
    outreach
+   api
    installation
    development
    faq
    babel
    cli
-   api
    citations
    governance/ROADMAP
    release-notes

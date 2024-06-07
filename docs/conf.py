@@ -248,7 +248,9 @@ html_theme = 'pydata_sphinx_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {}
+html_theme_options = {
+    "header_links_before_dropdown": 6
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = []
