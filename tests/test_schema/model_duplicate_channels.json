@@ -1,0 +1,50 @@
+{
+    "channels": [
+        {
+            "name": "singlechannel",
+            "samples": [
+                {
+                    "name": "signal",
+                    "data": [10],
+                    "modifiers": [
+                        {"name": "mu", "type": "normfactor", "data": null}
+                    ]
+                },
+                {
+                    "name": "background",
+                    "data": [15],
+                    "modifiers": [
+                        {
+                            "name": "uncorr_bkguncrt",
+                            "type": "shapesys",
+                            "data": [5]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "singlechannel",
+            "samples": [
+                {
+                    "name": "signal",
+                    "data": [10],
+                    "modifiers": [
+                        {"name": "mu", "type": "normfactor", "data": null}
+                    ]
+                },
+                {
+                    "name": "background",
+                    "data": [15],
+                    "modifiers": [
+                        {
+                            "name": "uncorr_bkguncrt",
+                            "type": "shapesys",
+                            "data": [5]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
