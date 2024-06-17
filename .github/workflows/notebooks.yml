@@ -32,7 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip install --system --upgrade pip setuptools wheel
+        uv pip install --system --upgrade pip wheel
         # FIXME: c.f. https://github.com/scikit-hep/pyhf/issues/2104
         uv pip install --system --upgrade ".[all,test]" 'jupyter-client<8.0.0'
 
