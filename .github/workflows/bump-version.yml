@@ -204,7 +204,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install uv
-        uv pip install --system --upgrade pip setuptools wheel
+        uv pip install --system --upgrade pip wheel
         uv pip install --system tbump
         python -m pip list
 
