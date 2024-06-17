@@ -164,6 +164,6 @@ def datadir(tmp_path, request):
     test_dir = pathlib.Path(request.module.__file__).with_suffix('')
 
     if test_dir.is_dir():
-        shutil.copytree(test_dir, tmp_path)
+        shutil.copytree(test_dir, tmp_path, dirs_exist_ok=True)
 
     return tmp_path
