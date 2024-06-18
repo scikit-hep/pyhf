@@ -1,6 +1,7 @@
 """
 Defines a synchronous Python-like Executor for pyhf: :class:`TrivialExecutor`
 """
+
 from concurrent import futures
 
 
