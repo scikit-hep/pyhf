@@ -328,7 +328,7 @@ class jax_backend:
 
         .. versionadded:: 0.7.0
         """
-        return jnp.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
+        return jnp.percentile(tensor_in, q, axis=axis, method=interpolation)
 
     def stack(self, sequence, axis=0):
         return jnp.stack(sequence, axis=axis)
