@@ -67,14 +67,29 @@ class OptimizerMixin:
             raise exceptions.FailedMinimization(result)
         return result
 
-    def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False):
+    def _internal_postprocess(
+        self, fitresult, stitch_pars, /, par_bounds, *, return_uncertainties=False
+    ):
         """
         Post-process the fit result.
+
+        Args:
+            fitresult (scipy.optimize.OptimizeResult): Fit result from :func:`_internal_minimize`
+            stitch_pars (:obj:`func`): callable that stitches fixed parameters into the unfixed parameters
+            par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
+                are allowed to reach in the fit.
+                The shape should be ``(n, 2)`` for ``n`` model parameters.
+            return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off (``False``).
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): A modified version of the fit result.
         """
         tensorlib, _ = get_backend()
+
+        # TODO: check how to handle this for batching
+        for par_index, (fitted_par, bound) in enumerate(zip(fitresult.x, par_bounds)):
+            if fitted_par in bound:
+                log.warning(f'parameter at index {par_index} is at the bounds')
 
         # stitch in missing parameters (e.g. fixed parameters)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
@@ -195,7 +210,10 @@ class OptimizerMixin:
             **minimizer_kwargs, options=kwargs, par_names=par_names
         )
         result = self._internal_postprocess(
-            result, stitch_pars, return_uncertainties=return_uncertainties
+            result,
+            stitch_pars,
+            par_bounds=minimizer_kwargs['bounds'],
+            return_uncertainties=return_uncertainties,
         )
 
         _returns = [result.x]
