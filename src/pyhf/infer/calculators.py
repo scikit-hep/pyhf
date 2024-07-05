@@ -806,9 +806,10 @@ class ToyCalculator:
                     self.par_bounds,
                     self.fixed_params,
                 )
-            except RuntimeError:
+            except:
                 if self.skip_failing_toys:
                     value = None
+                    print(f'signal failed for: {sample}')
                 else:
                     raise
 
@@ -826,9 +827,10 @@ class ToyCalculator:
                     self.par_bounds,
                     self.fixed_params,
                 )
-            except RuntimeError:
+            except:
                 if self.skip_failing_toys:
                     value = None
+                    print(f'background failed for: {sample}')
                 else:
                     raise
 
