@@ -1,8 +1,8 @@
 ARG BASE_IMAGE=python:3.12-slim-bullseye
 # hadolint ignore=DL3006
-FROM ${BASE_IMAGE} as base
+FROM ${BASE_IMAGE} AS base
 
-FROM base as builder
+FROM base AS builder
 # Set PATH to pickup virtual environment by default
 ENV PATH=/usr/local/venv/bin:"${PATH}"
 COPY . /code
@@ -49,10 +49,11 @@ RUN adduser \
 
 COPY --from=builder --chown=moby /usr/local/venv /usr/local/venv/
 
+# Does NOT define USER as ENV
 USER moby
 
-ENV USER ${USER}
-ENV HOME /home/moby
+ENV USER=moby
+ENV HOME=/home/moby
 WORKDIR ${HOME}/work
 
 # Use C.UTF-8 locale to avoid issues with ASCII encoding
