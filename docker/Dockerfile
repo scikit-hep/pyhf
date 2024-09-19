@@ -17,7 +17,6 @@ RUN apt-get -qq -y update && \
     . /usr/local/venv/bin/activate && \
     cd /code && \
     python -m pip --no-cache-dir install --upgrade uv && \
-    uv pip install --no-cache --upgrade pip wheel && \
     uv pip install --no-cache '.[xmlio,contrib]' && \
     uv pip list
 
