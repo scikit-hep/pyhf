@@ -33,7 +33,6 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip install --system --upgrade pip wheel
         uv pip install --system --upgrade '.[all,test]'
 
     - name: List installed Python packages
