@@ -10,13 +10,16 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   release-candidates:
 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-13]
         python-version: ['3.12']
 
     steps:
@@ -29,8 +32,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade --pre ".[all,test]"
+        python -m pip install uv
+        uv pip --no-cache --quiet install --system --upgrade --pre ".[all,test]"
         python -m pip list
 
     - name: List release candidates, alpha, and beta releases
@@ -57,14 +60,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # Use nightly SciPy wheels from Anaconda's PyPI
-    # c.f. https://twitter.com/ralfgommers/status/1419917265781334025
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade ".[all,test]"
-        python -m pip uninstall --yes scipy
-        python -m pip install --upgrade --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple scipy
+        python -m pip install uv
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --system scipy
+        # uv wants to upgrade dependencies (numpy) to a dev release too, so don't --upgrade
+        uv pip install --system --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple scipy
         python -m pip list
 
     - name: Test with pytest
@@ -87,11 +89,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade ".[all,test]"
-        python -m pip uninstall --yes iminuit
-        python -m pip install --upgrade cython
-        python -m pip install --upgrade git+https://github.com/scikit-hep/iminuit.git
+        python -m pip install uv
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --system iminuit
+        uv pip install --system --upgrade cython
+        uv pip install --system --upgrade git+https://github.com/scikit-hep/iminuit.git
         python -m pip list
     - name: Test with pytest
       run: |
@@ -113,10 +115,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade ".[all,test]"
-        python -m pip uninstall --yes uproot
-        python -m pip install --upgrade git+https://github.com/scikit-hep/uproot5.git
+        python -m pip install uv
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --system uproot
+        uv pip install --system --upgrade git+https://github.com/scikit-hep/uproot5.git
         python -m pip list
     - name: Test with pytest
       run: |
@@ -140,16 +142,17 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade ".[all,test]"
-        python -m pip uninstall --yes matplotlib
-        # Need to use --extra-index-url as dependencies aren't on scientific-python-nightly-wheels package index.
+        python -m pip install uv
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --system matplotlib
+        # Need to use --extra-index-url as all dependencies aren't on scientific-python-nightly-wheels package index.
         # Need to use --pre as dev releases will need priority over stable releases.
-        python -m pip install \
-          --upgrade \
+        # Note that uv and pip differ on --extra-index-url priority
+        # c.f. https://github.com/scientific-python/upload-nightly-action/issues/76
+        uv pip install --system \
           --pre \
-          --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
-          --extra-index-url https://pypi.org/simple/ \
+          --index-url https://pypi.org/simple/ \
+          --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
           matplotlib
 
     - name: List installed Python packages
@@ -175,10 +178,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --no-cache-dir --quiet install --upgrade ".[all,test]"
-        python -m pip uninstall --yes pytest
-        python -m pip install --upgrade git+https://github.com/pytest-dev/pytest.git
+        python -m pip install uv
+        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip uninstall --system pytest
+        uv pip install --system --upgrade git+https://github.com/pytest-dev/pytest.git
         python -m pip list
     - name: Test with pytest
       run: |

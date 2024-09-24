@@ -19,9 +19,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   docker:
     name: Build, test, and publish Docker images to Docker Hub
+    permissions:
+      contents: read
+      packages: write  # for docker to push to registry
     runs-on: ubuntu-latest
 
     steps:
@@ -75,7 +81,7 @@ jobs:
 
       - name: Test build
         id: docker_build_test
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: docker/Dockerfile
@@ -113,7 +119,7 @@ jobs:
         # every PR will trigger a push event on main, so check the push event is actually coming from main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scikit-hep/pyhf'
         id: docker_build_latest
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: docker/Dockerfile
@@ -130,7 +136,7 @@ jobs:
       - name: Build and publish to registry with release tag
         if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
         id: docker_build_release
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: docker/Dockerfile

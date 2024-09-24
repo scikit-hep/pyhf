@@ -15,11 +15,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 
+import importlib.metadata
 import sys
 from pathlib import Path
 
 import jupytext
-from pkg_resources import get_distribution
 
 sys.path.insert(0, str(Path('./exts').resolve()))
 
@@ -55,7 +55,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
-    'sphinx_rtd_theme',
     'sphinxcontrib.bibtex',
     'sphinx.ext.napoleon',
     'sphinx_click.ext',
@@ -123,7 +122,7 @@ author = 'Lukas Heinrich, Matthew Feickert, Giordon Stark'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 # The full version, including alpha/beta/rc tags.
-release = get_distribution('pyhf').version
+release = importlib.metadata.version("pyhf")
 # for example take major/minor/patch
 version = '.'.join(release.split('.')[:3])
 
@@ -243,13 +242,13 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'pydata_sphinx_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {}
+html_theme_options = {"header_links_before_dropdown": 6}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = []

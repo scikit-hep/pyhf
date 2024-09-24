@@ -1,6 +1,6 @@
-FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04 as base
+FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04 AS base
 
-FROM base as builder
+FROM base AS builder
 # hadolint ignore=DL3015
 RUN apt-get update -y && \
     apt-get install -y \
@@ -14,7 +14,7 @@ COPY . /code
 COPY ./docker/gpu/install_backend.sh /code/install_backend.sh
 WORKDIR /code
 ARG BACKEND=tensorflow
-RUN python3 -m pip --no-cache-dir install --upgrade pip setuptools wheel && \
+RUN python3 -m pip --no-cache-dir install --upgrade pip wheel && \
     /bin/bash install_backend.sh ${BACKEND} && \
     python3 -m pip list
 

@@ -11,9 +11,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.number }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   main:
 
+    permissions:
+      pull-requests: read  # for amannn/action-semantic-pull-request to analyze PRs
+      statuses: write  # for amannn/action-semantic-pull-request to mark status of analyzed PR
     name: Validate PR title
     runs-on: ubuntu-latest
 

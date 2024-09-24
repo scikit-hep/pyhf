@@ -1,10 +1,10 @@
 import json
 import pathlib
+import shutil
 import sys
 import tarfile
 
 import pytest
-from setuptools._distutils import dir_util
 
 import pyhf
 
@@ -164,9 +164,6 @@ def datadir(tmp_path, request):
     test_dir = pathlib.Path(request.module.__file__).with_suffix('')
 
     if test_dir.is_dir():
-        dir_util.copy_tree(test_dir, str(tmp_path))
-        # shutil is nicer, but doesn't work: https://bugs.python.org/issue20849
-        # Once pyhf is Python 3.8+ only then the below can be used.
-        # shutil.copytree(test_dir, tmp_path)
+        shutil.copytree(test_dir, tmp_path, dirs_exist_ok=True)
 
     return tmp_path

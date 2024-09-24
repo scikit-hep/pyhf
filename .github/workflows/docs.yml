@@ -11,6 +11,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build docs
@@ -28,9 +31,9 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip --quiet install --upgrade .[docs,test]
-        python -m pip install yq
+        python -m pip install uv
+        uv pip --quiet install --system --upgrade ".[docs,test]"
+        uv pip install --system yq
         python -m pip list
 
     - name: Install apt-get dependencies

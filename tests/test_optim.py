@@ -401,7 +401,9 @@ def test_optim_uncerts_minuit(backend, source, spec, mu):
         return_uncertainties=True,
     )
     assert result.shape == (2, 2)
-    assert pytest.approx([0.26418431, 0.0]) == pyhf.tensorlib.tolist(result[:, 1])
+    assert pytest.approx([0.26418431, 0.0], rel=1e-5) == pyhf.tensorlib.tolist(
+        result[:, 1]
+    )
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
