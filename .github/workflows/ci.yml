@@ -80,7 +80,7 @@ jobs:
       if: >-
         github.event_name != 'schedule' &&
         matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true
         files: ./coverage.xml
@@ -98,7 +98,7 @@ jobs:
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true
         files: ./coverage.xml
@@ -118,7 +118,7 @@ jobs:
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true
         files: doctest-coverage.xml
