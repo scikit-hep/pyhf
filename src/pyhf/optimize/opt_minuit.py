@@ -11,7 +11,7 @@ class minuit_optimizer(OptimizerMixin):
     Optimizer that minimizes via :meth:`iminuit.Minuit.migrad`.
     """
 
-    __slots__ = ['name', 'errordef', 'steps', 'strategy', 'tolerance']
+    __slots__ = ['errordef', 'name', 'steps', 'strategy', 'tolerance']
 
     def __init__(self, *args, **kwargs):
         """
