@@ -35,3 +35,4 @@ Contributors include:
 - Jonas Rembser
 - Lorenz Gaertner
 - Melissa Weber Mendonça
+- Matthias Bussonnier
