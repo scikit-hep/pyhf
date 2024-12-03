@@ -121,6 +121,7 @@ docs = [
     "pydata-sphinx-theme>=0.15.3",
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",
+    "intersphinx_registry>=0.2411.17",
     "sphinx-issues",
     "sphinx-copybutton>=0.3.2,!=0.5.1",
     "jupyterlite-sphinx>=0.13.1",  # c.f. https://github.com/scikit-hep/pyhf/pull/2458
