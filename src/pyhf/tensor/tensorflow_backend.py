@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 class tensorflow_backend:
     """TensorFlow backend for pyhf"""
 
-    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    __slots__ = ['default_do_grad', 'dtypemap', 'name', 'precision']
 
     #: The array type for tensorflow
     array_type = tf.Tensor

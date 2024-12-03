@@ -6,7 +6,7 @@ from scipy.optimize import toms748
 from pyhf import get_backend
 from pyhf.infer import hypotest
 
-__all__ = ["upper_limit", "linear_grid_scan", "toms748_scan"]
+__all__ = ["linear_grid_scan", "toms748_scan", "upper_limit"]
 
 
 def __dir__():

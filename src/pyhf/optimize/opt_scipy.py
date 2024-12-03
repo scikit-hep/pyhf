@@ -10,7 +10,7 @@ class scipy_optimizer(OptimizerMixin):
     Optimizer that uses :func:`scipy.optimize.minimize`.
     """
 
-    __slots__ = ['name', 'tolerance', 'solver_options']
+    __slots__ = ['name', 'solver_options', 'tolerance']
 
     def __init__(self, *args, **kwargs):
         """

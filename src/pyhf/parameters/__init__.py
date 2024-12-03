@@ -8,12 +8,12 @@ from pyhf.parameters.utils import reduce_paramsets_requirements
 from pyhf.parameters.paramview import ParamViewer
 
 __all__ = [
-    'paramset',
-    'unconstrained',
+    'ParamViewer',
     'constrained_by_normal',
     'constrained_by_poisson',
+    'paramset',
     'reduce_paramsets_requirements',
-    'ParamViewer',
+    'unconstrained',
 ]
 
 

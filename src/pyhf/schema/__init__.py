@@ -10,8 +10,8 @@ from pyhf.schema import variables
 
 __all__ = [
     "load_schema",
-    "validate",
     "path",
+    "validate",
     "version",
 ]
 

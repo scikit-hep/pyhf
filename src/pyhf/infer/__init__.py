@@ -206,7 +206,7 @@ def hypotest(
 
 from pyhf.infer import intervals
 
-__all__ = ["hypotest", "calculators", "intervals", "mle", "test_statistics", "utils"]
+__all__ = ["calculators", "hypotest", "intervals", "mle", "test_statistics", "utils"]
 
 
 def __dir__():

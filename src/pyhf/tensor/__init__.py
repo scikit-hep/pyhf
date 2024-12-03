@@ -3,10 +3,10 @@ from pyhf import exceptions
 
 class _BackendRetriever:
     __slots__ = [
-        "_array_types",
         "_array_subtypes",
-        "numpy_backend",
+        "_array_types",
         "jax_backend",
+        "numpy_backend",
         "pytorch_backend",
         "tensorflow_backend",
     ]
