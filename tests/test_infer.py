@@ -646,7 +646,7 @@ def test_deprecated_upperlimit(hypotest_args):
 
 def test_issue2563_toms748_scan_setLevel(tmp_path, hypotest_args):
     """
-    Test that setting the level actually gives us what we expect.
+    Test that setting the level actually gives us what we expect for scan=None (using the toms748 algorithm)
     """
     _, data, model = hypotest_args
 
