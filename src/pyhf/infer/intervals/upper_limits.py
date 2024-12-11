@@ -270,6 +270,7 @@ def upper_limit(
         model,
         bounds[0],
         bounds[1],
+        level=level,
         from_upper_limit_fn=True,
         **hypotest_kwargs,
     )
