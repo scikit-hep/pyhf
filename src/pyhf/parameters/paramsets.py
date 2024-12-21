@@ -1,5 +1,3 @@
-from typing import List
-
 import pyhf
 
 __all__ = [
@@ -29,7 +27,7 @@ class paramset:
             )
 
     @property
-    def suggested_fixed(self) -> List[bool]:
+    def suggested_fixed(self) -> list[bool]:
         if isinstance(self._suggested_fixed, bool):
             return [self._suggested_fixed] * self.n_parameters
         return self._suggested_fixed

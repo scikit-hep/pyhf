@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, Union
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 
@@ -26,7 +27,7 @@ FloatIntOrBool = Literal["float", "int", "bool"]
 log = logging.getLogger(__name__)
 
 
-class _BasicPoisson:
+class _BasicPoisson(Generic[T]):
     def __init__(self, rate: Tensor[T]):
         self.rate = rate
 
@@ -38,7 +39,7 @@ class _BasicPoisson:
         return tensorlib.poisson_logpdf(value, self.rate)
 
 
-class _BasicNormal:
+class _BasicNormal(Generic[T]):
     def __init__(self, loc: Tensor[T], scale: Tensor[T]):
         self.loc = loc
         self.scale = scale
@@ -198,9 +199,11 @@ class numpy_backend(Generic[T]):
         """
         return true_callable() if predicate else false_callable()
 
-    def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
+    def tolist(
+        self, tensor_in: Tensor[T] | list[T]
+    ) -> int | float | complex | list[T] | list[Any]:
         try:
-            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return]
+            return tensor_in.tolist()  # type: ignore[union-attr]
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -550,7 +553,7 @@ class numpy_backend(Generic[T]):
         """
         return norm.cdf(x, loc=mu, scale=sigma)  # type: ignore[no-any-return]
 
-    def poisson_dist(self, rate: Tensor[T]) -> _BasicPoisson:
+    def poisson_dist(self, rate: Tensor[T]) -> _BasicPoisson[T]:
         r"""
         The Poisson distribution with rate parameter :code:`rate`.
 
@@ -571,7 +574,7 @@ class numpy_backend(Generic[T]):
         """
         return _BasicPoisson(rate)
 
-    def normal_dist(self, mu: Tensor[T], sigma: Tensor[T]) -> _BasicNormal:
+    def normal_dist(self, mu: Tensor[T], sigma: Tensor[T]) -> _BasicNormal[T]:
         r"""
         The Normal distribution with mean :code:`mu` and standard deviation :code:`sigma`.
 

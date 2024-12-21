@@ -1,6 +1,7 @@
 import numbers
 from pathlib import Path
-from typing import Mapping, Union
+from typing import Union
+from collections.abc import Mapping
 
 import jsonschema
 
