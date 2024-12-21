@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, Union
 from collections.abc import Mapping, Sequence
 
 import numpy as np
@@ -206,7 +206,9 @@ class numpy_backend(Generic[T]):
         """
         return true_callable() if predicate else false_callable()
 
-    def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
+    def tolist(
+        self, tensor_in: Tensor[T] | list[T]
+    ) -> int | float | complex | list[T] | list[Any]:
         try:
             # unused-ignore for [no-any-return] in python 3.9
             return tensor_in.tolist()  # type: ignore[union-attr,no-any-return,unused-ignore]

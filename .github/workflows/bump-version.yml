@@ -195,11 +195,11 @@ jobs:
         echo "steps.script.outputs.old_tag=v${current_tag}"
         echo "old_tag=v${current_tag}" >> $GITHUB_OUTPUT
 
-    - name: Set up Python 3.13
+    - name: Set up Python 3.12
       if: success()
       uses: actions/setup-python@v6
       with:
-        python-version: '3.13'
+        python-version: '3.12'
 
     - name: Install Python dependencies
       run: |
