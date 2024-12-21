@@ -121,7 +121,7 @@ class AsymptoticTestStatDistribution:
             >>> pyhf.set_backend("numpy")
             >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
             >>> bkg_dist.cdf(0.0)
-            0.5
+            np.float64(0.5)
 
         Args:
             value (:obj:`float`): The test statistic value.
@@ -620,7 +620,7 @@ class EmpiricalDistribution:
             >>> samples = normal.sample((100,))
             >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
             >>> dist.expected_value(nsigma=1)
-            6.15094381...
+            np.float64(6.15094381...)
 
             >>> import pyhf
             >>> import numpy.random as random
