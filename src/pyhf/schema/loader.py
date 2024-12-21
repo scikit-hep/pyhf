@@ -1,15 +1,8 @@
 from pathlib import Path
-import sys
 import json
 import pyhf.exceptions
 from pyhf.schema import variables
-
-# importlib.resources.as_file wasn't added until Python 3.9
-# c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
-if sys.version_info >= (3, 9):
-    from importlib import resources
-else:
-    import importlib_resources as resources
+from importlib import resources
 
 
 def load_schema(schema_id: str):

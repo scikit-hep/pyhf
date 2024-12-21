@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 
@@ -207,7 +208,8 @@ class numpy_backend(Generic[T]):
 
     def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
         try:
-            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return]
+            # unused-ignore for [no-any-return] in python 3.9
+            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return,unused-ignore]
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
