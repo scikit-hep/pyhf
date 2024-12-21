@@ -529,6 +529,15 @@ linkcheck_ignore = [
     # and ReadTheDocs need to reference them
     r'https://github.com/scikit-hep/pyhf/releases/tag/.*',
     r'https://pyhf.readthedocs.io/en/.*',
+    # the following are 403s as they map to journals.aps.org or academic.oup.com
+    r'https://doi.org/10.1093/ptep/ptad144',
+    r'https://doi.org/10.1103/PhysRevD.104.055017',
+    r'https://doi.org/10.1103/PhysRevD.107.095021',
+    r'https://doi.org/10.1103/PhysRevD.108.016002',
+    r'https://doi.org/10.1103/PhysRevD.106.032005',
+    r'https://doi.org/10.1103/PhysRevLett.127.181802',
+    r'https://doi.org/10.1103/PhysRevLett.130.231801',
+    r'https://doi.org/10.1103/PhysRevLett.131.211802',
 ]
 linkcheck_retries = 50
 
