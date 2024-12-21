@@ -25,7 +25,7 @@ keywords = [
     "physics",
     "pytorch",
     "scipy",
-    "tensorflow >= 2.18",  # see https://github.com/tensorflow/probability/issues/1854
+    "tensorflow",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -69,6 +69,7 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 shellcomplete = ["click_completion"]
 # NOTE: macos x86 support is deprecated from tensorflow v2.17.0 onwards.
 tensorflow = [
+    "tensorflow >= 2.18",  # see https://github.com/tensorflow/probability/issues/1854
     "tensorflow-probability[tf]>=0.24.0"  # c.f. PR #2452
 ]
 torch = ["torch>=1.10.0"]  # c.f. PR #1657
