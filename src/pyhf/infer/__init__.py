@@ -1,7 +1,7 @@
 """Inference for Statistical Models."""
 
 from pyhf.infer import utils
-from pyhf import get_backend
+from pyhf.tensor.manager import get_backend
 from pyhf import exceptions
 
 
