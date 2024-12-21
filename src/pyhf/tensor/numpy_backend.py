@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 
