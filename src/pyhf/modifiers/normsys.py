@@ -1,5 +1,6 @@
 import logging
 
+import pyhf
 from pyhf import get_backend, events
 from pyhf import interpolators
 from pyhf.parameters import ParamViewer
@@ -72,6 +73,8 @@ class normsys_combined:
     def __init__(
         self, modifiers, pdfconfig, builder_data, interpcode='code1', batch_size=None
     ):
+        default_backend = pyhf.default_backend
+
         self.interpcode = interpcode
         assert self.interpcode in ['code1', 'code4']
 
@@ -97,10 +100,13 @@ class normsys_combined:
             ]
             for m in keys
         ]
-        self._normsys_mask = [
-            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
-            for m in keys
-        ]
+        self._normsys_mask = default_backend.astensor(
+            [
+                [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+                for m in keys
+            ],
+            dtype='bool',
+        )
 
         if normsys_mods:
             self.interpolator = getattr(interpolators, self.interpcode)(
