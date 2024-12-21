@@ -2,14 +2,12 @@ import os
 from typing import (
     Any,
     Literal,
-    MutableSequence,
     Protocol,
-    Sequence,
     SupportsIndex,
-    Tuple,
     TypedDict,
     Union,
 )
+from collections.abc import MutableSequence, Sequence
 
 __all__ = (
     "Channel",
@@ -35,10 +33,9 @@ __all__ = (
 )
 
 
-# TODO: Switch to os.PathLike[str] once Python 3.8 support dropped
-PathOrStr = Union[str, "os.PathLike[str]"]
+PathOrStr = Union[str, os.PathLike[str]]
 
-Shape = Tuple[int, ...]
+Shape = tuple[int, ...]
 ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
 
