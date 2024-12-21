@@ -210,8 +210,7 @@ class numpy_backend(Generic[T]):
         self, tensor_in: Tensor[T] | list[T]
     ) -> int | float | complex | list[T] | list[Any]:
         try:
-            # unused-ignore for [no-any-return] in python 3.9
-            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return,unused-ignore]
+            return tensor_in.tolist()  # type: ignore[union-attr]
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
