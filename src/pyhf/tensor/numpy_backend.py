@@ -210,8 +210,8 @@ class numpy_backend(Generic[T]):
         self, tensor_in: Tensor[T] | list[T]
     ) -> int | float | complex | list[T] | list[Any]:
         try:
-            # unused-ignore for [no-any-return] in python 3.9
-            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return,unused-ignore]
+            result = tensor_in.tolist()  # type: ignore[union-attr]
+            return cast(int | float | complex | list[T] | list[Any], result)
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -388,7 +388,7 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.simple_broadcast(
+            >>> list(pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
@@ -658,4 +658,5 @@ class numpy_backend(Generic[T]):
 
         .. versionadded:: 0.7.0
         """
-        return tensor_in.transpose()
+        result = tensor_in.transpose()
+        return cast(ArrayLike, result)
