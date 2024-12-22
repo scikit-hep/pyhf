@@ -326,8 +326,8 @@ class numpy_backend(Generic[T]):
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
-            >>> pyhf.tensorlib.percentile(a, 50)
-            np.float64(3.5)
+            >>> print(pyhf.tensorlib.percentile(a, 50))
+            3.5
             >>> pyhf.tensorlib.percentile(a, 50, axis=1)
             array([7., 2.])
 
@@ -387,11 +387,11 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.simple_broadcast(
+            >>> list(pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
-            ...   pyhf.tensorlib.astensor([5, 6, 7]))
-            (array([1., 1., 1.]), array([2., 3., 4.]), array([5., 6., 7.]))
+            ...   pyhf.tensorlib.astensor([5, 6, 7])))
+            [array([1., 1., 1.]), array([2., 3., 4.]), array([5., 6., 7.])]
 
         Args:
             args (Array of Tensors): Sequence of arrays
@@ -473,8 +473,8 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.poisson(5., 6.)
-            np.float64(0.16062314...)
+            >>> print(pyhf.tensorlib.poisson(5., 6.))
+            0.16062314...
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
             >>> pyhf.tensorlib.poisson(values, rates)
@@ -516,8 +516,8 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
-            np.float64(0.35206532...)
+            >>> print(pyhf.tensorlib.normal(0.5, 0., 1.))
+            0.35206532...
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
             >>> sigmas = pyhf.tensorlib.astensor([1., 0.8])
@@ -544,8 +544,8 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.normal_cdf(0.8)
-            np.float64(0.78814460...)
+            >>> print(pyhf.tensorlib.normal_cdf(0.8))
+            0.78814460...
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> pyhf.tensorlib.normal_cdf(values)
             array([0.7881446 , 0.97724987])
