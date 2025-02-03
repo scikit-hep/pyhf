@@ -115,7 +115,7 @@ constraint terms are derived implicitly as each type of modifier
 unambiguously defines the constraint terms it requires. Correlated shape
 modifiers and normalisation uncertainties have compatible constraint
 terms and thus modifiers can be declared that *share* parameters by
-re-using a name [1]_ for multiple modifiers. That is, a variation of a
+reusing a name [1]_ for multiple modifiers. That is, a variation of a
 single parameter causes a shift within sample rates due to both shape
 and normalisation variations.
 
