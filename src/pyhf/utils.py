@@ -4,14 +4,7 @@ import click
 import hashlib
 from gettext import gettext
 
-import sys
-
-# importlib.resources.as_file wasn't added until Python 3.9
-# c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
-if sys.version_info >= (3, 9):
-    from importlib import resources
-else:
-    import importlib_resources as resources
+from importlib import resources
 
 __all__ = [
     "EqDelimStringParamType",

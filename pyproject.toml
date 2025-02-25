@@ -11,7 +11,7 @@ dynamic = ["version"]
 description = "pure-Python HistFactory implementation with tensors and autodiff"
 readme = "README.rst"
 license = { text = "Apache-2.0" }  # SPDX short identifier
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
     { name = "Matthew Feickert", email = "matthew.feickert@cern.ch" },
@@ -35,7 +35,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -68,18 +67,10 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 
 [project.optional-dependencies]
 shellcomplete = ["click_completion"]
-# TODO: 'tensorflow' supports all platform_machine for tensorflow v2.16.1+
-# but TensorFlow only supports python_version 3.8 up through tensorflow v2.13.1.
-# So until Python 3.8 support is dropped, split requirments on python_version
-# before and after 3.9.
 # NOTE: macos x86 support is deprecated from tensorflow v2.17.0 onwards.
 tensorflow = [
-    # python == 3.8
-    "tensorflow>=2.7.0; python_version < '3.9' and platform_machine != 'arm64'",  # c.f. PR #1962, #2452
-    "tensorflow-macos>=2.7.0; python_version < '3.9' and platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. PR #2119, #2452
-    "tensorflow-probability>=0.11.0; python_version < '3.9'",  # c.f. PR #1657, #2452
-    # python >= 3.9
-    "tensorflow-probability[tf]>=0.24.0; python_version >= '3.9'"  # c.f. PR #2452
+    # see https://github.com/tensorflow/probability/issues/1854
+    "tensorflow-probability[tf]>=0.24.0,!=0.25.0"  # c.f. PR #2452
 ]
 torch = ["torch>=1.10.0"]  # c.f. PR #1657
 jax = [
@@ -251,6 +242,7 @@ warn_unused_configs = true
 strict = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
+plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
 module = [

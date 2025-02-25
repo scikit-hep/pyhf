@@ -112,10 +112,13 @@ class shapesys_combined:
             parfield_shape, pdfconfig.par_map, self._shapesys_mods
         )
 
-        self._shapesys_mask = [
-            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
-            for m in keys
-        ]
+        self._shapesys_mask = default_backend.astensor(
+            [
+                [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+                for m in keys
+            ],
+            dtype='bool',
+        )
         self.__shapesys_info = default_backend.astensor(
             [
                 [
