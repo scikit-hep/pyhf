@@ -5,19 +5,36 @@ from pyhf.parameters import ParamViewer
 import jax.numpy as jnp
 import jax
 
-def create_modifiers(additional_parameters = None):
+def create_modifiers():
 
     class PureFunctionModifierBuilder:
         is_shared = True
         def __init__(self, pdfconfig):
             self.config = pdfconfig
-            self.required_parsets = additional_parameters or {}
+            self.required_parsets = {}
             self.builder_data = {'local': {},'global': {'symbols': set()}}
 
         def collect(self, thismod, nom):
             maskval = True if thismod else False
             mask = [maskval] * len(nom)
             return {'mask': mask}
+
+        def require_synbols_as_scalars(self, symbols):
+            param_spec = {
+                p: 
+                [{
+                    'paramset_type': 'unconstrained',
+                    'n_parameters': 1,
+                    'is_shared': True,
+                    'inits': (1.0,),
+                    'bounds': ((0,10),),
+                    'is_scalar': True,
+                    'fixed': False,
+                }]
+                for p in symbols
+            }
+            return param_spec
+
 
         def append(self, key, channel, sample, thismod, defined_samp):
             self.builder_data['local'].setdefault(key, {}).setdefault(sample, {}).setdefault('data', {'mask': []})
@@ -42,6 +59,9 @@ def create_modifiers(additional_parameters = None):
 
         def finalize(self):
             list_of_symbols = [str(x) for x in self.builder_data['global']['symbols']]
+
+            self.required_parsets = self.require_synbols_as_scalars(list_of_symbols)
+
             self.builder_data['global']['symbol_names'] = list_of_symbols
             for modname, modspec in self.builder_data['local'].items():
                 for sample, samplespec in modspec.items():
@@ -113,29 +133,13 @@ def create_modifiers(additional_parameters = None):
 
 from pyhf.modifiers import histfactory_set
 
-def enable(new_params = None):
+def enable():
     modifier_set = {}
     modifier_set.update(**histfactory_set)
 
-    builder, applicator = create_modifiers(new_params)
+    builder, applicator = create_modifiers()
 
     modifier_set.update(**{
         applicator.name: (builder, applicator)}
     )
     return modifier_set
-
-def new_unconstrained_scalars(new_params):
-    param_spec = {
-        p['name']: 
-        [{
-            'paramset_type': 'unconstrained',
-            'n_parameters': 1,
-            'is_shared': True,
-            'inits': (p['init'],),
-            'bounds': ((p['min'], p['max']),),
-            'is_scalar': True,
-            'fixed': False,
-        }]
-        for p in new_params
-    }
-    return param_spec
