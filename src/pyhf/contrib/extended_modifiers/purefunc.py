@@ -13,13 +13,14 @@ def create_modifiers():
             self.config = pdfconfig
             self.required_parsets = {}
             self.builder_data = {'local': {},'global': {'symbols': set()}}
+            self.encountered_expressions = {}
 
         def collect(self, thismod, nom):
             maskval = True if thismod else False
             mask = [maskval] * len(nom)
             return {'mask': mask}
 
-        def require_synbols_as_scalars(self, symbols):
+        def require_symbols_as_scalars(self, symbols):
             param_spec = {
                 p: 
                 [{
@@ -52,7 +53,8 @@ def create_modifiers():
                 parsed = parser.parse_expr(formula)
                 free_symbols = parsed.free_symbols
                 for x in free_symbols:
-                    self.builder_data['global'].setdefault('symbols',set()).add(x)
+                    if x not in self.encountered_expressions:
+                        self.builder_data['global'].setdefault('symbols',set()).add(x)
             else:
                 parsed = None
             self.builder_data['local'].setdefault(key,{}).setdefault(sample,{}).setdefault('channels',{}).setdefault(channel,{})['parsed'] = parsed
@@ -60,7 +62,7 @@ def create_modifiers():
         def finalize(self):
             list_of_symbols = [str(x) for x in self.builder_data['global']['symbols']]
 
-            self.required_parsets = self.require_synbols_as_scalars(list_of_symbols)
+            self.required_parsets = self.require_symbols_as_scalars(list_of_symbols)
 
             self.builder_data['global']['symbol_names'] = list_of_symbols
             for modname, modspec in self.builder_data['local'].items():
