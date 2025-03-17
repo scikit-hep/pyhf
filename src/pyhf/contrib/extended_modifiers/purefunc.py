@@ -1,18 +1,19 @@
-
 import sympy.parsing.sympy_parser as parser
 import sympy
 from pyhf.parameters import ParamViewer
 import jax.numpy as jnp
 import jax
 
+
 def create_modifiers():
 
     class PureFunctionModifierBuilder:
         is_shared = True
+
         def __init__(self, pdfconfig):
             self.config = pdfconfig
             self.required_parsets = {}
-            self.builder_data = {'local': {},'global': {'symbols': set()}}
+            self.builder_data = {'local': {}, 'global': {'symbols': set()}}
             self.encountered_expressions = {}
 
         def collect(self, thismod, nom):
@@ -22,23 +23,25 @@ def create_modifiers():
 
         def require_symbols_as_scalars(self, symbols):
             param_spec = {
-                p: 
-                [{
-                    'paramset_type': 'unconstrained',
-                    'n_parameters': 1,
-                    'is_shared': True,
-                    'inits': (1.0,),
-                    'bounds': ((0,10),),
-                    'is_scalar': True,
-                    'fixed': False,
-                }]
+                p: [
+                    {
+                        'paramset_type': 'unconstrained',
+                        'n_parameters': 1,
+                        'is_shared': True,
+                        'inits': (1.0,),
+                        'bounds': ((0, 10),),
+                        'is_scalar': True,
+                        'fixed': False,
+                    }
+                ]
                 for p in symbols
             }
             return param_spec
 
-
         def append(self, key, channel, sample, thismod, defined_samp):
-            self.builder_data['local'].setdefault(key, {}).setdefault(sample, {}).setdefault('data', {'mask': []})
+            self.builder_data['local'].setdefault(key, {}).setdefault(
+                sample, {}
+            ).setdefault('data', {'mask': []})
 
             nom = (
                 defined_samp['data']
@@ -54,10 +57,12 @@ def create_modifiers():
                 free_symbols = parsed.free_symbols
                 for x in free_symbols:
                     if x not in self.encountered_expressions:
-                        self.builder_data['global'].setdefault('symbols',set()).add(x)
+                        self.builder_data['global'].setdefault('symbols', set()).add(x)
             else:
                 parsed = None
-            self.builder_data['local'].setdefault(key,{}).setdefault(sample,{}).setdefault('channels',{}).setdefault(channel,{})['parsed'] = parsed
+            self.builder_data['local'].setdefault(key, {}).setdefault(
+                sample, {}
+            ).setdefault('channels', {}).setdefault(channel, {})['parsed'] = parsed
 
         def finalize(self):
             list_of_symbols = [str(x) for x in self.builder_data['global']['symbols']]
@@ -69,7 +74,9 @@ def create_modifiers():
                 for sample, samplespec in modspec.items():
                     for channel, channelspec in samplespec['channels'].items():
                         if channelspec['parsed'] is not None:
-                            channelspec['jaxfunc'] = sympy.lambdify(list_of_symbols, channelspec['parsed'], 'jax')
+                            channelspec['jaxfunc'] = sympy.lambdify(
+                                list_of_symbols, channelspec['parsed'], 'jax'
+                            )
                         else:
                             channelspec['jaxfunc'] = lambda *args: 1.0
             return self.builder_data
@@ -95,28 +102,37 @@ def create_modifiers():
                 else (pdfconfig.npars,)
             )
 
-            self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, self.inputs)
+            self.param_viewer = ParamViewer(
+                parfield_shape, pdfconfig.par_map, self.inputs
+            )
             self.create_jax_eval()
 
         def create_jax_eval(self):
             def eval_func(pars):
-                return jnp.array([
+                return jnp.array(
                     [
-                        jnp.concatenate([
-                            self.builder_data['local'][m][s]['channels'][c]['jaxfunc'](*pars)*jnp.ones(self.pdfconfig.channel_nbins[c])
-                            for c in self.pdfconfig.channels
-                        ])
-                        for s in self.pdfconfig.samples
+                        [
+                            jnp.concatenate(
+                                [
+                                    self.builder_data['local'][m][s]['channels'][c][
+                                        'jaxfunc'
+                                    ](*pars)
+                                    * jnp.ones(self.pdfconfig.channel_nbins[c])
+                                    for c in self.pdfconfig.channels
+                                ]
+                            )
+                            for s in self.pdfconfig.samples
+                        ]
+                        for m in self.keys
                     ]
-                    for m in self.keys
+                )
 
-                ])
             self.jaxeval = eval_func
-        
-        def apply_nonbatched(self,pars):
-            return jnp.expand_dims(self.jaxeval(pars),2)
 
-        def apply_batched(self,pars):
+        def apply_nonbatched(self, pars):
+            return jnp.expand_dims(self.jaxeval(pars), 2)
+
+        def apply_batched(self, pars):
             return jax.vmap(self.jaxeval, in_axes=(1,), out_axes=2)(pars)
 
         def apply(self, pars):
@@ -129,11 +145,12 @@ def create_modifiers():
                 par_selection = self.param_viewer.get(pars)
                 results_purefunc = self.apply_batched(par_selection)
             return results_purefunc
-    
+
     return PureFunctionModifierBuilder, PureFunctionModifierApplicator
 
 
 from pyhf.modifiers import histfactory_set
+
 
 def enable():
     modifier_set = {}
@@ -141,7 +158,5 @@ def enable():
 
     builder, applicator = create_modifiers()
 
-    modifier_set.update(**{
-        applicator.name: (builder, applicator)}
-    )
+    modifier_set.update(**{applicator.name: (builder, applicator)})
     return modifier_set
