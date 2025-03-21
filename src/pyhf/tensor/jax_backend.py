@@ -2,6 +2,7 @@ from jax import config
 
 config.update('jax_enable_x64', True)
 
+import jax
 from jax import Array
 import jax.numpy as jnp
 from jax.scipy.special import gammaln, xlogy
@@ -12,6 +13,10 @@ import scipy.stats as osp_stats
 import logging
 
 log = logging.getLogger(__name__)
+
+
+def currently_jitting():
+    return isinstance(jnp.array(1) + 1, jax.core.Tracer)
 
 
 class _BasicPoisson:
@@ -184,6 +189,9 @@ class jax_backend:
         return true_callable() if predicate else false_callable()
 
     def tolist(self, tensor_in):
+        if currently_jitting():
+            # .aval is the abstract value and has a little nicer representation
+            return tensor_in.aval
         try:
             return jnp.asarray(tensor_in).tolist()
         except (TypeError, ValueError):
