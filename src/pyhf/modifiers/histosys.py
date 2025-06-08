@@ -67,6 +67,7 @@ class histosys_builder:
                 sample["data"]["mask"] = default_backend.concatenate(
                     sample["data"]["mask"]
                 )
+                sample["data"]["mask"] = sample["data"]["mask"].tolist()
                 sample["data"]["lo_data"] = default_backend.concatenate(
                     sample["data"]["lo_data"]
                 )
