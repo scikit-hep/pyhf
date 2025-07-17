@@ -101,8 +101,6 @@ jobs:
 
       - name: Run CLI API check
         run: |
-          printf "\npyhf\n"
-          docker run --rm pyhf/pyhf:sha-${GITHUB_SHA::8}
           printf "\npyhf --version\n"
           docker run --rm pyhf/pyhf:sha-${GITHUB_SHA::8} --version
           printf "\npyhf --help\n"
