@@ -233,6 +233,7 @@ filterwarnings = [
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
     "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning",  # papermill
     "ignore:In future, it will be an error for 'np.bool' scalars to be interpreted as an index:DeprecationWarning",  # PyTorch
+    "ignore:__array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments.:DeprecationWarning",  # PyTorch interacting with NumPy
 ]
 
 [tool.coverage.run]
