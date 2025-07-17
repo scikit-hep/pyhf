@@ -232,6 +232,7 @@ filterwarnings = [
     "ignore:'MultiCommand' is deprecated and will be removed in Click 9.0. Use 'Group' instead.:DeprecationWarning",  # Click
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
     "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning",  # papermill
+    "ignore:In future, it will be an error for 'np.bool' scalars to be interpreted as an index:DeprecationWarning",  # PyTorch
 ]
 
 [tool.coverage.run]
