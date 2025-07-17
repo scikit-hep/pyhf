@@ -231,6 +231,7 @@ filterwarnings = [
     "ignore:jax.xla_computation is deprecated. Please use the AOT APIs:DeprecationWarning",  # jax v0.4.30
     "ignore:'MultiCommand' is deprecated and will be removed in Click 9.0. Use 'Group' instead.:DeprecationWarning",  # Click
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
+    "ignore:datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC):DeprecationWarning",  # papermill
 ]
 
 [tool.coverage.run]
