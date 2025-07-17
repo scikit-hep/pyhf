@@ -11,6 +11,7 @@ import numpy as np
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
 else:
+    ArrayLike = "ArrayLike"
     NBitBase = "NBitBase"
 
 from scipy import special
