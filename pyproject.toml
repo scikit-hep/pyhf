@@ -80,8 +80,7 @@ tensorflow = [
     "tensorflow-probability>=0.11.0; python_version < '3.9'",  # c.f. PR #1657, #2452
     # python >= 3.9
     "tensorflow-probability[tf]>=0.24.0,<0.25.0; python_version >= '3.9' and platform_machine != 'arm64' and platform_system == 'Darwin'",  # c.f. TensorFlow v2.17.0
-    "tensorflow-probability[tf]>=0.24.0; python_version >= '3.9' and platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. TensorFlow v2.17.0
-    "tensorflow-probability[tf]>=0.24.0; python_version >= '3.9' and platform_system != 'Darwin'"  # c.f. TensorFlow v2.17.0
+    "tensorflow-probability[tf]>=0.24.0; python_version >= '3.9' and not (platform_system == 'Darwin' and platform_machine != 'arm64')"  # Everything else
 ]
 torch = [
     "torch>=1.10.0",  # c.f. PR #1657
