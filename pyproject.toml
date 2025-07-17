@@ -229,6 +229,8 @@ filterwarnings = [
     "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
     'ignore:Type google._upb._message.[A-Z]+ uses PyType_Spec with a metaclass that has custom:DeprecationWarning',  # protobuf via tensorflow
     "ignore:jax.xla_computation is deprecated. Please use the AOT APIs:DeprecationWarning",  # jax v0.4.30
+    "ignore:'MultiCommand' is deprecated and will be removed in Click 9.0. Use 'Group' instead.:DeprecationWarning",  # Click
+    "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
 ]
 
 [tool.coverage.run]
