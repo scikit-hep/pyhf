@@ -70,7 +70,7 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 shellcomplete = ["click_completion"]
 # TODO: 'tensorflow' supports all platform_machine for tensorflow v2.16.1+
 # but TensorFlow only supports python_version 3.8 up through tensorflow v2.13.1.
-# So until Python 3.8 support is dropped, split requirments on python_version
+# So until Python 3.8 support is dropped, split requirements on python_version
 # before and after 3.9.
 # NOTE: macos x86 support is deprecated from tensorflow v2.17.0 onwards.
 tensorflow = [
