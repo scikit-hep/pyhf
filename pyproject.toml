@@ -81,7 +81,10 @@ tensorflow = [
     # python >= 3.9
     "tensorflow-probability[tf]>=0.24.0; python_version >= '3.9'"  # c.f. PR #2452
 ]
-torch = ["torch>=1.10.0"]  # c.f. PR #1657
+torch = [
+    "torch>=1.10.0",  # c.f. PR #1657
+    "numpy<2.0"  # c.f. https://github.com/pytorch/pytorch/issues/157973
+]
 jax = [
     "jax>=0.4.1",  # c.f. PR #2079
     "jaxlib>=0.4.1",  # c.f. PR #2079
