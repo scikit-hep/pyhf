@@ -9,6 +9,11 @@ import pytest
 
 import pyhf
 
+# DEBUG: uv pip install --upgrade 'numpy<2.0' 'scipy<1.16' 'click>=8.2'
+# FIXME LIST:
+# * NumPy 2.0 compatibility: https://github.com/pytorch/pytorch/issues/157973
+# * SciPy 1.16 compatibility for tests/test_calculator.py
+# * Click CliRunner kward mix_stderr removed in click v8.2
 # Ensure testing on CPU and not GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
