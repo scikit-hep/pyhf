@@ -1,4 +1,5 @@
 import json
+import os
 import pathlib
 import shutil
 import sys
@@ -7,6 +8,9 @@ import tarfile
 import pytest
 
 import pyhf
+
+# Ensure testing on CPU and not GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 
 def pytest_addoption(parser):
