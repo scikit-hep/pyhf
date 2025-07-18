@@ -666,7 +666,12 @@ def test_missing_contrib_download(caplog):
 
         from pyhf.contrib.cli import download
 
-        runner = CliRunner(mix_stderr=False)
+        # mix_stderr removed in Click v8.2.0.
+        # Can simplify once pyhf is Python 3.10+.
+        try:
+            runner = CliRunner(mix_stderr=False)
+        except TypeError:
+            runner = CliRunner()
         result = runner.invoke(
             download,
             [

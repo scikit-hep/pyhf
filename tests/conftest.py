@@ -1,4 +1,5 @@
 import json
+import os
 import pathlib
 import shutil
 import sys
@@ -17,6 +18,12 @@ def pytest_addoption(parser):
         default=[],
         choices=["tensorflow", "pytorch", "jax", "minuit"],
         help="list of backends to disable in tests",
+    )
+    parser.addoption(
+        "--enable-cuda",
+        action="store_true",
+        default=False,
+        help="Allow CUDA enabled backends to run CUDA accelerated code on GPUs",
     )
 
 
@@ -167,3 +174,14 @@ def datadir(tmp_path, request):
         shutil.copytree(test_dir, tmp_path, dirs_exist_ok=True)
 
     return tmp_path
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_cuda_environment(request):
+    """
+    Automatically force CUDA enabled backends to run in CPU mode unless
+    --enable-cuda is passed.
+    """
+    if not request.config.getoption("--enable-cuda"):
+        # Ensure testing on CPU and not GPU
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""
