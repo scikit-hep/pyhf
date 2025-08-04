@@ -58,11 +58,11 @@ repos:
     hooks:
       - &mypy
         id: mypy
-        name: mypy with Python 3.8
+        name: mypy with Python 3.9
         files: src
         additional_dependencies:
           ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
-        args: ["--python-version=3.8"]
+        args: ["--python-version=3.9"]
       - <<: *mypy
         name: mypy with Python 3.12
         args: ["--python-version=3.12"]
