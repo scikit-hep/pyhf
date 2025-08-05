@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, Union
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 
@@ -205,9 +206,11 @@ class numpy_backend(Generic[T]):
         """
         return true_callable() if predicate else false_callable()
 
-    def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
+    def tolist(
+        self, tensor_in: Tensor[T] | list[T]
+    ) -> int | float | complex | list[T] | list[Any]:
         try:
-            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return]
+            return tensor_in.tolist()  # type: ignore[union-attr]
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -323,7 +326,7 @@ class numpy_backend(Generic[T]):
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> a = pyhf.tensorlib.astensor([[10, 7, 4], [3, 2, 1]])
-            >>> pyhf.tensorlib.percentile(a, 50)
+            >>> print(pyhf.tensorlib.percentile(a, 50))
             3.5
             >>> pyhf.tensorlib.percentile(a, 50, axis=1)
             array([7., 2.])
@@ -384,10 +387,10 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.simple_broadcast(
+            >>> list(pyhf.tensorlib.simple_broadcast(
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
-            ...   pyhf.tensorlib.astensor([5, 6, 7]))
+            ...   pyhf.tensorlib.astensor([5, 6, 7])))
             [array([1., 1., 1.]), array([2., 3., 4.]), array([5., 6., 7.])]
 
         Args:
@@ -470,7 +473,7 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.poisson(5., 6.)
+            >>> print(pyhf.tensorlib.poisson(5., 6.))
             0.16062314...
             >>> values = pyhf.tensorlib.astensor([5., 9.])
             >>> rates = pyhf.tensorlib.astensor([6., 8.])
@@ -513,7 +516,7 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.normal(0.5, 0., 1.)
+            >>> print(pyhf.tensorlib.normal(0.5, 0., 1.))
             0.35206532...
             >>> values = pyhf.tensorlib.astensor([0.5, 2.0])
             >>> means = pyhf.tensorlib.astensor([0., 2.3])
@@ -541,7 +544,7 @@ class numpy_backend(Generic[T]):
 
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
-            >>> pyhf.tensorlib.normal_cdf(0.8)
+            >>> print(pyhf.tensorlib.normal_cdf(0.8))
             0.78814460...
             >>> values = pyhf.tensorlib.astensor([0.8, 2.0])
             >>> pyhf.tensorlib.normal_cdf(values)

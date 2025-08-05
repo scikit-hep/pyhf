@@ -9,7 +9,7 @@ Using the calculators hypothesis tests can then be performed.
 """
 
 from pyhf.infer.mle import fixed_poi_fit
-from pyhf import get_backend
+from pyhf.tensor.manager import get_backend
 from pyhf.infer import utils
 import tqdm
 
@@ -120,7 +120,7 @@ class AsymptoticTestStatDistribution:
             >>> import pyhf
             >>> pyhf.set_backend("numpy")
             >>> bkg_dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0.0)
-            >>> bkg_dist.cdf(0.0)
+            >>> print(bkg_dist.cdf(0.0))
             0.5
 
         Args:
@@ -619,7 +619,7 @@ class EmpiricalDistribution:
             >>> normal = pyhf.probability.Normal(mean, std)
             >>> samples = normal.sample((100,))
             >>> dist = pyhf.infer.calculators.EmpiricalDistribution(samples)
-            >>> dist.expected_value(nsigma=1)
+            >>> print(dist.expected_value(nsigma=1))
             6.15094381...
 
             >>> import pyhf

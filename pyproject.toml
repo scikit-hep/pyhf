@@ -11,7 +11,7 @@ dynamic = ["version"]
 description = "pure-Python HistFactory implementation with tensors and autodiff"
 readme = "README.rst"
 license = { text = "Apache-2.0" }  # SPDX short identifier
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
     { name = "Matthew Feickert", email = "matthew.feickert@cern.ch" },
@@ -35,7 +35,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -262,6 +261,7 @@ warn_unused_configs = true
 strict = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
+plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
 module = [
