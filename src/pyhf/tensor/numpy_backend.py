@@ -3,7 +3,16 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Generic,
+    Mapping,
+    Sequence,
+    TypeVar,
+    Union,
+    Any,
+)
 
 import numpy as np
 
@@ -655,3 +664,27 @@ class numpy_backend(Generic[T]):
         .. versionadded:: 0.7.0
         """
         return tensor_in.transpose()
+
+    def fisher_cov(self, model: Any, pars: Tensor[T], data: Tensor[T]) -> ArrayLike:
+        raise NotImplementedError
+
+    def diagonal(self, tensor_in: Tensor[T]) -> ArrayLike:
+        """Return the diagonal elements of the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("numpy")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
+            >>> tensor
+            array([[1., 0.],
+                   [0., 1.]])
+            >>> pyhf.tensorlib.diagonal(tensor)
+            array([1., 1.])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            :class:`numpy.ndarray`: The diagonal of the input tensor.
+        """
+        return np.diag(tensor_in)
