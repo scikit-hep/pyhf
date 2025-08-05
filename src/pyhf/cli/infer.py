@@ -144,7 +144,7 @@ def fit(
 @click.option('--measurement', default=None)
 @click.option('-p', '--patch', multiple=True)
 @click.option('--test-poi', default=1.0)
-@click.option('--test-stat', type=click.Choice(['q', 'qtilde']), default='qtilde')
+@click.option('--test-stat', type=click.Choice(['q', 'qtilde', 'q0']), default='qtilde')
 @click.option(
     '--calctype', type=click.Choice(['asymptotics', 'toybased']), default='asymptotics'
 )
