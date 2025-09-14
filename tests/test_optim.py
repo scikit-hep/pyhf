@@ -123,8 +123,24 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     mocker.patch.object(OptimizerMixin, '_internal_minimize')
     mocker.patch.object(OptimizerMixin, '_internal_postprocess')
 
+    # patch out uncert calculations
+    import_dict = dict(
+        jax=pyhf.tensor.jax_backend,  # .jax_backend,
+        pytorch=pyhf.tensor.pytorch_backend,  # .pytorch_backend,
+        tensorflow=pyhf.tensor.tensorflow_backend,  # .tensorflow_backend,
+        numpy=pyhf.tensor.numpy_backend,
+    )
+
+    def make_backend(backend):
+        class MockedBackend(import_dict[backend]):
+            def fisher_cov(self, *args, **kwargs):
+                return import_dict[backend]().astensor([[1, 0], [0, 1]])
+
+        return MockedBackend()
+
     # start with first backend
-    pyhf.set_backend(backend, 'scipy')
+    pyhf.set_backend(make_backend(backend), 'scipy')
+
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
@@ -135,7 +151,7 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     assert shim.call_args[1]['do_grad'] != pyhf.tensorlib.default_do_grad
 
     # now switch to new backend and see what happens
-    pyhf.set_backend(backend_new)
+    pyhf.set_backend(make_backend(backend_new))
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
@@ -363,7 +379,7 @@ def test_optim_with_value(backend, source, spec, mu):
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 @pytest.mark.only_numpy_minuit
-def test_optim_uncerts(backend, source, spec, mu):
+def test_optim_uncerts_minuit(backend, source, spec, mu):
     pdf = pyhf.Model(spec, poi_name="mu")
     data = source['bindata']['data'] + pdf.config.auxdata
 
@@ -391,8 +407,72 @@ def test_optim_uncerts(backend, source, spec, mu):
 
 
 @pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
+@pytest.mark.skip_numpy
+@pytest.mark.skip_numpy_minuit
+def test_optim_uncerts_autodiff(backend, source, spec, mu):
+    pdf = pyhf.Model(spec, poi_name="mu")
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    optim = pyhf.optimizer
+
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
+
+    result = optim.minimize(
+        pyhf.infer.mle.twice_nll,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        fixed_vals=[(pdf.config.poi_index, mu)],
+        return_uncertainties=True,
+    )
+    assert result.shape == (2, 2)
+    # NOTE: this does not match minuit at all (0.26418431), and is probably an artefact of doing a fixed POI fit on this particular model?
+    # see discussion in https://github.com/scikit-hep/pyhf/pull/2269 for more details. differences disappear in global fit uncertainties.
+    assert pytest.approx([0.6693815171034548, 0.0]) == pyhf.tensorlib.tolist(
+        result[:, 1]
+    )
+
+
+@pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
 @pytest.mark.only_numpy_minuit
-def test_optim_correlations(backend, source, spec, mu):
+def test_optim_correlations_minuit(backend, source, spec, mu):
+    pdf = pyhf.Model(spec, poi_name="mu")
+    data = source['bindata']['data'] + pdf.config.auxdata
+
+    init_pars = pdf.config.suggested_init()
+    par_bounds = pdf.config.suggested_bounds()
+
+    optim = pyhf.optimizer
+
+    result = optim.minimize(pyhf.infer.mle.twice_nll, data, pdf, init_pars, par_bounds)
+    assert pyhf.tensorlib.tolist(result)
+
+    result, correlations = optim.minimize(
+        pyhf.infer.mle.twice_nll,
+        data,
+        pdf,
+        init_pars,
+        par_bounds,
+        [(pdf.config.poi_index, mu)],
+        return_correlations=True,
+    )
+    assert result.shape == (2,)
+    assert correlations.shape == (2, 2)
+    assert pyhf.tensorlib.tolist(result)
+    assert pyhf.tensorlib.tolist(correlations)
+
+    assert np.allclose([[1.0, 0.0], [0.0, 0.0]], pyhf.tensorlib.tolist(correlations))
+
+
+@pytest.mark.parametrize('mu', [1.0], ids=['mu=1'])
+@pytest.mark.skip_numpy
+@pytest.mark.skip_numpy_minuit
+def test_optim_correlations_autodiff(backend, source, spec, mu):
     pdf = pyhf.Model(spec, poi_name="mu")
     data = source['bindata']['data'] + pdf.config.auxdata
 

@@ -723,3 +723,47 @@ class tensorflow_backend:
         .. versionadded:: 0.7.0
         """
         return tf.transpose(tensor_in)
+
+    def fisher_cov(self, model, pars, data):
+        """Calculates the inverse of the Fisher information matrix to estimate the covariance of the maximum likelihood estimate.
+        See the Cramér-Rao bound for more details on the derivation of this.
+
+        Args:
+            model (:obj:`pyhf.pdf.Model`): The statistical model adhering to the schema ``model.json``.
+            pars (:obj:`tensor`): The (mle) model parameters at which to evaluate the uncertainty.
+            data (:obj:`tensor`): The observed data.
+
+        Returns:
+            TensorFlow Tensor: The covariance matrix of the maximum likelihood estimate.
+        """
+        with tf.GradientTape() as t2:
+            t2.watch(pars)
+            with tf.GradientTape() as t1:
+                t1.watch(pars)
+                lhood = model.logpdf(pars, data)[0]
+            g = t1.gradient(lhood, pars)
+        hess = t2.jacobian(g, pars)
+        return tf.linalg.inv(-hess)
+
+    def diagonal(self, tensor_in):
+        """Return the diagonal elements of the tensor.
+
+        Example:
+            >>> import pyhf
+            >>> pyhf.set_backend("tensorflow")
+            >>> tensor = pyhf.tensorlib.astensor([[1.0, 0.0], [0.0, 1.0]])
+            >>> tensor
+            <tf.Tensor: shape=(2, 2), dtype=float64, numpy=
+            array([[1., 0.],
+                   [0., 1.]])>
+            >>> pyhf.tensorlib.diagonal(tensor)
+            <tf.Tensor: shape=(2), dtype=float64, numpy=array([1., 1.])
+
+        Args:
+            tensor_in (:obj:`tensor`): The input tensor object.
+
+        Returns:
+            TensorFlow Tensor: The diagonal elements of the input tensor.
+
+        """
+        return tf.linalg.diag_part(tensor_in)

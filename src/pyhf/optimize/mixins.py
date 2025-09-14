@@ -8,7 +8,10 @@ from pyhf import exceptions
 from pyhf.optimize.common import shim
 from pyhf.tensor.manager import get_backend
 
+
 log = logging.getLogger(__name__)
+
+__all__ = ("OptimizerMixin",)
 
 
 class OptimizerMixin:
@@ -50,6 +53,7 @@ class OptimizerMixin:
             do_grad=do_grad,
             par_names=par_names,
         )
+
         result = self._minimize(
             minimizer,
             func,
@@ -67,7 +71,18 @@ class OptimizerMixin:
             raise exceptions.FailedMinimization(result)
         return result
 
-    def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False):
+    def _internal_postprocess(
+        self,
+        fitresult,
+        stitch_pars,
+        using_minuit,
+        return_uncertainties=False,
+        uncertainties=None,
+        hess_inv=None,
+        calc_correlations=False,
+        fixed_vals=None,
+        init_pars=None,
+    ):
         """
         Post-process the fit result.
 
@@ -80,17 +95,29 @@ class OptimizerMixin:
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
 
         # check if uncertainties were provided (and stitch just in case)
-        uncertainties = getattr(fitresult, 'unc', None)
+        uncertainties = getattr(fitresult, 'unc', None) or uncertainties
         if uncertainties is not None:
             # extract number of fixed parameters
             num_fixed_pars = len(fitted_pars) - len(fitresult.x)
 
-            # FIXME: Set uncertainties for fixed parameters to 0 manually
-            # https://github.com/scikit-hep/iminuit/issues/762
-            # https://github.com/scikit-hep/pyhf/issues/1918
-            # https://github.com/scikit-hep/cabinetry/pull/346
-            uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
-
+            # Set uncertainties for fixed parameters to 0 manually
+            if fixed_vals is not None:  # check for fixed vals
+                if using_minuit:
+                    # See related discussion here:
+                    # https://github.com/scikit-hep/iminuit/issues/762
+                    # https://github.com/scikit-hep/pyhf/issues/1918
+                    # https://github.com/scikit-hep/cabinetry/pull/346
+                    uncertainties = np.where(fitresult.minuit.fixed, 0.0, uncertainties)
+                else:
+                    # Not using minuit, so don't have `fitresult.minuit.fixed` here: do it manually
+                    fixed_bools = [False] * len(init_pars)
+                    for index, _ in fixed_vals:
+                        fixed_bools[index] = True
+                    uncertainties = tensorlib.where(
+                        tensorlib.astensor(fixed_bools, dtype="bool"),
+                        tensorlib.astensor(0.0),
+                        uncertainties,
+                    )
             # stitch in zero-uncertainty for fixed values
             uncertainties = stitch_pars(
                 tensorlib.astensor(uncertainties),
@@ -99,24 +126,57 @@ class OptimizerMixin:
             if return_uncertainties:
                 fitted_pars = tensorlib.stack([fitted_pars, uncertainties], axis=1)
 
-        correlations = getattr(fitresult, 'corr', None)
-        if correlations is not None:
+        cov = getattr(fitresult, 'hess_inv', None)
+        if cov is None and hess_inv is not None:
+            cov = hess_inv
+
+        # we also need to edit the covariance matrix to zero-out uncertainties!
+        # NOTE: minuit already does this (https://github.com/scikit-hep/iminuit/issues/762#issuecomment-1207436406)
+        if fixed_vals is not None and not using_minuit:
+            fixed_bools = [False] * len(init_pars)
+            # Convert fixed_bools to a numpy array and reshape to make it a column vector
+            fixed_mask = tensorlib.reshape(
+                tensorlib.astensor(fixed_bools, dtype="bool"), (-1, 1)
+            )
+            # Create 2D masks for rows and columns
+            row_mask = fixed_mask
+            col_mask = tensorlib.transpose(fixed_mask)
+
+            # Use logical OR to combine the masks
+            final_mask = row_mask | col_mask
+
+            # Use np.where to set elements of the covariance matrix to 0 where the mask is True
+            cov = tensorlib.where(
+                final_mask, tensorlib.astensor(0.0), tensorlib.astensor(cov)
+            )
+
+        correlations_from_fit = getattr(fitresult, 'corr', None)
+        if correlations_from_fit is None and calc_correlations:
+            correlations_from_fit = cov / tensorlib.outer(uncertainties, uncertainties)
+            correlations_from_fit = tensorlib.where(
+                tensorlib.isfinite(correlations_from_fit),
+                correlations_from_fit,
+                tensorlib.astensor(0.0),
+            )
+
+        if correlations_from_fit is not None and not using_minuit:
             _zeros = tensorlib.zeros(num_fixed_pars)
             # possibly a more elegant way to do this
             stitched_columns = [
                 stitch_pars(tensorlib.astensor(column), stitch_with=_zeros)
-                for column in zip(*correlations)
+                for column in zip(*correlations_from_fit)
             ]
             stitched_rows = [
                 stitch_pars(tensorlib.astensor(row), stitch_with=_zeros)
                 for row in zip(*stitched_columns)
             ]
-            correlations = tensorlib.stack(stitched_rows, axis=1)
+            correlations_from_fit = tensorlib.stack(stitched_rows, axis=1)
 
         fitresult.x = fitted_pars
         fitresult.fun = tensorlib.astensor(fitresult.fun)
         fitresult.unc = uncertainties
-        fitresult.corr = correlations
+        fitresult.hess_inv = cov
+        fitresult.corr = correlations_from_fit
 
         return fitresult
 
@@ -164,6 +224,10 @@ class OptimizerMixin:
                 - minimum (:obj:`float`): if ``return_fitted_val`` flagged, return minimized objective value
                 - result (:class:`scipy.optimize.OptimizeResult`): if ``return_result_obj`` flagged
         """
+        # literally just for the minimizer name to check if we're using minuit
+        # so we can check if valid for uncertainty calc later
+        using_minuit = hasattr(self, "name") and self.name == "minuit"
+
         # Configure do_grad based on backend "automagically" if not set by user
         tensorlib, _ = get_backend()
         do_grad = tensorlib.default_do_grad if do_grad is None else do_grad
@@ -194,8 +258,30 @@ class OptimizerMixin:
         result = self._internal_minimize(
             **minimizer_kwargs, options=kwargs, par_names=par_names
         )
+
+        # compute uncertainties with automatic differentiation
+        if not using_minuit and tensorlib.name in ['tensorflow', 'jax', 'pytorch']:
+            # stitch in missing parameters (e.g. fixed parameters)
+            all_pars = stitch_pars(tensorlib.astensor(result.x))
+            hess_inv = tensorlib.fisher_cov(pdf, all_pars, data)
+            uncertainties = tensorlib.sqrt(tensorlib.diagonal(hess_inv))
+            calc_correlations = True
+        else:
+            hess_inv = None
+            uncertainties = None
+            calc_correlations = False
+
+        # uncerts are set to 0 in here for fixed pars
         result = self._internal_postprocess(
-            result, stitch_pars, return_uncertainties=return_uncertainties
+            result,
+            stitch_pars,
+            using_minuit,
+            return_uncertainties=return_uncertainties,
+            uncertainties=uncertainties,
+            hess_inv=hess_inv,
+            calc_correlations=calc_correlations,
+            fixed_vals=fixed_vals,
+            init_pars=init_pars,
         )
 
         _returns = [result.x]

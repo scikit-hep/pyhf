@@ -5,6 +5,8 @@ from pyhf.optimize.mixins import OptimizerMixin
 import scipy
 import iminuit
 
+__all__ = ("minuit_optimizer",)
+
 
 class minuit_optimizer(OptimizerMixin):
     """
