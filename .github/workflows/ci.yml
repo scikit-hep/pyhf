@@ -30,13 +30,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
         include:
           - os: macos-latest
-            python-version: '3.12'
+            python-version: '3.13'
           # Intel runner
-          - os: macos-13
-            python-version: '3.12'
+          - os: macos-15-intel
+            python-version: '3.13'
 
     steps:
     - uses: actions/checkout@v5
@@ -99,11 +99,11 @@ jobs:
 
     - name: Test docstring examples with doctest
       # TODO: Don't currently try to match amd64 and arm64 floating point for docs, but will in the future.
-      if: matrix.python-version == '3.12' && matrix.os != 'macos-latest'
+      if: matrix.python-version == '3.13' && matrix.os != 'macos-latest'
       run: coverage run --data-file=.coverage-doctest --module pytest src/ README.rst
 
     - name: Coverage report for doctest only
-      if: matrix.python-version == '3.12' && matrix.os != 'macos-latest'
+      if: matrix.python-version == '3.13' && matrix.os != 'macos-latest'
       run: |
         coverage report --data-file=.coverage-doctest
         coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
