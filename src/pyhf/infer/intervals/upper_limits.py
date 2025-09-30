@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.optimize import toms748
 
-from pyhf import get_backend
+from pyhf.tensor.manager import get_backend
 from pyhf.infer import hypotest
 
 __all__ = ["linear_grid_scan", "toms748_scan", "upper_limit"]

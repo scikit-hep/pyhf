@@ -1,6 +1,6 @@
 """The probability density function module."""
 
-from pyhf import get_backend
+from pyhf.tensor.manager import get_backend
 
 __all__ = ["Independent", "Normal", "Poisson", "Simultaneous"]
 

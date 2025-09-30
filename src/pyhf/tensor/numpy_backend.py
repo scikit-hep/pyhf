@@ -3,7 +3,16 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from typing import (
+    Any,
+    TYPE_CHECKING,
+    Callable,
+    Generic,
+    Mapping,
+    Sequence,
+    TypeVar,
+    Union,
+)
 
 import numpy as np
 
@@ -205,9 +214,12 @@ class numpy_backend(Generic[T]):
         """
         return true_callable() if predicate else false_callable()
 
-    def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
+    def tolist(
+        self, tensor_in: Tensor[T] | list[T]
+    ) -> int | float | complex | list[T] | list[Any]:
         try:
-            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return]
+            result = tensor_in.tolist()  # type: ignore[union-attr]
+            return cast(Union[int, float, complex, list[T], list[Any]], result)
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -654,4 +666,5 @@ class numpy_backend(Generic[T]):
 
         .. versionadded:: 0.7.0
         """
-        return tensor_in.transpose()
+        result = tensor_in.transpose()
+        return cast(ArrayLike, result)

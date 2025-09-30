@@ -1,6 +1,6 @@
 """Numpy Backend Function Shim."""
 
-from pyhf import get_backend
+from pyhf.tensor.manager import get_backend
 from pyhf import exceptions
 
 

@@ -1,4 +1,4 @@
-from pyhf import get_backend
+from pyhf.tensor.manager import get_backend
 from pyhf.infer.mle import fixed_poi_fit, fit
 from pyhf.exceptions import UnspecifiedPOI
 
