@@ -211,7 +211,7 @@ class numpy_backend(Generic[T]):
     ) -> int | float | complex | list[T] | list[Any]:
         try:
             result = tensor_in.tolist()  # type: ignore[union-attr]
-            return cast(int | float | complex | list[T] | list[Any], result)
+            return cast(Union[int, float, complex, list[T], list[Any]], result)
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
