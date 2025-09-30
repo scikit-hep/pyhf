@@ -18,10 +18,7 @@ function get_JAXLIB_GPU_WHEEL {
 function install_backend() {
   # 1: the backend option name in setup.py
   local backend="${1}"
-  if [[ "${backend}" == "tensorflow" ]]; then
-    # shellcheck disable=SC2102
-    python3 -m pip install --no-cache-dir .[xmlio,tensorflow]
-  elif [[ "${backend}" == "torch" ]]; then
+  if [[ "${backend}" == "torch" ]]; then
     # shellcheck disable=SC2102
     python3 -m pip install --no-cache-dir .[xmlio,torch]
   elif [[ "${backend}" == "jax" ]]; then

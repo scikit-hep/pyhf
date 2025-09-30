@@ -13,7 +13,7 @@ RUN apt-get update -y && \
 COPY . /code
 COPY ./docker/gpu/install_backend.sh /code/install_backend.sh
 WORKDIR /code
-ARG BACKEND=tensorflow
+ARG BACKEND=jax
 RUN python3 -m pip --no-cache-dir install --upgrade pip wheel && \
     /bin/bash install_backend.sh ${BACKEND} && \
     python3 -m pip list
