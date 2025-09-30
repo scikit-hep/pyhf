@@ -77,7 +77,7 @@ def set_backend(
         '64b'
 
     Args:
-        backend (:obj:`str` or :obj:`bytes` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, TensorFlow, PyTorch, and JAX
+        backend (:obj:`str` or :obj:`bytes` or `pyhf.tensor` backend): One of the supported pyhf backends: NumPy, PyTorch, and JAX
         custom_optimizer (:obj:`str` or :obj:`bytes` or `pyhf.optimize` optimizer or :obj:`None`): Optional custom optimizer defined by the user
         precision (:obj:`str` or :obj:`bytes` or :obj:`None`): Floating point precision to use in the backend: ``64b`` or ``32b``. Default is backend dependent.
         default (:obj:`bool`): Set the backend as the default backend additionally

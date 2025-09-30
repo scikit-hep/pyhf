@@ -29,7 +29,7 @@ on the asymptotic formulas of “Asymptotic formulae for likelihood-based
 tests of new physics”
 [`arXiv:1007.1727 <https://arxiv.org/abs/1007.1727>`__]. The aim is also
 to support modern computational graph libraries such as PyTorch and
-TensorFlow in order to make use of features such as autodifferentiation
+JAX in order to make use of features such as autodifferentiation
 and GPU acceleration.
 
 ..
@@ -145,7 +145,6 @@ Implemented variations:
 Computational Backends:
   - ☑ NumPy
   - ☑ PyTorch
-  - ☑ TensorFlow
   - ☑ JAX
 
 Optimizers:
