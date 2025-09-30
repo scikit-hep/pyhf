@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import logging
-from typing import List
 
 import pyhf
 from pyhf import events
@@ -10,7 +11,7 @@ from pyhf.tensor.manager import get_backend
 log = logging.getLogger(__name__)
 
 
-def required_parset(sigmas, fixed: List[bool]):
+def required_parset(sigmas, fixed: list[bool]):
     n_parameters = len(sigmas)
     return {
         'paramset_type': 'constrained_by_normal',

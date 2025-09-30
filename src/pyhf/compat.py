@@ -19,7 +19,7 @@ def paramset_to_rootnames(paramset):
         paramset (:obj:`pyhf.paramsets.paramset`): The parameter set.
 
     Returns:
-        :obj:`List[str]` or :obj:`str`: The generated parameter names
+        :obj:`list[str]` or :obj:`str`: The generated parameter names
         (for the non-scalar/scalar case) respectively.
 
     Example:
