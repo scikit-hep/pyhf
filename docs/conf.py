@@ -146,11 +146,9 @@ language = "en"
 # today_fmt = '%B %d, %Y'
 
 autodoc_mock_imports = [
-    'tensorflow',
     'torch',
     'jax',
     'iminuit',
-    'tensorflow_probability',
 ]
 
 
@@ -195,7 +193,6 @@ exclude_patterns = [
     'examples/notebooks/ImpactPlot.ipynb',
     'examples/notebooks/Recast.ipynb',
     'examples/notebooks/StatError.ipynb',
-    'examples/notebooks/example-tensorflow.ipynb',
     'examples/notebooks/histogrammar.ipynb',
     'examples/notebooks/histosys.ipynb',
     'examples/notebooks/histosys-pytorch.ipynb',
@@ -205,7 +202,6 @@ exclude_patterns = [
     'examples/notebooks/normsys.ipynb',
     'examples/notebooks/pullplot.ipynb',
     'examples/notebooks/pytorch_tests_onoff.ipynb',
-    'examples/notebooks/tensorflow-limit.ipynb',
 ]
 
 # The reST default role (used for this markup: `text`) to use for all
