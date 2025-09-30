@@ -25,7 +25,6 @@ keywords = [
     "physics",
     "pytorch",
     "scipy",
-    "tensorflow",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -51,7 +50,7 @@ dependencies = [
     "jsonschema>=4.15.0",  # for utils
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
     # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for scipy v1.16.0 upper bound
-    "scipy>=1.5.2,<1.16.0",  # requires numpy, which is required by pyhf and tensorflow
+    "scipy>=1.5.2,<1.16.0",  # requires numpy, which is required by pyhf
     "tqdm>=4.56.0",  # for readxml
     "numpy",  # compatible versions controlled through scipy
 ]
@@ -69,21 +68,6 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 
 [project.optional-dependencies]
 shellcomplete = ["click_completion"]
-# TODO: 'tensorflow' supports all platform_machine for tensorflow v2.16.1+
-# but TensorFlow only supports python_version 3.8 up through tensorflow v2.13.1.
-# So until Python 3.8 support is dropped, split requirements on python_version
-# before and after 3.9.
-# NOTE: macos x86 support is deprecated from tensorflow v2.17.0 onwards.
-tensorflow = [
-    # python == 3.8
-    "tensorflow>=2.7.0; python_version < '3.9' and platform_machine != 'arm64'",  # c.f. PR #1962, #2452
-    "tensorflow-macos>=2.7.0; python_version < '3.9' and platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. PR #2119, #2452
-    "tensorflow-probability>=0.11.0; python_version < '3.9'",  # c.f. PR #1657, #2452
-    # python >= 3.9
-    "tensorflow-probability[tf]>=0.24.0,<0.25.0; python_version >= '3.9' and platform_machine != 'arm64' and platform_system == 'Darwin'",  # c.f. TensorFlow v2.17.0
-    "tensorflow-probability[tf]>=0.24.0; python_version >= '3.9' and platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. TensorFlow v2.17.0
-    "tensorflow-probability[tf]>=0.24.0; python_version >= '3.9' and platform_system != 'Darwin'"  # c.f. TensorFlow v2.17.0
-]
 torch = [
     "torch>=1.10.0",  # c.f. PR #1657
     "numpy<2.0"  # c.f. https://github.com/pytorch/pytorch/issues/157973
@@ -98,7 +82,7 @@ contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
 ]
-backends = ["pyhf[tensorflow,torch,jax,minuit]"]
+backends = ["pyhf[torch,jax,minuit]"]
 all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
 
 # Developer extras
@@ -200,23 +184,19 @@ markers = [
     "fail_numpy_minuit",
     "fail_pytorch",
     "fail_pytorch64",
-    "fail_tensorflow",
     "only_jax",
     "only_numpy",
     "only_numpy_minuit",
     "only_pytorch",
     "only_pytorch64",
-    "only_tensorflow",
     "skip_jax",
     "skip_numpy",
     "skip_numpy_minuit",
     "skip_pytorch",
     "skip_pytorch64",
-    "skip_tensorflow",
 ]
 filterwarnings = [
     "error",
-    'ignore:the imp module is deprecated:DeprecationWarning',  # tensorflow
     'ignore:distutils Version classes are deprecated:DeprecationWarning',  # tensorflow-probability
     'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
     "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
@@ -227,13 +207,9 @@ filterwarnings = [
     'ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning',  #FIXME: tests/test_optim.py::test_minimize[no_grad-scipy-pytorch-no_stitch]
     'ignore:divide by zero encountered in (true_)?divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
-    'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
-    'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
-    "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
     "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
     "ignore:jsonschema.RefResolver is deprecated as of v4.18.0, in favor of the:DeprecationWarning",  # Issue #2139
     "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
-    'ignore:Type google._upb._message.[A-Z]+ uses PyType_Spec with a metaclass that has custom:DeprecationWarning',  # protobuf via tensorflow
     "ignore:jax.xla_computation is deprecated. Please use the AOT APIs:DeprecationWarning",  # jax v0.4.30
     "ignore:'MultiCommand' is deprecated and will be removed in Click 9.0. Use 'Group' instead.:DeprecationWarning",  # Click
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
@@ -268,7 +244,6 @@ module = [
   'jax.*',
   'matplotlib.*',
   'scipy.*',
-  'tensorflow.*',
   'tensorflow_probability.*',
   'torch.*',
   'uproot.*',
@@ -300,7 +275,6 @@ module = [
   'pyhf.tensor.common.*',
   'pyhf.tensor',
   'pyhf.tensor.jax_backend.*',
-  'pyhf.tensor.tensorflow_backend.*',
   'pyhf.tensor.pytorch_backend.*',
 ]
 ignore_errors = true
