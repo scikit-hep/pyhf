@@ -65,11 +65,6 @@ def set_backend(
 
     Example:
         >>> import pyhf
-        >>> pyhf.set_backend("tensorflow")
-        >>> pyhf.tensorlib.name
-        'tensorflow'
-        >>> pyhf.tensorlib.precision
-        '64b'
         >>> pyhf.set_backend(b"pytorch", precision="32b")
         >>> pyhf.tensorlib.name
         'pytorch'
@@ -117,7 +112,7 @@ def set_backend(
             )(**backend_kwargs)
         except TypeError:
             raise exceptions.InvalidBackend(
-                f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, tensorflow, pytorch"
+                f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, pytorch"
             )
     else:
         new_backend = backend
