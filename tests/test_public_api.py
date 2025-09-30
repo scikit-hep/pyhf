@@ -99,6 +99,7 @@ def test_custom_backend_name_supported():
     class custom_backend:
         def __init__(self, **kwargs):
             self.name = "jax"
+            self.name = "numpy"
             self.precision = '64b'
 
         def _setup(self):
