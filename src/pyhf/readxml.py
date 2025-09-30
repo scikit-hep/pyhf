@@ -222,7 +222,7 @@ def process_sample(
                     modtag.attrib.get('HistoPath', ''),
                     modtag.attrib['HistoName'],
                 )
-                staterr = np.multiply(extstat, data).tolist()
+                staterr = cast(list[float], np.multiply(extstat, data).tolist())
             if not staterr:
                 raise RuntimeError('cannot determine stat error.')
             modifier_staterror: StatError = {
