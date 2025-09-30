@@ -119,7 +119,7 @@ def test_validate_implementation(backend, interpcode, random_histosets_alphasets
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     # single-float precision backends, calculate using single-floats
-    if pyhf.tensorlib.name in ['tensorflow', 'pytorch']:
+    if pyhf.tensorlib.name in ['pytorch']:
         abs_tolerance = 1e-6
         histogramssets = np.asarray(histogramssets, dtype=np.float32)
         alphasets = np.asarray(alphasets, dtype=np.float32)

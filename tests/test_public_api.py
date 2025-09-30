@@ -17,7 +17,7 @@ def model_setup(backend):
     return model, data, init_pars
 
 
-@pytest.mark.parametrize("backend_name", ["numpy", "tensorflow", "pytorch", "PyTorch"])
+@pytest.mark.parametrize("backend_name", ["numpy", "pytorch", "PyTorch"])
 def test_set_backend_by_string(backend_name):
     pyhf.set_backend(backend_name)
     assert isinstance(
@@ -43,7 +43,7 @@ def test_set_precision_by_string(precision_level):
     assert pyhf.tensorlib.precision == precision_level.lower()
 
 
-@pytest.mark.parametrize("backend_name", [b"numpy", b"tensorflow", b"pytorch"])
+@pytest.mark.parametrize("backend_name", [b"numpy", b"pytorch"])
 def test_set_backend_by_bytestring(backend_name):
     pyhf.set_backend(backend_name)
     assert isinstance(
@@ -143,14 +143,14 @@ def test_custom_optimizer_name_notsupported():
     assert pyhf.optimizer.name == optimizer.name
 
 
-@pytest.mark.parametrize("backend_name", ["numpy", "tensorflow", "pytorch", "PyTorch"])
+@pytest.mark.parametrize("backend_name", ["numpy", "pytorch", "PyTorch"])
 def test_backend_no_custom_attributes(backend_name):
     pyhf.set_backend(backend_name)
     with pytest.raises(AttributeError):
         pyhf.tensorlib.nonslotted = True
 
 
-@pytest.mark.parametrize("backend_name", ["numpy", "tensorflow", "pytorch", "PyTorch"])
+@pytest.mark.parametrize("backend_name", ["numpy", "pytorch", "PyTorch"])
 def test_backend_slotted_attributes(backend_name):
     pyhf.set_backend(backend_name)
     for attr in ["name", "precision", "dtypemap", "default_do_grad"]:

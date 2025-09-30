@@ -14,7 +14,6 @@ import numpy as np
 # from https://docs.scipy.org/doc/scipy/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead
 @pytest.mark.skip_pytorch
 @pytest.mark.skip_pytorch64
-@pytest.mark.skip_tensorflow
 @pytest.mark.skip_numpy_minuit
 def test_scipy_minimize(backend, capsys):
     tensorlib, _ = backend
@@ -36,10 +35,9 @@ def test_scipy_minimize(backend, capsys):
     [
         pyhf.tensor.numpy_backend,
         pyhf.tensor.pytorch_backend,
-        pyhf.tensor.tensorflow_backend,
         pyhf.tensor.jax_backend,
     ],
-    ids=['numpy', 'pytorch', 'tensorflow', 'jax'],
+    ids=['numpy', 'pytorch', 'jax'],
 )
 @pytest.mark.parametrize(
     'optimizer',
@@ -64,20 +62,16 @@ def test_minimize(tensorlib, optimizer, do_grad, do_stitch):
             # no grad, scipy, 64b
             'no_grad-scipy-numpy': [0.49998815367220306, 0.9999696999038924],
             'no_grad-scipy-pytorch': [0.49998815367220306, 0.9999696999038924],
-            'no_grad-scipy-tensorflow': [0.49998865164653106, 0.9999696533705097],
             'no_grad-scipy-jax': [0.4999880886490433, 0.9999696971774877],
             # do grad, scipy, 64b
             'do_grad-scipy-pytorch': [0.49998837853531425, 0.9999696648069287],
-            'do_grad-scipy-tensorflow': [0.4999883785353142, 0.9999696648069278],
             'do_grad-scipy-jax': [0.49998837853531414, 0.9999696648069285],
             # no grad, minuit, 64b - quite consistent
             'no_grad-minuit-numpy': [0.5000493563629738, 1.0000043833598724],
             'no_grad-minuit-pytorch': [0.5000493563758468, 1.0000043833508256],
-            'no_grad-minuit-tensorflow': [0.5000493563645547, 1.0000043833598657],
             'no_grad-minuit-jax': [0.5000493563528641, 1.0000043833614634],
             # do grad, minuit, 64b
             'do_grad-minuit-pytorch': [0.500049321728735, 1.00000441739846],
-            'do_grad-minuit-tensorflow': [0.5000492930412292, 1.0000044107437134],
             'do_grad-minuit-jax': [0.500049321731032, 1.0000044174002167],
         }[identifier]
 
@@ -107,9 +101,7 @@ def test_optimizer_mixin_extra_kwargs(optimizer):
 
 @pytest.mark.parametrize(
     'backend,backend_new',
-    itertools.permutations(
-        [('numpy', False), ('pytorch', True), ('tensorflow', True), ('jax', True)], 2
-    ),
+    itertools.permutations([('numpy', False), ('pytorch', True), ('jax', True)], 2),
     ids=lambda pair: f'{pair[0]}',
 )
 def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):

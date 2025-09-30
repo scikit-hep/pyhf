@@ -2,7 +2,6 @@ import logging
 
 import numpy as np
 import pytest
-import tensorflow as tf
 
 import pyhf
 from pyhf.simplemodels import uncorrelated_background
@@ -236,21 +235,13 @@ def test_shape(backend):
     assert tb.shape(tb.astensor([1.0])) == (1,)
     assert tb.shape(tb.astensor((1.0, 1.0))) == tb.shape(tb.astensor([1.0, 1.0]))
     assert tb.shape(tb.astensor((0.0, 0.0))) == tb.shape(tb.astensor([0.0, 0.0]))
-    with pytest.raises(
-        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
-    ):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) + tb.astensor([3, 4, 5])
-    with pytest.raises(
-        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
-    ):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) - tb.astensor([3, 4, 5])
-    with pytest.raises(
-        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
-    ):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) < tb.astensor([3, 4, 5])
-    with pytest.raises(
-        (ValueError, RuntimeError, tf.errors.InvalidArgumentError, TypeError)
-    ):
+    with pytest.raises((ValueError, RuntimeError, TypeError)):
         _ = tb.astensor([1, 2]) > tb.astensor([3, 4, 5])
     with pytest.raises((ValueError, RuntimeError, TypeError)):
         tb.conditional(
@@ -405,10 +396,6 @@ def test_tensor_tile(backend):
         [[10.0, 20.0, 10.0, 20.0, 10.0, 20.0]],
     ]
 
-    if tb.name == 'tensorflow':
-        with pytest.raises(tf.errors.InvalidArgumentError):
-            tb.tile(tb.astensor([[[10, 20, 30]]]), (2, 1))
-
 
 def test_1D_gather(backend):
     tb = pyhf.tensorlib
@@ -467,15 +454,6 @@ def test_tensor_to_list(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
     assert tb.tolist(tb.astensor([[1], [2], [3], [4]])) == [[1], [2], [3], [4]]
-
-
-@pytest.mark.only_tensorflow
-def test_tensor_list_conversion(backend):
-    tb = pyhf.tensorlib
-    # test when a tensor operation is done, but then need to check if this
-    # doesn't break in session.run
-    assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
-    assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
 
 
 def test_pdf_eval(backend):
@@ -554,7 +532,7 @@ def test_tensor_precision(backend):
 
 @pytest.mark.parametrize(
     'tensorlib',
-    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+    ['numpy_backend', 'jax_backend', 'pytorch_backend'],
 )
 @pytest.mark.parametrize('precision', ['64b', '32b'])
 def test_set_tensor_precision(tensorlib, precision):
@@ -596,7 +574,7 @@ def test_trigger_tensorlib_changed_precision(mocker):
 
 @pytest.mark.parametrize(
     'tensorlib',
-    ['numpy_backend', 'jax_backend', 'pytorch_backend', 'tensorflow_backend'],
+    ['numpy_backend', 'jax_backend', 'pytorch_backend'],
 )
 @pytest.mark.parametrize('precision', ['64b', '32b'])
 def test_tensorlib_setup(tensorlib, precision, mocker):
