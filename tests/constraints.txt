@@ -11,10 +11,6 @@ numpy==1.21.0 # constrained by jax v0.4.1
 uproot==4.1.1
 # minuit
 iminuit==2.7.0  # c.f. PR #1895
-# tensorflow
-tensorflow==2.7.0  # c.f. PR #1962
-tensorflow-probability==0.11.0  # c.f. PR #1657
-protobuf<4.21.0  # c.f. PR #2117
 # torch
 torch==1.10.0
 # jax
