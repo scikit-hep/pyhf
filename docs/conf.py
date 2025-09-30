@@ -146,9 +146,11 @@ language = "en"
 # today_fmt = '%B %d, %Y'
 
 autodoc_mock_imports = [
+    'tensorflow',
     'torch',
     'jax',
     'iminuit',
+    'tensorflow_probability',
 ]
 
 
