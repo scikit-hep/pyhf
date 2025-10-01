@@ -16,7 +16,7 @@ def pytest_addoption(parser):
         action="append",
         type=str,
         default=[],
-        choices=["tensorflow", "pytorch", "jax", "minuit"],
+        choices=["pytorch", "jax", "minuit"],
         help="list of backends to disable in tests",
     )
     parser.addoption(
@@ -80,19 +80,18 @@ def reset_backend():
         (("numpy_backend", dict()), ("scipy_optimizer", dict())),
         (("pytorch_backend", dict()), ("scipy_optimizer", dict())),
         (("pytorch_backend", dict(precision="64b")), ("scipy_optimizer", dict())),
-        (("tensorflow_backend", dict()), ("scipy_optimizer", dict())),
         (("jax_backend", dict()), ("scipy_optimizer", dict())),
         (
             ("numpy_backend", dict(poisson_from_normal=True)),
             ("minuit_optimizer", dict()),
         ),
     ],
-    ids=['numpy', 'pytorch', 'pytorch64', 'tensorflow', 'jax', 'numpy_minuit'],
+    ids=['numpy', 'pytorch', 'pytorch64', 'jax', 'numpy_minuit'],
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
     param_ids = request._fixturedef.ids
-    # the backend we're using: numpy, tensorflow, etc...
+    # the backend we're using: numpy, etc...
     param_id = param_ids[request.param_index]
     # name of function being called (with params), the original name is .originalname
     func_name = request._pyfuncitem.name

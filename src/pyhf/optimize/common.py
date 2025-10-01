@@ -42,11 +42,6 @@ def _get_tensor_shim():
 
         return numpy_shim
 
-    if tensorlib.name == 'tensorflow':
-        from pyhf.optimize.opt_tflow import wrap_objective as tflow_shim
-
-        return tflow_shim
-
     if tensorlib.name == 'pytorch':
         from pyhf.optimize.opt_pytorch import wrap_objective as pytorch_shim
 

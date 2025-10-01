@@ -996,7 +996,6 @@ def test_shapesys_nuisparfilter_validation():
     [
         pyhf.tensor.numpy_backend,
         pyhf.tensor.jax_backend,
-        pyhf.tensor.tensorflow_backend,
         pyhf.tensor.pytorch_backend,
     ],
 )
@@ -1021,7 +1020,6 @@ def test_optimizer_stitching(backend, optimizer):
     'backend',
     [
         pyhf.tensor.jax_backend,
-        pyhf.tensor.tensorflow_backend,
         pyhf.tensor.pytorch_backend,
     ],
 )

@@ -8,7 +8,6 @@ class _BackendRetriever:
         "jax_backend",
         "numpy_backend",
         "pytorch_backend",
-        "tensorflow_backend",
     ]
 
     def __init__(self):
@@ -53,21 +52,6 @@ class _BackendRetriever:
             except ImportError as e:
                 raise exceptions.ImportBackendError(
                     "There was a problem importing PyTorch. The pytorch backend cannot be used.",
-                    e,
-                )
-        elif name == 'tensorflow_backend':
-            try:
-                from pyhf.tensor.tensorflow_backend import tensorflow_backend
-
-                assert tensorflow_backend
-                # for autocomplete and dir() calls
-                self.tensorflow_backend = tensorflow_backend
-                self._array_types.add(tensorflow_backend.array_type)
-                self._array_subtypes.add(tensorflow_backend.array_subtype)
-                return tensorflow_backend
-            except ImportError as e:
-                raise exceptions.ImportBackendError(
-                    "There was a problem importing TensorFlow. The tensorflow backend cannot be used.",
                     e,
                 )
 
