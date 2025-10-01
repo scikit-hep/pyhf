@@ -9,7 +9,8 @@ from pyhf.utils import EqDelimStringParamType
 from pyhf.infer import hypotest
 from pyhf.infer import mle
 from pyhf.workspace import Workspace
-from pyhf import get_backend, set_backend, optimize
+from pyhf.tensor.manager import get_backend, set_backend
+from pyhf import optimize
 
 log = logging.getLogger(__name__)
 
