@@ -14,8 +14,8 @@ Abstract
     histogram-based analysis and its interval estimation is based on the
     asymptotic formulas of "Asymptotic formulae for likelihood-based tests of
     new physics" :xref:`arXiv:1007.1727`.
-    pyhf supports modern computational graph libraries such as PyTorch and JAX
-    in order to make use of features such as auto-differentiation and GPU
+    pyhf supports modern computational graph libraries such as JAX in order to
+    make use of features such as automatic differentiation and GPU
     acceleration.
 
 
@@ -30,8 +30,8 @@ Abstract
         estimation is based on the asymptotic formulas of "Asymptotic formulae
         for likelihood-based tests of new physics"
         \href{https://arxiv.org/abs/1007.1727}{[arXiv:1007.1727]}. pyhf
-        supports modern computational graph libraries such as PyTorch and JAX
-        in order to make use of features such as auto-differentiation and GPU
+        supports modern computational graph libraries such as JAX in order to
+        make use of features such as automatic differentiation and GPU
         acceleration.
 
 
