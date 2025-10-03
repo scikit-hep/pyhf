@@ -171,10 +171,10 @@ class Independent(_SimpleDistributionMixin):
             >>> independent = pyhf.probability.Independent(poissons)
             >>> values = pyhf.tensorlib.astensor([8.0, 9.0])
             >>> independent.log_prob(values)
-            -4.26248380...
+            np.float64(-4.26248380...)
             >>> broadcast_value = pyhf.tensorlib.astensor([11.0])
             >>> independent.log_prob(broadcast_value)
-            -4.34774364...
+            np.float(-4.34774364...)
 
         Args:
             value (:obj:`tensor` or :obj:`float`): The value at which to evaluate the distribution
