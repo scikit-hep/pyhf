@@ -42,11 +42,6 @@ def _get_tensor_shim():
 
         return numpy_shim
 
-    if tensorlib.name == 'pytorch':
-        from pyhf.optimize.opt_pytorch import wrap_objective as pytorch_shim
-
-        return pytorch_shim
-
     if tensorlib.name == 'jax':
         from pyhf.optimize.opt_jax import wrap_objective as jax_shim
 
