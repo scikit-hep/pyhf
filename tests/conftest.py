@@ -16,7 +16,7 @@ def pytest_addoption(parser):
         action="append",
         type=str,
         default=[],
-        choices=["pytorch", "jax", "minuit"],
+        choices=["jax", "minuit"],
         help="list of backends to disable in tests",
     )
     parser.addoption(
@@ -78,15 +78,13 @@ def reset_backend():
     scope='function',
     params=[
         (("numpy_backend", dict()), ("scipy_optimizer", dict())),
-        (("pytorch_backend", dict()), ("scipy_optimizer", dict())),
-        (("pytorch_backend", dict(precision="64b")), ("scipy_optimizer", dict())),
         (("jax_backend", dict()), ("scipy_optimizer", dict())),
         (
             ("numpy_backend", dict(poisson_from_normal=True)),
             ("minuit_optimizer", dict()),
         ),
     ],
-    ids=['numpy', 'pytorch', 'pytorch64', 'jax', 'numpy_minuit'],
+    ids=['numpy', 'jax', 'numpy_minuit'],
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
