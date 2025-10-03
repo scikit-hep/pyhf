@@ -38,8 +38,6 @@ def test_uncorrelated_background(backend):
 
 
 # See https://github.com/scikit-hep/pyhf/issues/1654
-@pytest.mark.fail_pytorch
-@pytest.mark.fail_pytorch64
 @pytest.mark.fail_jax
 def test_correlated_background_default_backend(default_backend):
     model = pyhf.simplemodels.correlated_background(
@@ -56,8 +54,6 @@ def test_correlated_background_default_backend(default_backend):
 
 
 # See https://github.com/scikit-hep/pyhf/issues/1654
-@pytest.mark.fail_pytorch
-@pytest.mark.fail_pytorch64
 @pytest.mark.fail_jax
 def test_uncorrelated_background_default_backend(default_backend):
     model = pyhf.simplemodels.uncorrelated_background(
