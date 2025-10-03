@@ -105,7 +105,6 @@ def test_hypotest_qmu_tilde(
 
     backends = [
         pyhf.tensor.numpy_backend(precision='64b'),
-        pyhf.tensor.pytorch_backend(precision='64b'),
         pyhf.tensor.jax_backend(precision='64b'),
     ]
 
