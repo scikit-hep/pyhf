@@ -251,8 +251,6 @@ def test_shape(backend):
         )
 
 
-@pytest.mark.fail_pytorch
-@pytest.mark.fail_pytorch64
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
     # FIXME
@@ -295,50 +293,6 @@ def test_pdf_calculations(backend):
     ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
 
 
-# validate_args in torch.distributions raises ValueError not nan
-@pytest.mark.only_pytorch
-@pytest.mark.only_pytorch64
-def test_pdf_calculations_pytorch(backend):
-    tb = pyhf.tensorlib
-
-    values = tb.astensor([0, 0, 1, 1])
-    mus = tb.astensor([0, 1, 0, 1])
-    sigmas = tb.astensor([0, 0, 0, 0])
-    for x, mu, sigma in zip(values, mus, sigmas):
-        with pytest.raises(ValueError):
-            _ = tb.normal_logpdf(x, mu, sigma)
-    assert tb.tolist(
-        tb.normal_logpdf(
-            tb.astensor([0, 0, 1, 1]),
-            tb.astensor([0, 1, 0, 1]),
-            tb.astensor([1, 1, 1, 1]),
-        )
-    ) == pytest.approx(
-        [
-            -0.91893853,
-            -1.41893853,
-            -1.41893853,
-            -0.91893853,
-        ],
-    )
-
-    # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
-    assert tb.tolist(
-        tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
-    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
-        assert tb.tolist(
-            tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-        ) == pytest.approx(
-            np.log([1.0, 0.3678794503211975, 0.0, 0.3678794503211975]).tolist()
-        )
-
-    # Ensure continuous approximation is valid
-    assert tb.tolist(
-        tb.poisson(n=tb.astensor([0.5, 1.1, 1.5]), lam=tb.astensor(1.0))
-    ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
-
-
 def test_boolean_mask(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
@@ -365,11 +319,6 @@ def test_percentile(backend):
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
-# FIXME: PyTorch doesn't yet support interpolation schemes other than "linear"
-# c.f. https://github.com/pytorch/pytorch/pull/59397
-# c.f. https://github.com/scikit-hep/pyhf/issues/1693
-@pytest.mark.fail_pytorch
-@pytest.mark.fail_pytorch64
 def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
@@ -532,7 +481,7 @@ def test_tensor_precision(backend):
 
 @pytest.mark.parametrize(
     'tensorlib',
-    ['numpy_backend', 'jax_backend', 'pytorch_backend'],
+    ['numpy_backend', 'jax_backend'],
 )
 @pytest.mark.parametrize('precision', ['64b', '32b'])
 def test_set_tensor_precision(tensorlib, precision):
@@ -574,7 +523,7 @@ def test_trigger_tensorlib_changed_precision(mocker):
 
 @pytest.mark.parametrize(
     'tensorlib',
-    ['numpy_backend', 'jax_backend', 'pytorch_backend'],
+    ['numpy_backend', 'jax_backend'],
 )
 @pytest.mark.parametrize('precision', ['64b', '32b'])
 def test_tensorlib_setup(tensorlib, precision, mocker):

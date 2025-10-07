@@ -11,8 +11,6 @@ numpy==1.21.0 # constrained by jax v0.4.1
 uproot==4.1.1
 # minuit
 iminuit==2.7.0  # c.f. PR #1895
-# torch
-torch==1.10.0
 # jax
 # Use Google Cloud Storage buckets for long term wheel support
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342

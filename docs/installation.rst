@@ -27,13 +27,6 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
 
     python -m pip install pyhf
 
-... with PyTorch backend
-++++++++++++++++++++++++
-
-.. code-block:: console
-
-    python -m pip install 'pyhf[torch]'
-
 ... with JAX backend
 ++++++++++++++++++++
 
@@ -66,13 +59,6 @@ Install latest development version from `GitHub <https://github.com/scikit-hep/p
 .. code-block:: console
 
     python -m pip install --upgrade 'pyhf@git+https://github.com/scikit-hep/pyhf.git'
-
-... with PyTorch backend
-++++++++++++++++++++++++
-
-.. code-block:: console
-
-    python -m pip install --upgrade 'pyhf[torch]@git+https://github.com/scikit-hep/pyhf.git'
 
 ... with JAX backend
 ++++++++++++++++++++++

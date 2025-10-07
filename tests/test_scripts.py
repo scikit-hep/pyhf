@@ -192,7 +192,7 @@ def test_import_usingMounts_badDelimitedPaths(datadir, tmp_path, script_runner):
     assert 'is not a valid colon-separated option' in ret.stderr
 
 
-@pytest.mark.parametrize("backend", ["numpy", "pytorch", "jax"])
+@pytest.mark.parametrize("backend", ["numpy", "jax"])
 def test_fit_backend_option(tmp_path, script_runner, backend):
     temp = tmp_path.joinpath("parsed_output.json")
     command = f"pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}"
@@ -207,7 +207,7 @@ def test_fit_backend_option(tmp_path, script_runner, backend):
     assert "mle_parameters" in ret_json
 
 
-@pytest.mark.parametrize("backend", ["numpy", "pytorch", "jax"])
+@pytest.mark.parametrize("backend", ["numpy", "jax"])
 def test_cls_backend_option(tmp_path, script_runner, backend):
     temp = tmp_path.joinpath("parsed_output.json")
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'

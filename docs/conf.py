@@ -146,7 +146,6 @@ language = "en"
 # today_fmt = '%B %d, %Y'
 
 autodoc_mock_imports = [
-    'torch',
     'jax',
     'iminuit',
 ]
@@ -195,13 +194,11 @@ exclude_patterns = [
     'examples/notebooks/StatError.ipynb',
     'examples/notebooks/histogrammar.ipynb',
     'examples/notebooks/histosys.ipynb',
-    'examples/notebooks/histosys-pytorch.ipynb',
     'examples/notebooks/importxml.ipynb',
     'examples/notebooks/multichannel-coupled-normsys.ipynb',
     'examples/notebooks/multichannel-normsys.ipynb',
     'examples/notebooks/normsys.ipynb',
     'examples/notebooks/pullplot.ipynb',
-    'examples/notebooks/pytorch_tests_onoff.ipynb',
 ]
 
 # The reST default role (used for this markup: `text`) to use for all

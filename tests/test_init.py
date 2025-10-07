@@ -8,19 +8,13 @@ import pyhf
     [
         ["numpy", "numpy_backend", "numpy_backend", pytest.raises(ImportError)],
         [
-            "torch",
-            "pytorch_backend",
-            "pytorch_backend",
-            pytest.raises(pyhf.exceptions.ImportBackendError),
-        ],
-        [
             "jax",
             "jax_backend",
             "jax_backend",
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
     ],
-    ids=["numpy", "pytorch", "jax"],
+    ids=["numpy", "jax"],
 )
 def test_missing_backends(isolate_modules, param):
     backend_name, module_name, import_name, expectation = param

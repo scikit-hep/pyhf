@@ -26,7 +26,6 @@ keywords:
   - fitting
   - scipy
   - numpy
-  - pytorch
   - jax
   - auto-differentiation
 license: "Apache-2.0"
@@ -37,8 +36,8 @@ abstract: |
   of that statistical model for multi-bin histogram-based analysis and its
   interval estimation is based on the asymptotic formulas of "Asymptotic
   formulae for likelihood-based tests of new physics". pyhf supports modern
-  computational graph libraries such as PyTorch and JAX in order
-  to make use of features such as autodifferentiation and GPU acceleration.
+  computational graph libraries such as JAX in order to make use of features
+  such as automatic differentiation and GPU acceleration.
 references:
   - type: article
     authors:

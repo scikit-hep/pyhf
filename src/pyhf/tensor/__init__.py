@@ -7,7 +7,6 @@ class _BackendRetriever:
         "_array_types",
         "jax_backend",
         "numpy_backend",
-        "pytorch_backend",
     ]
 
     def __init__(self):
@@ -37,21 +36,6 @@ class _BackendRetriever:
             except ImportError as e:
                 raise exceptions.ImportBackendError(
                     "There was a problem importing JAX. The jax backend cannot be used.",
-                    e,
-                )
-        elif name == 'pytorch_backend':
-            try:
-                from pyhf.tensor.pytorch_backend import pytorch_backend
-
-                assert pytorch_backend
-                # for autocomplete and dir() calls
-                self.pytorch_backend = pytorch_backend
-                self._array_types.add(pytorch_backend.array_type)
-                self._array_subtypes.add(pytorch_backend.array_subtype)
-                return pytorch_backend
-            except ImportError as e:
-                raise exceptions.ImportBackendError(
-                    "There was a problem importing PyTorch. The pytorch backend cannot be used.",
                     e,
                 )
 

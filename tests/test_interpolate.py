@@ -118,13 +118,7 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
 def test_validate_implementation(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
-    # single-float precision backends, calculate using single-floats
-    if pyhf.tensorlib.name in ['pytorch']:
-        abs_tolerance = 1e-6
-        histogramssets = np.asarray(histogramssets, dtype=np.float32)
-        alphasets = np.asarray(alphasets, dtype=np.float32)
-    else:
-        abs_tolerance = 1e-12
+    abs_tolerance = 1e-12
 
     histogramssets = histogramssets.tolist()
     alphasets = pyhf.tensorlib.astensor(alphasets.tolist())
