@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 import pyhf
 from pyhf import events
@@ -10,7 +9,7 @@ from pyhf.tensor.manager import get_backend
 log = logging.getLogger(__name__)
 
 
-def required_parset(sigmas, fixed: List[bool]):
+def required_parset(sigmas, fixed: list[bool]):
     n_parameters = len(sigmas)
     return {
         'paramset_type': 'constrained_by_normal',
@@ -150,10 +149,13 @@ class staterror_combined:
             parfield_shape, pdfconfig.par_map, self._staterr_mods
         )
 
-        self._staterror_mask = [
-            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
-            for m in keys
-        ]
+        self._staterror_mask = default_backend.astensor(
+            [
+                [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+                for m in keys
+            ],
+            dtype='bool',
+        )
         global_concatenated_bin_indices = [
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]

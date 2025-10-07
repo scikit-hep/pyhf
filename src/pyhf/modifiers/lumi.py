@@ -1,6 +1,8 @@
 import logging
 
-from pyhf import get_backend, events
+import pyhf
+from pyhf.tensor.manager import get_backend
+from pyhf import events
 from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
@@ -60,6 +62,8 @@ class lumi_combined:
     op_code = 'multiplication'
 
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
+        default_backend = pyhf.default_backend
+
         self.batch_size = batch_size
 
         keys = [f'{mtype}/{m}' for m, mtype in modifiers]
@@ -72,10 +76,13 @@ class lumi_combined:
         )
         self.param_viewer = ParamViewer(parfield_shape, pdfconfig.par_map, lumi_mods)
 
-        self._lumi_mask = [
-            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
-            for m in keys
-        ]
+        self._lumi_mask = default_backend.astensor(
+            [
+                [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+                for m in keys
+            ],
+            dtype='bool',
+        )
         self._precompute()
         events.subscribe('tensorlib_changed')(self._precompute)
 

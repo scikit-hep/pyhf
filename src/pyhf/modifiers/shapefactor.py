@@ -138,10 +138,13 @@ class shapefactor_combined:
             parfield_shape, pdfconfig.par_map, shapefactor_mods
         )
 
-        self._shapefactor_mask = [
-            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
-            for m in keys
-        ]
+        self._shapefactor_mask = default_backend.astensor(
+            [
+                [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+                for m in keys
+            ],
+            dtype='bool',
+        )
 
         global_concatenated_bin_indices = [
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]

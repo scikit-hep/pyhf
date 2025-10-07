@@ -101,6 +101,8 @@ class histosys_combined:
     def __init__(
         self, modifiers, pdfconfig, builder_data, interpcode='code0', batch_size=None
     ):
+        default_backend = pyhf.default_backend
+
         self.batch_size = batch_size
         self.interpcode = interpcode
         assert self.interpcode in ['code0', 'code2', 'code4p']
@@ -128,10 +130,13 @@ class histosys_combined:
             ]
             for m in keys
         ]
-        self._histosys_mask = [
-            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
-            for m in keys
-        ]
+        self._histosys_mask = default_backend.astensor(
+            [
+                [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+                for m in keys
+            ],
+            dtype='bool',
+        )
 
         if histosys_mods:
             self.interpolator = getattr(interpolators, self.interpcode)(
