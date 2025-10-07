@@ -105,7 +105,6 @@ def test_hypotest_qmu_tilde(
 
     backends = [
         pyhf.tensor.numpy_backend(precision='64b'),
-        pyhf.tensor.pytorch_backend(precision='64b'),
         pyhf.tensor.jax_backend(precision='64b'),
     ]
 
@@ -128,21 +127,10 @@ def test_hypotest_qmu_tilde(
     numpy_ratio = np.divide(test_statistic, test_statistic[0])
     numpy_ratio_delta_unity = np.absolute(np.subtract(numpy_ratio, 1))
 
-    # compare tensor libraries to each other
-    tensors_ratio = np.divide(test_statistic[1], test_statistic[2])
-    tensors_ratio_delta_unity = np.absolute(np.subtract(tensors_ratio, 1))
-
     try:
         assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
     except AssertionError:
         print(
             f"Ratio to NumPy+SciPy exceeded tolerance of {tolerance['numpy']}: {numpy_ratio_delta_unity.tolist()}"
-        )
-        assert False
-    try:
-        assert (tensors_ratio_delta_unity < tolerance['tensors']).all()
-    except AssertionError:
-        print(
-            f"Ratio between tensor backends exceeded tolerance of {tolerance['tensors']}: {tensors_ratio_delta_unity.tolist()}"
         )
         assert False

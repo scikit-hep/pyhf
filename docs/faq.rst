@@ -169,7 +169,7 @@ invitation for community contributions and new developers.
 Troubleshooting
 ---------------
 
-- :code:`import torch` or :code:`import pyhf` causes a :code:`Segmentation fault (core dumped)`
+- :code:`import pyhf` causes a :code:`Segmentation fault (core dumped)`
 
     This is may be the result of a conflict with the NVIDIA drivers that you
     have installed on your machine.  Try uninstalling and completely removing

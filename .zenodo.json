@@ -28,7 +28,6 @@
       "fitting",
       "scipy",
       "numpy",
-      "pytorch",
       "jax",
       "auto-differentiation"
     ],
