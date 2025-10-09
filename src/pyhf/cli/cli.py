@@ -5,9 +5,9 @@ import logging
 import click
 
 from pyhf import __version__
-from pyhf.cli import rootio, spec, infer, patchset, complete
+from pyhf.cli import complete, infer, patchset, rootio, spec, utils
 from pyhf.contrib import cli as contrib
-from pyhf import utils
+from pyhf.utils import citation
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 def _print_citation(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo(utils.citation())
+    click.echo(citation())
     ctx.exit()
 
 
@@ -53,6 +53,8 @@ pyhf.add_command(infer.fit)
 pyhf.add_command(infer.cls)
 
 pyhf.add_command(patchset.cli)
+
+pyhf.add_command(utils.cli)
 
 pyhf.add_command(complete.cli)
 

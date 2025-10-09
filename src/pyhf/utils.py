@@ -1,10 +1,13 @@
-import json
-import yaml
-import click
 import hashlib
+import json
+import platform
+import sys
 from gettext import gettext
 
-import sys
+import click
+import yaml
+
+from pyhf import __version__
 
 # importlib.resources.as_file wasn't added until Python 3.9
 # c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
@@ -17,6 +20,7 @@ __all__ = [
     "EqDelimStringParamType",
     "citation",
     "digest",
+    "environment_info",
     "options_from_eqdelimstring",
 ]
 
@@ -126,3 +130,57 @@ def citation(oneline=False):
     if oneline:
         data = ''.join(data.splitlines())
     return data
+
+
+def environment_info():
+    """
+    Produce OS / environment information useful for filing a bug report
+
+    Example:
+
+        >>> import pyhf
+        >>> pyhf.utils.environment_info()
+
+    Returns:
+        os_info (:obj:`str`): The operating system and environment information
+        for the host machine.
+    """
+
+    os_version = "Cannot be determined"
+    if sys.platform == "linux":
+        try:
+            # platform.freedesktop_os_release added in Python 3.10
+            # Remove when Python 3.9 support dropped
+            from platform import freedesktop_os_release
+        except ImportError:
+            # c.f. https://docs.python.org/3/library/platform.html#platform.freedesktop_os_release
+            from pathlib import Path
+
+            def freedesktop_os_release():
+                os_release_path = Path("/etc") / "os-release"
+                if os_release_path.exists():
+                    with open(os_release_path, encoding="utf8") as read_file:
+                        os_release_file = read_file.read()
+                    os_release_list = os_release_file.split("\n")
+                    # Remove all trailing lines
+                    os_release_list = list(filter(("").__ne__, os_release_list))
+                    return {
+                        token.split("=")[0]: token.split("=")[1].replace('"', '')
+                        for token in os_release_list
+                    }
+                else:
+                    raise OSError
+
+        try:
+            os_release = freedesktop_os_release()
+            os_version = f"{os_release['NAME']} {os_release['VERSION']}"
+        except OSError:
+            os_version = "Cannot be determined"
+    elif sys.platform == "darwin":
+        os_version = f"macOS {platform.mac_ver()[0]}"
+
+    os_info = f"* os version: {os_version}\n"
+    kernel_info = f"* kernel version: {platform.system()} {platform.release()} {platform.machine()}\n"
+    python_info = f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler()}]\n"
+    pyhf_version = f"* pyhf version: {__version__}\n"
+    return os_info + kernel_info + python_info + pyhf_version
