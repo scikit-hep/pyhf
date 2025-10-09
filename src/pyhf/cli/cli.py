@@ -47,6 +47,7 @@ pyhf.add_command(spec.rename)
 pyhf.add_command(spec.combine)
 pyhf.add_command(spec.digest)
 pyhf.add_command(spec.sort)
+pyhf.add_command(spec.hs3_to_hifa)
 
 # pyhf.add_command(infer.cli)
 pyhf.add_command(infer.fit)
