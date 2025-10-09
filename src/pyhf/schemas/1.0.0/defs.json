@@ -109,7 +109,8 @@
                         },
                         "required": ["lo_data", "hi_data"],
                         "additionalProperties": false
-                    }
+                    },
+                    "constraint": { "type": "string", "enum": [ "gaussian", "poisson" ] }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -119,7 +120,8 @@
                 "properties": {
                     "name": { "const": "lumi" },
                     "type": { "const": "lumi" },
-                    "data": { "type": "null" }
+                    "data": { "type": "null" },
+                    "constraint": { "type": "string", "enum": [ "gaussian", "poisson" ] }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -147,7 +149,8 @@
                         },
                         "required": ["lo", "hi"],
                         "additionalProperties": false
-                    }
+                    },
+                    "constraint": { "type": "string", "enum": [ "gaussian", "poisson" ] }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -167,7 +170,8 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "shapesys" },
-                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                    "constraint": { "type": "string", "enum": [ "gaussian", "poisson" ] }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
@@ -177,7 +181,8 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "staterror" },
-                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 }
+                    "data": { "type": "array", "items": {"type": "number"}, "minItems": 1 },
+                    "constraint": { "type": "string", "enum": [ "gaussian", "poisson" ] }
                 },
                 "required": ["name", "type", "data"],
                 "additionalProperties": false
