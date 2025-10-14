@@ -102,7 +102,7 @@ docs = [
     "pyhf[xmlio,contrib]",
     "sphinx>=7.0.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2271
     "sphinxcontrib-bibtex>=2.1",
-    "sphinx-click",
+    "sphinx-click>=2.5.0",
     "pydata-sphinx-theme>=0.15.3",
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",

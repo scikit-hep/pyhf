@@ -58,7 +58,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinxcontrib.bibtex',
     'sphinx.ext.napoleon',
-    'sphinx_click.ext',
+    'sphinx_click',
     'nbsphinx',
     'sphinx_issues',
     'sphinx_copybutton',
