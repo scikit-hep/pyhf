@@ -82,6 +82,7 @@ backends = ["pyhf[jax,minuit]"]
 all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
 
 # Developer extras
+[dependency-groups]
 test = [
     "scikit-hep-testdata>=0.4.11",
     "pytest>=6.0",
@@ -115,12 +116,13 @@ docs = [
     "jupytext>=1.14.0",
     "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
 ]
-develop = [
-    "pyhf[all,test,docs]",
+dev = [
+    "pyhf[all]",
     "tbump>=6.7.0",
     "pre-commit",
     "nox",
-    "uv>=0.1.39"
+    { include-group = "test" },
+    { include-group = "docs" },
 ]
 
 [tool.hatch.version]
