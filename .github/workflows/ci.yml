@@ -71,7 +71,8 @@ jobs:
     - name: Report core project coverage with Codecov
       if: >-
         github.event_name != 'schedule' &&
-        matrix.os == 'ubuntu-latest'
+        matrix.os == 'ubuntu-latest' &&
+        github.repository == 'scikit-hep/pyhf'
       uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true
@@ -89,7 +90,7 @@ jobs:
         coverage xml
 
     - name: Report contrib coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest' && github.repository == 'scikit-hep/pyhf'
       uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true
@@ -109,7 +110,7 @@ jobs:
         coverage xml --data-file=.coverage-doctest -o doctest-coverage.xml
 
     - name: Report doctest coverage with Codecov
-      if: github.event_name != 'schedule' && matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest'
+      if: github.event_name != 'schedule' && matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest' && github.repository == 'scikit-hep/pyhf'
       uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true
