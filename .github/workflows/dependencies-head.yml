@@ -34,7 +34,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip --no-cache --quiet install --system --upgrade --pre ".[all,test]"
+        uv pip --no-cache --quiet install --system --upgrade --pre ".[all]" --group test
         python -m pip list
 
     - name: List release candidates, alpha, and beta releases
@@ -65,7 +65,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip --no-cache --quiet install --system --upgrade ".[all]" --group test
         uv pip uninstall --system scipy
         # uv wants to upgrade dependencies (numpy) to a dev release too, so don't --upgrade
         uv pip install --system --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple scipy
@@ -93,7 +93,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip --no-cache --quiet install --system --upgrade ".[all]" --group test
         uv pip uninstall --system iminuit
         uv pip install --system --upgrade cython
         uv pip install --system --upgrade git+https://github.com/scikit-hep/iminuit.git
@@ -120,7 +120,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip --no-cache --quiet install --system --upgrade ".[all]" --group test
         uv pip uninstall --system uproot
         uv pip install --system --upgrade git+https://github.com/scikit-hep/uproot5.git
         python -m pip list
@@ -148,7 +148,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip --no-cache --quiet install --system --upgrade ".[all]" --group test
         uv pip uninstall --system matplotlib
         # Need to use --extra-index-url as all dependencies aren't on scientific-python-nightly-wheels package index.
         # Need to use --pre as dev releases will need priority over stable releases.
@@ -185,7 +185,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install uv
-        uv pip --no-cache --quiet install --system --upgrade ".[all,test]"
+        uv pip --no-cache --quiet install --system --upgrade ".[all]" --group test
         uv pip uninstall --system pytest
         uv pip install --system --upgrade git+https://github.com/pytest-dev/pytest.git
         python -m pip list
