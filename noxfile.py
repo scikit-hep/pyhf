@@ -8,6 +8,7 @@ ALL_PYTHONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
 # Default sessions to run if no session handles are passed
 nox.options.sessions = ["lint", "tests-3.13"]
+nox.options.default_venv_backend = "uv|virtualenv"
 
 
 DIR = Path(__file__).parent.resolve()
