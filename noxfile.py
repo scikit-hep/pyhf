@@ -35,7 +35,7 @@ def tests(session):
         $ nox --session tests --python 3.13 -- tests/test_tensor.py  # run specific tests
         $ nox --session tests --python 3.13 -- coverage  # run with coverage but slower
     """
-    session.install("--upgrade", "--editable", ".[all,test]")
+    session.install("--upgrade", "--editable", ".[all]", "--group", "test")
     session.install("--upgrade", "pytest")
 
     # Allow tests to be run with coverage
@@ -107,7 +107,7 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("--upgrade", "--editable", ".[all,test]")
+    session.install("--upgrade", "--editable", ".[all]", "--group", "test")
     session.install("--upgrade", "pytest", "matplotlib")
     if not sys.platform.startswith("linux"):
         session.error(
@@ -133,7 +133,7 @@ def docs(session):
         $ nox --session docs -- serve  # Need for local jupyterlite preview
         $ nox --session docs -- clean
     """
-    session.install("--upgrade", "--editable", ".[backends,contrib,docs]")
+    session.install("--upgrade", "--editable", ".[backends,contrib]", "--group", "docs")
     session.install("--upgrade", "sphinx")
 
     build_path = DIR / "docs" / "_build"
@@ -182,7 +182,7 @@ def notebooks(session: nox.Session):
     """
     Run the notebook tests.
     """
-    session.install("--upgrade", "--editable", ".[all,test]")
+    session.install("--upgrade", "--editable", ".[all]", "--group", "test")
     session.run(
         "pytest",
         "--override-ini",
