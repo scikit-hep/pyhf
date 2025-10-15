@@ -16,7 +16,9 @@ log = logging.getLogger(__name__)
 
 
 def _currently_jitting():
-    """JAX turns arrays into Tracers during jit-compilation, so we can check for that"""
+    """
+    JAX turns arrays into Tracers during jit-compilation, so check for that.
+    """
     return isinstance(jnp.array(1), Tracer)
 
 
