@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=python:3.12-slim-bullseye
+ARG BASE_IMAGE=python:3.13-slim-bookworm
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE} AS base
 

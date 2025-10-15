@@ -4,10 +4,10 @@ from pathlib import Path
 
 import nox
 
-ALL_PYTHONS = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+ALL_PYTHONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
 # Default sessions to run if no session handles are passed
-nox.options.sessions = ["lint", "tests-3.12"]
+nox.options.sessions = ["lint", "tests-3.13"]
 
 
 DIR = Path(__file__).parent.resolve()
@@ -30,10 +30,10 @@ def tests(session):
 
     Examples:
 
-        $ nox --session tests --python 3.12
-        $ nox --session tests --python 3.12 -- contrib  # run the contrib module tests
-        $ nox --session tests --python 3.12 -- tests/test_tensor.py  # run specific tests
-        $ nox --session tests --python 3.12 -- coverage  # run with coverage but slower
+        $ nox --session tests --python 3.13
+        $ nox --session tests --python 3.13 -- contrib  # run the contrib module tests
+        $ nox --session tests --python 3.13 -- tests/test_tensor.py  # run specific tests
+        $ nox --session tests --python 3.13 -- coverage  # run with coverage but slower
     """
     session.install("--upgrade", "--editable", ".[all,test]")
     session.install("--upgrade", "pytest")

@@ -64,8 +64,8 @@ repos:
           ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
         args: ["--python-version=3.8"]
       - <<: *mypy
-        name: mypy with Python 3.12
-        args: ["--python-version=3.12"]
+        name: mypy with Python 3.13
+        args: ["--python-version=3.13"]
 
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
