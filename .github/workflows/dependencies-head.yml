@@ -19,8 +19,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-13]
-        python-version: ['3.12']
+        os: [ubuntu-latest, macos-latest, macos-15-intel]
+        python-version: ['3.13']
 
     steps:
     - uses: actions/checkout@v5
@@ -50,7 +50,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.12']
+        python-version: ['3.13']
 
     steps:
     - uses: actions/checkout@v5
@@ -79,7 +79,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.12']
+        python-version: ['3.13']
 
     steps:
     - uses: actions/checkout@v5
@@ -105,7 +105,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.12']
+        python-version: ['3.13']
 
     steps:
     - uses: actions/checkout@v5
@@ -130,7 +130,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.12']
+        python-version: ['3.13']
 
     steps:
     - uses: actions/checkout@v5
@@ -168,7 +168,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.12']
+        python-version: ['3.13']
 
     steps:
     - uses: actions/checkout@v5
