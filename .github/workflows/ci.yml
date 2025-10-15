@@ -35,7 +35,7 @@ jobs:
           - os: macos-latest
             python-version: '3.12'
           # Intel runner
-          - os: macos-13
+          - os: macos-15-intel
             python-version: '3.12'
 
     steps:
