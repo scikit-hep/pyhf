@@ -49,8 +49,8 @@ dependencies = [
     "jsonpatch>=1.15",
     "jsonschema>=4.15.0",  # for utils
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
-    # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for scipy v1.16.0 upper bound
-    "scipy>=1.5.2,<1.16.0",  # requires numpy, which is required by pyhf
+    # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for excluded v1.16.x versions
+    "scipy>=1.5.2,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
     "tqdm>=4.56.0",  # for readxml
     "numpy",  # compatible versions controlled through scipy
 ]
