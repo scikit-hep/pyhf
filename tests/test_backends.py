@@ -87,8 +87,13 @@ def test_tensor_array_types():
 
 
 @pytest.mark.only_jax
-def test_jax_data_shape_mismatch_during_jitting():
-    # Issue: https://github.com/scikit-hep/pyhf/issues/1422
+def test_jax_data_shape_mismatch_during_jitting(backend):
+    """
+    Validate that during JAX tracingg time the correct form
+    of the tracer is returned.
+    Issue: https://github.com/scikit-hep/pyhf/issues/1422
+    PR: https://github.com/scikit-hep/pyhf/pull/2580
+    """
     model = pyhf.simplemodels.uncorrelated_background([10], [15], [5])
     with pytest.raises(
         pyhf.exceptions.InvalidPdfData,
