@@ -84,3 +84,15 @@ def test_backend_array_type(backend):
 def test_tensor_array_types():
     # can't really assert the content of them so easily
     assert pyhf.tensor.array_types
+
+
+def test_jax_data_shape_mismatch_during_jitting():
+    # Issue: https://github.com/scikit-hep/pyhf/issues/1422
+    # PR: https://github.com/scikit-hep/pyhf/pull/2580
+    pyhf.set_backend("jax")
+    model = pyhf.simplemodels.uncorrelated_background([10], [15], [5])
+    with pytest.raises(
+        pyhf.exceptions.InvalidPdfData,
+        match="eval failed as data has len 1 but 2 was expected",
+    ):
+        pyhf.infer.mle.fit([12.5], model)
