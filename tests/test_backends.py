@@ -89,8 +89,10 @@ def test_tensor_array_types():
 @pytest.mark.only_jax
 def test_jax_data_shape_mismatch_during_jitting(backend):
     """
-    Validate that during JAX tracing time the correct form
-    of the tracer is returned.
+    Validate that during JAX tracing time pyhf doesn't try
+    to convert the data to a list, which is not possible with tracers,
+    for a shape mismatch.
+    Instead, we return the tracer itself for a proper error message.
     Issue: https://github.com/scikit-hep/pyhf/issues/1422
     PR: https://github.com/scikit-hep/pyhf/pull/2580
     """
