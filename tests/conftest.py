@@ -89,7 +89,7 @@ def reset_backend():
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
     param_ids = request._fixturedef.ids
-    # the backend we're using: numpy, etc...
+    # the backend we're using: numpy, jax, etc...
     param_id = param_ids[request.param_index]
     # name of function being called (with params), the original name is .originalname
     func_name = request._pyfuncitem.name
