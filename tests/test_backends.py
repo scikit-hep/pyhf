@@ -84,3 +84,21 @@ def test_backend_array_type(backend):
 def test_tensor_array_types():
     # can't really assert the content of them so easily
     assert pyhf.tensor.array_types
+
+
+@pytest.mark.only_jax
+def test_jax_data_shape_mismatch_during_jitting(backend):
+    """
+    Validate that during JAX tracing time pyhf doesn't try
+    to convert the data to a list, which is not possible with tracers,
+    for a shape mismatch.
+    Instead, return the tracer itself for a proper error message.
+    Issue: https://github.com/scikit-hep/pyhf/issues/1422
+    PR: https://github.com/scikit-hep/pyhf/pull/2580
+    """
+    model = pyhf.simplemodels.uncorrelated_background([10], [15], [5])
+    with pytest.raises(
+        pyhf.exceptions.InvalidPdfData,
+        match="eval failed as data has len 1 but 2 was expected",
+    ):
+        pyhf.infer.mle.fit([12.5], model)
