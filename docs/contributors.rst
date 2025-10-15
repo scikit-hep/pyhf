@@ -36,3 +36,4 @@ Contributors include:
 - Lorenz Gaertner
 - Melissa Weber Mendonça
 - Matthias Bussonnier
+- Peter Fackeldey
