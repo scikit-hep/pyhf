@@ -2,7 +2,7 @@ from jax import config
 
 config.update('jax_enable_x64', True)
 
-import jax
+from jax.core import Tracer
 from jax import Array
 import jax.numpy as jnp
 from jax.scipy.special import gammaln, xlogy
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 def _currently_jitting():
-    return isinstance(jnp.array(1) + 1, jax.core.Tracer)
+    return isinstance(jnp.array(1) + 1, Tracer)
 
 
 class _BasicPoisson:
