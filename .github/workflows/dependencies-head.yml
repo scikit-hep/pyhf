@@ -16,6 +16,7 @@ permissions:
 jobs:
   release-candidates:
 
+    if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -46,6 +47,7 @@ jobs:
 
   scipy:
 
+    if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -75,6 +77,7 @@ jobs:
 
   iminuit:
 
+    if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -101,6 +104,7 @@ jobs:
 
   uproot5:
 
+    if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -126,6 +130,7 @@ jobs:
 
   matplotlib:
 
+    if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -164,6 +169,7 @@ jobs:
 
   pytest:
 
+    if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
