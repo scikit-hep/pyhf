@@ -656,4 +656,4 @@ class numpy_backend(Generic[T]):
 
         .. versionadded:: 0.7.0
         """
-        return tensor_in.transpose()
+        return cast(ArrayLike, tensor_in.transpose())
