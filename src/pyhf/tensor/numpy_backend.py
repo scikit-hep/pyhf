@@ -656,4 +656,5 @@ class numpy_backend(Generic[T]):
 
         .. versionadded:: 0.7.0
         """
+        # TODO: Casting needed for Python 3.10 mypy but not Python 3.13?
         return cast(ArrayLike, tensor_in.transpose())
