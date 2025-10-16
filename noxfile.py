@@ -8,6 +8,7 @@ ALL_PYTHONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
 # Default sessions to run if no session handles are passed
 nox.options.sessions = ["lint", "tests-3.13"]
+nox.options.default_venv_backend = "uv|virtualenv"
 
 
 DIR = Path(__file__).parent.resolve()
@@ -35,7 +36,7 @@ def tests(session):
         $ nox --session tests --python 3.13 -- tests/test_tensor.py  # run specific tests
         $ nox --session tests --python 3.13 -- coverage  # run with coverage but slower
     """
-    session.install("--upgrade", "--editable", ".[all,test]")
+    session.install("--upgrade", "--editable", ".[all]", "--group", "test")
     session.install("--upgrade", "pytest")
 
     # Allow tests to be run with coverage
@@ -107,7 +108,7 @@ def regenerate(session):
     """
     Regenerate Matplotlib images.
     """
-    session.install("--upgrade", "--editable", ".[all,test]")
+    session.install("--upgrade", "--editable", ".[all]", "--group", "test")
     session.install("--upgrade", "pytest", "matplotlib")
     if not sys.platform.startswith("linux"):
         session.error(
@@ -133,7 +134,7 @@ def docs(session):
         $ nox --session docs -- serve  # Need for local jupyterlite preview
         $ nox --session docs -- clean
     """
-    session.install("--upgrade", "--editable", ".[backends,contrib,docs]")
+    session.install("--upgrade", "--editable", ".[backends,contrib]", "--group", "docs")
     session.install("--upgrade", "sphinx")
 
     build_path = DIR / "docs" / "_build"
@@ -182,7 +183,7 @@ def notebooks(session: nox.Session):
     """
     Run the notebook tests.
     """
-    session.install("--upgrade", "--editable", ".[all,test]")
+    session.install("--upgrade", "--editable", ".[all]", "--group", "test")
     session.run(
         "pytest",
         "--override-ini",
