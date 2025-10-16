@@ -17,6 +17,7 @@ jobs:
 
   pypi_release:
 
+    if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
