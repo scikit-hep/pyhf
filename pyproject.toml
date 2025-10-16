@@ -10,7 +10,7 @@ name = "pyhf"
 dynamic = ["version"]
 description = "pure-Python HistFactory implementation with tensors and autodiff"
 readme = "README.rst"
-license = { text = "Apache-2.0" }  # SPDX short identifier
+license = "Apache-2.0"
 requires-python = ">=3.8"
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
@@ -29,7 +29,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: WebAssembly :: Emscripten",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
@@ -172,7 +171,7 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob='*.rst'",
 ]
-log_cli_level = "info"
+log_cli_level = "INFO"
 testpaths = "tests"
 markers = [
     "fail_jax",
@@ -262,26 +261,20 @@ module = [
 ignore_errors = true
 
 [tool.ruff]
-src = ["src"]
 line-length = 88
 
 [tool.ruff.lint]
-select = [
-  "E", "F", "W", # flake8
+extend-select = [
   "UP",          # pyupgrade
   "RUF",         # Ruff-specific
   "TID",         # flake8-tidy-imports
 ]
 ignore = [
   "E402",
-  "E501",
   "RUF001", # String contains ambiguous unicode character
   "RUF005", # unpack-instead-of-concatenating-to-collection-literal
 ]
 typing-modules = ["pyhf.typing"]
-unfixable = [
-  "F841", # Removes unused variables
-]
 flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
