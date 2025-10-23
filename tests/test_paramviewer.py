@@ -11,8 +11,8 @@ def test_paramviewer_simple_nonbatched(backend):
 
     view = ParamViewer(
         parshape,
-        {'hello': {'slice': slice(0, 2)}, 'world': {'slice': slice(5, 7)}},
-        ['world', 'hello'],
+        {"hello": {"slice": slice(0, 2)}, "world": {"slice": slice(5, 7)}},
+        ["world", "hello"],
     )
     par_slice = view.get(pars)
     assert pyhf.tensorlib.tolist(par_slice[slice(2, 4)]) == [1, 2]
@@ -42,8 +42,8 @@ def test_paramviewer_simple_batched(backend):
 
     view = ParamViewer(
         parshape,
-        {'hello': {'slice': slice(0, 2)}, 'world': {'slice': slice(3, 4)}},
-        ['world', 'hello'],
+        {"hello": {"slice": slice(0, 2)}, "world": {"slice": slice(3, 4)}},
+        ["world", "hello"],
     )
     par_slice = view.get(pars)
 

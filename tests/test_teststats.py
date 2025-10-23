@@ -1,7 +1,9 @@
+import logging
+
 import pytest
+
 import pyhf
 import pyhf.infer.test_statistics
-import logging
 
 
 def test_q0(caplog):

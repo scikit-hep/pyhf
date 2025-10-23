@@ -1,9 +1,10 @@
-import pyhf.events as events
 from unittest import mock
+
+import pyhf.events as events
 
 
 def test_subscribe_event():
-    ename = 'test'
+    ename = "test"
 
     m = mock.Mock()
     events.subscribe(ename)(m.__call__)
@@ -16,7 +17,7 @@ def test_subscribe_event():
 
 
 def test_event():
-    ename = 'test'
+    ename = "test"
 
     m = mock.Mock()
     events.subscribe(ename)(m.__call__)
@@ -27,7 +28,7 @@ def test_event():
 
 
 def test_event_weakref():
-    ename = 'test'
+    ename = "test"
 
     m = mock.Mock()
     events.subscribe(ename)(m.__call__)
@@ -39,7 +40,7 @@ def test_event_weakref():
 
 
 def test_disable_event():
-    ename = 'test'
+    ename = "test"
 
     m = mock.Mock()
     noop, noop_m = events.noop, mock.Mock()
@@ -63,16 +64,16 @@ def test_trigger_noevent():
     noop, noop_m = events.noop, mock.Mock()
     events.noop = noop_m
 
-    assert 'fake' not in events.__events
-    assert events.trigger('fake') == events.noop
-    events.trigger('fake')()
+    assert "fake" not in events.__events
+    assert events.trigger("fake") == events.noop
+    events.trigger("fake")()
     noop_m.assert_called_once()
 
     events.noop = noop
 
 
 def test_subscribe_function(capsys):
-    ename = 'test'
+    ename = "test"
 
     def add(a, b):
         print(a + b)
@@ -87,7 +88,7 @@ def test_subscribe_function(capsys):
 
 
 def test_trigger_function(capsys):
-    ename = 'test'
+    ename = "test"
 
     def add(a, b):
         print(a + b)
@@ -96,8 +97,8 @@ def test_trigger_function(capsys):
     postcall = mock.Mock()
 
     wrapped_add = events.register(ename)(add)
-    events.subscribe(f'{ename}::before')(precall.__call__)
-    events.subscribe(f'{ename}::after')(postcall.__call__)
+    events.subscribe(f"{ename}::before")(precall.__call__)
+    events.subscribe(f"{ename}::after")(postcall.__call__)
 
     precall.assert_not_called()
     postcall.assert_not_called()
@@ -108,5 +109,5 @@ def test_trigger_function(capsys):
     precall.assert_called_once()
     postcall.assert_called_once()
 
-    del events.__events[f'{ename}::before']
-    del events.__events[f'{ename}::after']
+    del events.__events[f"{ename}::before"]
+    del events.__events[f"{ename}::after"]

@@ -2,20 +2,18 @@
 
 import copy
 import logging
-from typing import List, Union
+from typing import Union
 
-import pyhf.parameters
 import pyhf
-from pyhf.tensor.manager import get_backend
-from pyhf import exceptions
-from pyhf import schema
-from pyhf import events
+import pyhf.parameters
+from pyhf import events, exceptions, schema
 from pyhf import probability as prob
 from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
-from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
-from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
 from pyhf.mixins import _ChannelSummaryMixin
 from pyhf.modifiers import histfactory_set
+from pyhf.parameters import ParamViewer, reduce_paramsets_requirements
+from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
@@ -30,11 +28,11 @@ def _finalize_parameters_specs(user_parameters, _paramsets_requirements):
     # build up a dictionary of the parameter configurations provided by the user
     _paramsets_user_configs = {}
     for parameter in user_parameters:
-        if parameter['name'] in _paramsets_user_configs:
+        if parameter["name"] in _paramsets_user_configs:
             raise exceptions.InvalidModel(
                 f"Multiple parameter configurations for {parameter['name']} were found."
             )
-        _paramsets_user_configs[parameter.get('name')] = parameter
+        _paramsets_user_configs[parameter.get("name")] = parameter
     _reqs = reduce_paramsets_requirements(
         _paramsets_requirements, _paramsets_user_configs
     )
@@ -46,7 +44,7 @@ def _create_parameters_from_spec(_reqs):
     auxdata = []
     auxdata_order = []
     for param_name, paramset_requirements in _reqs.items():
-        paramset_type = getattr(pyhf.parameters, paramset_requirements['paramset_type'])
+        paramset_type = getattr(pyhf.parameters, paramset_requirements["paramset_type"])
         paramset = paramset_type(**paramset_requirements)
         if paramset.constrained:  # is constrained
             auxdata += paramset.auxdata
@@ -62,24 +60,24 @@ class _nominal_builder:
         self.config = config
 
     def append(self, channel, sample, defined_samp):
-        self.mega_samples.setdefault(sample, {'name': f'mega_{sample}', 'nom': []})
+        self.mega_samples.setdefault(sample, {"name": f"mega_{sample}", "nom": []})
         nom = (
-            defined_samp['data']
+            defined_samp["data"]
             if defined_samp
             else [0.0] * self.config.channel_nbins[channel]
         )
         if not len(nom) == self.config.channel_nbins[channel]:
             raise exceptions.InvalidModel(
-                f'expected {self.config.channel_nbins[channel]} size sample data but got {len(nom)}'
+                f"expected {self.config.channel_nbins[channel]} size sample data but got {len(nom)}"
             )
-        self.mega_samples[sample]['nom'].append(nom)
+        self.mega_samples[sample]["nom"].append(nom)
 
     def finalize(self):
         default_backend = pyhf.default_backend
 
         nominal_rates = default_backend.astensor(
             [
-                default_backend.concatenate(self.mega_samples[sample]['nom'])
+                default_backend.concatenate(self.mega_samples[sample]["nom"])
                 for sample in self.config.samples
             ]
         )
@@ -117,17 +115,17 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     # 2. make a helper that maps channel-name/sample-name to pairs of channel-sample structs
     helper = {}
     _keys_seen = set()
-    for c in spec['channels']:
-        for s in c['samples']:
+    for c in spec["channels"]:
+        for s in c["samples"]:
             moddict = {}
-            for x in s['modifiers']:
-                if x['type'] not in modifier_set:
+            for x in s["modifiers"]:
+                if x["type"] not in modifier_set:
                     raise exceptions.InvalidModifier(
-                        f'{x["type"]} not among {list(modifier_set)}'
+                        f"{x['type']} not among {list(modifier_set)}"
                     )
                 key = f"{x['type']}/{x['name']}"
                 # check if the modifier to be built is allowed to be shared
-                if not modifiers_builders[x['type']].is_shared and (
+                if not modifiers_builders[x["type"]].is_shared and (
                     key in _keys_seen or key in moddict
                 ):
                     raise exceptions.InvalidModel(
@@ -135,7 +133,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                     )
 
                 moddict[key] = x
-            helper.setdefault(c['name'], {})[s['name']] = (s, moddict)
+            helper.setdefault(c["name"], {})[s["name"]] = (s, moddict)
             # add in all keys seen
             _keys_seen.update(moddict)
 
@@ -148,7 +146,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
             )
             nominal.append(c, s, defined_samp)
             for m, mtype in config.modifiers:
-                key = f'{mtype}/{m}'
+                key = f"{mtype}/{m}"
                 # this is None if modifier doesn't affect channel/sample.
                 thismod = defined_mods.get(key) if defined_mods else None
                 modifiers_builders[mtype].append(key, c, s, thismod, defined_samp)
@@ -156,7 +154,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     # 4. finalize nominal & modifier builders
     nominal_rates = nominal.finalize()
     finalizd_builder_data = {}
-    for k, (builder, applier) in modifier_set.items():
+    for k, (builder, applier) in modifier_set.items():  # noqa: B007
         finalizd_builder_data[k] = modifiers_builders[k].finalize()
 
     # 5. collect parameters from spec and from user.
@@ -167,7 +165,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
             _required_paramsets.setdefault(pname, [])
             _required_paramsets[pname] += req_list
 
-    user_parameters = spec.get('parameters', [])
+    user_parameters = spec.get("parameters", [])
 
     _required_paramsets = _finalize_parameters_specs(
         user_parameters,
@@ -178,14 +176,14 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     )
 
     if not _required_paramsets:
-        raise exceptions.InvalidModel('No parameters specified for the Model.')
+        raise exceptions.InvalidModel("No parameters specified for the Model.")
 
     config.set_parameters(_prameter_objects)
     config.set_auxinfo(_auxdata, _auxdata_order)
 
     # 6. use finalized modifier data to build reparametrization function for main likelihood part
     the_modifiers = {}
-    for k, (builder, applier) in modifier_set.items():
+    for k, (builder, applier) in modifier_set.items():  # noqa: B007
         the_modifiers[k] = applier(
             modifiers=[
                 x for x in config.modifiers if x[1] == k
@@ -216,15 +214,15 @@ class _ModelConfig(_ChannelSummaryMixin):
         Args:
             spec (:obj:`jsonable`): The HistFactory JSON specification.
         """
-        super().__init__(channels=spec['channels'])
+        super().__init__(channels=spec["channels"])
 
         default_modifier_settings = {
-            'normsys': {'interpcode': 'code4'},
-            'histosys': {'interpcode': 'code4p'},
+            "normsys": {"interpcode": "code4"},
+            "histosys": {"interpcode": "code4p"},
         }
 
         self.modifier_settings = config_kwargs.pop(
-            'modifier_settings', default_modifier_settings
+            "modifier_settings", default_modifier_settings
         )
 
         if config_kwargs:
@@ -317,7 +315,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['paramset'].suggested_init
+            init = init + self.par_map[name]["paramset"].suggested_init
         return init
 
     def suggested_bounds(self):
@@ -337,7 +335,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['paramset'].suggested_bounds
+            bounds = bounds + self.par_map[name]["paramset"].suggested_bounds
         return bounds
 
     def par_slice(self, name):
@@ -356,7 +354,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             >>> model.config.par_slice("uncorr_bkguncrt")
             slice(1, 3, None)
         """
-        return self.par_map[name]['slice']
+        return self.par_map[name]["slice"]
 
     @property
     def par_names(self):
@@ -384,7 +382,7 @@ class _ModelConfig(_ChannelSummaryMixin):
                 continue
 
             _names.extend(
-                [f'{name}[{index}]' for index in range(param_set.n_parameters)]
+                [f"{name}[{index}]" for index in range(param_set.n_parameters)]
             )
         return _names
 
@@ -404,9 +402,9 @@ class _ModelConfig(_ChannelSummaryMixin):
             >>> param_set.pdf_type
             'poisson'
         """
-        return self.par_map[name]['paramset']
+        return self.par_map[name]["paramset"]
 
-    def suggested_fixed(self) -> List[bool]:
+    def suggested_fixed(self) -> list[bool]:
         """
         Identify the fixed parameters in the model.
 
@@ -436,7 +434,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         fixed = []
         for name in self.par_order:
-            paramset = self.par_map[name]['paramset']
+            paramset = self.par_map[name]["paramset"]
             fixed += paramset.suggested_fixed
         return fixed
 
@@ -476,7 +474,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         next_index = 0
         for param_name, paramset in required_paramsets.items():
             log.info(
-                'adding modifier %s (%s new nuisance parameters)',
+                "adding modifier %s (%s new nuisance parameters)",
                 param_name,
                 paramset.n_parameters,
             )
@@ -485,7 +483,7 @@ class _ModelConfig(_ChannelSummaryMixin):
             next_index = next_index + paramset.n_parameters
 
             self._par_order.append(param_name)
-            self.par_map[param_name] = {'slice': sl, 'paramset': paramset}
+            self.par_map[param_name] = {"slice": sl, "paramset": paramset}
 
 
 class _ConstraintModel:
@@ -616,7 +614,7 @@ class _MainModel:
                 self._factor_mods.append(modifier_applier.name)
 
         self._precompute()
-        events.subscribe('tensorlib_changed')(self._precompute)
+        events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -727,7 +725,7 @@ class _MainModel:
             )
 
         if return_by_sample:
-            batch_first = tensorlib.einsum('ij...->ji...', newbysample)
+            batch_first = tensorlib.einsum("ij...->ji...", newbysample)
             if self.batch_size is None:
                 return batch_first[0]
             return batch_first
@@ -775,8 +773,8 @@ class Model:
         self.batch_size = batch_size
         # deep-copy "spec" as it may be modified by config
         self.spec = copy.deepcopy(spec)
-        self.schema = config_kwargs.pop('schema', 'model.json')
-        self.version = config_kwargs.pop('version', None)
+        self.schema = config_kwargs.pop("schema", "model.json")
+        self.version = config_kwargs.pop("version", None)
         # run jsonschema validation of input specification against the (provided) schema
         if validate:
             log.info(f"Validating spec against schema: {self.schema:s}")
@@ -815,7 +813,7 @@ class Model:
         if self.constraint_model.has_pdf():
             sizes.append(self.config.nauxdata)
         self.fullpdf_tv = _tensorviewer_from_sizes(
-            sizes, ['main', 'aux'], self.batch_size
+            sizes, ["main", "aux"], self.batch_size
         )
 
     @property
@@ -952,14 +950,14 @@ class Model:
             # Verify parameter and data shapes
             if pars.shape[-1] != self.config.npars:
                 raise exceptions.InvalidPdfParameters(
-                    f'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
+                    f"eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected"
                 )
 
             if data.shape[-1] != self.nominal_rates.shape[-1] + len(
                 self.config.auxdata
             ):
                 raise exceptions.InvalidPdfData(
-                    f'eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected'
+                    f"eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected"
                 )
 
             result = self.make_pdf(pars).log_prob(data)
