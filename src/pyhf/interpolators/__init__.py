@@ -38,8 +38,8 @@ def get(interpcode, do_tensorized_calc=True):
 
     try:
         return interpcodes[interpcode]
-    except KeyError:
-        raise exceptions.InvalidInterpCode
+    except KeyError as exc:
+        raise exceptions.InvalidInterpCode from exc
 
 
 __all__ = ["code0", "code1", "code2", "code4", "code4p"]

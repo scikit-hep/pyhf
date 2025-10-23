@@ -257,10 +257,10 @@ class PatchSet:
             key = tuple(key)
         try:
             return self._patches_by_key[key]
-        except KeyError:
+        except KeyError as exc:
             raise exceptions.InvalidPatchLookup(
                 f'No patch associated with "{key}" is defined in patchset.'
-            )
+            ) from exc
 
     def __iter__(self):
         """

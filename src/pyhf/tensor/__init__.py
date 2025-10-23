@@ -33,11 +33,11 @@ class _BackendRetriever:
                 self._array_types.add(jax_backend.array_type)
                 self._array_subtypes.add(jax_backend.array_subtype)
                 return jax_backend
-            except ImportError as e:
+            except ImportError as exc:
                 raise exceptions.ImportBackendError(
                     "There was a problem importing JAX. The jax backend cannot be used.",
-                    e,
-                )
+                    exc,
+                ) from exc
 
     @property
     def array_types(self):

@@ -387,10 +387,10 @@ class Workspace(_ChannelSummaryMixin, dict):
                 )
                 try:
                     measurement = self["measurements"][measurement_index]
-                except IndexError:
+                except IndexError as exc:
                     raise exceptions.InvalidMeasurement(
                         f"The measurement index {measurement_index} is out of bounds as only {len(self.measurement_names)} measurement(s) have been defined."
-                    )
+                    ) from exc
         else:
             raise exceptions.InvalidMeasurement("No measurements have been defined.")
 

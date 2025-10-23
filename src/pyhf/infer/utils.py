@@ -109,5 +109,5 @@ def get_test_stat(name):
     }
     try:
         return _mapping[name]
-    except KeyError:
-        raise InvalidTestStatistic
+    except KeyError as exc:
+        raise InvalidTestStatistic from exc

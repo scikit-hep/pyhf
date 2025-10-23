@@ -97,4 +97,4 @@ def validate(
     try:
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
-        raise pyhf.exceptions.InvalidSpecification(err, schema_name)
+        raise pyhf.exceptions.InvalidSpecification(err, schema_name) from err
