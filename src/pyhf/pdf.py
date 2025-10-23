@@ -154,7 +154,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     # 4. finalize nominal & modifier builders
     nominal_rates = nominal.finalize()
     finalizd_builder_data = {}
-    for k, (builder, applier) in modifier_set.items():
+    for k, (builder, applier) in modifier_set.items():  # noqa: B007
         finalizd_builder_data[k] = modifiers_builders[k].finalize()
 
     # 5. collect parameters from spec and from user.
@@ -183,7 +183,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
 
     # 6. use finalized modifier data to build reparametrization function for main likelihood part
     the_modifiers = {}
-    for k, (builder, applier) in modifier_set.items():
+    for k, (builder, applier) in modifier_set.items():  # noqa: B007
         the_modifiers[k] = applier(
             modifiers=[
                 x for x in config.modifiers if x[1] == k
