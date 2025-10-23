@@ -1,11 +1,15 @@
-from pyhf import compat, infer, schema, simplemodels
+# FIXME: If import order is changed 'import pyhf' fails due to circular imports
+# ruff: isort: off
+from pyhf import compat, schema
 from pyhf._version import version as __version__
 from pyhf.optimize import OptimizerRetriever as optimize  # noqa
-from pyhf.patchset import PatchSet
-from pyhf.pdf import Model
 from pyhf.tensor import BackendRetriever as tensor
 from pyhf.tensor.manager import get_backend, set_backend
+from pyhf.patchset import PatchSet
+from pyhf.pdf import Model
+from pyhf import infer, simplemodels
 from pyhf.workspace import Workspace
+# ruff: isort: on
 
 __all__ = [
     "Model",
