@@ -1,6 +1,7 @@
+import pytest
+
 import pyhf
 import pyhf.readxml
-import pytest
 
 
 @pytest.fixture(

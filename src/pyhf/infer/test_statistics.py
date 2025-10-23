@@ -1,8 +1,8 @@
-from pyhf import get_backend
-from pyhf.infer.mle import fixed_poi_fit, fit
-from pyhf.exceptions import UnspecifiedPOI
-
 import logging
+
+from pyhf import get_backend
+from pyhf.exceptions import UnspecifiedPOI
+from pyhf.infer.mle import fit, fixed_poi_fit
 
 log = logging.getLogger(__name__)
 

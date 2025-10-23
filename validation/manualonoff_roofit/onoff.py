@@ -1,4 +1,5 @@
 import json
+
 import ROOT
 
 with open("data/source.json", encoding="utf-8") as source_file:

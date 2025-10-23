@@ -1,14 +1,15 @@
-from unittest.mock import patch, PropertyMock
-import pyhf
-from pyhf.optimize.mixins import OptimizerMixin
-from pyhf.optimize.common import _get_tensor_shim, _make_stitch_pars
-from pyhf.tensor.common import _TensorViewer
-import pytest
-from scipy.optimize import minimize, OptimizeResult
-from scipy.optimize import OptimizeWarning
-import iminuit
 import itertools
+from unittest.mock import PropertyMock, patch
+
+import iminuit
 import numpy as np
+import pytest
+from scipy.optimize import OptimizeResult, OptimizeWarning, minimize
+
+import pyhf
+from pyhf.optimize.common import _get_tensor_shim, _make_stitch_pars
+from pyhf.optimize.mixins import OptimizerMixin
+from pyhf.tensor.common import _TensorViewer
 
 
 # from https://docs.scipy.org/doc/scipy/tutorial/optimize.html#nelder-mead-simplex-algorithm-method-nelder-mead

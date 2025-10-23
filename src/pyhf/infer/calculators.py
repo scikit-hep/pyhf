@@ -8,13 +8,14 @@ hypotheses.
 Using the calculators hypothesis tests can then be performed.
 """
 
-from pyhf.infer.mle import fixed_poi_fit
-from pyhf import get_backend
-from pyhf.infer import utils
+import logging
+from dataclasses import dataclass
+
 import tqdm
 
-from dataclasses import dataclass
-import logging
+from pyhf import get_backend
+from pyhf.infer import utils
+from pyhf.infer.mle import fixed_poi_fit
 
 log = logging.getLogger(__name__)
 

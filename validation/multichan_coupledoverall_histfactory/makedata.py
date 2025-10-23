@@ -1,7 +1,7 @@
-import ROOT
-
 import json
 import sys
+
+import ROOT
 
 with open(sys.argv[1], encoding="utf-8") as source_file:
     source_data = json.load(source_file)

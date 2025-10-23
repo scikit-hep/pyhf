@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 from collections.abc import Sequence
+from typing import Any
 
 from pyhf.typing import Channel
 

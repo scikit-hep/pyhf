@@ -1,9 +1,11 @@
-import pyhf
-import pytest
-import pyhf.exceptions
-import pyhf.patchset
 import json
 from unittest import mock
+
+import pytest
+
+import pyhf
+import pyhf.exceptions
+import pyhf.patchset
 
 
 @pytest.fixture(

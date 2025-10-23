@@ -1,14 +1,12 @@
 """The pyhf spec CLI subcommand."""
 
+import json
 import logging
 
 import click
-import json
 
+from pyhf import modifiers, parameters, utils
 from pyhf.workspace import Workspace
-from pyhf import modifiers
-from pyhf import parameters
-from pyhf import utils
 
 log = logging.getLogger(__name__)
 

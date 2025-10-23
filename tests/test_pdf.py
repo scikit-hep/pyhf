@@ -1,8 +1,10 @@
-import pyhf
-import pytest
-import pyhf.exceptions
-import numpy as np
 import json
+
+import numpy as np
+import pytest
+
+import pyhf
+import pyhf.exceptions
 
 
 def test_minimum_model_spec():

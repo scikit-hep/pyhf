@@ -1,6 +1,8 @@
-import pyhf
-import pytest
 import logging
+
+import pytest
+
+import pyhf
 
 
 @pytest.mark.parametrize(

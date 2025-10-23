@@ -1,5 +1,7 @@
-import pytest
 import sys
+
+import pytest
+
 import pyhf
 
 

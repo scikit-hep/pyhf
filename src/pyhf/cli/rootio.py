@@ -1,12 +1,13 @@
 """CLI subapps to handle conversion from ROOT."""
 
-import logging
-
-import click
 import json
+import logging
 import os
 from pathlib import Path
+
+import click
 import jsonpatch
+
 from pyhf.utils import VolumeMountPath
 
 log = logging.getLogger(__name__)

@@ -1,12 +1,14 @@
+import logging
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+import numpy as np
+import pytest
+import uproot
+from jsonschema import ValidationError
+
 import pyhf
 import pyhf.readxml
-import numpy as np
-import uproot
-from pathlib import Path
-import pytest
-import xml.etree.ElementTree as ET
-import logging
-from jsonschema import ValidationError
 
 
 def assert_equal_dictionary(d1, d2):

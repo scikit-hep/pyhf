@@ -1,8 +1,9 @@
 """SciPy Optimizer Class."""
 
+import scipy
+
 from pyhf import exceptions
 from pyhf.optimize.mixins import OptimizerMixin
-import scipy
 
 
 class scipy_optimizer(OptimizerMixin):

@@ -1,5 +1,6 @@
-from pyhf import probability
 import numpy as np
+
+from pyhf import probability
 
 
 def test_poisson(backend):

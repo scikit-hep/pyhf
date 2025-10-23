@@ -1,5 +1,6 @@
-import pyhf.events as events
 from unittest import mock
+
+import pyhf.events as events
 
 
 def test_subscribe_event():

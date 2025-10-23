@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
 from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
 
 import numpy as np
 
@@ -15,12 +15,13 @@ else:
     ArrayLike = "ArrayLike"
     NBitBase = "NBitBase"
 
+from typing import cast
+
 from scipy import special
 from scipy.special import gammaln, xlogy
 from scipy.stats import norm, poisson
 
 from pyhf.typing import Literal, Shape
-from typing import cast
 
 T = TypeVar("T", bound=NBitBase)
 

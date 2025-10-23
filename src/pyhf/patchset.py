@@ -3,10 +3,10 @@ pyhf patchset provides a user-friendly interface for interacting with patchsets.
 """
 
 import logging
+
 import jsonpatch
-from pyhf import exceptions
-from pyhf import utils
-from pyhf import schema
+
+from pyhf import exceptions, schema, utils
 from pyhf.workspace import Workspace
 
 log = logging.getLogger(__name__)

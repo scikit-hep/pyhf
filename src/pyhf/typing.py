@@ -1,4 +1,5 @@
 import os
+from collections.abc import MutableSequence, Sequence
 from typing import (
     Any,
     Literal,
@@ -7,7 +8,6 @@ from typing import (
     TypedDict,
     Union,
 )
-from collections.abc import MutableSequence, Sequence
 
 __all__ = (
     "Channel",

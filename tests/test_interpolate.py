@@ -1,6 +1,7 @@
-import pyhf
 import numpy as np
 import pytest
+
+import pyhf
 
 
 @pytest.fixture

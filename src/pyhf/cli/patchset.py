@@ -1,9 +1,9 @@
 """The pyhf spec CLI subcommand."""
 
+import json
 import logging
 
 import click
-import json
 
 from pyhf.patchset import PatchSet
 from pyhf.workspace import Workspace

@@ -1,8 +1,7 @@
 """Inference for Statistical Models."""
 
+from pyhf import exceptions, get_backend
 from pyhf.infer import utils
-from pyhf import get_backend
-from pyhf import exceptions
 
 
 def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):

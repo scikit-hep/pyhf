@@ -1,6 +1,7 @@
-from click.testing import CliRunner
-import sys
 import importlib
+import sys
+
+from click.testing import CliRunner
 
 
 def test_shllcomplete_cli(isolate_modules):
