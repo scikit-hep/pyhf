@@ -507,7 +507,7 @@ def test_init_pars_sync_fixed_values_minuit(mocker):
     # patch all we need
     from pyhf.optimize import opt_minuit
 
-    minuit = mocker.patch.object(getattr(opt_minuit, "iminuit"), "Minuit")
+    minuit = mocker.patch.object(opt_minuit.iminuit, "Minuit")
     minimizer = opt._get_minimizer(None, [9, 9, 9], [(0, 10)] * 3, fixed_vals=[(0, 1)])
     assert minuit.called
     assert minuit.call_args.args[1] == [1, 9, 9]
