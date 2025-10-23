@@ -134,4 +134,4 @@ def test_hypotest_qmu_tilde(n_bins, invert_order, tolerance=None):
         print(
             f"Ratio to NumPy+SciPy exceeded tolerance of {tolerance['numpy']}: {numpy_ratio_delta_unity.tolist()}"
         )
-        assert False
+        raise AssertionError() from None
