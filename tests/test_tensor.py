@@ -198,7 +198,7 @@ def test_broadcasting(backend):
             ),
         )
     ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         tb.simple_broadcast(
             tb.astensor([1]), tb.astensor([2, 3]), tb.astensor([5, 6, 7])
         )
