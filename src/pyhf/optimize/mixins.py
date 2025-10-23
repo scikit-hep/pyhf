@@ -39,7 +39,7 @@ class OptimizerMixin:
         do_grad=False,
         bounds=None,
         fixed_vals=None,
-        options={},
+        options=None,
         par_names=None,
     ):
         minimizer = self._get_minimizer(
@@ -50,6 +50,8 @@ class OptimizerMixin:
             do_grad=do_grad,
             par_names=par_names,
         )
+        if options is None:
+            options = {}
         result = self._minimize(
             minimizer,
             func,
