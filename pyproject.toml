@@ -252,9 +252,10 @@ line-length = 88
 
 [tool.ruff.lint]
 extend-select = [
-  "UP",          # pyupgrade
-  "RUF",         # Ruff-specific
-  "TID",         # flake8-tidy-imports
+  "UP",  # pyupgrade
+  "RUF",  # Ruff-specific
+  "TID",  # flake8-tidy-imports
+  "I",  # isort
 ]
 ignore = [
   "E402",
