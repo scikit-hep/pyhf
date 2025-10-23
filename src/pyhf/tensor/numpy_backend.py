@@ -357,8 +357,8 @@ class numpy_backend(Generic[T]):
         # see https://github.com/numpy/numpy/issues/22125
         return cast(
             ArrayLike,
-            np.percentile(tensor_in, q, axis=axis, interpolation=interpolation),
-        )  # type: ignore[call-overload]
+            np.percentile(tensor_in, q, axis=axis, interpolation=interpolation),  # type: ignore[call-overload]
+        )
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)
