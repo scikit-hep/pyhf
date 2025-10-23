@@ -11,19 +11,19 @@ from pyhf.workspace import Workspace
 log = logging.getLogger(__name__)
 
 
-@click.group(name='spec')
+@click.group(name="spec")
 def cli():
     """Spec CLI group."""
 
 
 @cli.command()
-@click.argument('workspace', default='-')
+@click.argument("workspace", default="-")
 @click.option(
-    '--output-file',
-    help='The location of the output json file. If not specified, prints to screen.',
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
-@click.option('--measurement', default=None)
+@click.option("--measurement", default=None)
 def inspect(workspace, output_file, measurement):
     """
     Inspect a pyhf JSON document.
@@ -66,92 +66,92 @@ def inspect(workspace, output_file, measurement):
     default_measurement = ws.get_measurement()
 
     result = {}
-    result['samples'] = ws.samples
-    result['channels'] = [
+    result["samples"] = ws.samples
+    result["channels"] = [
         (channel, ws.channel_nbins[channel]) for channel in ws.channels
     ]
-    result['modifiers'] = dict(ws.modifiers)
+    result["modifiers"] = dict(ws.modifiers)
 
     parset_descr = {
-        parameters.paramsets.unconstrained: 'unconstrained',
-        parameters.paramsets.constrained_by_normal: 'constrained_by_normal',
-        parameters.paramsets.constrained_by_poisson: 'constrained_by_poisson',
+        parameters.paramsets.unconstrained: "unconstrained",
+        parameters.paramsets.constrained_by_normal: "constrained_by_normal",
+        parameters.paramsets.constrained_by_poisson: "constrained_by_poisson",
     }
 
     model = ws.model()
 
-    result['parameters'] = sorted(
-        (parset_name, parset_descr[type(parset_spec['paramset'])])
+    result["parameters"] = sorted(
+        (parset_name, parset_descr[type(parset_spec["paramset"])])
         for parset_name, parset_spec in model.config.par_map.items()
     )
-    result['systematics'] = [
+    result["systematics"] = [
         (
             parameter[0],
             parameter[1],
             [modifier[1] for modifier in ws.modifiers if modifier[0] == parameter[0]],
         )
-        for parameter in result['parameters']
+        for parameter in result["parameters"]
     ]
 
-    result['measurements'] = [
-        (m['name'], m['config']['poi'], [p['name'] for p in m['config']['parameters']])
-        for m in ws.get('measurements')
+    result["measurements"] = [
+        (m["name"], m["config"]["poi"], [p["name"] for p in m["config"]["parameters"]])
+        for m in ws.get("measurements")
     ]
 
     maxlen_channels = max(map(len, ws.channels))
     maxlen_samples = max(map(len, ws.samples))
-    maxlen_parameters = max(map(len, [p for p, _ in result['parameters']]))
-    maxlen_measurements = max(map(lambda x: len(x[0]), result['measurements']))
+    maxlen_parameters = max(map(len, [p for p, _ in result["parameters"]]))
+    maxlen_measurements = max(map(lambda x: len(x[0]), result["measurements"]))
     maxlen = max(
         [maxlen_channels, maxlen_samples, maxlen_parameters, maxlen_measurements]
     )
 
     # summary
-    fmtStr = '{{: >{:d}s}}  {{:s}}'.format(maxlen + len('Summary'))
-    click.echo(fmtStr.format('     Summary     ', ''))
-    click.echo(fmtStr.format('-' * 18, ''))
-    fmtStr = f'{{0: >{maxlen:d}s}}  {{1:s}}'
-    for key in ['channels', 'samples', 'parameters', 'modifiers']:
+    fmtStr = "{{: >{:d}s}}  {{:s}}".format(maxlen + len("Summary"))
+    click.echo(fmtStr.format("     Summary     ", ""))
+    click.echo(fmtStr.format("-" * 18, ""))
+    fmtStr = f"{{0: >{maxlen:d}s}}  {{1:s}}"
+    for key in ["channels", "samples", "parameters", "modifiers"]:
         click.echo(fmtStr.format(key, str(len(result[key]))))
     click.echo()
 
-    fmtStr = f'{{0: >{maxlen:d}s}}  {{1: ^5s}}'
-    click.echo(fmtStr.format('channels', 'nbins'))
-    click.echo(fmtStr.format('-' * 10, '-' * 5))
-    for channel, nbins in result['channels']:
+    fmtStr = f"{{0: >{maxlen:d}s}}  {{1: ^5s}}"
+    click.echo(fmtStr.format("channels", "nbins"))
+    click.echo(fmtStr.format("-" * 10, "-" * 5))
+    for channel, nbins in result["channels"]:
         click.echo(fmtStr.format(channel, str(nbins)))
     click.echo()
 
-    fmtStr = f'{{0: >{maxlen:d}s}}'
-    click.echo(fmtStr.format('samples'))
-    click.echo(fmtStr.format('-' * 10))
-    for sample in result['samples']:
+    fmtStr = f"{{0: >{maxlen:d}s}}"
+    click.echo(fmtStr.format("samples"))
+    click.echo(fmtStr.format("-" * 10))
+    for sample in result["samples"]:
         click.echo(fmtStr.format(sample))
     click.echo()
 
     # print parameters, constraints, modifiers
-    fmtStr = f'{{0: >{maxlen:d}s}}  {{1: <22s}}  {{2:s}}'
-    click.echo(fmtStr.format('parameters', 'constraint', 'modifiers'))
-    click.echo(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
-    for parname, constraint, modtypes in result['systematics']:
-        click.echo(fmtStr.format(parname, constraint, ','.join(sorted(set(modtypes)))))
+    fmtStr = f"{{0: >{maxlen:d}s}}  {{1: <22s}}  {{2:s}}"
+    click.echo(fmtStr.format("parameters", "constraint", "modifiers"))
+    click.echo(fmtStr.format("-" * 10, "-" * 10, "-" * 10))
+    for parname, constraint, modtypes in result["systematics"]:
+        click.echo(fmtStr.format(parname, constraint, ",".join(sorted(set(modtypes)))))
     click.echo()
 
-    fmtStr = f'{{0: >{maxlen:d}s}}  {{1: ^22s}}  {{2:s}}'
-    click.echo(fmtStr.format('measurement', 'poi', 'parameters'))
-    click.echo(fmtStr.format('-' * 10, '-' * 10, '-' * 10))
+    fmtStr = f"{{0: >{maxlen:d}s}}  {{1: ^22s}}  {{2:s}}"
+    click.echo(fmtStr.format("measurement", "poi", "parameters"))
+    click.echo(fmtStr.format("-" * 10, "-" * 10, "-" * 10))
     for measurement_name, measurement_poi, measurement_parameters in result[
-        'measurements'
+        "measurements"
     ]:
         click.echo(
             fmtStr.format(
-                ('(*) ' if measurement_name == default_measurement['name'] else '')
+                ("(*) " if measurement_name == default_measurement["name"] else "")
                 + measurement_name,
                 measurement_poi,
                 (
-                    ','.join(measurement_parameters)
+                    ",".join(measurement_parameters)
                     if measurement_parameters
-                    else '(none)'
+                    else "(none)"
                 ),
             )
         )
@@ -165,23 +165,23 @@ def inspect(workspace, output_file, measurement):
 
 
 @cli.command()
-@click.argument('workspace', default='-')
+@click.argument("workspace", default="-")
 @click.option(
-    '--output-file',
-    help='The location of the output json file. If not specified, prints to screen.',
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
-@click.option('-c', '--channel', default=[], multiple=True, metavar='<CHANNEL>...')
-@click.option('-s', '--sample', default=[], multiple=True, metavar='<SAMPLE>...')
-@click.option('-m', '--modifier', default=[], multiple=True, metavar='<MODIFIER>...')
+@click.option("-c", "--channel", default=[], multiple=True, metavar="<CHANNEL>...")
+@click.option("-s", "--sample", default=[], multiple=True, metavar="<SAMPLE>...")
+@click.option("-m", "--modifier", default=[], multiple=True, metavar="<MODIFIER>...")
 @click.option(
-    '-t',
-    '--modifier-type',
+    "-t",
+    "--modifier-type",
     default=[],
     multiple=True,
     type=click.Choice(modifiers.histfactory_set),
 )
-@click.option('--measurement', default=[], multiple=True, metavar='<MEASUREMENT>...')
+@click.option("--measurement", default=[], multiple=True, metavar="<MEASUREMENT>...")
 def prune(
     workspace, output_file, channel, sample, modifier, modifier_type, measurement
 ):
@@ -211,42 +211,42 @@ def prune(
 
 
 @cli.command()
-@click.argument('workspace', default='-')
+@click.argument("workspace", default="-")
 @click.option(
-    '--output-file',
-    help='The location of the output json file. If not specified, prints to screen.',
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
 @click.option(
-    '-c',
-    '--channel',
+    "-c",
+    "--channel",
     default=[],
     multiple=True,
     type=click.Tuple([str, str]),
-    metavar='<PATTERN> <REPLACE>...',
+    metavar="<PATTERN> <REPLACE>...",
 )
 @click.option(
-    '-s',
-    '--sample',
+    "-s",
+    "--sample",
     default=[],
     multiple=True,
     type=click.Tuple([str, str]),
-    metavar='<PATTERN> <REPLACE>...',
+    metavar="<PATTERN> <REPLACE>...",
 )
 @click.option(
-    '-m',
-    '--modifier',
+    "-m",
+    "--modifier",
     default=[],
     multiple=True,
     type=click.Tuple([str, str]),
-    metavar='<PATTERN> <REPLACE>...',
+    metavar="<PATTERN> <REPLACE>...",
 )
 @click.option(
-    '--measurement',
+    "--measurement",
     default=[],
     multiple=True,
     type=click.Tuple([str, str]),
-    metavar='<PATTERN> <REPLACE>...',
+    metavar="<PATTERN> <REPLACE>...",
 )
 def rename(workspace, output_file, channel, sample, modifier, measurement):
     """
@@ -274,23 +274,23 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
 
 
 @cli.command()
-@click.argument('workspace-one', default='-')
-@click.argument('workspace-two', default='-')
+@click.argument("workspace-one", default="-")
+@click.argument("workspace-two", default="-")
 @click.option(
-    '-j',
-    '--join',
-    default='none',
+    "-j",
+    "--join",
+    default="none",
     type=click.Choice(Workspace.valid_joins),
-    help='The join operation to apply when combining the two workspaces.',
+    help="The join operation to apply when combining the two workspaces.",
 )
 @click.option(
-    '--output-file',
-    help='The location of the output json file. If not specified, prints to screen.',
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
 @click.option(
-    '--merge-channels/--no-merge-channels',
-    help='Whether or not to deeply merge channels. Can only be done with left/right outer joins.',
+    "--merge-channels/--no-merge-channels",
+    help="Whether or not to deeply merge channels. Can only be done with left/right outer joins.",
     default=False,
 )
 def combine(workspace_one, workspace_two, join, output_file, merge_channels):
@@ -320,19 +320,19 @@ def combine(workspace_one, workspace_two, join, output_file, merge_channels):
 
 
 @cli.command()
-@click.argument('workspace', default='-')
+@click.argument("workspace", default="-")
 @click.option(
-    '-a',
-    '--algorithm',
-    default=['sha256'],
+    "-a",
+    "--algorithm",
+    default=["sha256"],
     multiple=True,
-    help='The hashing algorithm used to compute the workspace digest.',
+    help="The hashing algorithm used to compute the workspace digest.",
 )
 @click.option(
-    '-j/-p',
-    '--json/--plaintext',
-    'output_json',
-    help='Output the hash values as a JSON dictionary or plaintext strings',
+    "-j/-p",
+    "--json/--plaintext",
+    "output_json",
+    help="Output the hash values as a JSON dictionary or plaintext strings",
 )
 def digest(workspace, algorithm, output_json):
     """
@@ -360,7 +360,7 @@ def digest(workspace, algorithm, output_json):
     if output_json:
         output = json.dumps(digests, indent=4, sort_keys=True)
     else:
-        output = '\n'.join(
+        output = "\n".join(
             f"{hash_alg}:{digest}" for hash_alg, digest in digests.items()
         )
 
@@ -368,10 +368,10 @@ def digest(workspace, algorithm, output_json):
 
 
 @cli.command()
-@click.argument('workspace', default='-')
+@click.argument("workspace", default="-")
 @click.option(
-    '--output-file',
-    help='The location of the output json file. If not specified, prints to screen.',
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
 def sort(workspace, output_file):

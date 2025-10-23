@@ -47,7 +47,7 @@ class code1:
 
         self._precompute()
         if subscribe:
-            events.subscribe('tensorlib_changed')(self._precompute)
+            events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -55,10 +55,10 @@ class code1:
         self.deltas_dn = tensorlib.astensor(self._deltas_dn)
         self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
         self.bases_up = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_up
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
         self.bases_dn = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_dn
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_dn
         )
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
@@ -69,10 +69,10 @@ class code1:
         tensorlib, _ = get_backend()
         self.alphasets_shape = alphasets_shape
         self.bases_up = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_up
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
         self.bases_dn = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_dn
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_dn
         )
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
@@ -91,11 +91,11 @@ class code1:
         # h: histogram affected by modifier
         # b: bin of histogram
         exponents = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.abs(alphasets), self.broadcast_helper
+            "sa,shb->shab", tensorlib.abs(alphasets), self.broadcast_helper
         )
         masks = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_positive, self.broadcast_helper
             ),
             dtype="bool",
         )

@@ -39,10 +39,10 @@ def __dir__():
 
 
 def __getattr__(name):
-    if name == 'tensorlib':
+    if name == "tensorlib":
         return get_backend(default=False)[0]
-    if name == 'optimizer':
+    if name == "optimizer":
         return get_backend(default=False)[1]
-    if name == 'default_backend':
+    if name == "default_backend":
         return get_backend(default=True)[0]
     raise AttributeError

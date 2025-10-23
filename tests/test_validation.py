@@ -8,35 +8,35 @@ import pyhf.readxml
 import pyhf.writexml
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_1bin_shapesys():
     with open("validation/data/1bin_example1.json", encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_1bin_shapesys(source_1bin_shapesys):
     source = source_1bin_shapesys
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt',
-                                'type': 'shapesys',
-                                'data': source['bindata']['bkgerr'],
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": source["bindata"]["bkgerr"],
                             }
                         ],
                     },
@@ -47,7 +47,7 @@ def spec_1bin_shapesys(source_1bin_shapesys):
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_1bin_shapesys():
     expected_result = {
         "exp": [
@@ -62,7 +62,7 @@ def expected_result_1bin_shapesys():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_1bin_shapesys_q0():
     with open("validation/data/1bin_example1_q0.json", encoding="utf-8") as read_json:
         return json.load(read_json)
@@ -71,29 +71,29 @@ def source_1bin_shapesys_q0():
 source_1bin_shapesys_q0_toys = source_1bin_shapesys_q0
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_1bin_shapesys_q0(source_1bin_shapesys_q0):
     source = source_1bin_shapesys_q0
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt',
-                                'type': 'shapesys',
-                                'data': source['bindata']['bkgerr'],
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": source["bindata"]["bkgerr"],
                             }
                         ],
                     },
@@ -107,7 +107,7 @@ def spec_1bin_shapesys_q0(source_1bin_shapesys_q0):
 spec_1bin_shapesys_q0_toys = spec_1bin_shapesys_q0
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_1bin_shapesys_q0():
     expected_result = {
         "exp": [
@@ -122,7 +122,7 @@ def expected_result_1bin_shapesys_q0():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_1bin_shapesys_q0_toys():
     expected_result = {
         "exp": [0.0, 0.0, 0.0135, 0.1365, 0.39854497],
@@ -131,13 +131,13 @@ def expected_result_1bin_shapesys_q0_toys():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_1bin_lumi():
     with open("validation/data/1bin_lumi.json", encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_1bin_lumi(source_1bin_lumi):
     source = source_1bin_lumi
     spec = {
@@ -147,19 +147,19 @@ def spec_1bin_lumi(source_1bin_lumi):
                 "samples": [
                     {
                         "name": "signal",
-                        "data": source['bindata']['sig'],
+                        "data": source["bindata"]["sig"],
                         "modifiers": [
                             {"data": None, "name": "mu", "type": "normfactor"}
                         ],
                     },
                     {
                         "name": "background1",
-                        "data": source['bindata']['bkg1'],
+                        "data": source["bindata"]["bkg1"],
                         "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                     },
                     {
                         "name": "background2",
-                        "data": source['bindata']['bkg2'],
+                        "data": source["bindata"]["bkg2"],
                         "modifiers": [{"data": None, "name": "lumi", "type": "lumi"}],
                     },
                 ],
@@ -178,7 +178,7 @@ def spec_1bin_lumi(source_1bin_lumi):
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_1bin_lumi():
     expected_result = {
         "exp": [
@@ -193,35 +193,35 @@ def expected_result_1bin_lumi():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_1bin_normsys():
     with open("validation/data/1bin_normsys.json", encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_1bin_normsys(source_1bin_normsys):
     source = source_1bin_normsys
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'bkg_norm',
-                                'type': 'normsys',
-                                'data': {'lo': 0.90, 'hi': 1.10},
+                                "name": "bkg_norm",
+                                "type": "normsys",
+                                "data": {"lo": 0.90, "hi": 1.10},
                             }
                         ],
                     },
@@ -232,7 +232,7 @@ def spec_1bin_normsys(source_1bin_normsys):
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_1bin_normsys():
     expected_result = {
         "exp": [
@@ -247,7 +247,7 @@ def expected_result_1bin_normsys():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_2bin_histosys():
     with open(
         "validation/data/2bin_histosys_example2.json", encoding="utf-8"
@@ -255,31 +255,31 @@ def source_2bin_histosys():
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_2bin_histosys(source_2bin_histosys):
     source = source_2bin_histosys
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'bkg_norm',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['bindata']['bkgsys_dn'],
-                                    'hi_data': source['bindata']['bkgsys_up'],
+                                "name": "bkg_norm",
+                                "type": "histosys",
+                                "data": {
+                                    "lo_data": source["bindata"]["bkgsys_dn"],
+                                    "hi_data": source["bindata"]["bkgsys_up"],
                                 },
                             }
                         ],
@@ -291,7 +291,7 @@ def spec_2bin_histosys(source_2bin_histosys):
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_2bin_histosys():
     expected_result = {
         "exp": [
@@ -306,7 +306,7 @@ def expected_result_2bin_histosys():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_2bin_2channel():
     with open(
         "validation/data/2bin_2channel_example1.json", encoding="utf-8"
@@ -314,30 +314,30 @@ def source_2bin_2channel():
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_2bin_2channel(source_2bin_2channel):
     source = source_2bin_2channel
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'signal',
-                'samples': [
+                "name": "signal",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['channels']['signal']['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["channels"]["signal"]["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['channels']['signal']['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["channels"]["signal"]["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt_signal',
-                                'type': 'shapesys',
-                                'data': source['channels']['signal']['bindata'][
-                                    'bkgerr'
+                                "name": "uncorr_bkguncrt_signal",
+                                "type": "shapesys",
+                                "data": source["channels"]["signal"]["bindata"][
+                                    "bkgerr"
                                 ],
                             }
                         ],
@@ -345,17 +345,17 @@ def spec_2bin_2channel(source_2bin_2channel):
                 ],
             },
             {
-                'name': 'control',
-                'samples': [
+                "name": "control",
+                "samples": [
                     {
-                        'name': 'background',
-                        'data': source['channels']['control']['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["channels"]["control"]["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt_control',
-                                'type': 'shapesys',
-                                'data': source['channels']['control']['bindata'][
-                                    'bkgerr'
+                                "name": "uncorr_bkguncrt_control",
+                                "type": "shapesys",
+                                "data": source["channels"]["control"]["bindata"][
+                                    "bkgerr"
                                 ],
                             }
                         ],
@@ -367,7 +367,7 @@ def spec_2bin_2channel(source_2bin_2channel):
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_2bin_2channel():
     expected_result = {
         "exp": [
@@ -382,7 +382,7 @@ def expected_result_2bin_2channel():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_2bin_2channel_couplednorm():
     with open(
         "validation/data/2bin_2channel_couplednorm.json", encoding="utf-8"
@@ -390,56 +390,56 @@ def source_2bin_2channel_couplednorm():
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
     source = source_2bin_2channel_couplednorm
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'signal',
-                'samples': [
+                "name": "signal",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['channels']['signal']['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["channels"]["signal"]["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'bkg1',
-                        'data': source['channels']['signal']['bindata']['bkg1'],
-                        'modifiers': [
+                        "name": "bkg1",
+                        "data": source["channels"]["signal"]["bindata"]["bkg1"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_normsys',
-                                'type': 'normsys',
-                                'data': {'lo': 0.9, 'hi': 1.1},
+                                "name": "coupled_normsys",
+                                "type": "normsys",
+                                "data": {"lo": 0.9, "hi": 1.1},
                             }
                         ],
                     },
                     {
-                        'name': 'bkg2',
-                        'data': source['channels']['signal']['bindata']['bkg2'],
-                        'modifiers': [
+                        "name": "bkg2",
+                        "data": source["channels"]["signal"]["bindata"]["bkg2"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_normsys',
-                                'type': 'normsys',
-                                'data': {'lo': 0.5, 'hi': 1.5},
+                                "name": "coupled_normsys",
+                                "type": "normsys",
+                                "data": {"lo": 0.5, "hi": 1.5},
                             }
                         ],
                     },
                 ],
             },
             {
-                'name': 'control',
-                'samples': [
+                "name": "control",
+                "samples": [
                     {
-                        'name': 'background',
-                        'data': source['channels']['control']['bindata']['bkg1'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["channels"]["control"]["bindata"]["bkg1"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_normsys',
-                                'type': 'normsys',
-                                'data': {'lo': 0.9, 'hi': 1.1},
+                                "name": "coupled_normsys",
+                                "type": "normsys",
+                                "data": {"lo": 0.9, "hi": 1.1},
                             }
                         ],
                     }
@@ -450,7 +450,7 @@ def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_2bin_2channel_couplednorm():
     # NB: mac/linux differ for exp[0]
     # Mac:   0.055222676184648795
@@ -469,7 +469,7 @@ def expected_result_2bin_2channel_couplednorm():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_2bin_2channel_coupledhistosys():
     with open(
         "validation/data/2bin_2channel_coupledhisto.json", encoding="utf-8"
@@ -477,52 +477,52 @@ def source_2bin_2channel_coupledhistosys():
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
     source = source_2bin_2channel_coupledhistosys
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'signal',
-                'samples': [
+                "name": "signal",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['channels']['signal']['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["channels"]["signal"]["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'bkg1',
-                        'data': source['channels']['signal']['bindata']['bkg1'],
-                        'modifiers': [
+                        "name": "bkg1",
+                        "data": source["channels"]["signal"]["bindata"]["bkg1"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_histosys',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['channels']['signal']['bindata'][
-                                        'bkg1_dn'
+                                "name": "coupled_histosys",
+                                "type": "histosys",
+                                "data": {
+                                    "lo_data": source["channels"]["signal"]["bindata"][
+                                        "bkg1_dn"
                                     ],
-                                    'hi_data': source['channels']['signal']['bindata'][
-                                        'bkg1_up'
+                                    "hi_data": source["channels"]["signal"]["bindata"][
+                                        "bkg1_up"
                                     ],
                                 },
                             }
                         ],
                     },
                     {
-                        'name': 'bkg2',
-                        'data': source['channels']['signal']['bindata']['bkg2'],
-                        'modifiers': [
+                        "name": "bkg2",
+                        "data": source["channels"]["signal"]["bindata"]["bkg2"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_histosys',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['channels']['signal']['bindata'][
-                                        'bkg2_dn'
+                                "name": "coupled_histosys",
+                                "type": "histosys",
+                                "data": {
+                                    "lo_data": source["channels"]["signal"]["bindata"][
+                                        "bkg2_dn"
                                     ],
-                                    'hi_data': source['channels']['signal']['bindata'][
-                                        'bkg2_up'
+                                    "hi_data": source["channels"]["signal"]["bindata"][
+                                        "bkg2_up"
                                     ],
                                 },
                             }
@@ -531,21 +531,21 @@ def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
                 ],
             },
             {
-                'name': 'control',
-                'samples': [
+                "name": "control",
+                "samples": [
                     {
-                        'name': 'background',
-                        'data': source['channels']['control']['bindata']['bkg1'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["channels"]["control"]["bindata"]["bkg1"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_histosys',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['channels']['control']['bindata'][
-                                        'bkg1_dn'
+                                "name": "coupled_histosys",
+                                "type": "histosys",
+                                "data": {
+                                    "lo_data": source["channels"]["control"]["bindata"][
+                                        "bkg1_dn"
                                     ],
-                                    'hi_data': source['channels']['control']['bindata'][
-                                        'bkg1_up'
+                                    "hi_data": source["channels"]["control"]["bindata"][
+                                        "bkg1_up"
                                     ],
                                 },
                             }
@@ -558,7 +558,7 @@ def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_2bin_2channel_coupledhistosys():
     expected_result = {
         "exp": [
@@ -573,7 +573,7 @@ def expected_result_2bin_2channel_coupledhistosys():
     return expected_result
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def source_2bin_2channel_coupledshapefactor():
     with open(
         "validation/data/2bin_2channel_coupledshapefactor.json", encoding="utf-8"
@@ -581,45 +581,45 @@ def source_2bin_2channel_coupledshapefactor():
         return json.load(read_json)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor):
     source = source_2bin_2channel_coupledshapefactor
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'signal',
-                'samples': [
+                "name": "signal",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['channels']['signal']['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["channels"]["signal"]["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'bkg1',
-                        'data': source['channels']['signal']['bindata']['bkg1'],
-                        'modifiers': [
+                        "name": "bkg1",
+                        "data": source["channels"]["signal"]["bindata"]["bkg1"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_shapefactor',
-                                'type': 'shapefactor',
-                                'data': None,
+                                "name": "coupled_shapefactor",
+                                "type": "shapefactor",
+                                "data": None,
                             }
                         ],
                     },
                 ],
             },
             {
-                'name': 'control',
-                'samples': [
+                "name": "control",
+                "samples": [
                     {
-                        'name': 'background',
-                        'data': source['channels']['control']['bindata']['bkg1'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["channels"]["control"]["bindata"]["bkg1"],
+                        "modifiers": [
                             {
-                                'name': 'coupled_shapefactor',
-                                'type': 'shapefactor',
-                                'data': None,
+                                "name": "coupled_shapefactor",
+                                "type": "shapefactor",
+                                "data": None,
                             }
                         ],
                     }
@@ -630,11 +630,11 @@ def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefacto
     return spec
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def expected_result_2bin_2channel_coupledshapefactor():
     expected_result = {
-        'obs': 0.5421679124909312,
-        'exp': [
+        "obs": 0.5421679124909312,
+        "exp": [
             0.013753299929451691,
             0.048887400056355966,
             0.15555296253957684,
@@ -657,7 +657,7 @@ def validate_hypotest(
     init_pars = pdf.config.suggested_init()
     par_bounds = pdf.config.suggested_bounds()
 
-    kwargs = {'return_expected_set': True, 'test_stat': test_stat, 'calctype': calctype}
+    kwargs = {"return_expected_set": True, "test_stat": test_stat, "calctype": calctype}
 
     np.random.seed(0)
     CLs_obs, CLs_exp_set = pyhf.infer.hypotest(
@@ -669,81 +669,81 @@ def validate_hypotest(
         **kwargs,
     )
 
-    assert abs(CLs_obs - expected_result['obs']) / expected_result['obs'] < tolerance
-    for result, expected in zip(CLs_exp_set, expected_result['exp']):
+    assert abs(CLs_obs - expected_result["obs"]) / expected_result["obs"] < tolerance
+    for result, expected in zip(CLs_exp_set, expected_result["exp"]):
         assert result == pytest.approx(expected, rel=tolerance), result
 
 
 @pytest.fixture(
     params=[
         (
-            '1bin_shapesys',
-            {'init_pars': 2, 'par_bounds': 2},
+            "1bin_shapesys",
+            {"init_pars": 2, "par_bounds": 2},
             1.0,
             "q",
             1e-6,
             "asymptotics",
         ),
         (
-            '1bin_shapesys_q0',
-            {'init_pars': 2, 'par_bounds': 2},
+            "1bin_shapesys_q0",
+            {"init_pars": 2, "par_bounds": 2},
             0.0,
             "q0",
             3e-4,
             "asymptotics",
         ),
         (
-            '1bin_shapesys_q0_toys',
-            {'init_pars': 2, 'par_bounds': 2},
+            "1bin_shapesys_q0_toys",
+            {"init_pars": 2, "par_bounds": 2},
             0.0,
             "q0",
             1e-6,
             "toybased",
         ),
-        ('1bin_lumi', {'init_pars': 2, 'par_bounds': 2}, 1.0, "q", 4e-6, "asymptotics"),
+        ("1bin_lumi", {"init_pars": 2, "par_bounds": 2}, 1.0, "q", 4e-6, "asymptotics"),
         (
-            '1bin_normsys',
-            {'init_pars': 2, 'par_bounds': 2},
+            "1bin_normsys",
+            {"init_pars": 2, "par_bounds": 2},
             1.0,
             "q",
             3e-6,
             "asymptotics",
         ),
         (
-            '2bin_histosys',
-            {'init_pars': 2, 'par_bounds': 2},
+            "2bin_histosys",
+            {"init_pars": 2, "par_bounds": 2},
             1.0,
             "q",
             8e-5,
             "asymptotics",
         ),
         (
-            '2bin_2channel',
-            {'init_pars': 5, 'par_bounds': 5},
+            "2bin_2channel",
+            {"init_pars": 5, "par_bounds": 5},
             1.0,
             "q",
             1e-6,
             "asymptotics",
         ),
         (
-            '2bin_2channel_couplednorm',
-            {'init_pars': 2, 'par_bounds': 2},
+            "2bin_2channel_couplednorm",
+            {"init_pars": 2, "par_bounds": 2},
             1.0,
             "q",
             1e-6,
             "asymptotics",
         ),
         (
-            '2bin_2channel_coupledhistosys',
-            {'auxdata': 1, 'init_pars': 2, 'par_bounds': 2},
+            "2bin_2channel_coupledhistosys",
+            {"auxdata": 1, "init_pars": 2, "par_bounds": 2},
             1.0,
             "q",
             1e-6,
             "asymptotics",
         ),
         (
-            '2bin_2channel_coupledshapefactor',
-            {'auxdata': 0, 'init_pars': 3, 'par_bounds': 3},
+            "2bin_2channel_coupledshapefactor",
+            {"auxdata": 0, "init_pars": 3, "par_bounds": 3},
             1.0,
             "q",
             2.5e-6,
@@ -751,16 +751,16 @@ def validate_hypotest(
         ),
     ],
     ids=[
-        '1bin_shapesys_mu1',
-        '1bin_shapesys_q0_mu1',
-        '1bin_shapesys_q0_mu1_toys',
-        '1bin_lumi_mu1',
-        '1bin_normsys_mu1',
-        '2bin_histosys_mu1',
-        '2bin_2channel_mu1',
-        '2bin_2channel_couplednorm_mu1',
-        '2bin_2channel_coupledhistosys_mu1',
-        '2bin_2channel_coupledshapefactor_mu1',
+        "1bin_shapesys_mu1",
+        "1bin_shapesys_q0_mu1",
+        "1bin_shapesys_q0_mu1_toys",
+        "1bin_lumi_mu1",
+        "1bin_normsys_mu1",
+        "2bin_histosys_mu1",
+        "2bin_2channel_mu1",
+        "2bin_2channel_couplednorm_mu1",
+        "2bin_2channel_coupledhistosys_mu1",
+        "2bin_2channel_coupledshapefactor_mu1",
     ],
 )
 def setup(request):
@@ -774,10 +774,10 @@ def setup(request):
     tolerance = request.param[4]
     calctype = request.param[5]
     return {
-        'source': source,
-        'spec': spec,
-        'mu': mu,
-        'expected': {'result': expected_result, 'config': config},
+        "source": source,
+        "spec": spec,
+        "mu": mu,
+        "expected": {"result": expected_result, "config": config},
         "test_stat": test_stat,
         "tolerance": tolerance,
         "calctype": calctype,
@@ -785,7 +785,7 @@ def setup(request):
 
 
 def test_validation(setup):
-    source = setup['source']
+    source = setup["source"]
 
     pdf = pyhf.Model(
         setup["spec"],
@@ -793,92 +793,92 @@ def test_validation(setup):
         poi_name="mu",
     )
 
-    if 'channels' in source:
+    if "channels" in source:
         data = []
         for c in pdf.config.channels:
-            data += source['channels'][c]['bindata']['data']
+            data += source["channels"][c]["bindata"]["data"]
         data = data + pdf.config.auxdata
     else:
-        data = source['bindata']['data'] + pdf.config.auxdata
+        data = source["bindata"]["data"] + pdf.config.auxdata
 
-    if 'auxdata' in setup['expected']['config']:
-        assert len(pdf.config.auxdata) == setup['expected']['config']['auxdata']
-    assert len(pdf.config.suggested_init()) == setup['expected']['config']['init_pars']
+    if "auxdata" in setup["expected"]["config"]:
+        assert len(pdf.config.auxdata) == setup["expected"]["config"]["auxdata"]
+    assert len(pdf.config.suggested_init()) == setup["expected"]["config"]["init_pars"]
     assert (
-        len(pdf.config.suggested_bounds()) == setup['expected']['config']['par_bounds']
+        len(pdf.config.suggested_bounds()) == setup["expected"]["config"]["par_bounds"]
     )
 
     validate_hypotest(
         pdf,
         data,
-        setup['mu'],
-        setup['expected']['result'],
-        test_stat=setup['test_stat'],
-        tolerance=setup['tolerance'],
-        calctype=setup['calctype'],
+        setup["mu"],
+        setup["expected"]["result"],
+        test_stat=setup["test_stat"],
+        tolerance=setup["tolerance"],
+        calctype=setup["calctype"],
     )
 
 
 @pytest.mark.parametrize(
-    'top_level, base_dir',
+    "top_level, base_dir",
     [
         (
-            'validation/xmlimport_input/config/example.xml',
-            'validation/xmlimport_input/',
+            "validation/xmlimport_input/config/example.xml",
+            "validation/xmlimport_input/",
         ),
         (
-            'validation/xmlimport_input2/config/example.xml',
-            'validation/xmlimport_input2',
+            "validation/xmlimport_input2/config/example.xml",
+            "validation/xmlimport_input2",
         ),
         (
-            'validation/xmlimport_input3/config/examples/example_ShapeSys.xml',
-            'validation/xmlimport_input3',
+            "validation/xmlimport_input3/config/examples/example_ShapeSys.xml",
+            "validation/xmlimport_input3",
         ),
     ],
-    ids=['example-one', 'example-two', 'example-three'],
+    ids=["example-one", "example-two", "example-three"],
 )
 def test_import_roundtrip(tmp_path, top_level, base_dir):
     parsed_xml_before = pyhf.readxml.parse(top_level, base_dir)
     spec = {
-        'channels': parsed_xml_before['channels'],
-        'parameters': parsed_xml_before['measurements'][0]['config']['parameters'],
+        "channels": parsed_xml_before["channels"],
+        "parameters": parsed_xml_before["measurements"][0]["config"]["parameters"],
     }
-    pdf_before = pyhf.Model(spec, poi_name='SigXsecOverSM')
+    pdf_before = pyhf.Model(spec, poi_name="SigXsecOverSM")
 
-    tmp_config = tmp_path.joinpath('config')
+    tmp_config = tmp_path.joinpath("config")
     tmp_config.mkdir()
-    tmp_data = tmp_path.joinpath('data')
+    tmp_data = tmp_path.joinpath("data")
     tmp_data.mkdir()
-    tmp_xml = tmp_path.joinpath('FitConfig.xml')
+    tmp_xml = tmp_path.joinpath("FitConfig.xml")
     tmp_xml.write_text(
         pyhf.writexml.writexml(
             parsed_xml_before,
             tmp_config,
             tmp_data,
-            tmp_path.joinpath('FitConfig'),
-        ).decode('utf-8')
+            tmp_path.joinpath("FitConfig"),
+        ).decode("utf-8")
     )
     parsed_xml_after = pyhf.readxml.parse(tmp_xml, tmp_path)
     spec = {
-        'channels': parsed_xml_after['channels'],
-        'parameters': parsed_xml_after['measurements'][0]['config']['parameters'],
+        "channels": parsed_xml_after["channels"],
+        "parameters": parsed_xml_after["measurements"][0]["config"]["parameters"],
     }
-    pdf_after = pyhf.Model(spec, poi_name='SigXsecOverSM')
+    pdf_after = pyhf.Model(spec, poi_name="SigXsecOverSM")
 
     data_before = [
         binvalue
         for k in pdf_before.config.channels
         for binvalue in next(
-            obs for obs in parsed_xml_before['observations'] if obs['name'] == k
-        )['data']
+            obs for obs in parsed_xml_before["observations"] if obs["name"] == k
+        )["data"]
     ] + pdf_before.config.auxdata
 
     data_after = [
         binvalue
         for k in pdf_after.config.channels
         for binvalue in next(
-            obs for obs in parsed_xml_after['observations'] if obs['name'] == k
-        )['data']
+            obs for obs in parsed_xml_after["observations"] if obs["name"] == k
+        )["data"]
     ] + pdf_after.config.auxdata
 
     assert data_before == data_after
@@ -975,32 +975,32 @@ def test_shapesys_nuisparfilter_validation():
     ws = pyhf.Workspace(spec)
     model = ws.model(
         modifier_settings={
-            'normsys': {'interpcode': 'code4'},
-            'histosys': {'interpcode': 'code4p'},
+            "normsys": {"interpcode": "code4"},
+            "histosys": {"interpcode": "code4p"},
         },
     )
     data = ws.data(model)
     obs, exp = pyhf.infer.hypotest(1.0, data, model, return_expected_set=True)
-    pyhf_results = {'CLs_obs': obs, 'CLs_exp': [e for e in exp]}
+    pyhf_results = {"CLs_obs": obs, "CLs_exp": [e for e in exp]}
 
     assert np.allclose(
-        reference_root_results['CLs_obs'], pyhf_results['CLs_obs'], atol=1e-4, rtol=1e-5
+        reference_root_results["CLs_obs"], pyhf_results["CLs_obs"], atol=1e-4, rtol=1e-5
     )
     assert np.allclose(
-        reference_root_results['CLs_exp'], pyhf_results['CLs_exp'], atol=1e-4, rtol=1e-5
+        reference_root_results["CLs_exp"], pyhf_results["CLs_exp"], atol=1e-4, rtol=1e-5
     )
 
 
 @pytest.mark.parametrize(
-    'backend',
+    "backend",
     [
         pyhf.tensor.numpy_backend,
         pyhf.tensor.jax_backend,
     ],
 )
-@pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
+@pytest.mark.parametrize("optimizer", ["scipy", "minuit"])
 def test_optimizer_stitching(backend, optimizer):
-    pyhf.set_backend(backend(precision='64b'), optimizer)
+    pyhf.set_backend(backend(precision="64b"), optimizer)
 
     pdf = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10])
     data = [125.0] + pdf.config.auxdata
@@ -1016,14 +1016,14 @@ def test_optimizer_stitching(backend, optimizer):
 
 
 @pytest.mark.parametrize(
-    'backend',
+    "backend",
     [
         pyhf.tensor.jax_backend,
     ],
 )
-@pytest.mark.parametrize('optimizer,rtol', [('scipy', 1e-6), ('minuit', 1e-3)])
+@pytest.mark.parametrize("optimizer,rtol", [("scipy", 1e-6), ("minuit", 1e-3)])
 def test_optimizer_grad(backend, optimizer, rtol):
-    pyhf.set_backend(backend(precision='64b'), optimizer)
+    pyhf.set_backend(backend(precision="64b"), optimizer)
 
     pdf = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10])
     data = [125.0] + pdf.config.auxdata

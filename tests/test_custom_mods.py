@@ -10,14 +10,14 @@ class custom_builder:
     def __init__(self, pdfconfig):
         self.config = pdfconfig
         self.required_parsets = {
-            'k1': [
+            "k1": [
                 {
-                    'paramset_type': 'unconstrained',
-                    'n_parameters': 1,
-                    'is_constrained': False,
-                    'inits': (1.0,),
-                    'bounds': ((-5, 5),),
-                    'fixed': False,
+                    "paramset_type": "unconstrained",
+                    "n_parameters": 1,
+                    "is_constrained": False,
+                    "inits": (1.0,),
+                    "bounds": ((-5, 5),),
+                    "fixed": False,
                 }
             ]
         }
@@ -31,8 +31,8 @@ class custom_builder:
 
 
 class custom_applicator:
-    op_code = 'multiplication'
-    name = 'customfunc'
+    op_code = "multiplication"
+    name = "customfunc"
 
     def __init__(
         self, modifiers=None, pdfconfig=None, builder_data=None, batch_size=None
@@ -49,32 +49,32 @@ def test_custom_mods():
 
     model = pyhf.Model(
         {
-            'channels': [
+            "channels": [
                 {
-                    'name': 'singlechannel',
-                    'samples': [
+                    "name": "singlechannel",
+                    "samples": [
                         {
-                            'name': 'signal',
-                            'data': [10] * 20,
-                            'modifiers': [
+                            "name": "signal",
+                            "data": [10] * 20,
+                            "modifiers": [
                                 {
-                                    'name': 'singlemod',
-                                    'type': 'customfunc',
-                                    'data': None,
+                                    "name": "singlemod",
+                                    "type": "customfunc",
+                                    "data": None,
                                 },
                             ],
                         },
-                        {'name': 'background', 'data': [300] * 20, 'modifiers': []},
+                        {"name": "background", "data": [300] * 20, "modifiers": []},
                     ],
                 }
             ]
         },
         modifier_set=modifier_set,
-        poi_name='k1',
+        poi_name="k1",
         validate=False,
     )
     assert model
-    assert 'k1' in model.config.parameters
+    assert "k1" in model.config.parameters
 
 
 def test_missing_poi():
@@ -84,28 +84,28 @@ def test_missing_poi():
     with pytest.raises(exceptions.InvalidModel):
         model = pyhf.Model(
             {
-                'channels': [
+                "channels": [
                     {
-                        'name': 'singlechannel',
-                        'samples': [
+                        "name": "singlechannel",
+                        "samples": [
                             {
-                                'name': 'signal',
-                                'data': [10] * 20,
-                                'modifiers': [
+                                "name": "signal",
+                                "data": [10] * 20,
+                                "modifiers": [
                                     {
-                                        'name': 'singlemod',
-                                        'type': 'customfunc',
-                                        'data': None,
+                                        "name": "singlemod",
+                                        "type": "customfunc",
+                                        "data": None,
                                     },
                                 ],
                             },
-                            {'name': 'background', 'data': [300] * 20, 'modifiers': []},
+                            {"name": "background", "data": [300] * 20, "modifiers": []},
                         ],
                     }
                 ]
             },
             modifier_set=modifier_set,
-            poi_name='non_existent_poi',
+            poi_name="non_existent_poi",
             validate=False,
         )
         assert model

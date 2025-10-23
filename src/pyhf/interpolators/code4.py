@@ -125,12 +125,12 @@ class code4:
             ]
         )
         self._coefficients = default_backend.einsum(
-            'rc,shb,cshb->rshb', A_inverse, self._broadcast_helper, b
+            "rc,shb,cshb->rshb", A_inverse, self._broadcast_helper, b
         )
 
         self._precompute()
         if subscribe:
-            events.subscribe('tensorlib_changed')(self._precompute)
+            events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -140,15 +140,15 @@ class code4:
         self.alpha0 = tensorlib.astensor(self._alpha0)
         self.coefficients = tensorlib.astensor(self._coefficients)
         self.bases_up = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_up
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
         self.bases_dn = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_dn
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_dn
         )
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
         self.ones = tensorlib.einsum(
-            'sa,shb->shab', self.mask_on, self.broadcast_helper
+            "sa,shb->shab", self.mask_on, self.broadcast_helper
         )
 
     def _precompute_alphasets(self, alphasets_shape):
@@ -157,15 +157,15 @@ class code4:
         tensorlib, _ = get_backend()
         self.alphasets_shape = alphasets_shape
         self.bases_up = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_up
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
         self.bases_dn = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.ones(self.alphasets_shape), self.deltas_dn
+            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_dn
         )
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
         self.ones = tensorlib.einsum(
-            'sa,shb->shab', self.mask_on, self.broadcast_helper
+            "sa,shb->shab", self.mask_on, self.broadcast_helper
         )
         return
 
@@ -180,7 +180,7 @@ class code4:
         )
         masks_gtalpha0 = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_gtalpha0, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_gtalpha0, self.broadcast_helper
             ),
             dtype="bool",
         )
@@ -191,7 +191,7 @@ class code4:
         )
         masks_not_ltalpha0 = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_not_ltalpha0, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_not_ltalpha0, self.broadcast_helper
             ),
             dtype="bool",
         )
@@ -201,7 +201,7 @@ class code4:
         # h: histogram affected by modifier
         # b: bin of histogram
         exponents = tensorlib.einsum(
-            'sa,shb->shab', tensorlib.abs(alphasets), self.broadcast_helper
+            "sa,shb->shab", tensorlib.abs(alphasets), self.broadcast_helper
         )
         # for |alpha| >= alpha0, we want to raise the bases to the exponent=alpha
         # and for |alpha| < alpha0, we want to raise the bases to the exponent=1
@@ -221,7 +221,7 @@ class code4:
         )
         # this is the 1 + sum_i a_i alpha^i
         value_btwn = tensorlib.ones(exponents.shape) + tensorlib.einsum(
-            'rshb,rsa->shab', self.coefficients, alphasets_powers
+            "rshb,rsa->shab", self.coefficients, alphasets_powers
         )
 
         # first, build a result where:

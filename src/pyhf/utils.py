@@ -19,30 +19,30 @@ def __dir__():
 
 
 def options_from_eqdelimstring(opts):
-    document = '\n'.join(
+    document = "\n".join(
         f"{opt.split('=', 1)[0]}: {opt.split('=', 1)[1]}" for opt in opts
     )
     return yaml.safe_load(document)
 
 
 class EqDelimStringParamType(click.ParamType):
-    name = 'equal-delimited option'
+    name = "equal-delimited option"
 
     def convert(self, value, param, ctx):
         try:
             return options_from_eqdelimstring([value])
         except IndexError:
-            self.fail(f'{value:s} is not a valid equal-delimited string', param, ctx)
+            self.fail(f"{value:s} is not a valid equal-delimited string", param, ctx)
 
 
 class VolumeMountPath(click.Path):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = f'{self.name}:{gettext("path")}'
+        self.name = f"{self.name}:{gettext('path')}"
 
     def convert(self, value, param, ctx):
         try:
-            path_host, path_mount = value.split(':')
+            path_host, path_mount = value.split(":")
         except ValueError:
             # too many values to unpack / not enough values to unpack
             self.fail(f"{value!r} is not a valid colon-separated option", param, ctx)
@@ -53,7 +53,7 @@ class VolumeMountPath(click.Path):
         )
 
 
-def digest(obj, algorithm='sha256'):
+def digest(obj, algorithm="sha256"):
     """
     Get the digest for the provided object. Note: object must be JSON-serializable.
 
@@ -82,7 +82,7 @@ def digest(obj, algorithm='sha256'):
     """
 
     try:
-        stringified = json.dumps(obj, sort_keys=True, ensure_ascii=False).encode('utf8')
+        stringified = json.dumps(obj, sort_keys=True, ensure_ascii=False).encode("utf8")
     except TypeError:
         raise ValueError(
             "The supplied object is not JSON-serializable for calculating a hash."
@@ -112,10 +112,10 @@ def citation(oneline=False):
     Returns:
         citation (:obj:`str`): The citation for this software
     """
-    ref = resources.files('pyhf') / 'data' / 'citation.bib'
+    ref = resources.files("pyhf") / "data" / "citation.bib"
     with resources.as_file(ref) as path:
         data = path.read_text().strip()
 
     if oneline:
-        data = ''.join(data.splitlines())
+        data = "".join(data.splitlines())
     return data

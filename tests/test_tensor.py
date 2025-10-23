@@ -9,10 +9,10 @@ from pyhf.simplemodels import uncorrelated_background
 
 def test_astensor_dtype(backend, caplog):
     tb = pyhf.tensorlib
-    with caplog.at_level(logging.INFO, 'pyhf.tensor'):
+    with caplog.at_level(logging.INFO, "pyhf.tensor"):
         with pytest.raises(KeyError):
-            assert tb.astensor([1, 2, 3], dtype='long')
-            assert 'Invalid dtype' in caplog.text
+            assert tb.astensor([1, 2, 3], dtype="long")
+            assert "Invalid dtype" in caplog.text
 
 
 def test_ones_dtype(backend, caplog):
@@ -211,15 +211,15 @@ def test_reshape(backend):
 
 def test_swap(backend):
     tb = pyhf.tensorlib
-    assert tb.tolist(tb.einsum('ij...->ji...', tb.astensor([[1, 2, 3]]))) == [
+    assert tb.tolist(tb.einsum("ij...->ji...", tb.astensor([[1, 2, 3]]))) == [
         [1],
         [2],
         [3],
     ]
-    assert tb.tolist(tb.einsum('ij...->ji...', tb.astensor([[[1, 2, 3]]]))) == [
+    assert tb.tolist(tb.einsum("ij...->ji...", tb.astensor([[[1, 2, 3]]]))) == [
         [[1, 2, 3]]
     ]
-    assert tb.tolist(tb.einsum('ijk...->kji...', tb.astensor([[[1, 2, 3]]]))) == [
+    assert tb.tolist(tb.einsum("ijk...->kji...", tb.astensor([[[1, 2, 3]]]))) == [
         [[1]],
         [[2]],
         [[3]],
@@ -298,13 +298,13 @@ def test_boolean_mask(backend):
     assert tb.tolist(
         tb.boolean_mask(
             tb.astensor([1, 2, 3, 4, 5, 6]),
-            tb.astensor([True, True, False, True, False, False], dtype='bool'),
+            tb.astensor([True, True, False, True, False, False], dtype="bool"),
         )
     ) == [1, 2, 4]
     assert tb.tolist(
         tb.boolean_mask(
             tb.astensor([[1, 2], [3, 4], [5, 6]]),
-            tb.astensor([[True, True], [False, True], [False, False]], dtype='bool'),
+            tb.astensor([[True, True], [False, True], [False, False]], dtype="bool"),
         )
     ) == [1, 2, 4]
 
@@ -350,12 +350,12 @@ def test_1D_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.gather(
-            tb.astensor([1, 2, 3, 4, 5, 6]), tb.astensor([4, 0, 3, 2], dtype='int')
+            tb.astensor([1, 2, 3, 4, 5, 6]), tb.astensor([4, 0, 3, 2], dtype="int")
         )
     ) == [5, 1, 4, 3]
     assert tb.tolist(
         tb.gather(
-            tb.astensor([1, 2, 3, 4, 5, 6]), tb.astensor([[4, 0], [3, 2]], dtype='int')
+            tb.astensor([1, 2, 3, 4, 5, 6]), tb.astensor([[4, 0], [3, 2]], dtype="int")
         )
     ) == [[5, 1], [4, 3]]
 
@@ -364,7 +364,7 @@ def test_ND_gather(backend):
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.gather(
-            tb.astensor([[1, 2], [3, 4], [5, 6]]), tb.astensor([1, 0], dtype='int')
+            tb.astensor([[1, 2], [3, 4], [5, 6]]), tb.astensor([1, 0], dtype="int")
         )
     ) == [[3, 4], [1, 2]]
 
@@ -383,10 +383,10 @@ def test_einsum(backend):
     x = np.arange(20).reshape(5, 4).tolist()
 
     assert np.all(
-        tb.tolist(tb.einsum('ij->ji', tb.astensor(x))) == np.asarray(x).T.tolist()
+        tb.tolist(tb.einsum("ij->ji", tb.astensor(x))) == np.asarray(x).T.tolist()
     )
     assert (
-        tb.tolist(tb.einsum('i,j->ij', tb.astensor([1, 1, 1]), tb.astensor([1, 2, 3])))
+        tb.tolist(tb.einsum("i,j->ij", tb.astensor([1, 1, 1]), tb.astensor([1, 2, 3])))
         == [[1, 2, 3]] * 3
     )
 
@@ -417,27 +417,27 @@ def test_pdf_eval(backend):
         },
     }
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'bkg_norm',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['bindata']['bkgsys_dn'],
-                                    'hi_data': source['bindata']['bkgsys_up'],
+                                "name": "bkg_norm",
+                                "type": "histosys",
+                                "data": {
+                                    "lo_data": source["bindata"]["bkgsys_dn"],
+                                    "hi_data": source["bindata"]["bkgsys_up"],
                                 },
                             }
                         ],
@@ -447,7 +447,7 @@ def test_pdf_eval(backend):
         ]
     }
     pdf = pyhf.Model(spec)
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
     assert pytest.approx([-17.648827643136507], rel=5e-5) == pyhf.tensorlib.tolist(
         pdf.logpdf(pdf.config.suggested_init(), data)
     )
@@ -465,9 +465,9 @@ def test_pdf_eval_2(backend):
     }
 
     pdf = uncorrelated_background(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+        source["bindata"]["sig"], source["bindata"]["bkg"], source["bindata"]["bkgerr"]
     )
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
 
     assert pytest.approx([-23.579605171119738], rel=5e-5) == pyhf.tensorlib.tolist(
         pdf.logpdf(pdf.config.suggested_init(), data)
@@ -476,31 +476,31 @@ def test_pdf_eval_2(backend):
 
 def test_tensor_precision(backend):
     tb, _ = backend
-    assert tb.precision in ['32b', '64b']
+    assert tb.precision in ["32b", "64b"]
 
 
 @pytest.mark.parametrize(
-    'tensorlib',
-    ['numpy_backend', 'jax_backend'],
+    "tensorlib",
+    ["numpy_backend", "jax_backend"],
 )
-@pytest.mark.parametrize('precision', ['64b', '32b'])
+@pytest.mark.parametrize("precision", ["64b", "32b"])
 def test_set_tensor_precision(tensorlib, precision):
     tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
     assert tb.precision == precision
     # check for float64/int64/float32/int32 in the dtypemap by looking at the class names
     #   - may break if class names stop including this, but i doubt it
-    assert f'float{precision[:1]}' in str(tb.dtypemap['float'])
-    assert f'int{precision[:1]}' in str(tb.dtypemap['int'])
+    assert f"float{precision[:1]}" in str(tb.dtypemap["float"])
+    assert f"int{precision[:1]}" in str(tb.dtypemap["int"])
 
 
 def test_trigger_tensorlib_changed_name(mocker):
-    numpy_64 = pyhf.tensor.numpy_backend(precision='64b')
-    jax_64 = pyhf.tensor.jax_backend(precision='64b')
+    numpy_64 = pyhf.tensor.numpy_backend(precision="64b")
+    jax_64 = pyhf.tensor.jax_backend(precision="64b")
 
     pyhf.set_backend(numpy_64)
 
     func = mocker.Mock()
-    pyhf.events.subscribe('tensorlib_changed')(func.__call__)
+    pyhf.events.subscribe("tensorlib_changed")(func.__call__)
 
     assert func.call_count == 0
     pyhf.set_backend(jax_64)
@@ -508,13 +508,13 @@ def test_trigger_tensorlib_changed_name(mocker):
 
 
 def test_trigger_tensorlib_changed_precision(mocker):
-    jax_64 = pyhf.tensor.jax_backend(precision='64b')
-    jax_32 = pyhf.tensor.jax_backend(precision='32b')
+    jax_64 = pyhf.tensor.jax_backend(precision="64b")
+    jax_32 = pyhf.tensor.jax_backend(precision="32b")
 
     pyhf.set_backend(jax_64)
 
     func = mocker.Mock()
-    pyhf.events.subscribe('tensorlib_changed')(func.__call__)
+    pyhf.events.subscribe("tensorlib_changed")(func.__call__)
 
     assert func.call_count == 0
     pyhf.set_backend(jax_32)
@@ -522,10 +522,10 @@ def test_trigger_tensorlib_changed_precision(mocker):
 
 
 @pytest.mark.parametrize(
-    'tensorlib',
-    ['numpy_backend', 'jax_backend'],
+    "tensorlib",
+    ["numpy_backend", "jax_backend"],
 )
-@pytest.mark.parametrize('precision', ['64b', '32b'])
+@pytest.mark.parametrize("precision", ["64b", "32b"])
 def test_tensorlib_setup(tensorlib, precision, mocker):
     tb = getattr(pyhf.tensor, tensorlib)(precision=precision)
 

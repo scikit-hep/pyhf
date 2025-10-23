@@ -13,34 +13,34 @@ from pyhf.utils import VolumeMountPath
 log = logging.getLogger(__name__)
 
 
-@click.group(name='rootio')
+@click.group(name="rootio")
 def cli():
     """ROOT I/O CLI group."""
 
 
 @cli.command()
-@click.argument('entrypoint-xml', type=click.Path(exists=True))
+@click.argument("entrypoint-xml", type=click.Path(exists=True))
 @click.option(
-    '--basedir',
-    help='The base directory for the XML files to point relative to.',
+    "--basedir",
+    help="The base directory for the XML files to point relative to.",
     type=click.Path(exists=True),
     default=Path.cwd(),
 )
 @click.option(
-    '-v',
-    '--mount',
-    help='Consists of two fields, separated by a colon character ( : ). The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to Docker.',
+    "-v",
+    "--mount",
+    help="Consists of two fields, separated by a colon character ( : ). The first field is the local path to where files are located, the second field is the path where the file or directory are saved in the XML configuration. This is similar in spirit to Docker.",
     type=VolumeMountPath(exists=True, resolve_path=True, path_type=Path),
     default=None,
     multiple=True,
 )
 @click.option(
-    '--output-file',
-    help='The location of the output json file. If not specified, prints to screen.',
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
-@click.option('--track-progress/--hide-progress', default=True)
-@click.option('--validation-as-error/--validation-as-warning', default=True)
+@click.option("--track-progress/--hide-progress", default=True)
+@click.option("--validation-as-error/--validation-as-warning", default=True)
 def xml2json(
     entrypoint_xml, basedir, mount, output_file, track_progress, validation_as_error
 ):
@@ -73,12 +73,12 @@ def xml2json(
 
 
 @cli.command()
-@click.argument('workspace', default='-')
-@click.option('--output-dir', type=click.Path(exists=True), default='.')
-@click.option('--specroot', default='config')
-@click.option('--dataroot', default='data')
-@click.option('--resultprefix', default='FitConfig')
-@click.option('-p', '--patch', multiple=True)
+@click.argument("workspace", default="-")
+@click.option("--output-dir", type=click.Path(exists=True), default=".")
+@click.option("--specroot", default="config")
+@click.option("--dataroot", default="data")
+@click.option("--resultprefix", default="FitConfig")
+@click.option("-p", "--patch", multiple=True)
 def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
     """Convert pyhf JSON back to XML + ROOT files."""
     try:
@@ -110,5 +110,5 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
                     Path(output_dir).joinpath(specroot),
                     Path(output_dir).joinpath(dataroot),
                     resultprefix,
-                ).decode('utf-8')
+                ).decode("utf-8")
             )

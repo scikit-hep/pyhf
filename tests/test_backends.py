@@ -7,18 +7,18 @@ import pyhf
 def test_default_backend():
     pyhf.set_backend("jax", default=True)
 
-    assert pyhf.default_backend.name == 'jax'
-    assert pyhf.tensorlib.name == 'jax'
+    assert pyhf.default_backend.name == "jax"
+    assert pyhf.tensorlib.name == "jax"
 
 
 def test_nondefault_backend():
     pyhf.set_backend("jax", default=False)
 
-    assert pyhf.default_backend.name == 'numpy'
-    assert pyhf.tensorlib.name == 'jax'
+    assert pyhf.default_backend.name == "numpy"
+    assert pyhf.tensorlib.name == "jax"
 
 
-@pytest.mark.parametrize('jitted', (False, True))
+@pytest.mark.parametrize("jitted", (False, True))
 def test_diffable_backend(jitted):
     pyhf.set_backend("jax", default=True)
 

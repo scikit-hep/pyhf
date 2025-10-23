@@ -11,7 +11,7 @@ class scipy_optimizer(OptimizerMixin):
     Optimizer that uses :func:`scipy.optimize.minimize`.
     """
 
-    __slots__ = ['name', 'solver_options', 'tolerance']
+    __slots__ = ["name", "solver_options", "tolerance"]
 
     def __init__(self, *args, **kwargs):
         """
@@ -27,9 +27,9 @@ class scipy_optimizer(OptimizerMixin):
                 :func:`scipy.optimize.show_options` for additional options of
                 optimization solvers.
         """
-        self.name = 'scipy'
-        self.tolerance = kwargs.pop('tolerance', None)
-        self.solver_options = kwargs.pop('solver_options', {})
+        self.name = "scipy"
+        self.tolerance = kwargs.pop("tolerance", None)
+        self.solver_options = kwargs.pop("solver_options", {})
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
@@ -71,11 +71,11 @@ class scipy_optimizer(OptimizerMixin):
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
-        maxiter = options.pop('maxiter', self.maxiter)
-        verbose = options.pop('verbose', self.verbose)
-        method = options.pop('method', 'SLSQP')
-        tolerance = options.pop('tolerance', self.tolerance)
-        solver_options = options.pop('solver_options', self.solver_options)
+        maxiter = options.pop("maxiter", self.maxiter)
+        verbose = options.pop("verbose", self.verbose)
+        method = options.pop("method", "SLSQP")
+        tolerance = options.pop("tolerance", self.tolerance)
+        solver_options = options.pop("solver_options", self.solver_options)
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options)}."
@@ -85,7 +85,7 @@ class scipy_optimizer(OptimizerMixin):
         indices = [i for i, _ in fixed_vals]
         values = [v for _, v in fixed_vals]
         if fixed_vals:
-            constraints = [{'type': 'eq', 'fun': lambda v: v[indices] - values}]
+            constraints = [{"type": "eq", "fun": lambda v: v[indices] - values}]
             # update the initial values to the fixed value for any fixed parameter
             for idx, fixed_val in fixed_vals:
                 x0[idx] = fixed_val

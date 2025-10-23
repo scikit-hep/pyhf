@@ -19,7 +19,7 @@ def _print_citation(ctx, param, value):
     ctx.exit()
 
 
-@click.group(context_settings=dict(help_option_names=['-h', '--help']))
+@click.group(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(version=__version__)
 @click.option(
     "--cite",

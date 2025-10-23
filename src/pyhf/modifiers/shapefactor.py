@@ -10,12 +10,12 @@ log = logging.getLogger(__name__)
 
 def required_parset(sample_data, modifier_data):
     return {
-        'paramset_type': 'unconstrained',
-        'n_parameters': len(sample_data),
-        'is_scalar': False,
-        'inits': (1.0,) * len(sample_data),
-        'bounds': ((0.0, 10.0),) * len(sample_data),
-        'fixed': False,
+        "paramset_type": "unconstrained",
+        "n_parameters": len(sample_data),
+        "is_scalar": False,
+        "inits": (1.0,) * len(sample_data),
+        "bounds": ((0.0, 10.0),) * len(sample_data),
+        "fixed": False,
     }
 
 
@@ -32,23 +32,23 @@ class shapefactor_builder:
     def collect(self, thismod, nom):
         maskval = True if thismod else False
         mask = [maskval] * len(nom)
-        return {'mask': mask}
+        return {"mask": mask}
 
     def append(self, key, channel, sample, thismod, defined_samp):
         self.builder_data.setdefault(key, {}).setdefault(sample, {}).setdefault(
-            'data', {'mask': []}
+            "data", {"mask": []}
         )
         nom = (
-            defined_samp['data']
+            defined_samp["data"]
             if defined_samp
             else [0.0] * self.config.channel_nbins[channel]
         )
         moddata = self.collect(thismod, nom)
-        self.builder_data[key][sample]['data']['mask'] += moddata['mask']
+        self.builder_data[key][sample]["data"]["mask"] += moddata["mask"]
         if thismod:
             self.required_parsets.setdefault(
-                thismod['name'],
-                [required_parset(defined_samp['data'], thismod['data'])],
+                thismod["name"],
+                [required_parset(defined_samp["data"], thismod["data"])],
             )
 
     def finalize(self):
@@ -56,8 +56,8 @@ class shapefactor_builder:
 
 
 class shapefactor_combined:
-    name = 'shapefactor'
-    op_code = 'multiplication'
+    name = "shapefactor"
+    op_code = "multiplication"
 
     def __init__(self, modifiers, pdfconfig, builder_data, batch_size=None):
         """
@@ -130,7 +130,7 @@ class shapefactor_combined:
         default_backend = pyhf.default_backend
 
         self.batch_size = batch_size
-        keys = [f'{mtype}/{m}' for m, mtype in modifiers]
+        keys = [f"{mtype}/{m}" for m, mtype in modifiers]
         shapefactor_mods = [m for m, _ in modifiers]
 
         parfield_shape = (self.batch_size or 1, pdfconfig.npars)
@@ -139,7 +139,7 @@ class shapefactor_combined:
         )
 
         self._shapefactor_mask = [
-            [[builder_data[m][s]['data']['mask']] for s in pdfconfig.samples]
+            [[builder_data[m][s]["data"]["mask"]] for s in pdfconfig.samples]
             for m in keys
         ]
 
@@ -180,7 +180,7 @@ class shapefactor_combined:
                     )
 
         self._precompute()
-        events.subscribe('tensorlib_changed')(self._precompute)
+        events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         if not self.param_viewer.index_selection:
@@ -190,7 +190,7 @@ class shapefactor_combined:
             tensorlib.astensor(self._shapefactor_mask, dtype="bool"),
             (1, 1, self.batch_size or 1, 1),
         )
-        self.access_field = tensorlib.astensor(self._access_field, dtype='int')
+        self.access_field = tensorlib.astensor(self._access_field, dtype="int")
 
         self.shapefactor_default = tensorlib.ones(
             tensorlib.shape(self.shapefactor_mask)
@@ -212,7 +212,7 @@ class shapefactor_combined:
             flat_pars = tensorlib.reshape(pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapefactor = tensorlib.einsum(
-            'mab,s->msab', shapefactors, self.sample_ones
+            "mab,s->msab", shapefactors, self.sample_ones
         )
         results_shapefactor = tensorlib.where(
             self.shapefactor_mask, results_shapefactor, self.shapefactor_default

@@ -399,7 +399,7 @@ class AsymptoticCalculator:
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-        asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
+        asimov_mu = 1.0 if self.test_stat == "q0" else 0.0
 
         asimov_data, asimov_mubhathat = generate_asimov_data(
             asimov_mu,
@@ -799,7 +799,7 @@ class ToyCalculator:
         signal_sample = signal_pdf.sample(sample_shape)
 
         bkg_pars = fixed_poi_fit(
-            1.0 if self.test_stat == 'q0' else 0.0,
+            1.0 if self.test_stat == "q0" else 0.0,
             self.data,
             self.pdf,
             self.init_pars,

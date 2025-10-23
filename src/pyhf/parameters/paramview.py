@@ -20,8 +20,8 @@ def _tensorviewer_from_parmap(par_map, batch_size):
                 (
                     (
                         paramset_name,
-                        paramset_spec['slice'],
-                        paramset_spec['slice'].start,
+                        paramset_spec["slice"],
+                        paramset_spec["slice"].start,
                     )
                     for paramset_name, paramset_spec in par_map.items()
                 ),
@@ -45,11 +45,11 @@ def extract_index_access(baseviewer, subviewer, indices):
         # the transpose is here so that modifier code doesn't have to do it
         indices_concatenated = tensorlib.astensor(
             (
-                tensorlib.einsum('ij->ji', stitched)
+                tensorlib.einsum("ij->ji", stitched)
                 if len(tensorlib.shape(stitched)) > 1
                 else stitched
             ),
-            dtype='int',
+            dtype="int",
         )
     return index_selection, stitched, indices_concatenated
 
@@ -65,7 +65,7 @@ class ParamViewer:
         batch_size = shape[0] if len(shape) > 1 else None
 
         fullsize = default_backend.product(default_backend.astensor(shape))
-        flat_indices = default_backend.astensor(range(int(fullsize)), dtype='int')
+        flat_indices = default_backend.astensor(range(int(fullsize)), dtype="int")
         self._all_indices = default_backend.reshape(flat_indices, shape)
 
         # a tensor viewer that can split and stitch parameters
@@ -74,7 +74,7 @@ class ParamViewer:
         # a tensor viewer that can split and stitch the selected parameters
         self.selected_viewer = _tensorviewer_from_sizes(
             [
-                par_map[s]['slice'].stop - par_map[s]['slice'].start
+                par_map[s]["slice"].stop - par_map[s]["slice"].start
                 for s in par_selection
             ],
             par_selection,
@@ -82,7 +82,7 @@ class ParamViewer:
         )
 
         self._precompute()
-        events.subscribe('tensorlib_changed')(self._precompute)
+        events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
