@@ -62,9 +62,9 @@ class OptimizerMixin:
 
         try:
             assert result.success
-        except AssertionError:
+        except AssertionError as exc:
             log.error(result, exc_info=True)
-            raise exceptions.FailedMinimization(result)
+            raise exceptions.FailedMinimization(result) from exc
         return result
 
     def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False):

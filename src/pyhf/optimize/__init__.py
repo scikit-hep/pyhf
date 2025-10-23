@@ -26,11 +26,11 @@ class _OptimizerRetriever:
                 # for autocomplete and dir() calls
                 self.minuit_optimizer = minuit_optimizer
                 return minuit_optimizer
-            except ImportError as e:
+            except ImportError as exc:
                 raise exceptions.ImportBackendError(
                     "There was a problem importing Minuit. The minuit optimizer cannot be used.",
-                    e,
-                )
+                    exc,
+                ) from exc
         elif name == "__wrapped__":  # doctest
             pass
 

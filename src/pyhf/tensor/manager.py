@@ -105,10 +105,10 @@ def set_backend(
             new_backend: TensorBackend = getattr(
                 BackendRetriever, f"{backend:s}_backend"
             )(**backend_kwargs)
-        except TypeError:
+        except TypeError as exc:
             raise exceptions.InvalidBackend(
                 f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, jax"
-            )
+            ) from exc
     else:
         new_backend = backend
 
@@ -139,10 +139,10 @@ def set_backend(
                 new_optimizer = getattr(
                     OptimizerRetriever, f"{custom_optimizer.lower()}_optimizer"
                 )()
-            except TypeError:
+            except TypeError as exc:
                 raise exceptions.InvalidOptimizer(
                     f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
-                )
+                ) from exc
         else:
             new_optimizer = custom_optimizer
 
