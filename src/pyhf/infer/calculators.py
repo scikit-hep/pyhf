@@ -10,21 +10,22 @@ Using the calculators hypothesis tests can then be performed.
 
 from __future__ import annotations
 
-from pyhf.infer.mle import fixed_poi_fit
-from pyhf import get_backend
-from pyhf.infer import utils
+import logging
+from dataclasses import dataclass
+
+from rich.console import Console
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
-    TextColumn,
-    BarColumn,
     TaskProgressColumn,
+    TextColumn,
     TimeElapsedColumn,
 )
-from rich.console import Console
 
-from dataclasses import dataclass
-import logging
+from pyhf import get_backend
+from pyhf.infer import utils
+from pyhf.infer.mle import fixed_poi_fit
 
 log = logging.getLogger(__name__)
 

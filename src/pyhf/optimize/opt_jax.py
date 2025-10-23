@@ -1,9 +1,11 @@
 """JAX Backend Function Shim."""
 
+import logging
+
+import jax
+
 from pyhf import get_backend
 from pyhf.tensor.common import _TensorViewer
-import jax
-import logging
 
 log = logging.getLogger(__name__)
 

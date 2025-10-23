@@ -1,7 +1,8 @@
-import pyhf
-from pyhf.simplemodels import uncorrelated_background
 import numpy as np
 import pytest
+
+import pyhf
+from pyhf.simplemodels import uncorrelated_background
 
 
 def generate_source_static(n_bins):

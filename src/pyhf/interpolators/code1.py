@@ -2,10 +2,11 @@
 
 import logging
 import math
+
 import pyhf
-from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf.interpolators import _slow_interpolator_looper
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 

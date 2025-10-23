@@ -10,7 +10,9 @@ from __future__ import annotations
 
 import collections
 import copy
+import functools
 import logging
+import operator
 from typing import ClassVar
 
 import jsonpatch
@@ -18,8 +20,6 @@ import jsonpatch
 from pyhf import exceptions, schema
 from pyhf.mixins import _ChannelSummaryMixin
 from pyhf.pdf import Model
-import functools
-import operator
 
 log = logging.getLogger(__name__)
 

@@ -2,15 +2,16 @@ from jax import config
 
 config.update('jax_enable_x64', True)
 
-from jax.core import Tracer
-from jax import Array
+import logging
+
 import jax.numpy as jnp
-from jax.scipy.special import gammaln, xlogy
-from jax.scipy import special
-from jax.scipy.stats import norm
 import numpy as np
 import scipy.stats as osp_stats
-import logging
+from jax import Array
+from jax.core import Tracer
+from jax.scipy import special
+from jax.scipy.special import gammaln, xlogy
+from jax.scipy.stats import norm
 
 log = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 import logging
 
-from pyhf import get_backend, events
+from pyhf import events, get_backend
 from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)

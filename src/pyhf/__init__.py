@@ -1,16 +1,11 @@
-from pyhf.tensor import BackendRetriever as tensor
-from pyhf.optimize import OptimizerRetriever as optimize  # noqa
-from pyhf.tensor.manager import get_backend
-from pyhf.tensor.manager import set_backend
+from pyhf import compat, infer, schema, simplemodels
 from pyhf._version import version as __version__
-
-from pyhf.pdf import Model
-from pyhf.workspace import Workspace
-from pyhf import schema
-from pyhf import simplemodels
-from pyhf import infer
-from pyhf import compat
+from pyhf.optimize import OptimizerRetriever as optimize  # noqa
 from pyhf.patchset import PatchSet
+from pyhf.pdf import Model
+from pyhf.tensor import BackendRetriever as tensor
+from pyhf.tensor.manager import get_backend, set_backend
+from pyhf.workspace import Workspace
 
 __all__ = [
     "Model",

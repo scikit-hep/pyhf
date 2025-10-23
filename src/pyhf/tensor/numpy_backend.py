@@ -3,18 +3,16 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable, Generic, TypeVar, Union
 from collections.abc import Mapping, Sequence
+from typing import Callable, Generic, TypeVar, Union, cast
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
-
 from scipy import special
 from scipy.special import gammaln, xlogy
 from scipy.stats import norm, poisson
 
 from pyhf.typing import Literal, Shape
-from typing import cast
 
 T = TypeVar("T", bound=NBitBase)
 

@@ -1,9 +1,10 @@
-import pytest
-import pyhf
-from pyhf.parameters import constrained_by_poisson, constrained_by_normal
-from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
-from pyhf import default_backend
 import numpy as np
+import pytest
+
+import pyhf
+from pyhf import default_backend
+from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
+from pyhf.parameters import constrained_by_normal, constrained_by_poisson
 
 
 class MockConfig:

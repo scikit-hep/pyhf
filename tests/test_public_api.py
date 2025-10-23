@@ -1,7 +1,9 @@
-import pytest
-import pyhf
-import numpy as np
 import pathlib
+
+import numpy as np
+import pytest
+
+import pyhf
 
 
 @pytest.fixture(scope='function')

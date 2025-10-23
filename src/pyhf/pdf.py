@@ -4,18 +4,16 @@ import copy
 import logging
 from typing import Union
 
-import pyhf.parameters
 import pyhf
-from pyhf.tensor.manager import get_backend
-from pyhf import exceptions
-from pyhf import schema
-from pyhf import events
+import pyhf.parameters
+from pyhf import events, exceptions, schema
 from pyhf import probability as prob
 from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
-from pyhf.parameters import reduce_paramsets_requirements, ParamViewer
-from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
 from pyhf.mixins import _ChannelSummaryMixin
 from pyhf.modifiers import histfactory_set
+from pyhf.parameters import ParamViewer, reduce_paramsets_requirements
+from pyhf.tensor.common import _TensorViewer, _tensorviewer_from_sizes
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 

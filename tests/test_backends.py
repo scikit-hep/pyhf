@@ -1,6 +1,7 @@
-import pyhf
 import jax
 import pytest
+
+import pyhf
 
 
 def test_default_backend():

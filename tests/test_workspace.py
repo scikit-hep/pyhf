@@ -1,13 +1,15 @@
-import pyhf
-import pyhf.readxml
-import pytest
-import pyhf.exceptions
+import copy
 import json
 import logging
-import pyhf.workspace
-import pyhf.utils
+
+import pytest
+
+import pyhf
+import pyhf.exceptions
+import pyhf.readxml
 import pyhf.schema
-import copy
+import pyhf.utils
+import pyhf.workspace
 
 
 @pytest.fixture(

@@ -1,10 +1,9 @@
 import logging
-
-from pathlib import Path
 import shutil
 import xml.etree.ElementTree as ET
-import numpy as np
+from pathlib import Path
 
+import numpy as np
 import uproot
 
 from pyhf.mixins import _ChannelSummaryMixin

@@ -1,5 +1,6 @@
-from pyhf.parameters import paramsets
 import pytest
+
+from pyhf.parameters import paramsets
 
 
 def test_paramset_unconstrained():

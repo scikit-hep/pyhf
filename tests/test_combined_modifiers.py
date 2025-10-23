@@ -1,18 +1,19 @@
+import numpy as np
+
+import pyhf
 from pyhf.modifiers.histosys import histosys_combined
-from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.lumi import lumi_combined
-from pyhf.modifiers.staterror import staterror_combined
-from pyhf.modifiers.shapesys import shapesys_combined
 from pyhf.modifiers.normfactor import normfactor_combined
+from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.shapefactor import shapefactor_combined
+from pyhf.modifiers.shapesys import shapesys_combined
+from pyhf.modifiers.staterror import staterror_combined
 from pyhf.parameters import (
-    paramset,
-    unconstrained,
     constrained_by_normal,
     constrained_by_poisson,
+    paramset,
+    unconstrained,
 )
-import numpy as np
-import pyhf
 
 
 class MockConfig:

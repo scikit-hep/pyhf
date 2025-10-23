@@ -1,8 +1,8 @@
 import pyhf
-from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf import probability as prob
 from pyhf.parameters import ParamViewer
+from pyhf.tensor.manager import get_backend
 
 __all__ = ["gaussian_constraint_combined", "poisson_constraint_combined"]
 

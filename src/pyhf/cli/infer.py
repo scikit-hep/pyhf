@@ -1,15 +1,14 @@
 """The inference CLI group."""
 
+import json
 import logging
 
 import click
-import json
 
+from pyhf import get_backend, optimize, set_backend
+from pyhf.infer import hypotest, mle
 from pyhf.utils import EqDelimStringParamType
-from pyhf.infer import hypotest
-from pyhf.infer import mle
 from pyhf.workspace import Workspace
-from pyhf import get_backend, set_backend, optimize
 
 log = logging.getLogger(__name__)
 

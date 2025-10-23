@@ -1,8 +1,9 @@
-from pathlib import Path
 import json
+from importlib import resources
+from pathlib import Path
+
 import pyhf.exceptions
 from pyhf.schema import variables
-from importlib import resources
 
 
 def load_schema(schema_id: str):

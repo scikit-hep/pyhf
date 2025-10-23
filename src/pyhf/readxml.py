@@ -1,32 +1,29 @@
 from __future__ import annotations
 
 import logging
+import xml.etree.ElementTree as ET
+from collections.abc import Iterable, MutableMapping, MutableSequence, Sequence
+from pathlib import Path
 from typing import (
     IO,
     Callable,
     Union,
     cast,
 )
-from collections.abc import Iterable, MutableMapping, MutableSequence, Sequence
-
-import xml.etree.ElementTree as ET
-from pathlib import Path
 
 import numpy as np
+import uproot
+from rich.console import Console
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
-    TextColumn,
-    BarColumn,
     TaskProgressColumn,
+    TextColumn,
     TimeElapsedColumn,
 )
-from rich.console import Console
-import uproot
 
-from pyhf import compat
-from pyhf import exceptions
-from pyhf import schema
+from pyhf import compat, exceptions, schema
 from pyhf.typing import (
     Channel,
     HistoSys,

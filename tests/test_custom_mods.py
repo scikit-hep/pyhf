@@ -1,6 +1,7 @@
+import pytest
+
 import pyhf
 import pyhf.exceptions as exceptions
-import pytest
 
 
 class custom_builder:

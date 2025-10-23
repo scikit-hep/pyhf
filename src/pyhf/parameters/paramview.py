@@ -1,10 +1,10 @@
 import pyhf
 from pyhf import events
-from pyhf.tensor.manager import get_backend
 from pyhf.tensor.common import (
-    _tensorviewer_from_slices,
     _tensorviewer_from_sizes,
+    _tensorviewer_from_slices,
 )
+from pyhf.tensor.manager import get_backend
 
 __all__ = ["ParamViewer"]
 
