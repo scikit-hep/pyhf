@@ -147,19 +147,6 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyhf"]
 
-[tool.black]
-line-length = 88
-skip-string-normalization = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | .eggs
-  | build
-  | .nox
-)/
-'''
-
 [tool.pytest.ini_options]
 minversion = "6.0"
 xfail_strict = true
