@@ -84,7 +84,7 @@ class minuit_optimizer(OptimizerMixin):
         do_grad=False,
         bounds=None,
         fixed_vals=None,
-        options={},
+        options=None,
     ):
         """
         Same signature as :func:`scipy.optimize.minimize`.
@@ -103,6 +103,8 @@ class minuit_optimizer(OptimizerMixin):
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
+        if options is None:
+            options = {}
         maxiter = options.pop("maxiter", self.maxiter)
         # do_grad value results in iminuit.Minuit.strategy of either:
         #   0: Fast. Does not check a user-provided gradient.
