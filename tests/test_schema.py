@@ -8,22 +8,22 @@ from pytest_socket import socket_disabled  # noqa: F401
 import pyhf
 
 
-@pytest.mark.parametrize('version', ['1.0.0'])
+@pytest.mark.parametrize("version", ["1.0.0"])
 @pytest.mark.parametrize(
-    'schema', ['defs.json', 'measurement.json', 'model.json', 'workspace.json']
+    "schema", ["defs.json", "measurement.json", "model.json", "workspace.json"]
 )
 def test_get_schema(version, schema):
-    assert pyhf.schema.load_schema(f'{version}/{schema}')
+    assert pyhf.schema.load_schema(f"{version}/{schema}")
 
 
 def test_load_missing_schema():
     with pytest.raises(IOError):
-        pyhf.schema.load_schema('fake_schema.json')
+        pyhf.schema.load_schema("fake_schema.json")
 
 
 def test_schema_attributes():
-    assert hasattr(pyhf.schema, 'version')
-    assert hasattr(pyhf.schema, 'path')
+    assert hasattr(pyhf.schema, "version")
+    assert hasattr(pyhf.schema, "path")
     assert pyhf.schema.version
     assert pyhf.schema.path
 
@@ -43,10 +43,10 @@ def self_restoring_schema_globals():
 
 def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
     monkeypatch.setattr(
-        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+        pyhf.schema.variables, "schemas", pyhf.schema.variables.schemas, raising=True
     )
     old_path, old_cache = self_restoring_schema_globals
-    new_path = datadir / 'customschema'
+    new_path = datadir / "customschema"
 
     with pytest.raises(pyhf.exceptions.SchemaNotFound):
         with open(
@@ -66,10 +66,10 @@ def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
 
 def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_globals):
     monkeypatch.setattr(
-        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+        pyhf.schema.variables, "schemas", pyhf.schema.variables.schemas, raising=True
     )
     old_path, old_cache = self_restoring_schema_globals
-    new_path = datadir / 'customschema'
+    new_path = datadir / "customschema"
 
     assert old_path == pyhf.schema.path
     with pyhf.schema(new_path):
@@ -88,10 +88,10 @@ def test_schema_changeable_context_error(
     datadir, monkeypatch, self_restoring_schema_globals
 ):
     monkeypatch.setattr(
-        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+        pyhf.schema.variables, "schemas", pyhf.schema.variables.schemas, raising=True
     )
     old_path, old_cache = self_restoring_schema_globals
-    new_path = datadir / 'customschema'
+    new_path = datadir / "customschema"
 
     with pytest.raises(ZeroDivisionError):
         with pyhf.schema(new_path):
@@ -104,23 +104,23 @@ def test_schema_changeable_context_error(
 
 
 def test_no_channels():
-    spec = {'channels': []}
+    spec = {"channels": []}
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
 
 
 def test_no_samples():
-    spec = {'channels': [{'name': 'channel', 'samples': []}]}
+    spec = {"channels": [{"name": "channel", "samples": []}]}
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
 
 
 def test_sample_missing_data():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [{'name': 'sample', 'data': [], 'modifiers': []}],
+                "name": "channel",
+                "samples": [{"name": "sample", "data": [], "modifiers": []}],
             }
         ]
     }
@@ -130,7 +130,7 @@ def test_sample_missing_data():
 
 def test_sample_missing_name():
     spec = {
-        'channels': [{'name': 'channel', 'samples': [{'data': [1], 'modifiers': []}]}]
+        "channels": [{"name": "channel", "samples": [{"data": [1], "modifiers": []}]}]
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
@@ -138,10 +138,10 @@ def test_sample_missing_name():
 
 def test_sample_missing_all_modifiers():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [{'name': 'sample', 'data': [10.0], 'modifiers': []}],
+                "name": "channel",
+                "samples": [{"name": "sample", "data": [10.0], "modifiers": []}],
             }
         ]
     }
@@ -151,39 +151,39 @@ def test_sample_missing_all_modifiers():
 
 def test_one_sample_missing_modifiers():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ]
     }
-    pyhf.Model(spec, poi_name='mypoi')
+    pyhf.Model(spec, poi_name="mypoi")
 
 
 def test_add_unknown_modifier():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'ttbar',
-                        'data': [1],
-                        'modifiers': [
+                        "name": "ttbar",
+                        "data": [1],
+                        "modifiers": [
                             {
-                                'name': 'a_name',
-                                'type': 'this_should_not_exist',
-                                'data': [1],
+                                "name": "a_name",
+                                "type": "this_should_not_exist",
+                                "data": [1],
                             }
                         ],
                     }
@@ -197,18 +197,18 @@ def test_add_unknown_modifier():
 
 def test_empty_staterror():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0],
-                        'modifiers': [
+                        "name": "sample",
+                        "data": [10.0],
+                        "modifiers": [
                             {
-                                'name': 'staterror_channel',
-                                'type': 'staterror',
-                                'data': [],
+                                "name": "staterror_channel",
+                                "type": "staterror",
+                                "data": [],
                             }
                         ],
                     }
@@ -222,15 +222,15 @@ def test_empty_staterror():
 
 def test_empty_shapesys():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0],
-                        'modifiers': [
-                            {'name': 'sample_norm', 'type': 'shapesys', 'data': []}
+                        "name": "sample",
+                        "data": [10.0],
+                        "modifiers": [
+                            {"name": "sample_norm", "type": "shapesys", "data": []}
                         ],
                     }
                 ],
@@ -243,18 +243,18 @@ def test_empty_shapesys():
 
 def test_empty_histosys():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0],
-                        'modifiers': [
+                        "name": "sample",
+                        "data": [10.0],
+                        "modifiers": [
                             {
-                                'name': 'modifier',
-                                'type': 'histosys',
-                                'data': {'lo_data': [], 'hi_data': []},
+                                "name": "modifier",
+                                "type": "histosys",
+                                "data": {"lo_data": [], "hi_data": []},
                             }
                         ],
                     }
@@ -268,22 +268,22 @@ def test_empty_histosys():
 
 def test_additional_properties():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'fake_additional_property': 2,
+        "fake_additional_property": 2,
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.Model(spec)
@@ -291,209 +291,209 @@ def test_additional_properties():
 
 def test_parameters_definition():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [{'name': 'mypoi'}],
+        "parameters": [{"name": "mypoi"}],
     }
-    pyhf.Model(spec, poi_name='mypoi')
+    pyhf.Model(spec, poi_name="mypoi")
 
 
 def test_parameters_incorrect_format():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': {'a': 'fake', 'object': 2},
+        "parameters": {"a": "fake", "object": 2},
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.Model(spec, poi_name='mypoi')
+        pyhf.Model(spec, poi_name="mypoi")
 
 
 def test_parameters_duplicated():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [{'name': 'mypoi'}, {'name': 'mypoi'}],
+        "parameters": [{"name": "mypoi"}, {"name": "mypoi"}],
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pyhf.Model(spec, poi_name='mypoi')
+        pyhf.Model(spec, poi_name="mypoi")
 
 
 def test_parameters_fixed():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0],
-                        'modifiers': [
-                            {'name': 'unfixed', 'type': 'normfactor', 'data': None}
+                        "name": "sample",
+                        "data": [10.0],
+                        "modifiers": [
+                            {"name": "unfixed", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
+        "parameters": [{"name": "mypoi", "inits": [1], "fixed": True}],
     }
-    pyhf.Model(spec, poi_name='mypoi')
+    pyhf.Model(spec, poi_name="mypoi")
 
 
 def test_parameters_all_props():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [{'name': 'mypoi', 'inits': [1], 'bounds': [[0, 1]]}],
+        "parameters": [{"name": "mypoi", "inits": [1], "bounds": [[0, 1]]}],
     }
-    pyhf.Model(spec, poi_name='mypoi')
+    pyhf.Model(spec, poi_name="mypoi")
 
 
 @pytest.mark.parametrize(
-    'bad_parameter',
+    "bad_parameter",
     [
-        {'name': 'mypoi', 'inits': ['a']},
-        {'name': 'mypoi', 'bounds': [0, 1]},
-        {'name': 'mypoi', 'auxdata': ['a']},
-        {'name': 'mypoi', 'factors': ['a']},
-        {'name': 'mypoi', 'paramset_type': 'fake_paramset_type'},
-        {'name': 'mypoi', 'n_parameters': 5},
-        {'name': 'mypoi', 'op_code': 'fake_op_code'},
+        {"name": "mypoi", "inits": ["a"]},
+        {"name": "mypoi", "bounds": [0, 1]},
+        {"name": "mypoi", "auxdata": ["a"]},
+        {"name": "mypoi", "factors": ["a"]},
+        {"name": "mypoi", "paramset_type": "fake_paramset_type"},
+        {"name": "mypoi", "n_parameters": 5},
+        {"name": "mypoi", "op_code": "fake_op_code"},
     ],
     ids=[
-        'inits',
-        'bounds',
-        'auxdata',
-        'factors',
-        'paramset_type',
-        'n_parameters',
-        'op_code',
+        "inits",
+        "bounds",
+        "auxdata",
+        "factors",
+        "paramset_type",
+        "n_parameters",
+        "op_code",
     ],
 )
 def test_parameters_bad_parameter(bad_parameter):
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [bad_parameter],
+        "parameters": [bad_parameter],
     }
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.Model(spec, poi_name='mypoi')
+        pyhf.Model(spec, poi_name="mypoi")
 
 
 @pytest.mark.parametrize(
-    'bad_parameter', [{'name': 'mypoi', 'factors': [0.0]}], ids=['factors']
+    "bad_parameter", [{"name": "mypoi", "factors": [0.0]}], ids=["factors"]
 )
 def test_parameters_normfactor_bad_attribute(bad_parameter):
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'sample', 'data': [10.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "sample", "data": [10.0], "modifiers": []},
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [bad_parameter],
+        "parameters": [bad_parameter],
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        pyhf.Model(spec, poi_name='mypoi')
+        pyhf.Model(spec, poi_name="mypoi")
 
 
 def test_histosys_additional_properties():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0],
-                        'modifiers': [
+                        "name": "sample",
+                        "data": [10.0],
+                        "modifiers": [
                             {
-                                'name': 'histosys',
-                                'type': 'histosys',
-                                'data': {
-                                    'hi_data': [1.0],
-                                    'lo_data': [0.5],
-                                    'foo': 2.0,
+                                "name": "histosys",
+                                "type": "histosys",
+                                "data": {
+                                    "hi_data": [1.0],
+                                    "lo_data": [0.5],
+                                    "foo": 2.0,
                                 },
                             }
                         ],
@@ -508,18 +508,18 @@ def test_histosys_additional_properties():
 
 def test_normsys_additional_properties():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0],
-                        'modifiers': [
+                        "name": "sample",
+                        "data": [10.0],
+                        "modifiers": [
                             {
-                                'name': 'normsys',
-                                'type': 'normsys',
-                                'data': {'hi': 1.0, 'lo': 0.5, 'foo': 2.0},
+                                "name": "normsys",
+                                "type": "normsys",
+                                "data": {"hi": 1.0, "lo": 0.5, "foo": 2.0},
                             }
                         ],
                     }
@@ -532,7 +532,7 @@ def test_normsys_additional_properties():
 
 
 @pytest.mark.parametrize(
-    'patch',
+    "patch",
     [
         {"op": "add", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
         {"op": "replace", "path": "/foo/0/bar", "value": {"foo": [1.0]}},
@@ -541,14 +541,14 @@ def test_normsys_additional_properties():
         {"op": "move", "path": "/foo/0/bar", "from": "/foo/0/baz"},
         {"op": "copy", "path": "/foo/0/bar", "from": "/foo/0/baz"},
     ],
-    ids=['add', 'replace', 'test', 'remove', 'move', 'copy'],
+    ids=["add", "replace", "test", "remove", "move", "copy"],
 )
 def test_jsonpatch(patch):
-    pyhf.schema.validate([patch], 'jsonpatch.json')
+    pyhf.schema.validate([patch], "jsonpatch.json")
 
 
 @pytest.mark.parametrize(
-    'patch',
+    "patch",
     [
         {"path": "/foo/0/bar"},
         {"op": "add", "path": "/foo/0/bar", "from": {"foo": [1.0]}},
@@ -559,47 +559,47 @@ def test_jsonpatch(patch):
         {"op": "move", "from": "/foo/0/baz"},
     ],
     ids=[
-        'noop',
-        'add_from_novalue',
-        'add_novalue',
-        'add_nopath',
-        'remove_nopath',
-        'move_nofrom',
-        'move_nopath',
+        "noop",
+        "add_from_novalue",
+        "add_novalue",
+        "add_nopath",
+        "remove_nopath",
+        "move_nofrom",
+        "move_nopath",
     ],
 )
 def test_jsonpatch_fail(patch):
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.schema.validate([patch], 'jsonpatch.json')
+        pyhf.schema.validate([patch], "jsonpatch.json")
 
 
-@pytest.mark.parametrize('patchset_file', ['patchset_good.json'])
+@pytest.mark.parametrize("patchset_file", ["patchset_good.json"])
 def test_patchset(datadir, patchset_file):
     with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
         patchset = json.load(patch_file)
-    pyhf.schema.validate(patchset, 'patchset.json')
+    pyhf.schema.validate(patchset, "patchset.json")
 
 
 @pytest.mark.parametrize(
-    'patchset_file',
+    "patchset_file",
     [
-        'patchset_bad_label_pattern.json',
-        'patchset_bad_no_patch_name.json',
-        'patchset_bad_empty_patches.json',
-        'patchset_bad_no_patch_values.json',
-        'patchset_bad_no_digests.json',
-        'patchset_bad_no_description.json',
-        'patchset_bad_no_labels.json',
-        'patchset_bad_invalid_digests.json',
-        'patchset_bad_hepdata_reference.json',
-        'patchset_bad_no_version.json',
+        "patchset_bad_label_pattern.json",
+        "patchset_bad_no_patch_name.json",
+        "patchset_bad_empty_patches.json",
+        "patchset_bad_no_patch_values.json",
+        "patchset_bad_no_digests.json",
+        "patchset_bad_no_description.json",
+        "patchset_bad_no_labels.json",
+        "patchset_bad_invalid_digests.json",
+        "patchset_bad_hepdata_reference.json",
+        "patchset_bad_no_version.json",
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
     with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
         patchset = json.load(patch_file)
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
-        pyhf.schema.validate(patchset, 'patchset.json')
+        pyhf.schema.validate(patchset, "patchset.json")
 
 
 def test_defs_always_cached(
@@ -611,31 +611,31 @@ def test_defs_always_cached(
     Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
     (e.g. a cluster node without network access).
     """
-    modules_to_clear = [name for name in sys.modules if name.split('.')[0] == 'pyhf']
+    modules_to_clear = [name for name in sys.modules if name.split(".")[0] == "pyhf"]
     for module_name in modules_to_clear:
         del sys.modules[module_name]
-    pyhf = importlib.import_module('pyhf')
+    pyhf = importlib.import_module("pyhf")
 
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': [10],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": [10],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': [20],
-                        'modifiers': [
+                        "name": "background",
+                        "data": [20],
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt',
-                                'type': 'shapesys',
-                                'data': [30],
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": [30],
                             }
                         ],
                     },
@@ -643,7 +643,7 @@ def test_defs_always_cached(
             }
         ]
     }
-    pyhf.schema.validate(spec, 'model.json')  # may try to access network and fail
+    pyhf.schema.validate(spec, "model.json")  # may try to access network and fail
 
 
 def test_schema_tensor_type_allowed(backend):

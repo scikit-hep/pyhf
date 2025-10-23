@@ -63,7 +63,7 @@ class _BasicNormal(Generic[T]):
 class numpy_backend(Generic[T]):
     """NumPy backend for pyhf"""
 
-    __slots__ = ['default_do_grad', 'dtypemap', 'name', 'precision']
+    __slots__ = ["default_do_grad", "dtypemap", "name", "precision"]
 
     #: The array type for numpy
     array_type = np.ndarray
@@ -78,9 +78,9 @@ class numpy_backend(Generic[T]):
             FloatIntOrBool,
             DTypeLike,  # Type[np.floating[T]] | Type[np.integer[T]] | Type[np.bool_],
         ] = {
-            'float': np.float64 if self.precision == '64b' else np.float32,
-            'int': np.int64 if self.precision == '64b' else np.int32,
-            'bool': np.bool_,
+            "float": np.float64 if self.precision == "64b" else np.float32,
+            "int": np.int64 if self.precision == "64b" else np.int32,
+            "bool": np.bool_,
         }
         self.default_do_grad: bool = False
 
@@ -229,7 +229,7 @@ class numpy_backend(Generic[T]):
         return np.isfinite(tensor)
 
     def astensor(
-        self, tensor_in: ArrayLike, dtype: FloatIntOrBool = 'float'
+        self, tensor_in: ArrayLike, dtype: FloatIntOrBool = "float"
     ) -> ArrayLike:
         """
         Convert to a NumPy array.
@@ -255,7 +255,7 @@ class numpy_backend(Generic[T]):
             dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
             )
             raise
 
@@ -355,7 +355,10 @@ class numpy_backend(Generic[T]):
         .. versionadded:: 0.7.0
         """
         # see https://github.com/numpy/numpy/issues/22125
-        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, interpolation=interpolation))  # type: ignore[call-overload]
+        return cast(
+            ArrayLike,
+            np.percentile(tensor_in, q, axis=axis, interpolation=interpolation),
+        )  # type: ignore[call-overload]
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)

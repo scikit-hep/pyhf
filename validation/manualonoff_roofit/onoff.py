@@ -4,16 +4,16 @@ import ROOT
 
 with open("data/source.json", encoding="utf-8") as source_file:
     d = json.load(source_file)
-nobs = d['bindata']['data'][0]
-b = d['bindata']['bkg'][0]
-deltab = d['bindata']['bkgerr'][0]
-s = d['bindata']['sig'][0]
+nobs = d["bindata"]["data"][0]
+b = d["bindata"]["bkg"][0]
+deltab = d["bindata"]["bkgerr"][0]
+s = d["bindata"]["sig"][0]
 
 # derived data
 tau = b / deltab / deltab
 mobs = round(tau * b)
 
-print(f'tau: {tau}, m: {mobs}')
+print(f"tau: {tau}, m: {mobs}")
 
 w = ROOT.RooWorkspace("w", True)
 
@@ -25,38 +25,38 @@ w.factory("Poisson:on_model(nobs_sr[0,1000],nexp_sr)")
 
 # -----------------
 
-w.var('s').setVal(s)
-w.var('b').setVal(b)
+w.var("s").setVal(s)
+w.var("b").setVal(b)
 
-w.var('s').setConstant(True)
-w.var('nobs_sr').setVal(nobs)
+w.var("s").setConstant(True)
+w.var("nobs_sr").setVal(nobs)
 
 
 w.factory("prod:nexp_cr(tau[1],b)")
 w.factory("Poisson:off_model(nobs_cr[0,1000],nexp_cr)")
-w.var('nobs_cr').setVal(mobs)
-w.var('nobs_cr').setConstant(True)
-w.var('tau').setVal(tau)
-w.var('tau').setConstant(True)
+w.var("nobs_cr").setVal(mobs)
+w.var("nobs_cr").setConstant(True)
+w.var("tau").setVal(tau)
+w.var("tau").setConstant(True)
 
 w.factory("PROD:onoff(on_model,off_model)")
 
 
 data = ROOT.RooDataSet(
-    'data', 'data', ROOT.RooArgSet(w.var('nobs_sr'), w.var('nobs_cr'))
+    "data", "data", ROOT.RooArgSet(w.var("nobs_sr"), w.var("nobs_cr"))
 )
-data.add(ROOT.RooArgSet(w.var('nobs_sr'), w.var('nobs_cr')))
+data.add(ROOT.RooArgSet(w.var("nobs_sr"), w.var("nobs_cr")))
 
-getattr(w, 'import')(data)
+getattr(w, "import")(data)
 
 modelConfig = ROOT.RooStats.ModelConfig(w)
-modelConfig.SetPdf(w.pdf('onoff'))
-modelConfig.SetParametersOfInterest(ROOT.RooArgSet(w.var('mu')))
-modelConfig.SetNuisanceParameters(ROOT.RooArgSet(w.var('b')))
-modelConfig.SetObservables(ROOT.RooArgSet(w.var('nobs_sr'), w.var('nobs_cr')))
+modelConfig.SetPdf(w.pdf("onoff"))
+modelConfig.SetParametersOfInterest(ROOT.RooArgSet(w.var("mu")))
+modelConfig.SetNuisanceParameters(ROOT.RooArgSet(w.var("b")))
+modelConfig.SetObservables(ROOT.RooArgSet(w.var("nobs_sr"), w.var("nobs_cr")))
 modelConfig.SetGlobalObservables(ROOT.RooArgSet())
 modelConfig.SetName("ModelConfig")
-getattr(w, 'import')(modelConfig)
+getattr(w, "import")(modelConfig)
 
 w.Print()
 
@@ -64,7 +64,7 @@ w.Print()
 # model building complete
 
 
-sbModel = w.obj('ModelConfig')
+sbModel = w.obj("ModelConfig")
 poi = sbModel.GetParametersOfInterest().first()
 
 sbModel.SetSnapshot(ROOT.RooArgSet(poi))
@@ -93,8 +93,8 @@ c = ROOT.TCanvas()
 c.SetLogy(False)
 plot.Draw("OBS EXP CLb 2CL")
 c.Draw()
-c.SaveAs('scan.pdf')
+c.SaveAs("scan.pdf")
 
-print(f'observed: {result.UpperLimit()}')
+print(f"observed: {result.UpperLimit()}")
 for i in [-2, -1, 0, 1, 2]:
-    print(f'expected {i}: {result.GetExpectedUpperLimit(i)}')
+    print(f"expected {i}: {result.GetExpectedUpperLimit(i)}")

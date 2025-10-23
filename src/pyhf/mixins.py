@@ -20,7 +20,7 @@ class _ChannelSummaryMixin:
     """
 
     def __init__(self, *args: Any, **kwargs: Sequence[Channel]):
-        channels = kwargs.pop('channels')
+        channels = kwargs.pop("channels")
         super().__init__(*args, **kwargs)
         self._channels: list[str] = []
         self._samples: list[str] = []
@@ -30,15 +30,15 @@ class _ChannelSummaryMixin:
         # need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         for channel in channels:
-            self._channels.append(channel['name'])
-            self._channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
-            for sample in channel['samples']:
-                self._samples.append(sample['name'])
-                for modifier_def in sample['modifiers']:
+            self._channels.append(channel["name"])
+            self._channel_nbins[channel["name"]] = len(channel["samples"][0]["data"])
+            for sample in channel["samples"]:
+                self._samples.append(sample["name"])
+                for modifier_def in sample["modifiers"]:
                     self._modifiers.append(
                         (
-                            modifier_def['name'],  # mod name
-                            modifier_def['type'],  # mod type
+                            modifier_def["name"],  # mod name
+                            modifier_def["type"],  # mod type
                         )
                     )
 

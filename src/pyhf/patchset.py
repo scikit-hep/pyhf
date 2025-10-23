@@ -41,8 +41,8 @@ class Patch(jsonpatch.JsonPatch):
             patch (:class:`~pyhf.patchset.Patch`): The Patch instance.
 
         """
-        super().__init__(spec['patch'])
-        self._metadata = spec['metadata']
+        super().__init__(spec["patch"])
+        self._metadata = spec["metadata"]
 
     @property
     def metadata(self):
@@ -52,12 +52,12 @@ class Patch(jsonpatch.JsonPatch):
     @property
     def name(self):
         """The name of the patch"""
-        return self.metadata['name']
+        return self.metadata["name"]
 
     @property
     def values(self):
         """The values of the associated labels for the patch"""
-        return tuple(self.metadata['values'])
+        return tuple(self.metadata["values"])
 
     def __repr__(self):
         """Representation of the object"""
@@ -161,38 +161,38 @@ class PatchSet:
             patchset (:class:`~pyhf.patchset.PatchSet`): The PatchSet instance.
 
         """
-        self.schema = config_kwargs.pop('schema', 'patchset.json')
-        self._version = config_kwargs.pop('version', spec.get('version', None))
+        self.schema = config_kwargs.pop("schema", "patchset.json")
+        self._version = config_kwargs.pop("version", spec.get("version", None))
 
         # run jsonschema validation of input specification against the (provided) schema
         log.info(f"Validating spec against schema: {self.schema}")
         schema.validate(spec, self.schema, version=self._version)
 
         # set properties based on metadata
-        self._metadata = spec['metadata']
+        self._metadata = spec["metadata"]
 
         # list of all patch objects
         self._patches = []
         # look-up table for retrieving patch by name or values
-        self._patches_by_key = {'name': {}, 'values': {}}
+        self._patches_by_key = {"name": {}, "values": {}}
 
         # inflate all patches
-        for patchspec in spec['patches']:
+        for patchspec in spec["patches"]:
             patch = Patch(patchspec)
 
             if patch.name in self._patches_by_key:
                 raise exceptions.InvalidPatchSet(
-                    f'Multiple patches were defined by name for {patch}.'
+                    f"Multiple patches were defined by name for {patch}."
                 )
 
             if patch.values in self._patches_by_key:
                 raise exceptions.InvalidPatchSet(
-                    f'Multiple patches were defined by values for {patch}.'
+                    f"Multiple patches were defined by values for {patch}."
                 )
 
             if len(patch.values) != len(self.labels):
                 raise exceptions.InvalidPatchSet(
-                    f'Incompatible number of values ({len(patch.values)} for {patch} in patchset. Expected {len(self.labels)}.'
+                    f"Incompatible number of values ({len(patch.values)} for {patch} in patchset. Expected {len(self.labels)}."
                 )
 
             # all good, register patch
@@ -214,22 +214,22 @@ class PatchSet:
     @property
     def references(self):
         """The references in the PatchSet metadata"""
-        return self.metadata['references']
+        return self.metadata["references"]
 
     @property
     def description(self):
         """The description in the PatchSet metadata"""
-        return self.metadata['description']
+        return self.metadata["description"]
 
     @property
     def digests(self):
         """The digests in the PatchSet metadata"""
-        return self.metadata['digests']
+        return self.metadata["digests"]
 
     @property
     def labels(self):
         """The labels in the PatchSet metadata"""
-        return self.metadata['labels']
+        return self.metadata["labels"]
 
     @property
     def patches(self):

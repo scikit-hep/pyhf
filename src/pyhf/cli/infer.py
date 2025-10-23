@@ -13,7 +13,7 @@ from pyhf.workspace import Workspace
 log = logging.getLogger(__name__)
 
 
-@click.group(name='infer')
+@click.group(name="infer")
 def cli():
     """Infererence CLI group."""
 
@@ -130,24 +130,24 @@ def fit(
 
 
 @cli.command()
-@click.argument('workspace', default='-')
+@click.argument("workspace", default="-")
 @click.option(
-    '--output-file',
-    help='The location of the output json file. If not specified, prints to screen.',
+    "--output-file",
+    help="The location of the output json file. If not specified, prints to screen.",
     default=None,
 )
-@click.option('--measurement', default=None)
-@click.option('-p', '--patch', multiple=True)
-@click.option('--test-poi', default=1.0)
-@click.option('--test-stat', type=click.Choice(['q', 'qtilde']), default='qtilde')
+@click.option("--measurement", default=None)
+@click.option("-p", "--patch", multiple=True)
+@click.option("--test-poi", default=1.0)
+@click.option("--test-stat", type=click.Choice(["q", "qtilde"]), default="qtilde")
 @click.option(
-    '--calctype', type=click.Choice(['asymptotics', 'toybased']), default='asymptotics'
+    "--calctype", type=click.Choice(["asymptotics", "toybased"]), default="asymptotics"
 )
 @click.option(
-    '--backend',
-    type=click.Choice(['numpy', 'jax', 'np']),
-    help='The tensor backend used for the calculation.',
-    default='numpy',
+    "--backend",
+    type=click.Choice(["numpy", "jax", "np"]),
+    help="The tensor backend used for the calculation.",
+    default="numpy",
 )
 @click.option(
     "--optimizer",
@@ -155,7 +155,7 @@ def fit(
     help="The optimizer used for the calculation.",
     default="scipy",
 )
-@click.option('--optconf', type=EqDelimStringParamType(), multiple=True)
+@click.option("--optconf", type=EqDelimStringParamType(), multiple=True)
 def cls(
     workspace,
     output_file,
@@ -202,8 +202,8 @@ def cls(
         measurement_name=measurement,
         patches=patches,
         modifier_settings={
-            'normsys': {'interpcode': 'code4'},
-            'histosys': {'interpcode': 'code4p'},
+            "normsys": {"interpcode": "code4"},
+            "histosys": {"interpcode": "code4p"},
         },
     )
 
@@ -219,7 +219,7 @@ def cls(
     # set the new optimizer
     if optimizer:
         new_optimizer = getattr(optimize, optimizer) or getattr(
-            optimize, f'{optimizer}_optimizer'
+            optimize, f"{optimizer}_optimizer"
         )
         set_backend(tensorlib, new_optimizer(**optconf))
 
@@ -232,8 +232,8 @@ def cls(
         return_expected_set=True,
     )
     result = {
-        'CLs_obs': tensorlib.tolist(result[0]),
-        'CLs_exp': [tensorlib.tolist(tensor) for tensor in result[-1]],
+        "CLs_obs": tensorlib.tolist(result[0]),
+        "CLs_exp": [tensorlib.tolist(tensor) for tensor in result[-1]],
     }
 
     if output_file is None:

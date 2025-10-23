@@ -44,13 +44,13 @@ def paramset_to_rootnames(paramset):
         ['gamma_uncorr_bkguncrt_0', 'gamma_uncorr_bkguncrt_1']
     """
 
-    if paramset.name == 'lumi':
-        return 'Lumi'
+    if paramset.name == "lumi":
+        return "Lumi"
     if paramset.is_scalar:
         if paramset.constrained:
-            return f'alpha_{paramset.name}'
-        return f'{paramset.name}'
-    return [f'gamma_{paramset.name}_{index}' for index in range(paramset.n_parameters)]
+            return f"alpha_{paramset.name}"
+        return f"{paramset.name}"
+    return [f"gamma_{paramset.name}_{index}" for index in range(paramset.n_parameters)]
 
 
 def interpret_rootname(rootname):
@@ -88,33 +88,33 @@ def interpret_rootname(rootname):
     """
 
     interpretation = {
-        'constrained': 'n/a',
-        'is_scalar': 'n/a',
-        'name': 'n/a',
-        'element': 'n/a',
+        "constrained": "n/a",
+        "is_scalar": "n/a",
+        "name": "n/a",
+        "element": "n/a",
     }
-    if rootname.startswith('gamma_'):
-        interpretation['is_scalar'] = False
-        match = re.search(r'^gamma_(.+)_(\d+)$', rootname)
+    if rootname.startswith("gamma_"):
+        interpretation["is_scalar"] = False
+        match = re.search(r"^gamma_(.+)_(\d+)$", rootname)
         if not match:
-            raise ValueError(f'confusing rootname {rootname}. Please report as a bug.')
-        interpretation['name'] = match.group(1)
-        interpretation['element'] = int(match.group(2))
+            raise ValueError(f"confusing rootname {rootname}. Please report as a bug.")
+        interpretation["name"] = match.group(1)
+        interpretation["element"] = int(match.group(2))
     else:
-        interpretation['is_scalar'] = True
+        interpretation["is_scalar"] = True
 
-    if rootname.startswith('alpha_'):
-        interpretation['constrained'] = True
-        match = re.search(r'^alpha_(.+)$', rootname)
+    if rootname.startswith("alpha_"):
+        interpretation["constrained"] = True
+        match = re.search(r"^alpha_(.+)$", rootname)
         if not match:
-            raise ValueError(f'confusing rootname {rootname}. Please report as a bug.')
-        interpretation['name'] = match.group(1)
+            raise ValueError(f"confusing rootname {rootname}. Please report as a bug.")
+        interpretation["name"] = match.group(1)
 
-    if not (rootname.startswith('alpha_') or rootname.startswith('gamma_')):
-        interpretation['constrained'] = False
-        interpretation['name'] = rootname
+    if not (rootname.startswith("alpha_") or rootname.startswith("gamma_")):
+        interpretation["constrained"] = False
+        interpretation["name"] = rootname
 
-    if rootname == 'Lumi':
-        interpretation['name'] = 'lumi'
+    if rootname == "Lumi":
+        interpretation["name"] = "lumi"
 
     return interpretation

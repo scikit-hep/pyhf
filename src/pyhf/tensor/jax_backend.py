@@ -1,6 +1,6 @@
 from jax import config
 
-config.update('jax_enable_x64', True)
+config.update("jax_enable_x64", True)
 
 import logging
 
@@ -61,7 +61,7 @@ class _BasicNormal:
 class jax_backend:
     """JAX backend for pyhf"""
 
-    __slots__ = ['default_do_grad', 'dtypemap', 'name', 'precision']
+    __slots__ = ["default_do_grad", "dtypemap", "name", "precision"]
 
     #: The array type for jax
     array_type = Array
@@ -70,12 +70,12 @@ class jax_backend:
     array_subtype = Array
 
     def __init__(self, **kwargs):
-        self.name = 'jax'
-        self.precision = kwargs.get('precision', '64b')
+        self.name = "jax"
+        self.precision = kwargs.get("precision", "64b")
         self.dtypemap = {
-            'float': jnp.float64 if self.precision == '64b' else jnp.float32,
-            'int': jnp.int64 if self.precision == '64b' else jnp.int32,
-            'bool': jnp.bool_,
+            "float": jnp.float64 if self.precision == "64b" else jnp.float32,
+            "int": jnp.int64 if self.precision == "64b" else jnp.int32,
+            "bool": jnp.bool_,
         }
         self.default_do_grad = True
 
@@ -241,7 +241,7 @@ class jax_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
             )
             raise
 

@@ -48,7 +48,7 @@ class code2:
         self._broadcast_helper = default_backend.ones(default_backend.shape(self._a))
         self._precompute()
         if subscribe:
-            events.subscribe('tensorlib_changed')(self._precompute)
+            events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -89,24 +89,24 @@ class code2:
         # h: histogram affected by modifier
         # b: bin of histogram
         value_gt1 = tensorlib.einsum(
-            'sa,shb->shab', alphasets - self.mask_on, self.b_plus_2a
+            "sa,shb->shab", alphasets - self.mask_on, self.b_plus_2a
         )
         value_btwn = tensorlib.einsum(
-            'sa,sa,shb->shab', alphasets, alphasets, self.a
-        ) + tensorlib.einsum('sa,shb->shab', alphasets, self.b)
+            "sa,sa,shb->shab", alphasets, alphasets, self.a
+        ) + tensorlib.einsum("sa,shb->shab", alphasets, self.b)
         value_lt1 = tensorlib.einsum(
-            'sa,shb->shab', alphasets + self.mask_off, self.b_minus_2a
+            "sa,shb->shab", alphasets + self.mask_off, self.b_minus_2a
         )
 
         masks_gt1 = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_gt1, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_gt1, self.broadcast_helper
             ),
             dtype="bool",
         )
         masks_not_lt1 = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_not_lt1, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_not_lt1, self.broadcast_helper
             ),
             dtype="bool",
         )

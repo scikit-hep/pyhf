@@ -25,8 +25,8 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
         measurement_name=None,
         patches=[signal_patch_json],
         modifier_settings={
-            'normsys': {'interpcode': 'code4'},
-            'histosys': {'interpcode': 'code4p'},
+            "normsys": {"interpcode": "code4"},
+            "histosys": {"interpcode": "code4p"},
         },
     )
     result = pyhf.infer.hypotest(

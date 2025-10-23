@@ -6,7 +6,7 @@ import pytest
 import pyhf
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def model_setup(backend):
     np.random.seed(0)
     n_bins = 100
@@ -101,7 +101,7 @@ def test_custom_backend_name_supported():
     class custom_backend:
         def __init__(self, **kwargs):
             self.name = "jax"
-            self.precision = '64b'
+            self.precision = "64b"
 
         def _setup(self):
             pass
@@ -123,7 +123,7 @@ def test_custom_backend_name_notsupported():
     class custom_backend:
         def __init__(self, **kwargs):
             self.name = "notsupported"
-            self.precision = '64b'
+            self.precision = "64b"
 
         def _setup(self):
             pass
@@ -192,14 +192,14 @@ def test_pdf_batched(backend):
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     model = pyhf.simplemodels.uncorrelated_background(
-        source['bindata']['sig'],
-        source['bindata']['bkg'],
-        source['bindata']['bkgerr'],
+        source["bindata"]["sig"],
+        source["bindata"]["bkg"],
+        source["bindata"]["bkgerr"],
         batch_size=2,
     )
 
     pars = [model.config.suggested_init()] * 2
-    data = source['bindata']['data'] + model.config.auxdata
+    data = source["bindata"]["data"] + model.config.auxdata
 
     model.pdf(pars, data)
     model.expected_data(pars)
@@ -207,20 +207,20 @@ def test_pdf_batched(backend):
 
 def test_set_schema_path(monkeypatch):
     monkeypatch.setattr(
-        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+        pyhf.schema.variables, "schemas", pyhf.schema.variables.schemas, raising=True
     )
 
-    new_path = pathlib.Path('a/new/path')
+    new_path = pathlib.Path("a/new/path")
     pyhf.schema(new_path)
     assert pyhf.schema.path == new_path
 
 
 def test_set_schema_path_context(monkeypatch):
     monkeypatch.setattr(
-        pyhf.schema.variables, 'schemas', pyhf.schema.variables.schemas, raising=True
+        pyhf.schema.variables, "schemas", pyhf.schema.variables.schemas, raising=True
     )
 
-    new_path = pathlib.Path('a/new/path')
+    new_path = pathlib.Path("a/new/path")
     with pyhf.schema(new_path):
         assert pyhf.schema.path == new_path
 
@@ -228,10 +228,10 @@ def test_set_schema_path_context(monkeypatch):
 def test_pdf_set_poi(backend):
     model = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [2.5])
     assert model.config.poi_index == 0
-    assert model.config.poi_name == 'mu'
-    model.config.set_poi('uncorr_bkguncrt')
+    assert model.config.poi_name == "mu"
+    model.config.set_poi("uncorr_bkguncrt")
     assert model.config.poi_index == 1
-    assert model.config.poi_name == 'uncorr_bkguncrt'
+    assert model.config.poi_name == "uncorr_bkguncrt"
     model.config.set_poi(None)
     assert model.config.poi_index is None
     assert model.config.poi_name is None

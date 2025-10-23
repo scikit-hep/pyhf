@@ -22,8 +22,8 @@ def generate_source_static(n_bins):
     sig = [30.0] * n_bins
 
     source = {
-        'binning': binning,
-        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
+        "binning": binning,
+        "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
     return source
 
@@ -47,8 +47,8 @@ def generate_source_poisson(n_bins):
     sig = np.random.poisson(30.0, n_bins).tolist()
 
     source = {
-        'binning': binning,
-        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
+        "binning": binning,
+        "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
     return source
 
@@ -67,10 +67,10 @@ def hypotest(pdf, data):
 
 
 bins = [1, 10, 50, 100, 200]
-bin_ids = [f'{n_bins}_bins' for n_bins in bins]
+bin_ids = [f"{n_bins}_bins" for n_bins in bins]
 
 
-@pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
+@pytest.mark.parametrize("n_bins", bins, ids=bin_ids)
 def test_hypotest(benchmark, backend, n_bins):
     """
     Benchmark the performance of pyhf.utils.hypotest()
@@ -86,7 +86,7 @@ def test_hypotest(benchmark, backend, n_bins):
     """
     source = generate_source_static(n_bins)
     pdf = uncorrelated_background(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+        source["bindata"]["sig"], source["bindata"]["bkg"], source["bindata"]["bkgerr"]
     )
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
     assert benchmark(hypotest, pdf, data)

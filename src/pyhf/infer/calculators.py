@@ -213,11 +213,11 @@ class HypoTestFitResults:
     """
 
     # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
-    asimov_pars: 'Tensor'  # noqa: F821
-    free_fit_to_data: 'Tensor'  # noqa: F821
-    free_fit_to_asimov: 'Tensor'  # noqa: F821
-    fixed_poi_fit_to_data: 'Tensor'  # noqa: F821
-    fixed_poi_fit_to_asimov: 'Tensor'  # noqa: F821
+    asimov_pars: "Tensor"  # noqa: F821
+    free_fit_to_data: "Tensor"  # noqa: F821
+    free_fit_to_asimov: "Tensor"  # noqa: F821
+    fixed_poi_fit_to_data: "Tensor"  # noqa: F821
+    fixed_poi_fit_to_asimov: "Tensor"  # noqa: F821
 
 
 class AsymptoticCalculator:
@@ -377,7 +377,7 @@ class AsymptoticCalculator:
         )
         sqrtqmu_v = tensorlib.sqrt(qmu_v)
 
-        asimov_mu = 1.0 if self.test_stat == 'q0' else 0.0
+        asimov_mu = 1.0 if self.test_stat == "q0" else 0.0
 
         asimov_data, asimov_mubhathat = generate_asimov_data(
             asimov_mu,
@@ -770,7 +770,7 @@ class ToyCalculator:
         signal_sample = signal_pdf.sample(sample_shape)
 
         bkg_pars = fixed_poi_fit(
-            1.0 if self.test_stat == 'q0' else 0.0,
+            1.0 if self.test_stat == "q0" else 0.0,
             self.data,
             self.pdf,
             self.init_pars,
@@ -788,11 +788,11 @@ class ToyCalculator:
             disable=not (
                 track_progress if track_progress is not None else self.track_progress
             ),
-            unit='toy',
+            unit="toy",
         )
 
         signal_teststat = []
-        for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
+        for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc="Signal-like"):
             signal_teststat.append(
                 teststat_func(
                     poi_test,
@@ -805,7 +805,7 @@ class ToyCalculator:
             )
 
         bkg_teststat = []
-        for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
+        for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc="Background-like"):
             bkg_teststat.append(
                 teststat_func(
                     poi_test,

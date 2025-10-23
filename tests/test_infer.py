@@ -225,7 +225,7 @@ def test_hypotest_poi_outofbounds(tmp_path, hypotest_args):
         pyhf.infer.hypotest(10.1, data, pdf)
 
 
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+@pytest.mark.parametrize("test_stat", ["q0", "q", "qtilde"])
 def test_hypotest_return_tail_probs(tmp_path, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
@@ -233,16 +233,16 @@ def test_hypotest_return_tail_probs(tmp_path, hypotest_args, test_stat):
     """
     tb = pyhf.tensorlib
 
-    kwargs = {'return_tail_probs': True, 'test_stat': test_stat}
+    kwargs = {"return_tail_probs": True, "test_stat": test_stat}
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CL_sb, CL_b]
     assert len(list(result)) == 2
     assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 1 if test_stat == 'q0' else 2
+    assert len(result[1]) == 1 if test_stat == "q0" else 2
     assert check_uniform_type(result[1])
 
 
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+@pytest.mark.parametrize("test_stat", ["q0", "q", "qtilde"])
 def test_hypotest_return_expected(tmp_path, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
@@ -251,20 +251,20 @@ def test_hypotest_return_expected(tmp_path, hypotest_args, test_stat):
     tb = pyhf.tensorlib
 
     kwargs = {
-        'return_tail_probs': True,
-        'return_expected': True,
-        'test_stat': test_stat,
+        "return_tail_probs": True,
+        "return_expected": True,
+        "test_stat": test_stat,
     }
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp
     assert len(list(result)) == 3
     assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 1 if test_stat == 'q0' else 2
+    assert len(result[1]) == 1 if test_stat == "q0" else 2
     assert check_uniform_type(result[1])
     assert isinstance(result[2], type(tb.astensor(result[2])))
 
 
-@pytest.mark.parametrize('test_stat', ['q0', 'q', 'qtilde'])
+@pytest.mark.parametrize("test_stat", ["q0", "q", "qtilde"])
 def test_hypotest_return_expected_set(tmp_path, hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
@@ -273,16 +273,16 @@ def test_hypotest_return_expected_set(tmp_path, hypotest_args, test_stat):
     tb = pyhf.tensorlib
 
     kwargs = {
-        'return_tail_probs': True,
-        'return_expected': True,
-        'return_expected_set': True,
-        'test_stat': test_stat,
+        "return_tail_probs": True,
+        "return_expected": True,
+        "return_expected_set": True,
+        "test_stat": test_stat,
     }
     result = pyhf.infer.hypotest(*hypotest_args, **kwargs)
     # CLs_obs, [CLsb, CLb], CLs_exp, CLs_exp @[-2, -1, 0, +1, +2]sigma
     assert len(list(result)) == 4
     assert isinstance(result[0], type(tb.astensor(result[0])))
-    assert len(result[1]) == 1 if test_stat == 'q0' else 2
+    assert len(result[1]) == 1 if test_stat == "q0" else 2
     assert check_uniform_type(result[1])
     assert isinstance(result[2], type(tb.astensor(result[2])))
     assert len(result[3]) == 5
@@ -290,15 +290,15 @@ def test_hypotest_return_expected_set(tmp_path, hypotest_args, test_stat):
 
 
 @pytest.mark.parametrize(
-    'calctype,kwargs,expected_type',
+    "calctype,kwargs,expected_type",
     [
-        ('asymptotics', {}, pyhf.infer.calculators.AsymptoticCalculator),
-        ('toybased', dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
+        ("asymptotics", {}, pyhf.infer.calculators.AsymptoticCalculator),
+        ("toybased", dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
     ],
 )
-@pytest.mark.parametrize('return_tail_probs', [True, False])
-@pytest.mark.parametrize('return_expected', [True, False])
-@pytest.mark.parametrize('return_expected_set', [True, False])
+@pytest.mark.parametrize("return_tail_probs", [True, False])
+@pytest.mark.parametrize("return_expected", [True, False])
+@pytest.mark.parametrize("return_expected_set", [True, False])
 def test_hypotest_return_calculator(
     tmp_path,
     hypotest_args,
@@ -344,8 +344,8 @@ def test_hypotest_return_calculator(
 
 @pytest.mark.parametrize(
     "kwargs",
-    [{'calctype': 'asymptotics'}, {'calctype': 'toybased', 'ntoys': 5}],
-    ids=lambda x: x['calctype'],
+    [{"calctype": "asymptotics"}, {"calctype": "toybased", "ntoys": 5}],
+    ids=lambda x: x["calctype"],
 )
 def test_hypotest_backends(backend, kwargs):
     """
@@ -474,7 +474,7 @@ def test_calculator_distributions_without_teststatistic(test_stat):
 )
 def test_asymptotic_dist_low_pvalues(backend, nsigma, expected_pval):
     rtol = 1e-8
-    if backend[0].precision != '64b':
+    if backend[0].precision != "64b":
         rtol = 1e-5
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)
     assert np.isclose(np.array(dist.pvalue(nsigma)), expected_pval, rtol=rtol, atol=0)
@@ -482,7 +482,7 @@ def test_asymptotic_dist_low_pvalues(backend, nsigma, expected_pval):
 
 def test_significance_to_pvalue_roundtrip(backend):
     rtol = 1e-15
-    if backend[0].precision != '64b':
+    if backend[0].precision != "64b":
         rtol = 1e-6
     sigma = np.arange(0, 10, 0.1)
     dist = pyhf.infer.calculators.AsymptoticTestStatDistribution(0)

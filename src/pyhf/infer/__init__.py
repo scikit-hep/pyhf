@@ -7,12 +7,12 @@ from pyhf.infer import utils
 def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):
     if pdf.config.poi_index is None:
         raise exceptions.UnspecifiedPOI(
-            'No POI is defined. A POI is required to run a hypothesis test.'
+            "No POI is defined. A POI is required to run a hypothesis test."
         )
 
     if not utils.all_pois_floating(pdf, fixed_params):
         raise exceptions.InvalidModel(
-            f'POI at index [{pdf.config.poi_index}] is set as fixed, which makes profile likelihood ratio based inference impossible. Please unfix the POI to continue.'
+            f"POI at index [{pdf.config.poi_index}] is set as fixed, which makes profile likelihood ratio based inference impossible. Please unfix the POI to continue."
         )
 
 
@@ -179,7 +179,7 @@ def hypotest(
         sig_plus_bkg_distribution, bkg_only_distribution
     )
 
-    is_q0 = kwargs.get('test_stat', 'qtilde') == 'q0'
+    is_q0 = kwargs.get("test_stat", "qtilde") == "q0"
 
     _returns = [CLsb_obs if is_q0 else CLs_obs]
     if return_tail_probs:

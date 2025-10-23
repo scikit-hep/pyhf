@@ -14,7 +14,7 @@ class _BackendRetriever:
         self._array_subtypes = set()
 
     def __getattr__(self, name):
-        if name == 'numpy_backend':
+        if name == "numpy_backend":
             from pyhf.tensor.numpy_backend import numpy_backend
 
             assert numpy_backend
@@ -23,7 +23,7 @@ class _BackendRetriever:
             self._array_types.add(numpy_backend.array_type)
             self._array_subtypes.add(numpy_backend.array_subtype)
             return numpy_backend
-        elif name == 'jax_backend':
+        elif name == "jax_backend":
             try:
                 from pyhf.tensor.jax_backend import jax_backend
 
@@ -49,4 +49,4 @@ class _BackendRetriever:
 
 
 BackendRetriever = _BackendRetriever()
-__all__ = ['BackendRetriever']
+__all__ = ["BackendRetriever"]

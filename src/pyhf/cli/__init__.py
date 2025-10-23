@@ -7,7 +7,7 @@ from pyhf.cli.rootio import cli as rootio
 from pyhf.cli.spec import cli as spec
 from pyhf.contrib import cli as contrib
 
-__all__ = ['cli', 'complete', 'contrib', 'infer', 'rootio', 'spec']
+__all__ = ["cli", "complete", "contrib", "infer", "rootio", "spec"]
 
 
 def __dir__():

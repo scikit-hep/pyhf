@@ -23,9 +23,9 @@ def test_missing_backends(isolate_modules, param):
 
     # hide
     CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
-    sys.modules.setdefault(f'pyhf.tensor.{import_name}', None)
-    CACHE_MODULE, sys.modules[f'pyhf.tensor.{module_name}'] = (
-        sys.modules[f'pyhf.tensor.{module_name}'],
+    sys.modules.setdefault(f"pyhf.tensor.{import_name}", None)
+    CACHE_MODULE, sys.modules[f"pyhf.tensor.{module_name}"] = (
+        sys.modules[f"pyhf.tensor.{module_name}"],
         None,
     )
 
@@ -39,7 +39,7 @@ def test_missing_backends(isolate_modules, param):
 
     # put back
     CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
-    CACHE_MODULE, sys.modules[f'pyhf.tensor.{module_name}'] = (
+    CACHE_MODULE, sys.modules[f"pyhf.tensor.{module_name}"] = (
         None,
         CACHE_MODULE,
     )
@@ -63,9 +63,9 @@ def test_missing_optimizer(isolate_modules, param):
 
     # hide
     CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
-    sys.modules.setdefault(f'pyhf.optimize.{import_name}', None)
-    CACHE_MODULE, sys.modules[f'pyhf.optimize.{import_name}'] = (
-        sys.modules[f'pyhf.optimize.{import_name}'],
+    sys.modules.setdefault(f"pyhf.optimize.{import_name}", None)
+    CACHE_MODULE, sys.modules[f"pyhf.optimize.{import_name}"] = (
+        sys.modules[f"pyhf.optimize.{import_name}"],
         None,
     )
     try:
@@ -78,7 +78,7 @@ def test_missing_optimizer(isolate_modules, param):
 
     # put back
     CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
-    CACHE_MODULE, sys.modules[f'pyhf.optimize.{import_name}'] = (
+    CACHE_MODULE, sys.modules[f"pyhf.optimize.{import_name}"] = (
         None,
         CACHE_MODULE,
     )

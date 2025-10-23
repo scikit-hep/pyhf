@@ -71,12 +71,12 @@ class NormSysData(TypedDict):
 
 
 class NormSys(ModifierBase):
-    type: Literal['normsys']
+    type: Literal["normsys"]
     data: NormSysData
 
 
 class NormFactor(ModifierBase):
-    type: Literal['normfactor']
+    type: Literal["normfactor"]
     data: None
 
 
@@ -86,28 +86,28 @@ class HistoSysData(TypedDict):
 
 
 class HistoSys(ModifierBase):
-    type: Literal['histosys']
+    type: Literal["histosys"]
     data: HistoSysData
 
 
 class StatError(ModifierBase):
-    type: Literal['staterror']
+    type: Literal["staterror"]
     data: Sequence[float]
 
 
 class ShapeSys(ModifierBase):
-    type: Literal['shapesys']
+    type: Literal["shapesys"]
     data: Sequence[float]
 
 
 class ShapeFactor(ModifierBase):
-    type: Literal['shapefactor']
+    type: Literal["shapefactor"]
     data: None
 
 
 class LumiSys(TypedDict):
-    name: Literal['lumi']
-    type: Literal['lumi']
+    name: Literal["lumi"]
+    type: Literal["lumi"]
     data: None
 
 

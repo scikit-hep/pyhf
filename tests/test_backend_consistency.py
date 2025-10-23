@@ -21,8 +21,8 @@ def generate_source_static(n_bins):
     sig = [30.0] * n_bins
 
     source = {
-        'binning': binning,
-        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
+        "binning": binning,
+        "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
     return source
 
@@ -46,21 +46,21 @@ def generate_source_poisson(n_bins):
     sig = np.random.poisson(30.0, n_bins).tolist()
 
     source = {
-        'binning': binning,
-        'bindata': {'data': data, 'bkg': bkg, 'bkgerr': bkgerr, 'sig': sig},
+        "binning": binning,
+        "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
     return source
 
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
 bins = [50, 500]
-bin_ids = [f'{n_bins}_bins' for n_bins in bins]
+bin_ids = [f"{n_bins}_bins" for n_bins in bins]
 
 
-@pytest.mark.parametrize('n_bins', bins, ids=bin_ids)
-@pytest.mark.parametrize('invert_order', [False, True], ids=['normal', 'inverted'])
+@pytest.mark.parametrize("n_bins", bins, ids=bin_ids)
+@pytest.mark.parametrize("invert_order", [False, True], ids=["normal", "inverted"])
 def test_hypotest_qmu_tilde(
-    n_bins, invert_order, tolerance={'numpy': 1e-02, 'tensors': 5e-03}
+    n_bins, invert_order, tolerance={"numpy": 1e-02, "tensors": 5e-03}
 ):
     """
     Check that the different backends all compute a test statistic
@@ -78,19 +78,19 @@ def test_hypotest_qmu_tilde(
     source = generate_source_static(n_bins)
 
     signal_sample = {
-        'name': 'signal',
-        'data': source['bindata']['sig'],
-        'modifiers': [{'name': 'mu', 'type': 'normfactor', 'data': None}],
+        "name": "signal",
+        "data": source["bindata"]["sig"],
+        "modifiers": [{"name": "mu", "type": "normfactor", "data": None}],
     }
 
     background_sample = {
-        'name': 'background',
-        'data': source['bindata']['bkg'],
-        'modifiers': [
+        "name": "background",
+        "data": source["bindata"]["bkg"],
+        "modifiers": [
             {
-                'name': 'uncorr_bkguncrt',
-                'type': 'shapesys',
-                'data': source['bindata']['bkgerr'],
+                "name": "uncorr_bkguncrt",
+                "type": "shapesys",
+                "data": source["bindata"]["bkgerr"],
             }
         ],
     }
@@ -99,14 +99,14 @@ def test_hypotest_qmu_tilde(
         if invert_order
         else [signal_sample, background_sample]
     )
-    spec = {'channels': [{'name': 'singlechannel', 'samples': samples}]}
+    spec = {"channels": [{"name": "singlechannel", "samples": samples}]}
     pdf = pyhf.Model(spec, poi_name="mu")
 
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
 
     backends = [
-        pyhf.tensor.numpy_backend(precision='64b'),
-        pyhf.tensor.jax_backend(precision='64b'),
+        pyhf.tensor.numpy_backend(precision="64b"),
+        pyhf.tensor.jax_backend(precision="64b"),
     ]
 
     test_statistic = []
@@ -129,7 +129,7 @@ def test_hypotest_qmu_tilde(
     numpy_ratio_delta_unity = np.absolute(np.subtract(numpy_ratio, 1))
 
     try:
-        assert (numpy_ratio_delta_unity < tolerance['numpy']).all()
+        assert (numpy_ratio_delta_unity < tolerance["numpy"]).all()
     except AssertionError:
         print(
             f"Ratio to NumPy+SciPy exceeded tolerance of {tolerance['numpy']}: {numpy_ratio_delta_unity.tolist()}"

@@ -19,8 +19,8 @@ class HasState(Protocol):
 
 this: HasState = sys.modules[__name__]
 this.state = {
-    'default': (None, None),  # type: ignore[typeddict-item]
-    'current': (None, None),  # type: ignore[typeddict-item]
+    "default": (None, None),  # type: ignore[typeddict-item]
+    "current": (None, None),  # type: ignore[typeddict-item]
 }
 
 
@@ -49,11 +49,11 @@ def get_backend(default: bool = False) -> tuple[TensorBackend, Optimizer]:
 _default_backend: TensorBackend = BackendRetriever.numpy_backend()
 _default_optimizer: Optimizer = OptimizerRetriever.scipy_optimizer()  # type: ignore[no-untyped-call]
 
-this.state['default'] = (_default_backend, _default_optimizer)
-this.state['current'] = this.state['default']
+this.state["default"] = (_default_backend, _default_optimizer)
+this.state["current"] = this.state["default"]
 
 
-@events.register('change_backend')
+@events.register("change_backend")
 def set_backend(
     backend: str | bytes | TensorBackend,
     custom_optimizer: str | bytes | Optimizer | None = None,
@@ -157,25 +157,25 @@ def set_backend(
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(
-        (new_backend.name != this.state['current'][0].name)
-        | (new_backend.precision != this.state['current'][0].precision)
+        (new_backend.name != this.state["current"][0].name)
+        | (new_backend.precision != this.state["current"][0].precision)
     )
-    optimizer_changed = bool(this.state['current'][1] != new_optimizer)
+    optimizer_changed = bool(this.state["current"][1] != new_optimizer)
     # set new backend
-    this.state['current'] = (new_backend, new_optimizer)
+    this.state["current"] = (new_backend, new_optimizer)
     if default:
         default_tensorlib_changed = bool(
-            (new_backend.name != this.state['default'][0].name)
-            | (new_backend.precision != this.state['default'][0].precision)
+            (new_backend.name != this.state["default"][0].name)
+            | (new_backend.precision != this.state["default"][0].precision)
         )
-        default_optimizer_changed = bool(this.state['default'][1] != new_optimizer)
+        default_optimizer_changed = bool(this.state["default"][1] != new_optimizer)
         # trigger events
         if default_tensorlib_changed:
             events.trigger("default_tensorlib_changed")()
         if default_optimizer_changed:
             events.trigger("default_optimizer_changed")()
 
-        this.state['default'] = this.state['current']
+        this.state["default"] = this.state["current"]
 
     # trigger events
     if tensorlib_changed:

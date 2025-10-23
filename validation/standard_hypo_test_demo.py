@@ -36,7 +36,7 @@ def standard_hypo_test_demo(
     profile_ll.SetOneSided(True)
     calc = ROOT.RooStats.FrequentistCalculator(data, bkg_model, sb_model)
 
-    print(f'by hand: {profile_ll.Evaluate(data, ROOT.RooArgSet(_var))}')
+    print(f"by hand: {profile_ll.Evaluate(data, ROOT.RooArgSet(_var))}")
 
     calc.SetToys(ntoys, ntoys)
 

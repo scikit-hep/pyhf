@@ -33,7 +33,7 @@ def get(interpcode, do_tensorized_calc=True):
         1: code1 if do_tensorized_calc else _slow_code1,
         2: code2 if do_tensorized_calc else _slow_code2,
         4: code4 if do_tensorized_calc else _slow_code4,
-        '4p': code4p if do_tensorized_calc else _slow_code4p,
+        "4p": code4p if do_tensorized_calc else _slow_code4p,
     }
 
     try:
@@ -42,7 +42,7 @@ def get(interpcode, do_tensorized_calc=True):
         raise exceptions.InvalidInterpCode
 
 
-__all__ = ['code0', 'code1', 'code2', 'code4', 'code4p']
+__all__ = ["code0", "code1", "code2", "code4", "code4p"]
 
 
 def __dir__():

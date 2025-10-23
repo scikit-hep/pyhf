@@ -129,12 +129,12 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. A POI is required for profile likelihood based test statistics.'
+            "No POI is defined. A POI is required for profile likelihood based test statistics."
         )
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
-            'qmu test statistic used for fit configuration with POI bounded at zero.\n'
-            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.\n'
+            "qmu test statistic used for fit configuration with POI bounded at zero.\n"
+            + "Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.\n"
             + 'If you called this from pyhf.infer.mle or pyhf.infer.hypotest, set test_stat="qtilde".'
         )
     return _qmu_like(
@@ -225,12 +225,12 @@ def qmu_tilde(
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. A POI is required for profile likelihood based test statistics.'
+            "No POI is defined. A POI is required for profile likelihood based test statistics."
         )
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
-            'qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
-            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.\n'
+            "qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n"
+            + "Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.\n"
             + 'If you called this from pyhf.infer.mle or pyhf.infer.hypotest, set test_stat="q".'
         )
     return _qmu_like(
@@ -308,12 +308,12 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. A POI is required for profile likelihood based test statistics.'
+            "No POI is defined. A POI is required for profile likelihood based test statistics."
         )
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
-            'tmu test statistic used for fit configuration with POI bounded at zero.\n'
-            + 'Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead.'
+            "tmu test statistic used for fit configuration with POI bounded at zero.\n"
+            + "Use the tmu_tilde test statistic (pyhf.infer.test_statistics.tmu_tilde) instead."
         )
     return _tmu_like(
         mu,
@@ -398,12 +398,12 @@ def tmu_tilde(
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. A POI is required for profile likelihood based test statistics.'
+            "No POI is defined. A POI is required for profile likelihood based test statistics."
         )
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
-            'tmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
-            + 'Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead.'
+            "tmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n"
+            + "Use the tmu test statistic (pyhf.infer.test_statistics.tmu) instead."
         )
     return _tmu_like(
         mu,
@@ -477,11 +477,11 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
 
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. A POI is required for profile likelihood based test statistics.'
+            "No POI is defined. A POI is required for profile likelihood based test statistics."
         )
     if mu != 0.0:
         log.warning(
-            'q0 test statistic only used for fit configuration with POI set to zero. Setting mu=0.'
+            "q0 test statistic only used for fit configuration with POI set to zero. Setting mu=0."
         )
         mu = 0.0
 
