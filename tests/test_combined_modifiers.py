@@ -1,18 +1,19 @@
+import numpy as np
+
+import pyhf
 from pyhf.modifiers.histosys import histosys_combined
-from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.lumi import lumi_combined
-from pyhf.modifiers.staterror import staterror_combined
-from pyhf.modifiers.shapesys import shapesys_combined
 from pyhf.modifiers.normfactor import normfactor_combined
+from pyhf.modifiers.normsys import normsys_combined
 from pyhf.modifiers.shapefactor import shapefactor_combined
+from pyhf.modifiers.shapesys import shapesys_combined
+from pyhf.modifiers.staterror import staterror_combined
 from pyhf.parameters import (
-    paramset,
-    unconstrained,
     constrained_by_normal,
     constrained_by_poisson,
+    paramset,
+    unconstrained,
 )
-import numpy as np
-import pyhf
 
 
 class MockConfig:
@@ -27,28 +28,28 @@ class MockConfig:
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['paramset'].suggested_init
+            init = init + self.par_map[name]["paramset"].suggested_init
         return init
 
     def suggested_bounds(self):
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]['paramset'].suggested_bounds
+            bounds = bounds + self.par_map[name]["paramset"].suggested_bounds
         return bounds
 
     def par_slice(self, name):
-        return self.par_map[name]['slice']
+        return self.par_map[name]["slice"]
 
     def param_set(self, name):
-        return self.par_map[name]['paramset']
+        return self.par_map[name]["paramset"]
 
 
 def test_histosys(backend):
     mc = MockConfig(
         par_map={
-            'hello': {
-                'paramset': constrained_by_normal(
-                    name='hello',
+            "hello": {
+                "paramset": constrained_by_normal(
+                    name="hello",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
@@ -56,11 +57,11 @@ def test_histosys(backend):
                     fixed=False,
                     auxdata=[0.0],
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             },
-            'world': {
-                'paramset': constrained_by_normal(
-                    name='world',
+            "world": {
+                "paramset": constrained_by_normal(
+                    name="world",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
@@ -68,62 +69,62 @@ def test_histosys(backend):
                     fixed=False,
                     auxdata=[0.0],
                 ),
-                'slice': slice(1, 2),
+                "slice": slice(1, 2),
             },
         },
-        par_order=['hello', 'world'],
-        samples=['signal', 'background'],
+        par_order=["hello", "world"],
+        samples=["signal", "background"],
     )
 
     mega_mods = {
-        'histosys/hello': {
-            'signal': {
-                'type': 'histosys',
-                'name': 'hello',
-                'data': {
-                    'hi_data': [11, 12, 13],
-                    'lo_data': [9, 8, 7],
-                    'nom_data': [10, 10, 10],
-                    'mask': [True, True, True],
+        "histosys/hello": {
+            "signal": {
+                "type": "histosys",
+                "name": "hello",
+                "data": {
+                    "hi_data": [11, 12, 13],
+                    "lo_data": [9, 8, 7],
+                    "nom_data": [10, 10, 10],
+                    "mask": [True, True, True],
                 },
             },
-            'background': {
-                'type': 'histosys',
-                'name': 'hello',
-                'data': {
-                    'hi_data': [11, 12, 13],
-                    'lo_data': [9, 8, 7],
-                    'nom_data': [10, 10, 10],
-                    'mask': [True, True, True],
+            "background": {
+                "type": "histosys",
+                "name": "hello",
+                "data": {
+                    "hi_data": [11, 12, 13],
+                    "lo_data": [9, 8, 7],
+                    "nom_data": [10, 10, 10],
+                    "mask": [True, True, True],
                 },
             },
         },
-        'histosys/world': {
-            'signal': {
-                'type': 'histosys',
-                'name': 'world',
-                'data': {
-                    'hi_data': [10, 10, 10],
-                    'lo_data': [5, 6, 7],
-                    'nom_data': [10, 10, 10],
-                    'mask': [True, True, True],
+        "histosys/world": {
+            "signal": {
+                "type": "histosys",
+                "name": "world",
+                "data": {
+                    "hi_data": [10, 10, 10],
+                    "lo_data": [5, 6, 7],
+                    "nom_data": [10, 10, 10],
+                    "mask": [True, True, True],
                 },
             },
-            'background': {
-                'type': 'histosys',
-                'name': 'world',
-                'data': {
-                    'hi_data': [10, 10, 10],
-                    'lo_data': [5, 6, 7],
-                    'nom_data': [10, 10, 10],
-                    'mask': [True, True, True],
+            "background": {
+                "type": "histosys",
+                "name": "world",
+                "data": {
+                    "hi_data": [10, 10, 10],
+                    "lo_data": [5, 6, 7],
+                    "nom_data": [10, 10, 10],
+                    "mask": [True, True, True],
                 },
             },
         },
     }
 
     hsc = histosys_combined(
-        [('hello', 'histosys'), ('world', 'histosys')], mc, mega_mods
+        [("hello", "histosys"), ("world", "histosys")], mc, mega_mods
     )
 
     mod = hsc.apply(pyhf.tensorlib.astensor([0.5, -1.0]))
@@ -133,7 +134,7 @@ def test_histosys(backend):
     assert np.allclose(mod[0, 0, 0], [0.5, 1.0, 1.5])
 
     hsc = histosys_combined(
-        [('hello', 'histosys'), ('world', 'histosys')], mc, mega_mods, batch_size=4
+        [("hello", "histosys"), ("world", "histosys")], mc, mega_mods, batch_size=4
     )
 
     mod = hsc.apply(
@@ -151,9 +152,9 @@ def test_histosys(backend):
 def test_normsys(backend):
     mc = MockConfig(
         par_map={
-            'hello': {
-                'paramset': constrained_by_normal(
-                    name='hello',
+            "hello": {
+                "paramset": constrained_by_normal(
+                    name="hello",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
@@ -161,11 +162,11 @@ def test_normsys(backend):
                     fixed=False,
                     auxdata=[0.0],
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             },
-            'world': {
-                'paramset': constrained_by_normal(
-                    name='world',
+            "world": {
+                "paramset": constrained_by_normal(
+                    name="world",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
@@ -173,61 +174,61 @@ def test_normsys(backend):
                     fixed=False,
                     auxdata=[0.0],
                 ),
-                'slice': slice(1, 2),
+                "slice": slice(1, 2),
             },
         },
-        par_order=['hello', 'world'],
-        samples=['signal', 'background'],
+        par_order=["hello", "world"],
+        samples=["signal", "background"],
     )
 
     mega_mods = {
-        'normsys/hello': {
-            'signal': {
-                'type': 'normsys',
-                'name': 'hello',
-                'data': {
-                    'hi': [1.1] * 3,
-                    'lo': [0.9] * 3,
-                    'nom_data': [1, 1, 1],
-                    'mask': [True, True, True],
+        "normsys/hello": {
+            "signal": {
+                "type": "normsys",
+                "name": "hello",
+                "data": {
+                    "hi": [1.1] * 3,
+                    "lo": [0.9] * 3,
+                    "nom_data": [1, 1, 1],
+                    "mask": [True, True, True],
                 },
             },
-            'background': {
-                'type': 'normsys',
-                'name': 'hello',
-                'data': {
-                    'hi': [1.2] * 3,
-                    'lo': [0.8] * 3,
-                    'nom_data': [1, 1, 1],
-                    'mask': [True, True, True],
+            "background": {
+                "type": "normsys",
+                "name": "hello",
+                "data": {
+                    "hi": [1.2] * 3,
+                    "lo": [0.8] * 3,
+                    "nom_data": [1, 1, 1],
+                    "mask": [True, True, True],
                 },
             },
         },
-        'normsys/world': {
-            'signal': {
-                'type': 'v',
-                'name': 'world',
-                'data': {
-                    'hi': [1.3] * 3,
-                    'lo': [0.7] * 3,
-                    'nom_data': [1, 1, 1],
-                    'mask': [True, True, True],
+        "normsys/world": {
+            "signal": {
+                "type": "v",
+                "name": "world",
+                "data": {
+                    "hi": [1.3] * 3,
+                    "lo": [0.7] * 3,
+                    "nom_data": [1, 1, 1],
+                    "mask": [True, True, True],
                 },
             },
-            'background': {
-                'type': 'normsys',
-                'name': 'world',
-                'data': {
-                    'hi': [1.4] * 3,
-                    'lo': [0.6] * 3,
-                    'nom_data': [1, 1, 1],
-                    'mask': [True, True, True],
+            "background": {
+                "type": "normsys",
+                "name": "world",
+                "data": {
+                    "hi": [1.4] * 3,
+                    "lo": [0.6] * 3,
+                    "nom_data": [1, 1, 1],
+                    "mask": [True, True, True],
                 },
             },
         },
     }
 
-    hsc = normsys_combined([('hello', 'normsys'), ('world', 'normsys')], mc, mega_mods)
+    hsc = normsys_combined([("hello", "normsys"), ("world", "normsys")], mc, mega_mods)
 
     mod = hsc.apply(pyhf.tensorlib.astensor([1.0, -1.0]))
     shape = pyhf.tensorlib.shape(mod)
@@ -239,7 +240,7 @@ def test_normsys(backend):
     assert np.allclose(mod[1, 1, 0], [0.6, 0.6, 0.6])
 
     hsc = normsys_combined(
-        [('hello', 'normsys'), ('world', 'normsys')], mc, mega_mods, batch_size=4
+        [("hello", "normsys"), ("world", "normsys")], mc, mega_mods, batch_size=4
     )
 
     mod = hsc.apply(
@@ -258,9 +259,9 @@ def test_normsys(backend):
 def test_lumi(backend):
     mc = MockConfig(
         par_map={
-            'lumi': {
-                'paramset': constrained_by_normal(
-                    name='lumi',
+            "lumi": {
+                "paramset": constrained_by_normal(
+                    name="lumi",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
@@ -269,29 +270,29 @@ def test_lumi(backend):
                     auxdata=[None],
                     sigmas=[None],
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             }
         },
-        par_order=['lumi'],
-        samples=['signal', 'background'],
+        par_order=["lumi"],
+        samples=["signal", "background"],
     )
 
     mega_mods = {
-        'lumi/lumi': {
-            'signal': {
-                'type': 'lumi',
-                'name': 'lumi',
-                'data': {'mask': [True, True, True]},
+        "lumi/lumi": {
+            "signal": {
+                "type": "lumi",
+                "name": "lumi",
+                "data": {"mask": [True, True, True]},
             },
-            'background': {
-                'type': 'lumi',
-                'name': 'lumi',
-                'data': {'mask': [True, True, True]},
+            "background": {
+                "type": "lumi",
+                "name": "lumi",
+                "data": {"mask": [True, True, True]},
             },
         },
     }
 
-    hsc = lumi_combined([('lumi', 'lumi')], mc, mega_mods)
+    hsc = lumi_combined([("lumi", "lumi")], mc, mega_mods)
 
     mod = hsc.apply(pyhf.tensorlib.astensor([0.5]))
     shape = pyhf.tensorlib.shape(mod)
@@ -301,7 +302,7 @@ def test_lumi(backend):
     assert np.allclose(mod[0, 0, 0], [0.5, 0.5, 0.5])
     assert np.allclose(mod[0, 1, 0], [0.5, 0.5, 0.5])
 
-    hsc = lumi_combined([('lumi', 'lumi')], mc, mega_mods, batch_size=4)
+    hsc = lumi_combined([("lumi", "lumi")], mc, mega_mods, batch_size=4)
 
     mod = hsc.apply(pyhf.tensorlib.astensor([[1.0], [2.0], [3.0], [4.0]]))
     shape = pyhf.tensorlib.shape(mod)
@@ -317,9 +318,9 @@ def test_lumi(backend):
 def test_stat(backend):
     mc = MockConfig(
         par_map={
-            'staterror_chan1': {
-                'paramset': constrained_by_normal(
-                    name='staterror_chan1',
+            "staterror_chan1": {
+                "paramset": constrained_by_normal(
+                    name="staterror_chan1",
                     is_scalar=False,
                     n_parameters=1,
                     inits=[1],
@@ -327,11 +328,11 @@ def test_stat(backend):
                     fixed=False,
                     auxdata=[1],
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             },
-            'staterror_chan2': {
-                'paramset': constrained_by_normal(
-                    name='staterror_chan2',
+            "staterror_chan2": {
+                "paramset": constrained_by_normal(
+                    name="staterror_chan2",
                     is_scalar=False,
                     n_parameters=2,
                     inits=[1, 1],
@@ -339,59 +340,59 @@ def test_stat(backend):
                     fixed=False,
                     auxdata=[1, 1],
                 ),
-                'slice': slice(1, 3),
+                "slice": slice(1, 3),
             },
         },
-        channels=['chan1', 'chan2'],
-        channel_nbins={'chan1': 1, 'chan2': 2},
-        par_order=['staterror_chan1', 'staterror_chan2'],
-        samples=['signal', 'background'],
+        channels=["chan1", "chan2"],
+        channel_nbins={"chan1": 1, "chan2": 2},
+        par_order=["staterror_chan1", "staterror_chan2"],
+        samples=["signal", "background"],
     )
 
     mega_mods = {
-        'staterror/staterror_chan1': {
-            'signal': {
-                'type': 'staterror',
-                'name': 'staterror_chan1',
-                'data': {
-                    'mask': [True, False, False],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [1, 0, 0],
+        "staterror/staterror_chan1": {
+            "signal": {
+                "type": "staterror",
+                "name": "staterror_chan1",
+                "data": {
+                    "mask": [True, False, False],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [1, 0, 0],
                 },
             },
-            'background': {
-                'type': 'staterror',
-                'name': 'staterror_chan1',
-                'data': {
-                    'mask': [True, False, False],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [1, 0, 0],
+            "background": {
+                "type": "staterror",
+                "name": "staterror_chan1",
+                "data": {
+                    "mask": [True, False, False],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [1, 0, 0],
                 },
             },
         },
-        'staterror/staterror_chan2': {
-            'signal': {
-                'type': 'staterror',
-                'name': 'staterror_chan2',
-                'data': {
-                    'mask': [False, True, True],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [0, 1, 1],
+        "staterror/staterror_chan2": {
+            "signal": {
+                "type": "staterror",
+                "name": "staterror_chan2",
+                "data": {
+                    "mask": [False, True, True],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [0, 1, 1],
                 },
             },
-            'background': {
-                'type': 'staterror',
-                'name': 'staterror_chan2',
-                'data': {
-                    'mask': [False, True, True],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [0, 1, 1],
+            "background": {
+                "type": "staterror",
+                "name": "staterror_chan2",
+                "data": {
+                    "mask": [False, True, True],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [0, 1, 1],
                 },
             },
         },
     }
     hsc = staterror_combined(
-        [('staterror_chan1', 'staterror'), ('staterror_chan2', 'staterror')],
+        [("staterror_chan1", "staterror"), ("staterror_chan2", "staterror")],
         mc,
         mega_mods,
     )
@@ -408,20 +409,20 @@ def test_stat(backend):
 def test_shapesys(backend):
     mc = MockConfig(
         par_map={
-            'dummy1': {
-                'paramset': paramset(
-                    name='dummy1',
+            "dummy1": {
+                "paramset": paramset(
+                    name="dummy1",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[0, 10]],
                     fixed=False,
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             },
-            'shapesys1': {
-                'paramset': constrained_by_poisson(
-                    name='shapesys1',
+            "shapesys1": {
+                "paramset": constrained_by_poisson(
+                    name="shapesys1",
                     is_scalar=False,
                     n_parameters=1,
                     inits=[0],
@@ -430,11 +431,11 @@ def test_shapesys(backend):
                     auxdata=[None],
                     factors=[None],
                 ),
-                'slice': slice(1, 2),
+                "slice": slice(1, 2),
             },
-            'shapesys2': {
-                'paramset': constrained_by_poisson(
-                    name='shapesys2',
+            "shapesys2": {
+                "paramset": constrained_by_poisson(
+                    name="shapesys2",
                     n_parameters=2,
                     is_scalar=False,
                     inits=[0, 0],
@@ -443,70 +444,70 @@ def test_shapesys(backend):
                     auxdata=[None, None],
                     factors=[None, None],
                 ),
-                'slice': slice(2, 4),
+                "slice": slice(2, 4),
             },
-            'dummy2': {
-                'paramset': paramset(
-                    name='dummy2',
+            "dummy2": {
+                "paramset": paramset(
+                    name="dummy2",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[0, 10]],
                     fixed=False,
                 ),
-                'slice': slice(4, 5),
+                "slice": slice(4, 5),
             },
         },
-        channels=['chan1', 'chan2'],
-        channel_nbins={'chan1': 1, 'chan2': 2},
-        par_order=['dummy1', 'shapesys1', 'shapesys2', 'dummy2'],
-        samples=['signal', 'background'],
+        channels=["chan1", "chan2"],
+        channel_nbins={"chan1": 1, "chan2": 2},
+        par_order=["dummy1", "shapesys1", "shapesys2", "dummy2"],
+        samples=["signal", "background"],
     )
 
     mega_mods = {
-        'shapesys/shapesys1': {
-            'signal': {
-                'type': 'shapesys',
-                'name': 'shapesys1',
-                'data': {
-                    'mask': [True, False, False],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [1, 0, 0],
+        "shapesys/shapesys1": {
+            "signal": {
+                "type": "shapesys",
+                "name": "shapesys1",
+                "data": {
+                    "mask": [True, False, False],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [1, 0, 0],
                 },
             },
-            'background': {
-                'type': 'shapesys',
-                'name': 'shapesys1',
-                'data': {
-                    'mask': [True, False, False],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [1, 0, 0],
+            "background": {
+                "type": "shapesys",
+                "name": "shapesys1",
+                "data": {
+                    "mask": [True, False, False],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [1, 0, 0],
                 },
             },
         },
-        'shapesys/shapesys2': {
-            'signal': {
-                'type': 'shapesys',
-                'name': 'shapesys1',
-                'data': {
-                    'mask': [False, True, True],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [0, 1, 1],
+        "shapesys/shapesys2": {
+            "signal": {
+                "type": "shapesys",
+                "name": "shapesys1",
+                "data": {
+                    "mask": [False, True, True],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [0, 1, 1],
                 },
             },
-            'background': {
-                'type': 'shapesys',
-                'name': 'shapesys1',
-                'data': {
-                    'mask': [False, True, True],
-                    'nom_data': [10, 10, 10],
-                    'uncrt': [0, 1, 1],
+            "background": {
+                "type": "shapesys",
+                "name": "shapesys1",
+                "data": {
+                    "mask": [False, True, True],
+                    "nom_data": [10, 10, 10],
+                    "uncrt": [0, 1, 1],
                 },
             },
         },
     }
     hsc = shapesys_combined(
-        [('shapesys1', 'shapesys'), ('shapesys2', 'shapesys')], mc, mega_mods
+        [("shapesys1", "shapesys"), ("shapesys2", "shapesys")], mc, mega_mods
     )
 
     mod = hsc.apply(pyhf.tensorlib.astensor([-10, 1.1, 1.2, 1.3, -20]))
@@ -521,61 +522,61 @@ def test_shapesys(backend):
 def test_normfactor(backend):
     mc = MockConfig(
         par_map={
-            'mu1': {
-                'paramset': unconstrained(
-                    name='mu1',
+            "mu1": {
+                "paramset": unconstrained(
+                    name="mu1",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[0, 10]],
                     fixed=False,
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             },
-            'mu2': {
-                'paramset': unconstrained(
-                    name='mu2',
+            "mu2": {
+                "paramset": unconstrained(
+                    name="mu2",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[0, 10]],
                     fixed=False,
                 ),
-                'slice': slice(1, 2),
+                "slice": slice(1, 2),
             },
         },
-        par_order=['mu1', 'mu2'],
-        samples=['signal', 'background'],
+        par_order=["mu1", "mu2"],
+        samples=["signal", "background"],
     )
 
     mega_mods = {
-        'normfactor/mu1': {
-            'signal': {
-                'type': 'normfactor',
-                'name': 'mu1',
-                'data': {'mask': [True, False, False]},
+        "normfactor/mu1": {
+            "signal": {
+                "type": "normfactor",
+                "name": "mu1",
+                "data": {"mask": [True, False, False]},
             },
-            'background': {
-                'type': 'normfactor',
-                'name': 'mu1',
-                'data': {'mask': [True, False, False]},
+            "background": {
+                "type": "normfactor",
+                "name": "mu1",
+                "data": {"mask": [True, False, False]},
             },
         },
-        'normfactor/mu2': {
-            'signal': {
-                'type': 'normfactor',
-                'name': 'mu2',
-                'data': {'mask': [False, True, True]},
+        "normfactor/mu2": {
+            "signal": {
+                "type": "normfactor",
+                "name": "mu2",
+                "data": {"mask": [False, True, True]},
             },
-            'background': {
-                'type': 'normfactor',
-                'name': 'mu2',
-                'data': {'mask': [False, True, True]},
+            "background": {
+                "type": "normfactor",
+                "name": "mu2",
+                "data": {"mask": [False, True, True]},
             },
         },
     }
     hsc = normfactor_combined(
-        [('mu1', 'normfactor'), ('mu2', 'normfactor')], mc, mega_mods
+        [("mu1", "normfactor"), ("mu2", "normfactor")], mc, mega_mods
     )
 
     mod = hsc.apply(pyhf.tensorlib.astensor([2.0, 3.0]))
@@ -587,7 +588,7 @@ def test_normfactor(backend):
     assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 3.0])
 
     hsc = normfactor_combined(
-        [('mu1', 'normfactor'), ('mu2', 'normfactor')], mc, mega_mods, batch_size=4
+        [("mu1", "normfactor"), ("mu2", "normfactor")], mc, mega_mods, batch_size=4
     )
 
     mod = hsc.apply(
@@ -611,20 +612,20 @@ def test_normfactor(backend):
 def test_shapesys_zero(backend):
     mc = MockConfig(
         par_map={
-            'SigXsecOverSM': {
-                'paramset': paramset(
-                    name='SigXsecOverSM',
+            "SigXsecOverSM": {
+                "paramset": paramset(
+                    name="SigXsecOverSM",
                     is_scalar=True,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[0, 10]],
                     fixed=False,
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             },
-            'syst': {
-                'paramset': constrained_by_poisson(
-                    name='syst',
+            "syst": {
+                "paramset": constrained_by_poisson(
+                    name="syst",
                     is_scalar=False,
                     n_parameters=5,
                     inits=[0] * 5,
@@ -633,38 +634,38 @@ def test_shapesys_zero(backend):
                     auxdata=[None] * 5,
                     factors=[None] * 5,
                 ),
-                'slice': slice(1, 6),
+                "slice": slice(1, 6),
             },
         },
-        channels=['channel1'],
-        channel_nbins={'channel1': 6},
-        par_order=['SigXsecOverSM', 'syst'],
-        samples=['signal', 'background'],
+        channels=["channel1"],
+        channel_nbins={"channel1": 6},
+        par_order=["SigXsecOverSM", "syst"],
+        samples=["signal", "background"],
     )
 
     mega_mods = {
-        'shapesys/syst': {
-            'background': {
-                'type': 'shapesys',
-                'name': 'syst',
-                'data': {
-                    'mask': [True, True, False, True, True, True],
-                    'nom_data': [100.0, 90.0, 0.0, 70, 0.1, 50],
-                    'uncrt': [10, 9, 1, 0.0, 0.1, 5],
+        "shapesys/syst": {
+            "background": {
+                "type": "shapesys",
+                "name": "syst",
+                "data": {
+                    "mask": [True, True, False, True, True, True],
+                    "nom_data": [100.0, 90.0, 0.0, 70, 0.1, 50],
+                    "uncrt": [10, 9, 1, 0.0, 0.1, 5],
                 },
             },
-            'signal': {
-                'type': 'shapesys',
-                'name': 'syst',
-                'data': {
-                    'mask': [False, False, False, False, False, False],
-                    'nom_data': [20.0, 10.0, 5.0, 3.0, 2.0, 1.0],
-                    'uncrt': [10, 9, 1, 0.0, 0.1, 5],
+            "signal": {
+                "type": "shapesys",
+                "name": "syst",
+                "data": {
+                    "mask": [False, False, False, False, False, False],
+                    "nom_data": [20.0, 10.0, 5.0, 3.0, 2.0, 1.0],
+                    "uncrt": [10, 9, 1, 0.0, 0.1, 5],
                 },
             },
         }
     }
-    hsc = shapesys_combined([('syst', 'shapesys')], mc, mega_mods)
+    hsc = shapesys_combined([("syst", "shapesys")], mc, mega_mods)
 
     mod = hsc.apply(pyhf.tensorlib.astensor([-10, 1.1, 1.2, 1.3, -20, -30]))
     shape = pyhf.tensorlib.shape(mod)
@@ -677,64 +678,64 @@ def test_shapesys_zero(backend):
 def test_shapefactor(backend):
     mc = MockConfig(
         par_map={
-            'shapefac1': {
-                'paramset': unconstrained(
-                    name='shapefac1',
+            "shapefac1": {
+                "paramset": unconstrained(
+                    name="shapefac1",
                     is_scalar=False,
                     n_parameters=1,
                     inits=[0],
                     bounds=[[0, 10]],
                     fixed=False,
                 ),
-                'slice': slice(0, 1),
+                "slice": slice(0, 1),
             },
-            'shapefac2': {
-                'paramset': unconstrained(
-                    name='shapefac2',
+            "shapefac2": {
+                "paramset": unconstrained(
+                    name="shapefac2",
                     is_scalar=False,
                     n_parameters=2,
                     inits=[0, 0],
                     bounds=[[0, 10], [0, 10]],
                     fixed=False,
                 ),
-                'slice': slice(1, 3),
+                "slice": slice(1, 3),
             },
         },
-        par_order=['shapefac1', 'shapefac2'],
-        samples=['signal', 'background'],
-        channels=['chan_one', 'chan_two'],
-        channel_nbins={'chan_one': 1, 'chan_two': 2},
+        par_order=["shapefac1", "shapefac2"],
+        samples=["signal", "background"],
+        channels=["chan_one", "chan_two"],
+        channel_nbins={"chan_one": 1, "chan_two": 2},
     )
 
     mega_mods = {
-        'shapefactor/shapefac1': {
-            'signal': {
-                'type': 'shapefactor',
-                'name': 'shapefac1',
-                'data': {'mask': [True, False, False]},
+        "shapefactor/shapefac1": {
+            "signal": {
+                "type": "shapefactor",
+                "name": "shapefac1",
+                "data": {"mask": [True, False, False]},
             },
-            'background': {
-                'type': 'shapefactor',
-                'name': 'shapefac1',
-                'data': {'mask': [True, False, False]},
+            "background": {
+                "type": "shapefactor",
+                "name": "shapefac1",
+                "data": {"mask": [True, False, False]},
             },
         },
-        'shapefactor/shapefac2': {
-            'signal': {
-                'type': 'shapefactor',
-                'name': 'shapefac2',
-                'data': {'mask': [False, True, True]},
+        "shapefactor/shapefac2": {
+            "signal": {
+                "type": "shapefactor",
+                "name": "shapefac2",
+                "data": {"mask": [False, True, True]},
             },
-            'background': {
-                'type': 'normfactor',
-                'name': 'shapefac2',
-                'data': {'mask': [False, True, True]},
+            "background": {
+                "type": "normfactor",
+                "name": "shapefac2",
+                "data": {"mask": [False, True, True]},
             },
         },
     }
 
     hsc = shapefactor_combined(
-        [('shapefac1', 'shapefactor'), ('shapefac2', 'shapefactor')], mc, mega_mods
+        [("shapefac1", "shapefactor"), ("shapefac2", "shapefactor")], mc, mega_mods
     )
 
     mod = hsc.apply(pyhf.tensorlib.astensor([2.0, 3.0, 4.0]))
@@ -746,7 +747,7 @@ def test_shapefactor(backend):
     assert np.allclose(mod[1, 0, 0], [1.0, 3.0, 4.0])
 
     hsc = shapefactor_combined(
-        [('shapefac1', 'shapefactor'), ('shapefac2', 'shapefactor')],
+        [("shapefac1", "shapefactor"), ("shapefac2", "shapefactor")],
         mc,
         mega_mods,
         batch_size=4,

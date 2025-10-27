@@ -11,7 +11,7 @@ dynamic = ["version"]
 description = "pure-Python HistFactory implementation with tensors and autodiff"
 readme = "README.rst"
 license = "Apache-2.0"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
     { name = "Matthew Feickert", email = "matthew.feickert@cern.ch" },
@@ -32,7 +32,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -44,7 +43,6 @@ classifiers = [
 ]
 dependencies = [
     "click>=8.0.0",  # for console scripts
-    "importlib_resources>=1.4.0; python_version < '3.9'",  # for resources in schema
     "jsonpatch>=1.15",
     "jsonschema>=4.15.0",  # for utils
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
@@ -148,19 +146,6 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyhf"]
-
-[tool.black]
-line-length = 88
-skip-string-normalization = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | .eggs
-  | build
-  | .nox
-)/
-'''
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -267,9 +252,11 @@ line-length = 88
 
 [tool.ruff.lint]
 extend-select = [
-  "UP",          # pyupgrade
-  "RUF",         # Ruff-specific
-  "TID",         # flake8-tidy-imports
+  "UP",  # pyupgrade
+  "RUF",  # Ruff-specific
+  "TID",  # flake8-tidy-imports
+  "I",  # isort
+  "B",  # flake8-bugbear
 ]
 ignore = [
   "E402",

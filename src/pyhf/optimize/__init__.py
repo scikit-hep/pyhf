@@ -5,7 +5,7 @@ from pyhf import exceptions
 
 class _OptimizerRetriever:
     def __getattr__(self, name):
-        if name == 'scipy_optimizer':
+        if name == "scipy_optimizer":
             from pyhf.optimize.opt_scipy import scipy_optimizer
 
             assert scipy_optimizer
@@ -15,7 +15,7 @@ class _OptimizerRetriever:
             # for autocomplete and dir() calls
             self.scipy_optimizer = scipy_optimizer
             return scipy_optimizer
-        elif name == 'minuit_optimizer':
+        elif name == "minuit_optimizer":
             try:
                 from pyhf.optimize.opt_minuit import minuit_optimizer
 
@@ -26,14 +26,14 @@ class _OptimizerRetriever:
                 # for autocomplete and dir() calls
                 self.minuit_optimizer = minuit_optimizer
                 return minuit_optimizer
-            except ImportError as e:
+            except ImportError as exc:
                 raise exceptions.ImportBackendError(
                     "There was a problem importing Minuit. The minuit optimizer cannot be used.",
-                    e,
-                )
-        elif name == '__wrapped__':  # doctest
+                    exc,
+                ) from exc
+        elif name == "__wrapped__":  # doctest
             pass
 
 
 OptimizerRetriever = _OptimizerRetriever()
-__all__ = ['OptimizerRetriever']
+__all__ = ["OptimizerRetriever"]

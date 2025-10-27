@@ -38,24 +38,24 @@ def test_generate_asimov_can_return_fitted_pars(return_fitted_pars):
 # in AsymptotiCalculator.teststatistic, where the fit results should be set
 # the other kwargs don't impact the logic of that method,
 # so leave them at the default so as not to put a burden on future changes
-@pytest.mark.parametrize('test_stat', ['qtilde', 'q', 'q0'])
+@pytest.mark.parametrize("test_stat", ["qtilde", "q", "q0"])
 def test_asymptotic_calculator_has_fitted_pars(test_stat):
     model = pyhf.simplemodels.uncorrelated_background([1], [1], [1])
     data = [2, 1]  # [main, aux]
 
     calc = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat=test_stat)
-    calc.teststatistic(0 if test_stat == 'q0' else 1)
+    calc.teststatistic(0 if test_stat == "q0" else 1)
 
-    assert hasattr(calc, 'fitted_pars')
+    assert hasattr(calc, "fitted_pars")
     fitted_pars = calc.fitted_pars
-    assert hasattr(fitted_pars, 'asimov_pars')
-    assert hasattr(fitted_pars, 'fixed_poi_fit_to_data')
-    assert hasattr(fitted_pars, 'fixed_poi_fit_to_asimov')
-    assert hasattr(fitted_pars, 'free_fit_to_data')
-    assert hasattr(fitted_pars, 'free_fit_to_asimov')
+    assert hasattr(fitted_pars, "asimov_pars")
+    assert hasattr(fitted_pars, "fixed_poi_fit_to_data")
+    assert hasattr(fitted_pars, "fixed_poi_fit_to_asimov")
+    assert hasattr(fitted_pars, "free_fit_to_data")
+    assert hasattr(fitted_pars, "free_fit_to_asimov")
 
     rtol = 1e-5
-    if test_stat == 'q0':
+    if test_stat == "q0":
         assert pytest.approx([1.0, 1.0], rel=rtol) == pyhf.tensorlib.tolist(
             fitted_pars.asimov_pars
         )

@@ -40,7 +40,7 @@ def get_json_from_tarfile():
     return _get_json_from_tarfile
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def isolate_modules():
     """
     This fixture isolates the sys.modules imported in case you need to mess around with them and do not want to break other tests.
@@ -52,7 +52,7 @@ def isolate_modules():
     sys.modules.update(CACHE_MODULES)
 
 
-@pytest.fixture(scope='function', autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def reset_events():
     """
     This fixture is automatically run to clear out the events registered before and after a test function runs.
@@ -64,18 +64,18 @@ def reset_events():
     pyhf.events.__disabled_events.clear()
 
 
-@pytest.fixture(scope='function', autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def reset_backend():
     """
     This fixture is automatically run to reset the backend before and after a test function runs.
     """
-    pyhf.set_backend('numpy', default=True)
+    pyhf.set_backend("numpy", default=True)
     yield reset_backend
-    pyhf.set_backend('numpy', default=True)
+    pyhf.set_backend("numpy", default=True)
 
 
 @pytest.fixture(
-    scope='function',
+    scope="function",
     params=[
         (("numpy_backend", dict()), ("scipy_optimizer", dict())),
         (("jax_backend", dict()), ("scipy_optimizer", dict())),
@@ -84,7 +84,7 @@ def reset_backend():
             ("minuit_optimizer", dict()),
         ),
     ],
-    ids=['numpy', 'jax', 'numpy_minuit'],
+    ids=["numpy", "jax", "numpy_minuit"],
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
@@ -95,12 +95,12 @@ def backend(request):
     func_name = request._pyfuncitem.name
 
     # skip backends if specified
-    skip_backend = request.node.get_closest_marker(f'skip_{param_id}')
+    skip_backend = request.node.get_closest_marker(f"skip_{param_id}")
     # allow the specific backend to fail if specified
-    fail_backend = request.node.get_closest_marker(f'fail_{param_id}')
+    fail_backend = request.node.get_closest_marker(f"fail_{param_id}")
     # only look at the specific backends
     only_backends = [
-        pid for pid in param_ids if request.node.get_closest_marker(f'only_{pid}')
+        pid for pid in param_ids if request.node.get_closest_marker(f"only_{pid}")
     ]
     disable_backend = any(
         backend in param_id for backend in request.config.option.disable_backend
@@ -148,15 +148,15 @@ def backend(request):
 
 
 @pytest.fixture(
-    scope='function',
+    scope="function",
     params=[0, 1, 2, 4],
-    ids=['interpcode0', 'interpcode1', 'interpcode2', 'interpcode4'],
+    ids=["interpcode0", "interpcode1", "interpcode2", "interpcode4"],
 )
 def interpcode(request):
     yield request.param
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def datadir(tmp_path, request):
     """
     Fixture responsible for searching a folder with the same name of test
@@ -165,7 +165,7 @@ def datadir(tmp_path, request):
     """
     # this gets the module name (e.g. /path/to/pyhf/tests/test_schema.py)
     # and then gets the directory by removing the suffix (e.g. /path/to/pyhf/tests/test_schema)
-    test_dir = pathlib.Path(request.module.__file__).with_suffix('')
+    test_dir = pathlib.Path(request.module.__file__).with_suffix("")
 
     if test_dir.is_dir():
         shutil.copytree(test_dir, tmp_path, dirs_exist_ok=True)

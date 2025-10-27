@@ -1,5 +1,6 @@
-import pyhf
 import numpy as np
+
+import pyhf
 
 
 def test_smoketest_toys(backend):

@@ -191,7 +191,7 @@ def fixed_poi_fit(
     """
     if pdf.config.poi_index is None:
         raise UnspecifiedPOI(
-            'No POI is defined. A POI is required to fit with a fixed POI.'
+            "No POI is defined. A POI is required to fit with a fixed POI."
         )
 
     init_pars = [*(init_pars or pdf.config.suggested_init())]

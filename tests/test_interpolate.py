@@ -1,6 +1,7 @@
-import pyhf
 import numpy as np
 import pytest
+
+import pyhf
 
 
 @pytest.fixture
@@ -58,19 +59,19 @@ def test_interpolator_structure(interpcode, random_histosets_alphasets_pair):
         histogramssets.tolist(), subscribe=False
     )
     assert callable(interpolator)
-    assert hasattr(interpolator, 'alphasets_shape')
-    assert hasattr(interpolator, '_precompute') and callable(interpolator._precompute)
-    assert hasattr(interpolator, '_precompute_alphasets') and callable(
+    assert hasattr(interpolator, "alphasets_shape")
+    assert hasattr(interpolator, "_precompute") and callable(interpolator._precompute)
+    assert hasattr(interpolator, "_precompute_alphasets") and callable(
         interpolator._precompute_alphasets
     )
 
 
 def test_interpolator_subscription(mocker, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
-    ename = 'tensorlib_changed'
+    ename = "tensorlib_changed"
 
     interpolator_cls = pyhf.interpolators.get(interpcode)
-    spy = mocker.spy(interpolator_cls, '_precompute')
+    spy = mocker.spy(interpolator_cls, "_precompute")
 
     interpolator_cls(histogramssets.tolist(), subscribe=False)
     assert spy.call_count == 1
@@ -142,7 +143,7 @@ def test_validate_implementation(backend, interpcode, random_histosets_alphasets
     )
 
 
-@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
 def test_code0_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
@@ -156,7 +157,7 @@ def test_code0_validation(backend, do_tensorized_calc):
     # calculate the actual change
     histogramssets = pyhf.tensorlib.astensor(histogramssets)
     allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum(
-        'sa,shb->shab',
+        "sa,shb->shab",
         pyhf.tensorlib.ones(pyhf.tensorlib.shape(alphasets)),
         histogramssets[:, :, 1],
     )
@@ -168,7 +169,7 @@ def test_code0_validation(backend, do_tensorized_calc):
     )
 
 
-@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
 def test_code1_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.9], [1.0], [1.1]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
@@ -182,7 +183,7 @@ def test_code1_validation(backend, do_tensorized_calc):
     # calculate the actual change
     histogramssets = pyhf.tensorlib.astensor(histogramssets)
     allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum(
-        'sa,shb->shab',
+        "sa,shb->shab",
         pyhf.tensorlib.ones(pyhf.tensorlib.shape(alphasets)),
         histogramssets[:, :, 1],
     )
@@ -196,7 +197,7 @@ def test_code1_validation(backend, do_tensorized_calc):
 
 def test_invalid_interpcode():
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
-        pyhf.interpolators.get('fake')
+        pyhf.interpolators.get("fake")
 
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
         pyhf.interpolators.get(1.2)
