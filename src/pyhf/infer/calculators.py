@@ -51,10 +51,11 @@ def generate_asimov_data(
         >>> asimov_data = pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
         >>> np.isclose(asimov_data, [ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
         array([ True,  True,  True,  True])
-        >>> pyhf.infer.calculators.generate_asimov_data(
+        >>> _, asimov_params = pyhf.infer.calculators.generate_asimov_data(
         ...     mu_test, data, model, None, None, None, return_fitted_pars=True
         ... )
-        (array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488]), array([1.        , 0.97224597, 0.87553894]))
+        >>> np.isclose(asimov_params, [1.        , 0.97224597, 0.87553894])
+        array([ True,  True,  True])
 
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
@@ -353,10 +354,17 @@ class AsymptoticCalculator:
             >>> test_stat = asymptotic_calculator.teststatistic(mu_test)
             >>> np.isclose(test_stat, 0.14043184)
             np.True_
-            >>> asymptotic_calculator.fitted_pars
-            HypoTestFitResults(asimov_pars=array([0.        , 1.0030482 , 0.96264534]), free_fit_to_data=array([0.        , 1.0030512 , 0.96266961]), free_fit_to_asimov=array([0.        , 1.00304893, 0.96263365]), fixed_poi_fit_to_data=array([1.        , 0.97224597, 0.87553894]), fixed_poi_fit_to_asimov=array([1.        , 0.97276864, 0.87142047]))
-            >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov  # best-fit parameters to Asimov dataset
-            array([0.        , 1.00304893, 0.96263365])
+            >>> fit_results = asymptotic_calculator.fitted_pars
+            >>> np.isclose(fit_results.asimov_pars, [0.        , 1.0030482 , 0.96264534])
+            array([ True,  True,  True)]
+            >>> np.isclose(fit_results.free_fit_to_data, [0.        , 1.0030512 , 0.96266961])
+            array([ True,  True,  True)]
+            >>> np.isclose(fit_results.free_fit_to_asimov, [0.        , 1.00304893, 0.96263365])  # best-fit parameters to Asimov dataset
+            array([ True,  True,  True)]
+            >>> np.isclose(fit_results.fixed_poi_fit_to_data, [1.        , 0.97224597, 0.87553894])
+            array([ True,  True,  True)]
+            >>> np.isclose(fit_results.fixed_poi_fit_to_asimov, [1.        , 0.97276864, 0.87142047])
+            array([ True,  True,  True)]
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -634,6 +642,7 @@ class EmpiricalDistribution:
             np.float64(6.15094381...)
 
             >>> import pyhf
+            >>> import numpy as np
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
