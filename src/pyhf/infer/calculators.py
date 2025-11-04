@@ -351,7 +351,7 @@ class AsymptoticCalculator:
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
             >>> test_stat = asymptotic_calculator.teststatistic(mu_test)
             >>> np.isclose(test_stat, 0.14043184)
-            True
+            array([ True,  True,  True,  True,  True])
             >>> asymptotic_calculator.fitted_pars
             HypoTestFitResults(asimov_pars=array([0.        , 1.0030482 , 0.96264534]), free_fit_to_data=array([0.        , 1.0030512 , 0.96266961]), free_fit_to_asimov=array([0.        , 1.00304893, 0.96263365]), fixed_poi_fit_to_data=array([1.        , 0.97224597, 0.87553894]), fixed_poi_fit_to_asimov=array([1.        , 0.97276864, 0.87142047]))
             >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov  # best-fit parameters to Asimov dataset
@@ -450,11 +450,11 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
             >>> np.isclose(CLsb, 0.02332502)
-            True
+            np.True_
             >>> np.isclose(CLb, 0.4441594)
-            True
+            np.True_
             >>> np.isclose(CLs, 0.05251497)
-            True
+            np.True_
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -500,7 +500,7 @@ class AsymptoticCalculator:
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
             >>> np.isclose(CLs_exp_band, [0.00260626, 0.01382005, 0.06445321, 0.23525644, 0.57303621])
-            True
+            np.True_
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
@@ -657,7 +657,7 @@ class EmpiricalDistribution:
             >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
             >>> exp_values = dist.expected_value(n_sigma)
             >>> np.isclose(exp_values, [0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01, 2.99592664e+00])
-            True
+            np.True_
 
         Args:
             nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.

@@ -47,7 +47,7 @@ def toms748_scan(
         ...     data, model, 0., 5., rtol=0.01
         ... )
         >>> np.isclose(obs_limit, 1.01156939)
-        True
+        np.True_
         >>> np.isclose(exp_limits, [0.5600747, 0.75702605, 1.06234693, 1.50116923, 2.05078912])
         array([ True,  True,  True,  True,  True])
 
@@ -162,7 +162,7 @@ def linear_grid_scan(
         ...     data, model, scan, return_results=True
         ... )
         >>> np.isclose(obs_limit, 1.01764089)
-        True
+        np.True_
         >>> np.isclose(exp_limits, [0.59576921, 0.76169166, 1.08504773, 1.50170482, 2.06654952])
         array([ True,  True,  True,  True,  True])
 
@@ -226,7 +226,7 @@ def upper_limit(
         ...     data, model, scan, return_results=True
         ... )
         >>> np.isclose(obs_limit, 1.01764089)
-        True
+        np.True_
         >>> np.isclose(exp_limits, [0.59576921, 0.76169166, 1.08504773, 1.50170482, 2.06654952])
         array([ True,  True,  True,  True,  True])
 
