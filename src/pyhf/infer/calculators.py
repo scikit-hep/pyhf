@@ -449,8 +449,12 @@ class AsymptoticCalculator:
             >>> q_tilde = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
-            >>> CLsb, CLb, CLs
-            (array(0.02332502), array(0.4441594...), array(0.05251497))
+            >>> np.isclose(CLsb, 0.02332502)
+            True
+            >>> np.isclose(CLb, 0.4441594)
+            True
+            >>> np.isclose(CLs, 0.05251497)
+            True
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
