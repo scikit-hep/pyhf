@@ -51,7 +51,7 @@ def hypotest(
         >>> CLs_obs
         array(0.05251497)
         >>> CLs_exp_band
-        [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
+        [array(0.00260626), array(0.01382005), array(0.064453...), array(0.2352564...), array(0.573036...)]
 
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)

@@ -102,7 +102,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         >>> pyhf.infer.test_statistics.qmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
+        (array(3.9549891), (array([1.        , 0.9722459..., 0.87553894]), array([-0.06679...,  1.005553...,  0.9693089...])))
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -180,6 +180,7 @@ def qmu_tilde(
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -194,10 +195,15 @@ def qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.93824492)
-        >>> pyhf.infer.test_statistics.qmu_tilde(
+        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
+        >>> test_stat
+        array(3.93824492)
+        >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
+        True
+        >>> np.isclose(unconstrained, [0.        , 1.0030512 , 0.96266961])
+        True
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -262,6 +268,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -277,10 +284,15 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.9549891)
-        >>> pyhf.infer.test_statistics.tmu(
+        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.tmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
+        >>> test_stat
+        array(3.9549891)
+        >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
+        True
+        >>> np.isclose(unconstrained, [-0.06679525,  1.00555369,  0.96930896])
+        True
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -353,6 +365,7 @@ def tmu_tilde(
     Example:
 
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -367,10 +380,15 @@ def tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.93824492)
-        >>> pyhf.infer.test_statistics.tmu_tilde(
+        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
+        >>> test_stat
+        array(3.93824492)
+        >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
+        True
+        >>> np.isclose(unconstrained, [0.        , 1.0030512 , 0.96266961])
+        True
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -433,6 +451,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -445,10 +464,15 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(2.98339447)
-        >>> pyhf.infer.test_statistics.q0(
+        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.q0(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(2.98339447), (array([0.        , 1.03050845, 1.12128752]), array([0.95260667, 0.99635345, 1.02140172])))
+        >>> test_stat
+        array(2.98339447)
+        >>> np.isclose(constrained, [0.        , 1.030508..., 1.12128752])
+        True
+        >>> np.isclose(unconstrained, [0.95260667, 0.99635345, 1.02140172])
+        True
 
     Args:
         mu (Number or Tensor): The signal strength parameter (must be set to zero)

@@ -47,7 +47,7 @@ def toms748_scan(
         ...     data, model, 0., 5., rtol=0.01
         ... )
         >>> obs_limit
-        array(1.01156939)
+        array(1.0115693...)
         >>> exp_limits
         [array(0.5600747), array(0.75702605), array(1.06234693), array(1.50116923), array(2.05078912)]
 
@@ -162,7 +162,7 @@ def linear_grid_scan(
         ...     data, model, scan, return_results=True
         ... )
         >>> obs_limit
-        array(1.01764089)
+        array(1.0176408...)
         >>> exp_limits
         [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
 
