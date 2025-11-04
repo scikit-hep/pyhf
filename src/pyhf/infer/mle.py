@@ -95,7 +95,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> bestfit_pars, twice_nll = pyhf.infer.mle.fit(data, model, return_fitted_val=True)
         >>> np.isclose(bestfit_pars, [0.        , 1.0030512 , 0.96266961])
-        True
+        array([ True,  True,  True])
         >>> twice_nll
         array(24.98393521)
         >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll
@@ -170,7 +170,7 @@ def fixed_poi_fit(
         ...     test_poi, data, model, return_fitted_val=True
         ... )
         >>> np.isclose(bestfit_pars, [1.        , 0.97224597, 0.87553894])
-        True
+        array([ True,  True,  True])
         >>> twice_nll
         array(28.92218013)
         >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll

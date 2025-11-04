@@ -195,7 +195,7 @@ def qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.93824492)
-        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.qmu_tilde(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
         >>> test_stat
@@ -284,7 +284,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.9549891)
-        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.tmu(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.tmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
         >>> test_stat
@@ -380,7 +380,7 @@ def tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.93824492)
-        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.tmu_tilde(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
         >>> test_stat
@@ -464,7 +464,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(2.98339447)
-        >>> test_stat, constrained, unconstrained = pyhf.infer.test_statistics.q0(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.q0(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
         >>> test_stat
