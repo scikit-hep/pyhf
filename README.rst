@@ -60,7 +60,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    ...     test_mu, data, model, test_stat="qtilde", return_expected=True
    ... )
    >>> print(f"Observed: {CLs_obs:.8f}, Expected: {CLs_exp:.8f}")
-   Observed: 0.05251497, Expected: 0.06445321
+   Observed: 0.05251497, Expected: 0.06445319
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
