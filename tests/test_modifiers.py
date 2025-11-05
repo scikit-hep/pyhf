@@ -9,22 +9,22 @@ import pyhf
 
 def test_shapefactor_build():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0] * 3,
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None},
+                        "name": "sample",
+                        "data": [10.0] * 3,
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None},
                         ],
                     },
                     {
-                        'name': 'another_sample',
-                        'data': [5.0] * 3,
-                        'modifiers': [
-                            {'name': 'freeshape', 'type': 'shapefactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0] * 3,
+                        "modifiers": [
+                            {"name": "freeshape", "type": "shapefactor", "data": None}
                         ],
                     },
                 ],
@@ -38,35 +38,35 @@ def test_shapefactor_build():
 
 def test_staterror_holes():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel1',
-                'samples': [
+                "name": "channel1",
+                "samples": [
                     {
-                        'name': 'another_sample',
-                        'data': [50, 0, 0, 70],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None},
+                        "name": "another_sample",
+                        "data": [50, 0, 0, 70],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None},
                             {
-                                'name': 'staterror_1',
-                                'type': 'staterror',
-                                'data': [5, 0, 5, 5],
+                                "name": "staterror_1",
+                                "type": "staterror",
+                                "data": [5, 0, 5, 5],
                             },
                         ],
                     },
                 ],
             },
             {
-                'name': 'channel2',
-                'samples': [
+                "name": "channel2",
+                "samples": [
                     {
-                        'name': 'another_sample',
-                        'data': [50, 0, 10, 70],
-                        'modifiers': [
+                        "name": "another_sample",
+                        "data": [50, 0, 10, 70],
+                        "modifiers": [
                             {
-                                'name': 'staterror_2',
-                                'type': 'staterror',
-                                'data': [5, 0, 5, 5],
+                                "name": "staterror_2",
+                                "type": "staterror",
+                                "data": [5, 0, 5, 5],
                             }
                         ],
                     },
@@ -113,35 +113,35 @@ def test_staterror_holes():
 
 def test_shapesys_holes():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel1',
-                'samples': [
+                "name": "channel1",
+                "samples": [
                     {
-                        'name': 'another_sample',
-                        'data': [50, 60, 0, 70],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None},
+                        "name": "another_sample",
+                        "data": [50, 60, 0, 70],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None},
                             {
-                                'name': 'freeshape1',
-                                'type': 'shapesys',
-                                'data': [5, 0, 5, 5],
+                                "name": "freeshape1",
+                                "type": "shapesys",
+                                "data": [5, 0, 5, 5],
                             },
                         ],
                     },
                 ],
             },
             {
-                'name': 'channel2',
-                'samples': [
+                "name": "channel2",
+                "samples": [
                     {
-                        'name': 'another_sample',
-                        'data': [50, 60, 0, 70],
-                        'modifiers': [
+                        "name": "another_sample",
+                        "data": [50, 60, 0, 70],
+                        "modifiers": [
                             {
-                                'name': 'freeshape2',
-                                'type': 'shapesys',
-                                'data': [5, 0, 5, 5],
+                                "name": "freeshape2",
+                                "type": "shapesys",
+                                "data": [5, 0, 5, 5],
                             }
                         ],
                     },

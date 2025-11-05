@@ -1,9 +1,10 @@
 """Minuit Optimizer Class."""
 
+import iminuit
+import scipy
+
 from pyhf import exceptions
 from pyhf.optimize.mixins import OptimizerMixin
-import scipy
-import iminuit
 
 
 class minuit_optimizer(OptimizerMixin):
@@ -11,7 +12,7 @@ class minuit_optimizer(OptimizerMixin):
     Optimizer that minimizes via :meth:`iminuit.Minuit.migrad`.
     """
 
-    __slots__ = ['errordef', 'name', 'steps', 'strategy', 'tolerance']
+    __slots__ = ["errordef", "name", "steps", "strategy", "tolerance"]
 
     def __init__(self, *args, **kwargs):
         """
@@ -37,11 +38,11 @@ class minuit_optimizer(OptimizerMixin):
               See specific optimizer for detailed meaning.
               Default is ``0.1``.
         """
-        self.name = 'minuit'
-        self.errordef = kwargs.pop('errordef', 1)
-        self.steps = kwargs.pop('steps', 1000)
-        self.strategy = kwargs.pop('strategy', None)
-        self.tolerance = kwargs.pop('tolerance', 0.1)
+        self.name = "minuit"
+        self.errordef = kwargs.pop("errordef", 1)
+        self.steps = kwargs.pop("steps", 1000)
+        self.strategy = kwargs.pop("strategy", None)
+        self.tolerance = kwargs.pop("tolerance", 0.1)
         super().__init__(*args, **kwargs)
 
     def _get_minimizer(
@@ -83,7 +84,7 @@ class minuit_optimizer(OptimizerMixin):
         do_grad=False,
         bounds=None,
         fixed_vals=None,
-        options={},
+        options=None,
     ):
         """
         Same signature as :func:`scipy.optimize.minimize`.
@@ -102,7 +103,9 @@ class minuit_optimizer(OptimizerMixin):
         Returns:
             fitresult (scipy.optimize.OptimizeResult): the fit result
         """
-        maxiter = options.pop('maxiter', self.maxiter)
+        if options is None:
+            options = {}
+        maxiter = options.pop("maxiter", self.maxiter)
         # do_grad value results in iminuit.Minuit.strategy of either:
         #   0: Fast. Does not check a user-provided gradient.
         #   1: Default. Checks user-provided gradient against numerical gradient.
@@ -111,7 +114,7 @@ class minuit_optimizer(OptimizerMixin):
         # passing strategy=None as options kwarg
         if strategy is None:
             strategy = 0 if do_grad else 1
-        tolerance = options.pop('tolerance', self.tolerance)
+        tolerance = options.pop("tolerance", self.tolerance)
         if options:
             raise exceptions.Unsupported(
                 f"Unsupported options were passed in: {list(options)}."

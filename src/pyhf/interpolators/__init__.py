@@ -19,12 +19,12 @@ def _slow_interpolator_looper(histogramssets, alphasets, func):
 
 
 # interpolation codes come from https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
-from pyhf.interpolators.code0 import code0, _slow_code0
-from pyhf.interpolators.code1 import code1, _slow_code1
-from pyhf.interpolators.code2 import code2, _slow_code2
-from pyhf.interpolators.code4 import code4, _slow_code4
-from pyhf.interpolators.code4p import code4p, _slow_code4p
 from pyhf import exceptions
+from pyhf.interpolators.code0 import _slow_code0, code0
+from pyhf.interpolators.code1 import _slow_code1, code1
+from pyhf.interpolators.code2 import _slow_code2, code2
+from pyhf.interpolators.code4 import _slow_code4, code4
+from pyhf.interpolators.code4p import _slow_code4p, code4p
 
 
 def get(interpcode, do_tensorized_calc=True):
@@ -33,16 +33,16 @@ def get(interpcode, do_tensorized_calc=True):
         1: code1 if do_tensorized_calc else _slow_code1,
         2: code2 if do_tensorized_calc else _slow_code2,
         4: code4 if do_tensorized_calc else _slow_code4,
-        '4p': code4p if do_tensorized_calc else _slow_code4p,
+        "4p": code4p if do_tensorized_calc else _slow_code4p,
     }
 
     try:
         return interpcodes[interpcode]
-    except KeyError:
-        raise exceptions.InvalidInterpCode
+    except KeyError as exc:
+        raise exceptions.InvalidInterpCode from exc
 
 
-__all__ = ['code0', 'code1', 'code2', 'code4', 'code4p']
+__all__ = ["code0", "code1", "code2", "code4", "code4p"]
 
 
 def __dir__():

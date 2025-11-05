@@ -1,9 +1,10 @@
-import pytest
-import pyhf
-from pyhf.parameters import constrained_by_poisson, constrained_by_normal
-from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
-from pyhf import default_backend
 import numpy as np
+import pytest
+
+import pyhf
+from pyhf import default_backend
+from pyhf.constraints import gaussian_constraint_combined, poisson_constraint_combined
+from pyhf.parameters import constrained_by_normal, constrained_by_poisson
 
 
 class MockConfig:
@@ -14,63 +15,63 @@ class MockConfig:
         self.auxdata = []
         self.auxdata_order = []
         for name in self.par_order:
-            self.auxdata = self.auxdata + self.par_map[name]['paramset'].auxdata
+            self.auxdata = self.auxdata + self.par_map[name]["paramset"].auxdata
             self.auxdata_order.append(name)
         self.npars = len(self.suggested_init())
 
     def suggested_init(self):
         init = []
         for name in self.par_order:
-            init = init + self.par_map[name]['paramset'].suggested_init
+            init = init + self.par_map[name]["paramset"].suggested_init
         return init
 
     def par_slice(self, name):
-        return self.par_map[name]['slice']
+        return self.par_map[name]["slice"]
 
     def param_set(self, name):
-        return self.par_map[name]['paramset']
+        return self.par_map[name]["paramset"]
 
 
 def test_numpy_pdf_inputs(backend):
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'firstchannel',
-                'samples': [
+                "name": "firstchannel",
+                "samples": [
                     {
-                        'name': 'mu',
-                        'data': [10.0, 10.0],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "mu",
+                        "data": [10.0, 10.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'bkg1',
-                        'data': [50.0, 70.0],
-                        'modifiers': [
+                        "name": "bkg1",
+                        "data": [50.0, 70.0],
+                        "modifiers": [
                             {
-                                'name': 'stat_firstchannel',
-                                'type': 'staterror',
-                                'data': [12.0, 12.0],
+                                "name": "stat_firstchannel",
+                                "type": "staterror",
+                                "data": [12.0, 12.0],
                             }
                         ],
                     },
                     {
-                        'name': 'bkg2',
-                        'data': [30.0, 20.0],
-                        'modifiers': [
+                        "name": "bkg2",
+                        "data": [30.0, 20.0],
+                        "modifiers": [
                             {
-                                'name': 'stat_firstchannel',
-                                'type': 'staterror',
-                                'data': [5.0, 5.0],
+                                "name": "stat_firstchannel",
+                                "type": "staterror",
+                                "data": [5.0, 5.0],
                             }
                         ],
                     },
                     {
-                        'name': 'bkg3',
-                        'data': [20.0, 15.0],
-                        'modifiers': [
-                            {'name': 'bkg_norm', 'type': 'shapesys', 'data': [10, 10]}
+                        "name": "bkg3",
+                        "data": [20.0, 15.0],
+                        "modifiers": [
+                            {"name": "bkg_norm", "type": "shapesys", "data": [10, 10]}
                         ],
                     },
                 ],
@@ -93,18 +94,18 @@ def test_numpy_pdf_inputs(backend):
             end_index = start_index + parset.n_parameters
             thisauxdata = auxdata[start_index:end_index]
             start_index = end_index
-            if parset.pdf_type == 'normal':
+            if parset.pdf_type == "normal":
                 paralphas = pars[parslice]
                 sigmas = (
                     parset.sigmas
-                    if hasattr(parset, 'sigmas')
+                    if hasattr(parset, "sigmas")
                     else tensorlib.ones(paralphas.shape)
                 )
                 sigmas = tensorlib.astensor(sigmas)
                 constraint_term = tensorlib.normal_logpdf(
                     thisauxdata, paralphas, sigmas
                 )
-            elif parset.pdf_type == 'poisson':
+            elif parset.pdf_type == "poisson":
                 paralphas = tensorlib.product(
                     tensorlib.stack(
                         [pars[parslice], tensorlib.astensor(parset.factors)]
@@ -132,11 +133,11 @@ def test_numpy_pdf_inputs(backend):
 
 def test_batched_constraints(backend):
     config = MockConfig(
-        par_order=['pois1', 'pois2', 'norm1', 'norm2'],
+        par_order=["pois1", "pois2", "norm1", "norm2"],
         par_map={
-            'pois1': {
-                'paramset': constrained_by_poisson(
-                    name='pois1',
+            "pois1": {
+                "paramset": constrained_by_poisson(
+                    name="pois1",
                     is_scalar=False,
                     n_parameters=1,
                     inits=[1.0],
@@ -145,12 +146,12 @@ def test_batched_constraints(backend):
                     factors=[12],
                     fixed=False,
                 ),
-                'slice': slice(0, 1),
-                'auxdata': [1],
+                "slice": slice(0, 1),
+                "auxdata": [1],
             },
-            'pois2': {
-                'paramset': constrained_by_poisson(
-                    name='pois2',
+            "pois2": {
+                "paramset": constrained_by_poisson(
+                    name="pois2",
                     is_scalar=False,
                     n_parameters=2,
                     inits=[1.0] * 2,
@@ -159,11 +160,11 @@ def test_batched_constraints(backend):
                     factors=[13, 14],
                     fixed=False,
                 ),
-                'slice': slice(1, 3),
+                "slice": slice(1, 3),
             },
-            'norm1': {
-                'paramset': constrained_by_normal(
-                    name='norm1',
+            "norm1": {
+                "paramset": constrained_by_normal(
+                    name="norm1",
                     is_scalar=False,
                     n_parameters=2,
                     inits=[0] * 2,
@@ -172,11 +173,11 @@ def test_batched_constraints(backend):
                     sigmas=[1.5, 2.0],
                     fixed=False,
                 ),
-                'slice': slice(3, 5),
+                "slice": slice(3, 5),
             },
-            'norm2': {
-                'paramset': constrained_by_normal(
-                    name='norm2',
+            "norm2": {
+                "paramset": constrained_by_normal(
+                    name="norm2",
                     is_scalar=False,
                     n_parameters=3,
                     inits=[0] * 3,
@@ -184,7 +185,7 @@ def test_batched_constraints(backend):
                     auxdata=[0, 0, 0],
                     fixed=False,
                 ),
-                'slice': slice(5, 8),
+                "slice": slice(5, 8),
             },
         },
     )

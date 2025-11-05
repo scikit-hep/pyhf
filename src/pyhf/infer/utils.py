@@ -1,10 +1,10 @@
 """Inference for Statistical Models."""
 
-from pyhf.infer.calculators import AsymptoticCalculator, ToyCalculator
-from pyhf.exceptions import InvalidTestStatistic
-from pyhf.infer.test_statistics import q0, qmu, qmu_tilde
-
 import logging
+
+from pyhf.exceptions import InvalidTestStatistic
+from pyhf.infer.calculators import AsymptoticCalculator, ToyCalculator
+from pyhf.infer.test_statistics import q0, qmu, qmu_tilde
 
 log = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ def create_calculator(calctype, *args, **kwargs):
     Returns:
         calculator (:obj:`object`): A calculator.
     """
-    return {'asymptotics': AsymptoticCalculator, 'toybased': ToyCalculator}[calctype](
+    return {"asymptotics": AsymptoticCalculator, "toybased": ToyCalculator}[calctype](
         *args, **kwargs
     )
 
@@ -109,5 +109,5 @@ def get_test_stat(name):
     }
     try:
         return _mapping[name]
-    except KeyError:
-        raise InvalidTestStatistic
+    except KeyError as exc:
+        raise InvalidTestStatistic from exc

@@ -80,13 +80,7 @@ try:
                 with open(output_directory, "wb") as archive:
                     archive.write(response.content)
             else:
-                # Support for file-like objects for tarfile.is_tarfile was added
-                # in Python 3.9, so as pyhf is currently Python 3.8+ then can't
-                # do tarfile.is_tarfile(BytesIO(response.content)).
-                # Instead, just use a 'try except' block to determine if the
-                # archive is a valid tarfile.
-                # TODO: Simplify after pyhf is Python 3.9+ only
-                try:
+                if tarfile.is_tarfile(BytesIO(response.content)):
                     # Use transparent compression to allow for .tar or .tar.gz
                     with tarfile.open(
                         mode="r:*", fileobj=BytesIO(response.content)
@@ -97,13 +91,7 @@ try:
                             archive.extractall(output_directory, filter="data")
                         else:
                             archive.extractall(output_directory)
-                except tarfile.ReadError:
-                    if not zipfile.is_zipfile(BytesIO(response.content)):
-                        raise exceptions.InvalidArchive(
-                            f"The archive downloaded from {archive_url} is not a tarfile"
-                            + " or a zipfile and so can not be opened as one."
-                        )
-
+                elif zipfile.is_zipfile(BytesIO(response.content)):
                     output_directory = Path(output_directory)
                     if output_directory.exists():
                         rmtree(output_directory)
@@ -129,6 +117,11 @@ try:
                         # from creation time
                         rmtree(output_directory)
                         _tmp_path.replace(output_directory)
+                else:
+                    raise exceptions.InvalidArchive(
+                        f"The archive downloaded from {archive_url} is not a tarfile"
+                        + " or a zipfile and so can not be opened as one."
+                    )
 
 except ModuleNotFoundError:
     log.error(

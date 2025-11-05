@@ -1,7 +1,7 @@
 """Common Backend Shim to prepare minimization for optimizer."""
 
-from pyhf.tensor.manager import get_backend
 from pyhf.tensor.common import _TensorViewer
+from pyhf.tensor.manager import get_backend
 
 
 def _make_stitch_pars(tv=None, fixed_values=None):
@@ -24,7 +24,7 @@ def _make_stitch_pars(tv=None, fixed_values=None):
 
     def stitch_pars(pars, stitch_with=fixed_values):
         tb, _ = get_backend()
-        return tv.stitch([tb.astensor(stitch_with, dtype='float'), pars])
+        return tv.stitch([tb.astensor(stitch_with, dtype="float"), pars])
 
     return stitch_pars
 
@@ -37,16 +37,16 @@ def _get_tensor_shim():
     that tensorlib is imported correctly.
     """
     tensorlib, _ = get_backend()
-    if tensorlib.name == 'numpy':
+    if tensorlib.name == "numpy":
         from pyhf.optimize.opt_numpy import wrap_objective as numpy_shim
 
         return numpy_shim
 
-    if tensorlib.name == 'jax':
+    if tensorlib.name == "jax":
         from pyhf.optimize.opt_jax import wrap_objective as jax_shim
 
         return jax_shim
-    raise ValueError(f'No optimizer shim for {tensorlib.name}.')
+    raise ValueError(f"No optimizer shim for {tensorlib.name}.")
 
 
 def shim(
@@ -107,7 +107,7 @@ def shim(
     if do_stitch:
         all_init = tensorlib.astensor(init_pars)
         variable_init = tensorlib.tolist(
-            tensorlib.gather(all_init, tensorlib.astensor(variable_idx, dtype='int'))
+            tensorlib.gather(all_init, tensorlib.astensor(variable_idx, dtype="int"))
         )
         variable_bounds = [par_bounds[i] for i in variable_idx]
         # stitched out the fixed values, so we don't pass any to the underlying minimizer
@@ -130,10 +130,10 @@ def shim(
         stitch_pars,
         do_grad=do_grad,
         jit_pieces={
-            'fixed_idx': fixed_idx,
-            'variable_idx': variable_idx,
-            'fixed_values': fixed_values,
-            'do_stitch': do_stitch,
+            "fixed_idx": fixed_idx,
+            "variable_idx": variable_idx,
+            "fixed_values": fixed_values,
+            "do_stitch": do_stitch,
         },
     )
 

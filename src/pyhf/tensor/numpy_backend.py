@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, Mapping, Sequence, TypeVar, Union
+from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
 
 import numpy as np
 
@@ -14,12 +15,13 @@ else:
     ArrayLike = "ArrayLike"
     NBitBase = "NBitBase"
 
+from typing import cast
+
 from scipy import special
 from scipy.special import gammaln, xlogy
 from scipy.stats import norm, poisson
 
 from pyhf.typing import Literal, Shape
-from typing import cast
 
 T = TypeVar("T", bound=NBitBase)
 
@@ -61,7 +63,7 @@ class _BasicNormal(Generic[T]):
 class numpy_backend(Generic[T]):
     """NumPy backend for pyhf"""
 
-    __slots__ = ['default_do_grad', 'dtypemap', 'name', 'precision']
+    __slots__ = ["default_do_grad", "dtypemap", "name", "precision"]
 
     #: The array type for numpy
     array_type = np.ndarray
@@ -76,9 +78,9 @@ class numpy_backend(Generic[T]):
             FloatIntOrBool,
             DTypeLike,  # Type[np.floating[T]] | Type[np.integer[T]] | Type[np.bool_],
         ] = {
-            'float': np.float64 if self.precision == '64b' else np.float32,
-            'int': np.int64 if self.precision == '64b' else np.int32,
-            'bool': np.bool_,
+            "float": np.float64 if self.precision == "64b" else np.float32,
+            "int": np.int64 if self.precision == "64b" else np.int32,
+            "bool": np.bool_,
         }
         self.default_do_grad: bool = False
 
@@ -207,7 +209,8 @@ class numpy_backend(Generic[T]):
 
     def tolist(self, tensor_in: Tensor[T] | list[T]) -> list[T]:
         try:
-            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return]
+            # unused-ignore for [no-any-return] in python 3.9
+            return tensor_in.tolist()  # type: ignore[union-attr,no-any-return,unused-ignore]
         except AttributeError:
             if isinstance(tensor_in, list):
                 return tensor_in
@@ -226,7 +229,7 @@ class numpy_backend(Generic[T]):
         return np.isfinite(tensor)
 
     def astensor(
-        self, tensor_in: ArrayLike, dtype: FloatIntOrBool = 'float'
+        self, tensor_in: ArrayLike, dtype: FloatIntOrBool = "float"
     ) -> ArrayLike:
         """
         Convert to a NumPy array.
@@ -252,7 +255,7 @@ class numpy_backend(Generic[T]):
             dtype_obj = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
             )
             raise
 
@@ -352,7 +355,10 @@ class numpy_backend(Generic[T]):
         .. versionadded:: 0.7.0
         """
         # see https://github.com/numpy/numpy/issues/22125
-        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, interpolation=interpolation))  # type: ignore[call-overload]
+        return cast(
+            ArrayLike,
+            np.percentile(tensor_in, q, axis=axis, interpolation=interpolation),  # type: ignore[call-overload]
+        )
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)
@@ -654,4 +660,5 @@ class numpy_backend(Generic[T]):
 
         .. versionadded:: 0.7.0
         """
-        return tensor_in.transpose()
+        # TODO: Casting needed for Python 3.10 mypy but not Python 3.13?
+        return cast(ArrayLike, tensor_in.transpose())

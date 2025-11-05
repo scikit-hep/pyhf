@@ -1,8 +1,9 @@
 import pytest
+
 import pyhf
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def default_backend(backend):
     pyhf.set_backend(*backend, default=True)
     yield backend
@@ -30,9 +31,9 @@ def test_uncorrelated_background(backend):
     assert model.config.samples == ["background", "signal"]
     assert model.config.par_order == ["mu", "uncorr_bkguncrt"]
     assert model.config.par_names == [
-        'mu',
-        'uncorr_bkguncrt[0]',
-        'uncorr_bkguncrt[1]',
+        "mu",
+        "uncorr_bkguncrt[0]",
+        "uncorr_bkguncrt[1]",
     ]
     assert model.config.suggested_init() == [1.0, 1.0, 1.0]
 
@@ -63,8 +64,8 @@ def test_uncorrelated_background_default_backend(default_backend):
     assert model.config.samples == ["background", "signal"]
     assert model.config.par_order == ["mu", "uncorr_bkguncrt"]
     assert model.config.par_names == [
-        'mu',
-        'uncorr_bkguncrt[0]',
-        'uncorr_bkguncrt[1]',
+        "mu",
+        "uncorr_bkguncrt[0]",
+        "uncorr_bkguncrt[1]",
     ]
     assert model.config.suggested_init() == [1.0, 1.0, 1.0]

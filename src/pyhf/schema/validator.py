@@ -1,6 +1,7 @@
 import numbers
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Mapping, Union
+from typing import Union
 
 import jsonschema
 
@@ -96,4 +97,4 @@ def validate(
     try:
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
-        raise pyhf.exceptions.InvalidSpecification(err, schema_name)
+        raise pyhf.exceptions.InvalidSpecification(err, schema_name) from err

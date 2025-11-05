@@ -1,9 +1,11 @@
 """JAX Backend Function Shim."""
 
+import logging
+
+import jax
+
 from pyhf import get_backend
 from pyhf.tensor.common import _TensorViewer
-import jax
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -11,13 +13,13 @@ log = logging.getLogger(__name__)
 def _final_objective(
     pars, data, fixed_values, fixed_idx, variable_idx, do_stitch, objective, pdf
 ):
-    log.debug('jitting function')
+    log.debug("jitting function")
     tensorlib, _ = get_backend()
     pars = tensorlib.astensor(pars)
     if do_stitch:
         tv = _TensorViewer([fixed_idx, variable_idx])
         constrained_pars = tv.stitch(
-            [tensorlib.astensor(fixed_values, dtype='float'), pars]
+            [tensorlib.astensor(fixed_values, dtype="float"), pars]
         )
     else:
         constrained_pars = pars
@@ -54,10 +56,10 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
             return _jitted_objective_and_grad(
                 pars,
                 data,
-                jit_pieces['fixed_values'],
-                tuple(jit_pieces['fixed_idx']),
-                tuple(jit_pieces['variable_idx']),
-                jit_pieces['do_stitch'],
+                jit_pieces["fixed_values"],
+                tuple(jit_pieces["fixed_idx"]),
+                tuple(jit_pieces["variable_idx"]),
+                jit_pieces["do_stitch"],
                 objective,
                 pdf,
             )
@@ -69,10 +71,10 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
             return _jitted_objective(
                 pars,
                 data,
-                jit_pieces['fixed_values'],
-                tuple(jit_pieces['fixed_idx']),
-                tuple(jit_pieces['variable_idx']),
-                jit_pieces['do_stitch'],
+                jit_pieces["fixed_values"],
+                tuple(jit_pieces["fixed_idx"]),
+                tuple(jit_pieces["variable_idx"]),
+                jit_pieces["do_stitch"],
                 objective,
                 pdf,
             )

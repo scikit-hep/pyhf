@@ -12,7 +12,7 @@ pure-python fitting/limit-setting/interval estimation HistFactory-style
 
 |PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
 
-|Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: black|
+|Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: ruff|
 
 |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
 |GitHub Actions Status: Docker|
@@ -392,8 +392,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 .. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/main.svg
   :target: https://results.pre-commit.ci/latest/github/scikit-hep/pyhf/main
   :alt: pre-commit.ci status
-.. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
+.. |Code style: ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+   :target: https://github.com/astral-sh/ruff
 
 .. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml/badge.svg
    :target: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml?query=branch%3Amain

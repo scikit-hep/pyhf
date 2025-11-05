@@ -4,10 +4,9 @@ import logging
 
 import click
 
-from pyhf import __version__
-from pyhf.cli import rootio, spec, infer, patchset, complete
+from pyhf import __version__, utils
+from pyhf.cli import complete, infer, patchset, rootio, spec
 from pyhf.contrib import cli as contrib
-from pyhf import utils
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -20,7 +19,7 @@ def _print_citation(ctx, param, value):
     ctx.exit()
 
 
-@click.group(context_settings=dict(help_option_names=['-h', '--help']))
+@click.group(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(version=__version__)
 @click.option(
     "--cite",

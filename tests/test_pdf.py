@@ -1,21 +1,23 @@
-import pyhf
-import pytest
-import pyhf.exceptions
-import numpy as np
 import json
+
+import numpy as np
+import pytest
+
+import pyhf
+import pyhf.exceptions
 
 
 def test_minimum_model_spec():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'goodsample',
-                        'data': [1.0],
-                        'modifiers': [
-                            {'type': 'normfactor', 'name': 'mu', 'data': None}
+                        "name": "goodsample",
+                        "data": [1.0],
+                        "modifiers": [
+                            {"type": "normfactor", "name": "mu", "data": None}
                         ],
                     },
                 ],
@@ -31,11 +33,11 @@ def test_pdf_inputs(backend):
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     pdf = pyhf.simplemodels.uncorrelated_background(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+        source["bindata"]["sig"], source["bindata"]["bkg"], source["bindata"]["bkgerr"]
     )
 
     pars = pdf.config.suggested_init()
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
 
     tensorlib, _ = backend
     assert tensorlib.shape(tensorlib.astensor(data)) == (2,)
@@ -54,11 +56,11 @@ def test_invalid_pdf_pars():
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     pdf = pyhf.simplemodels.uncorrelated_background(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+        source["bindata"]["sig"], source["bindata"]["bkg"], source["bindata"]["bkgerr"]
     )
 
     pars = pdf.config.suggested_init() + [1.0]
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
 
     with pytest.raises(pyhf.exceptions.InvalidPdfParameters):
         pdf.logpdf(pars, data)
@@ -70,17 +72,17 @@ def test_invalid_pdf_data():
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     pdf = pyhf.simplemodels.uncorrelated_background(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+        source["bindata"]["sig"], source["bindata"]["bkg"], source["bindata"]["bkgerr"]
     )
 
     pars = pdf.config.suggested_init()
-    data = source['bindata']['data'] + [10.0] + pdf.config.auxdata
+    data = source["bindata"]["data"] + [10.0] + pdf.config.auxdata
 
     with pytest.raises(pyhf.exceptions.InvalidPdfData):
         pdf.logpdf(pars, data)
 
 
-@pytest.mark.parametrize('batch_size', [None, 2])
+@pytest.mark.parametrize("batch_size", [None, 2])
 def test_pdf_expected_data_by_sample(backend, batch_size):
     tb, _ = backend
     source = {
@@ -88,9 +90,9 @@ def test_pdf_expected_data_by_sample(backend, batch_size):
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     pdf = pyhf.simplemodels.uncorrelated_background(
-        source['bindata']['sig'],
-        source['bindata']['bkg'],
-        source['bindata']['bkgerr'],
+        source["bindata"]["sig"],
+        source["bindata"]["bkg"],
+        source["bindata"]["bkgerr"],
         batch_size=batch_size,
     )
 
@@ -106,11 +108,11 @@ def test_pdf_expected_data_by_sample(backend, batch_size):
 
     data = pdf.main_model.expected_data(init_pars, return_by_sample=True)
     if batch_size:
-        data = tb.tolist(tb.einsum('ij...->ji...', data))
+        data = tb.tolist(tb.einsum("ij...->ji...", data))
 
     sample_expected_data = dict(zip(pdf.config.samples, tb.tolist(data)))
-    assert sample_expected_data['background'] == tb.tolist(expected_bkg)
-    assert sample_expected_data['signal'] == tb.tolist(expected_sig)
+    assert sample_expected_data["background"] == tb.tolist(expected_bkg)
+    assert sample_expected_data["signal"] == tb.tolist(expected_sig)
 
 
 def test_pdf_basicapi_tests(backend):
@@ -119,11 +121,11 @@ def test_pdf_basicapi_tests(backend):
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},
     }
     pdf = pyhf.simplemodels.uncorrelated_background(
-        source['bindata']['sig'], source['bindata']['bkg'], source['bindata']['bkgerr']
+        source["bindata"]["sig"], source["bindata"]["bkg"], source["bindata"]["bkgerr"]
     )
 
     pars = pdf.config.suggested_init()
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
 
     tensorlib, _ = backend
     assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
@@ -144,14 +146,14 @@ def test_pdf_basicapi_tests(backend):
     )
 
     pdf = pyhf.simplemodels.uncorrelated_background(
-        source['bindata']['sig'],
-        source['bindata']['bkg'],
-        source['bindata']['bkgerr'],
+        source["bindata"]["sig"],
+        source["bindata"]["bkg"],
+        source["bindata"]["bkgerr"],
         batch_size=2,
     )
 
     pars = [pdf.config.suggested_init()] * 2
-    data = source['bindata']['data'] + pdf.config.auxdata
+    data = source["bindata"]["data"] + pdf.config.auxdata
 
     tensorlib, _ = backend
     assert tensorlib.tolist(pdf.pdf(pars, data)) == pytest.approx(
@@ -195,46 +197,46 @@ def test_core_pdf_broadcasting(backend):
 
 def test_pdf_integration_staterror(backend):
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'firstchannel',
-                'samples': [
+                "name": "firstchannel",
+                "samples": [
                     {
-                        'name': 'mu',
-                        'data': [10.0, 10.0],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "mu",
+                        "data": [10.0, 10.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'bkg1',
-                        'data': [50.0, 70.0],
-                        'modifiers': [
+                        "name": "bkg1",
+                        "data": [50.0, 70.0],
+                        "modifiers": [
                             {
-                                'name': 'stat_firstchannel',
-                                'type': 'staterror',
-                                'data': [12.0, 12.0],
+                                "name": "stat_firstchannel",
+                                "type": "staterror",
+                                "data": [12.0, 12.0],
                             }
                         ],
                     },
                     {
-                        'name': 'bkg2',
-                        'data': [30.0, 20.0],
-                        'modifiers': [
+                        "name": "bkg2",
+                        "data": [30.0, 20.0],
+                        "modifiers": [
                             {
-                                'name': 'stat_firstchannel',
-                                'type': 'staterror',
-                                'data': [5.0, 5.0],
+                                "name": "stat_firstchannel",
+                                "type": "staterror",
+                                "data": [5.0, 5.0],
                             }
                         ],
                     },
-                    {'name': 'bkg3', 'data': [20.0, 15.0], 'modifiers': []},
+                    {"name": "bkg3", "data": [20.0, 15.0], "modifiers": []},
                 ],
             }
         ]
     }
     pdf = pyhf.Model(spec)
-    par_set = pdf.config.param_set('stat_firstchannel')
+    par_set = pdf.config.param_set("stat_firstchannel")
     tensorlib, _ = backend
     uncerts = tensorlib.astensor([[12.0, 12.0], [5.0, 5.0]])
     nominal = tensorlib.astensor([[50.0, 70.0], [30.0, 20.0]])
@@ -247,18 +249,18 @@ def test_pdf_integration_staterror(backend):
 
 def test_poiless_model(backend):
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'goodsample',
-                        'data': [10.0],
-                        'modifiers': [
+                        "name": "goodsample",
+                        "data": [10.0],
+                        "modifiers": [
                             {
-                                'type': 'normsys',
-                                'name': 'shape',
-                                'data': {"hi": 0.5, "lo": 1.5},
+                                "type": "normsys",
+                                "name": "shape",
+                                "data": {"hi": 0.5, "lo": 1.5},
                             }
                         ],
                     },
@@ -280,18 +282,18 @@ def test_poiless_model(backend):
 
 def test_poiless_model_empty_string(backend):
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'goodsample',
-                        'data': [10.0],
-                        'modifiers': [
+                        "name": "goodsample",
+                        "data": [10.0],
+                        "modifiers": [
                             {
-                                'type': 'normsys',
-                                'name': 'shape',
-                                'data': {"hi": 0.5, "lo": 1.5},
+                                "type": "normsys",
+                                "name": "shape",
+                                "data": {"hi": 0.5, "lo": 1.5},
                             }
                         ],
                     },
@@ -340,7 +342,7 @@ def test_pdf_integration_shapesys_zeros(backend):
         ]
     }
     pdf = pyhf.Model(spec)
-    par_set_syst = pdf.config.param_set('syst')
+    par_set_syst = pdf.config.param_set("syst")
 
     assert par_set_syst.n_parameters == 6
     tensorlib, _ = backend
@@ -359,27 +361,27 @@ def test_pdf_integration_histosys(backend):
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'bkg_norm',
-                                'type': 'histosys',
-                                'data': {
-                                    'lo_data': source['bindata']['bkgsys_dn'],
-                                    'hi_data': source['bindata']['bkgsys_up'],
+                                "name": "bkg_norm",
+                                "type": "histosys",
+                                "data": {
+                                    "lo_data": source["bindata"]["bkgsys_dn"],
+                                    "hi_data": source["bindata"]["bkgsys_up"],
                                 },
                             }
                         ],
@@ -392,31 +394,31 @@ def test_pdf_integration_histosys(backend):
 
     pars = [None, None]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [1.0],
     ]
     assert pdf.expected_data(pars, include_auxdata=False).tolist() == [102, 190]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [2.0],
     ]
     assert pdf.expected_data(pars, include_auxdata=False).tolist() == [104, 230]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [-1.0],
     ]
     assert pdf.expected_data(pars, include_auxdata=False).tolist() == [98, 100]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [-2.0],
     ]
     assert pdf.expected_data(pars, include_auxdata=False).tolist() == [96, 50]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [1.0],
         [1.0],
     ]
@@ -425,7 +427,7 @@ def test_pdf_integration_histosys(backend):
         190 + 95,
     ]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [1.0],
         [-1.0],
     ]
@@ -441,25 +443,25 @@ def test_pdf_integration_normsys(backend):
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
                             {
-                                'name': 'bkg_norm',
-                                'type': 'normsys',
-                                'data': {'lo': 0.9, 'hi': 1.1},
+                                "name": "bkg_norm",
+                                "type": "normsys",
+                                "data": {"lo": 0.9, "hi": 1.1},
                             }
                         ],
                     },
@@ -470,7 +472,7 @@ def test_pdf_integration_normsys(backend):
     pdf = pyhf.Model(spec)
 
     pars = [None, None]
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [0.0],
     ]
@@ -479,7 +481,7 @@ def test_pdf_integration_normsys(backend):
         [100, 150],
     )
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [1.0],
     ]
@@ -488,7 +490,7 @@ def test_pdf_integration_normsys(backend):
         [100 * 1.1, 150 * 1.1],
     )
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [-1.0],
     ]
@@ -505,22 +507,22 @@ def test_pdf_integration_shapesys(backend):
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
-                            {'name': 'bkg_norm', 'type': 'shapesys', 'data': [10, 10]}
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
+                            {"name": "bkg_norm", "type": "shapesys", "data": [10, 10]}
                         ],
                     },
                 ],
@@ -531,25 +533,25 @@ def test_pdf_integration_shapesys(backend):
 
     pars = [None, None]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [1.0, 1.0],
     ]
     assert pdf.expected_data(pars, include_auxdata=False).tolist() == [100, 150]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [1.1, 1.0],
     ]
     assert pdf.expected_data(pars, include_auxdata=False).tolist() == [100 * 1.1, 150]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [1.0, 1.1],
     ]
     assert pdf.expected_data(pars, include_auxdata=False).tolist() == [100, 150 * 1.1]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [1.1, 0.9],
     ]
@@ -558,7 +560,7 @@ def test_pdf_integration_shapesys(backend):
         150 * 0.9,
     ]
 
-    pars[pdf.config.par_slice('mu')], pars[pdf.config.par_slice('bkg_norm')] = [
+    pars[pdf.config.par_slice("mu")], pars[pdf.config.par_slice("bkg_norm")] = [
         [0.0],
         [0.9, 1.1],
     ]
@@ -570,18 +572,18 @@ def test_pdf_integration_shapesys(backend):
 
 def test_invalid_modifier():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'ttbar',
-                        'data': [1],
-                        'modifiers': [
+                        "name": "ttbar",
+                        "data": [1],
+                        "modifiers": [
                             {
-                                'name': 'a_name',
-                                'type': 'this_should_not_exist',
-                                'data': [1],
+                                "name": "a_name",
+                                "type": "this_should_not_exist",
+                                "data": [1],
                             }
                         ],
                     }
@@ -595,25 +597,25 @@ def test_invalid_modifier():
 
 def test_invalid_modifier_name_resuse():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'reused_name', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "reused_name", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': [50.0],
-                        'modifiers': [
+                        "name": "background",
+                        "data": [50.0],
+                        "modifiers": [
                             {
-                                'name': 'reused_name',
-                                'type': 'normsys',
-                                'data': {'lo': 0.9, 'hi': 1.1},
+                                "name": "reused_name",
+                                "type": "normsys",
+                                "data": {"lo": 0.9, "hi": 1.1},
                             }
                         ],
                     },
@@ -622,7 +624,7 @@ def test_invalid_modifier_name_resuse():
         ]
     }
     with pytest.raises(pyhf.exceptions.InvalidNameReuse):
-        pyhf.Model(spec, poi_name='reused_name')
+        pyhf.Model(spec, poi_name="reused_name")
 
 
 def test_override_paramset_defaults():
@@ -631,34 +633,34 @@ def test_override_paramset_defaults():
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
-                            {'name': 'bkg_norm', 'type': 'shapesys', 'data': [10, 10]}
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
+                            {"name": "bkg_norm", "type": "shapesys", "data": [10, 10]}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [
-            {'name': 'bkg_norm', 'inits': [99, 99], 'bounds': [[95, 95], [95, 95]]}
+        "parameters": [
+            {"name": "bkg_norm", "inits": [99, 99], "bounds": [[95, 95], [95, 95]]}
         ],
     }
     pdf = pyhf.Model(spec)
-    assert pdf.config.param_set('bkg_norm').suggested_bounds == [[95, 95], [95, 95]]
-    assert pdf.config.param_set('bkg_norm').suggested_init == [99, 99]
+    assert pdf.config.param_set("bkg_norm").suggested_bounds == [[95, 95], [95, 95]]
+    assert pdf.config.param_set("bkg_norm").suggested_init == [99, 99]
 
 
 def test_override_paramsets_incorrect_num_parameters():
@@ -667,28 +669,28 @@ def test_override_paramsets_incorrect_num_parameters():
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': source['bindata']['sig'],
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": source["bindata"]["sig"],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': source['bindata']['bkg'],
-                        'modifiers': [
-                            {'name': 'bkg_norm', 'type': 'shapesys', 'data': [10, 10]}
+                        "name": "background",
+                        "data": source["bindata"]["bkg"],
+                        "modifiers": [
+                            {"name": "bkg_norm", "type": "shapesys", "data": [10, 10]}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [{'name': 'bkg_norm', 'inits': [99, 99], 'bounds': [[95, 95]]}],
+        "parameters": [{"name": "bkg_norm", "inits": [99, 99], "bounds": [[95, 95]]}],
     }
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(spec)
@@ -733,12 +735,12 @@ def test_lumi_np_scaling():
     }
     pdf = pyhf.pdf.Model(spec, poi_name="SigXsecOverSM")
 
-    poi_slice = pdf.config.par_slice('SigXsecOverSM')
-    lumi_slice = pdf.config.par_slice('lumi')
+    poi_slice = pdf.config.par_slice("SigXsecOverSM")
+    lumi_slice = pdf.config.par_slice("lumi")
 
-    index_bkg1 = pdf.config.samples.index('background1')
-    index_bkg2 = pdf.config.samples.index('background2')
-    index_sig = pdf.config.samples.index('signal')
+    index_bkg1 = pdf.config.samples.index("background1")
+    index_bkg2 = pdf.config.samples.index("background2")
+    index_sig = pdf.config.samples.index("signal")
     bkg1_slice = slice(index_bkg1, index_bkg1 + 1)
     bkg2_slice = slice(index_bkg2, index_bkg2 + 1)
     sig_slice = slice(index_sig, index_sig + 1)
@@ -773,12 +775,12 @@ def test_lumi_np_scaling():
 
 def test_sample_wrong_bins():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
-                    {'name': 'goodsample', 'data': [1.0, 2.0], 'modifiers': []},
-                    {'name': 'badsample', 'data': [3.0, 4.0, 5.0], 'modifiers': []},
+                "name": "channel",
+                "samples": [
+                    {"name": "goodsample", "data": [1.0, 2.0], "modifiers": []},
+                    {"name": "badsample", "data": [3.0, 4.0, 5.0], "modifiers": []},
                 ],
             }
         ]
@@ -788,11 +790,11 @@ def test_sample_wrong_bins():
 
 
 @pytest.mark.parametrize(
-    'measurements, msettings',
+    "measurements, msettings",
     [
         (
             None,
-            {'normsys': {'interpcode': 'code4'}, 'histosys': {'interpcode': 'code4p'}},
+            {"normsys": {"interpcode": "code4"}, "histosys": {"interpcode": "code4p"}},
         )
     ],
 )
@@ -832,61 +834,61 @@ def test_unexpected_keyword_argument(measurements, msettings):
 
 def test_model_integration_fixed_parameters():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0],
-                        'modifiers': [
-                            {'name': 'unfixed', 'type': 'normfactor', 'data': None}
+                        "name": "sample",
+                        "data": [10.0],
+                        "modifiers": [
+                            {"name": "unfixed", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'another_sample',
-                        'data': [5.0],
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0],
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [{'name': 'mypoi', 'inits': [1], 'fixed': True}],
+        "parameters": [{"name": "mypoi", "inits": [1], "fixed": True}],
     }
-    model = pyhf.Model(spec, poi_name='mypoi')
-    assert model.config.suggested_fixed()[model.config.par_slice('mypoi')] == [True]
+    model = pyhf.Model(spec, poi_name="mypoi")
+    assert model.config.suggested_fixed()[model.config.par_slice("mypoi")] == [True]
 
 
 def test_model_integration_fixed_parameters_shapesys():
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'sample',
-                        'data': [10.0] * 3,
-                        'modifiers': [
-                            {'name': 'unfixed', 'type': 'normfactor', 'data': None},
-                            {'name': 'uncorr', 'type': 'shapesys', 'data': [1.5] * 3},
+                        "name": "sample",
+                        "data": [10.0] * 3,
+                        "modifiers": [
+                            {"name": "unfixed", "type": "normfactor", "data": None},
+                            {"name": "uncorr", "type": "shapesys", "data": [1.5] * 3},
                         ],
                     },
                     {
-                        'name': 'another_sample',
-                        'data': [5.0] * 3,
-                        'modifiers': [
-                            {'name': 'mypoi', 'type': 'normfactor', 'data': None}
+                        "name": "another_sample",
+                        "data": [5.0] * 3,
+                        "modifiers": [
+                            {"name": "mypoi", "type": "normfactor", "data": None}
                         ],
                     },
                 ],
             }
         ],
-        'parameters': [{'name': 'uncorr', 'inits': [1.0, 2.0, 3.0], 'fixed': True}],
+        "parameters": [{"name": "uncorr", "inits": [1.0, 2.0, 3.0], "fixed": True}],
     }
-    model = pyhf.Model(spec, poi_name='mypoi')
-    assert model.config.suggested_fixed()[model.config.par_slice('uncorr')] == [
+    model = pyhf.Model(spec, poi_name="mypoi")
+    assert model.config.suggested_fixed()[model.config.par_slice("uncorr")] == [
         True,
         True,
         True,
@@ -926,8 +928,8 @@ def test_reproducible_model_spec():
     workspace = pyhf.Workspace(ws)
     model_from_ws = workspace.model()
 
-    assert model_from_ws.spec['parameters'] == [
-        {'bounds': [[0, 5]], 'inits': [1], 'name': 'mu'}
+    assert model_from_ws.spec["parameters"] == [
+        {"bounds": [[0, 5]], "inits": [1], "name": "mu"}
     ]
     assert pyhf.Model(model_from_ws.spec)
 
@@ -938,16 +940,16 @@ def test_par_names_scalar_nonscalar():
     n_parameters==1.
     """
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'channel',
-                'samples': [
+                "name": "channel",
+                "samples": [
                     {
-                        'name': 'goodsample',
-                        'data': [1.0],
-                        'modifiers': [
-                            {'type': 'normfactor', 'name': 'scalar', 'data': None},
-                            {'type': 'shapesys', 'name': 'nonscalar', 'data': [1.0]},
+                        "name": "goodsample",
+                        "data": [1.0],
+                        "modifiers": [
+                            {"type": "normfactor", "name": "scalar", "data": None},
+                            {"type": "shapesys", "name": "nonscalar", "data": [1.0]},
                         ],
                     },
                 ],
@@ -958,8 +960,8 @@ def test_par_names_scalar_nonscalar():
     model = pyhf.Model(spec, poi_name="scalar")
     assert model.config.par_order == ["scalar", "nonscalar"]
     assert model.config.par_names == [
-        'scalar',
-        'nonscalar[0]',
+        "scalar",
+        "nonscalar[0]",
     ]
 
 
@@ -994,8 +996,8 @@ def test_make_model_with_tensors():
                                     "name": "corr_bkguncrt2",
                                     "type": "histosys",
                                     "data": {
-                                        'hi_data': corrup_data,
-                                        'lo_data': corrdn_data,
+                                        "hi_data": corrup_data,
+                                        "lo_data": corrdn_data,
                                     },
                                 },
                                 {
@@ -1006,7 +1008,7 @@ def test_make_model_with_tensors():
                                 {
                                     "name": "norm",
                                     "type": "normsys",
-                                    "data": {'hi': normsys_up, 'lo': normsys_dn},
+                                    "data": {"hi": normsys_up, "lo": normsys_dn},
                                 },
                             ],
                         }
@@ -1035,8 +1037,8 @@ def test_make_model_with_tensors():
                                     "name": "corr_bkguncrt2",
                                     "type": "histosys",
                                     "data": {
-                                        'hi_data': corrup_data,
-                                        'lo_data': corrdn_data,
+                                        "hi_data": corrup_data,
+                                        "lo_data": corrdn_data,
                                     },
                                 },
                                 {
@@ -1047,7 +1049,7 @@ def test_make_model_with_tensors():
                                 {
                                     "name": "norm",
                                     "type": "normsys",
-                                    "data": {'hi': normsys_up, 'lo': normsys_dn},
+                                    "data": {"hi": normsys_up, "lo": normsys_dn},
                                 },
                             ],
                         }
@@ -1057,13 +1059,13 @@ def test_make_model_with_tensors():
         }
         model = pyhf.Model(
             {
-                'channels': spec['channels'],
-                'parameters': [
+                "channels": spec["channels"],
+                "parameters": [
                     {
-                        'name': 'lumi',
-                        'auxdata': [1.0],
-                        'bounds': [[0.5, 1.5]],
-                        'inits': [1.0],
+                        "name": "lumi",
+                        "auxdata": [1.0],
+                        "bounds": [[0.5, 1.5]],
+                        "inits": [1.0],
                         "sigmas": [lumi_sigma],
                     }
                 ],
@@ -1188,7 +1190,7 @@ def test_pdf_clipping(backend):
     )
 
     # Minuit cannot handle negative yields, confirm that MLE fails for minuit specifically
-    if optimizer.name == 'minuit':
+    if optimizer.name == "minuit":
         with pytest.raises(pyhf.exceptions.FailedMinimization):
             pyhf.infer.mle.fit(data, model)
     else:
