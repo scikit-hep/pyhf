@@ -60,7 +60,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    ...     test_mu, data, model, test_stat="qtilde", return_expected=True
    ... )
    >>> print(f"Observed: {CLs_obs:.8f}, Expected: {CLs_exp:.8f}")
-   Observed: 0.05251497, Expected: 0.06445321
+   Observed: 0.05251497, Expected: 0.06445319
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
@@ -369,7 +369,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://pyhf.readthedocs.io/
 .. |Docs from main| image:: https://img.shields.io/badge/docs-main-blue.svg
    :target: https://scikit-hep.github.io/pyhf
-.. |Jupyter Book tutorial| image:: https://jupyterbook.org/_images/badge.svg
+.. |Jupyter Book tutorial| image:: https://raw.githubusercontent.com/jupyter-book/jupyter-book/next/docs/media/images/badge.svg
    :target: https://pyhf.github.io/pyhf-tutorial/
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/main?labpath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb

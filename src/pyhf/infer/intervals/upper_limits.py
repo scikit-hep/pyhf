@@ -46,10 +46,10 @@ def toms748_scan(
         >>> obs_limit, exp_limits = pyhf.infer.intervals.upper_limits.toms748_scan(
         ...     data, model, 0., 5., rtol=0.01
         ... )
-        >>> obs_limit
-        array(1.01156939)
-        >>> exp_limits
-        [array(0.5600747), array(0.75702605), array(1.06234693), array(1.50116923), array(2.05078912)]
+        >>> np.isclose(obs_limit, 1.01156939)
+        np.True_
+        >>> np.isclose(exp_limits, [0.5600747, 0.75702605, 1.06234693, 1.50116923, 2.05078912])
+        array([ True,  True,  True,  True,  True])
 
     Args:
         data (:obj:`tensor`): The observed data.
@@ -161,10 +161,10 @@ def linear_grid_scan(
         >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
         ...     data, model, scan, return_results=True
         ... )
-        >>> obs_limit
-        array(1.01764089)
-        >>> exp_limits
-        [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
+        >>> np.isclose(obs_limit, 1.01764089)
+        np.True_
+        >>> np.isclose(exp_limits, [0.59576921, 0.76169166, 1.08504773, 1.50170482, 2.06654952])
+        array([ True,  True,  True,  True,  True])
 
     Args:
         data (:obj:`tensor`): The observed data.
@@ -225,10 +225,10 @@ def upper_limit(
         >>> obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
         ...     data, model, scan, return_results=True
         ... )
-        >>> obs_limit
-        array(1.01764089)
-        >>> exp_limits
-        [array(0.59576921), array(0.76169166), array(1.08504773), array(1.50170482), array(2.06654952)]
+        >>> np.isclose(obs_limit, 1.01764089)
+        np.True_
+        >>> np.isclose(exp_limits, [0.59576921, 0.76169166, 1.08504773, 1.50170482, 2.06654952])
+        array([ True,  True,  True,  True,  True])
 
     Args:
         data (:obj:`tensor`): The observed data.

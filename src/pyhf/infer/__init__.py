@@ -38,6 +38,7 @@ def hypotest(
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -50,8 +51,8 @@ def hypotest(
         ... )
         >>> CLs_obs
         array(0.05251497)
-        >>> CLs_exp_band
-        [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
+        >>> np.isclose(CLs_exp_band, [0.00260626, 0.01382005, 0.06445321, 0.23525644, 0.57303621])
+        array([ True,  True,  True,  True,  True])
 
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)

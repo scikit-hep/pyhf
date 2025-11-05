@@ -40,6 +40,7 @@ def generate_asimov_data(
     Example:
 
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -47,12 +48,14 @@ def generate_asimov_data(
         >>> observations = [51, 48]
         >>> data = observations + model.config.auxdata
         >>> mu_test = 1.0
-        >>> pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
-        array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
-        >>> pyhf.infer.calculators.generate_asimov_data(
+        >>> asimov_data = pyhf.infer.calculators.generate_asimov_data(mu_test, data, model, None, None, None)
+        >>> np.isclose(asimov_data, [ 60.61229858,  56.52802479, 270.06832542,  48.31545488])
+        array([ True,  True,  True,  True])
+        >>> _, asimov_params = pyhf.infer.calculators.generate_asimov_data(
         ...     mu_test, data, model, None, None, None, return_fitted_pars=True
         ... )
-        (array([ 60.61229858,  56.52802479, 270.06832542,  48.31545488]), array([1.        , 0.97224597, 0.87553894]))
+        >>> np.isclose(asimov_params, [1.        , 0.97224597, 0.87553894])
+        array([ True,  True,  True])
 
     Args:
         asimov_mu (:obj:`float`): The value for the parameter of interest to be used.
@@ -339,6 +342,7 @@ class AsymptoticCalculator:
         Example:
 
             >>> import pyhf
+            >>> import numpy as np
             >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -347,12 +351,20 @@ class AsymptoticCalculator:
             >>> data = observations + model.config.auxdata
             >>> mu_test = 1.0
             >>> asymptotic_calculator = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
-            >>> asymptotic_calculator.teststatistic(mu_test)
-            array(0.14043184)
-            >>> asymptotic_calculator.fitted_pars
-            HypoTestFitResults(asimov_pars=array([0.        , 1.0030482 , 0.96264534]), free_fit_to_data=array([0.        , 1.0030512 , 0.96266961]), free_fit_to_asimov=array([0.        , 1.00304893, 0.96263365]), fixed_poi_fit_to_data=array([1.        , 0.97224597, 0.87553894]), fixed_poi_fit_to_asimov=array([1.        , 0.97276864, 0.87142047]))
-            >>> asymptotic_calculator.fitted_pars.free_fit_to_asimov  # best-fit parameters to Asimov dataset
-            array([0.        , 1.00304893, 0.96263365])
+            >>> test_stat = asymptotic_calculator.teststatistic(mu_test)
+            >>> np.isclose(test_stat, 0.14043184)
+            np.True_
+            >>> fit_results = asymptotic_calculator.fitted_pars
+            >>> np.isclose(fit_results.asimov_pars, [0.        , 1.0030482 , 0.96264534])
+            array([ True,  True,  True])
+            >>> np.isclose(fit_results.free_fit_to_data, [0.        , 1.0030512 , 0.96266961])
+            array([ True,  True,  True])
+            >>> np.isclose(fit_results.free_fit_to_asimov, [0.        , 1.00304893, 0.96263365])  # best-fit parameters to Asimov dataset
+            array([ True,  True,  True])
+            >>> np.isclose(fit_results.fixed_poi_fit_to_data, [1.        , 0.97224597, 0.87553894])
+            array([ True,  True,  True])
+            >>> np.isclose(fit_results.fixed_poi_fit_to_asimov, [1.        , 0.97276864, 0.87142047])
+            array([ True,  True,  True])
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
@@ -433,6 +445,7 @@ class AsymptoticCalculator:
         Example:
 
             >>> import pyhf
+            >>> import numpy as np
             >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -446,8 +459,12 @@ class AsymptoticCalculator:
             >>> q_tilde = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb, CLb, CLs = asymptotic_calculator.pvalues(q_tilde, sig_plus_bkg_dist, bkg_dist)
-            >>> CLsb, CLb, CLs
-            (array(0.02332502), array(0.4441594), array(0.05251497))
+            >>> np.isclose(CLsb, 0.02332502)
+            np.True_
+            >>> np.isclose(CLb, 0.4441594)
+            np.True_
+            >>> np.isclose(CLs, 0.05251497)
+            np.True_
 
         Args:
             teststat (:obj:`tensor`): The test statistic.
@@ -478,6 +495,7 @@ class AsymptoticCalculator:
         Example:
 
             >>> import pyhf
+            >>> import numpy as np
             >>> pyhf.set_backend("numpy")
             >>> model = pyhf.simplemodels.uncorrelated_background(
             ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -491,8 +509,8 @@ class AsymptoticCalculator:
             >>> _ = asymptotic_calculator.teststatistic(mu_test)
             >>> sig_plus_bkg_dist, bkg_dist = asymptotic_calculator.distributions(mu_test)
             >>> CLsb_exp_band, CLb_exp_band, CLs_exp_band = asymptotic_calculator.expected_pvalues(sig_plus_bkg_dist, bkg_dist)
-            >>> CLs_exp_band
-            [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
+            >>> np.isclose(CLs_exp_band, [0.00260626, 0.01382005, 0.06445321, 0.23525644, 0.57303621])
+            array([ True,  True,  True,  True,  True])
 
         Args:
             sig_plus_bkg_distribution (~pyhf.infer.calculators.AsymptoticTestStatDistribution):
@@ -611,6 +629,7 @@ class EmpiricalDistribution:
         Examples:
 
             >>> import pyhf
+            >>> import numpy as np
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
@@ -623,6 +642,7 @@ class EmpiricalDistribution:
             np.float64(6.15094381...)
 
             >>> import pyhf
+            >>> import numpy as np
             >>> import numpy.random as random
             >>> random.seed(0)
             >>> pyhf.set_backend("numpy")
@@ -646,9 +666,9 @@ class EmpiricalDistribution:
             ...     )
             ... )
             >>> n_sigma = pyhf.tensorlib.astensor([-2, -1, 0, 1, 2])
-            >>> dist.expected_value(n_sigma)
-            array([0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01,
-                   2.99592664e+00])
+            >>> exp_values = dist.expected_value(n_sigma)
+            >>> np.isclose(exp_values, [0.00000000e+00, 0.00000000e+00, 5.53671231e-04, 8.29987137e-01, 2.99592664e+00])
+            array([ True,  True,  True,  True,  True])
 
         Args:
             nsigma (:obj:`int` or :obj:`tensor`): The number of standard deviations.
