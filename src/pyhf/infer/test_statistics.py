@@ -104,7 +104,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
         >>> np.isclose(test_stat, 3.9549891)
-        True
+        np.True_
         >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
         array([ True,  True,  True])
         >>> np.isclose(unconstrained, [-0.06679525,  1.00555369,  0.96930896])
