@@ -142,11 +142,11 @@ def set_backend(
 
             try:
                 new_optimizer = getattr(
-                    OptimizerRetriever, f"{custom_optimizer.lower()}_optimizer"
+                    OptimizerRetriever, f"{custom_optimizer.lower()!r}_optimizer"
                 )()
             except TypeError:
                 raise exceptions.InvalidOptimizer(
-                    f"The optimizer provided is not supported: {custom_optimizer}. Select from one of the supported optimizers: scipy, minuit"
+                    f"The optimizer provided is not supported: {custom_optimizer!r}. Select from one of the supported optimizers: scipy, minuit"
                 )
         else:
             new_optimizer = custom_optimizer

@@ -486,7 +486,7 @@ def test_import_noChannelData(mocker, datadir):
 
     basedir = datadir.joinpath("xmlimport_noChannelData")
     with pytest.raises(
-        RuntimeError, match="Channel channel1 is missing data. See issue #1911"
+        RuntimeError, match=r"Channel channel1 is missing data. See issue #1911"
     ):
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
 
@@ -499,7 +499,7 @@ def test_import_noChannelDataPaths(mocker, datadir):
     basedir = datadir.joinpath("xmlimport_noChannelDataPaths")
     with pytest.raises(
         NotImplementedError,
-        match="Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566",
+        match=r"Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566",
     ):
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
 

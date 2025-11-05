@@ -23,7 +23,7 @@ def _qmu_like(
     If the lower bound of the POI is 0 this automatically implements
     qmu_tilde. Otherwise this is qmu (no tilde).
     """
-    tensorlib, optimizer = get_backend()
+    tensorlib, _ = get_backend()
     tmu_like_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=True
     )
@@ -44,7 +44,7 @@ def _tmu_like(
     If the lower bound of the POI is 0 this automatically implements
     tmu_tilde. Otherwise this is tmu (no tilde).
     """
-    tensorlib, optimizer = get_backend()
+    tensorlib, _ = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_val=True
     )
@@ -515,7 +515,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         )
         mu = 0.0
 
-    tensorlib, optimizer = get_backend()
+    tensorlib, _ = get_backend()
 
     tmu_like_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=True
