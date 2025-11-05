@@ -65,6 +65,11 @@ def set_backend(
 
     Example:
         >>> import pyhf
+        >>> pyhf.set_backend(b"jax", precision="32b")
+        >>> pyhf.tensorlib.name
+        'jax'
+        >>> pyhf.tensorlib.precision
+        '32b'
         >>> pyhf.set_backend(pyhf.tensor.numpy_backend())
         >>> pyhf.tensorlib.name
         'numpy'
