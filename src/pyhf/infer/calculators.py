@@ -356,15 +356,15 @@ class AsymptoticCalculator:
             np.True_
             >>> fit_results = asymptotic_calculator.fitted_pars
             >>> np.isclose(fit_results.asimov_pars, [0.        , 1.0030482 , 0.96264534])
-            array([ True,  True,  True)]
+            array([ True,  True,  True])
             >>> np.isclose(fit_results.free_fit_to_data, [0.        , 1.0030512 , 0.96266961])
-            array([ True,  True,  True)]
+            array([ True,  True,  True])
             >>> np.isclose(fit_results.free_fit_to_asimov, [0.        , 1.00304893, 0.96263365])  # best-fit parameters to Asimov dataset
-            array([ True,  True,  True)]
+            array([ True,  True,  True])
             >>> np.isclose(fit_results.fixed_poi_fit_to_data, [1.        , 0.97224597, 0.87553894])
-            array([ True,  True,  True)]
+            array([ True,  True,  True])
             >>> np.isclose(fit_results.fixed_poi_fit_to_asimov, [1.        , 0.97276864, 0.87142047])
-            array([ True,  True,  True)]
+            array([ True,  True,  True])
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
