@@ -283,9 +283,13 @@ def process_data(
 
 
 def process_channel(
-    channelxml: ET.ElementTree, resolver: ResolverType, track_progress: bool = False
+    channelxml: ET.ElementTree[ET.Element[str]],
+    resolver: ResolverType,
+    track_progress: bool = False,
 ) -> tuple[str, list[float], list[Sample], list[Parameter]]:
     channel = channelxml.getroot()
+    if channel is None:
+        raise RuntimeError("Root element of ElementTree is missing.")
 
     inputfile = channel.attrib.get('InputFile', '')
     histopath = channel.attrib.get('HistoPath', '')
@@ -316,7 +320,7 @@ def process_channel(
 
 
 def process_measurements(
-    toplvl: ET.ElementTree,
+    toplvl: ET.ElementTree[ET.Element[str]],
     other_parameter_configs: Sequence[Parameter] | None = None,
 ) -> list[Measurement]:
     """

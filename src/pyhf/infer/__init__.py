@@ -177,7 +177,7 @@ def hypotest(
             teststat, sig_plus_bkg_distribution, bkg_only_distribution
         )
     )
-    CLsb_exp, CLb_exp, CLs_exp = calc.expected_pvalues(
+    CLsb_exp, _CLb_exp, CLs_exp = calc.expected_pvalues(
         sig_plus_bkg_distribution, bkg_only_distribution
     )
 

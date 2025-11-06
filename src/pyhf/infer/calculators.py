@@ -524,7 +524,6 @@ class AsymptoticCalculator:
             :math:`\mathrm{CL}_{b}`, and :math:`\mathrm{CL}_{s}`.
         """
         # Calling pvalues is easier then repeating the CLs calculation here
-        tb, _ = get_backend()
         return list(
             map(
                 list,

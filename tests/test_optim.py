@@ -462,7 +462,7 @@ def test_minuit_set_options(mocker):
 
 def test_get_tensor_shim(monkeypatch):
     monkeypatch.setattr(pyhf.tensorlib, 'name', 'fake_backend')
-    with pytest.raises(ValueError, match="No optimizer shim for fake_backend."):
+    with pytest.raises(ValueError, match=r"No optimizer shim for fake_backend."):
         _get_tensor_shim()
 
 

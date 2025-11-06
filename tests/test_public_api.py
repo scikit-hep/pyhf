@@ -184,7 +184,6 @@ def test_prob_models(backend):
 
 
 def test_pdf_batched(backend):
-    tb, _ = backend
     source = {
         "binning": [2, -0.5, 1.5],
         "bindata": {"data": [55.0], "bkg": [50.0], "bkgerr": [7.0], "sig": [10.0]},

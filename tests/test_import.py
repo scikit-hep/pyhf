@@ -108,6 +108,17 @@ def test_process_normfactor_configs():
     assert result['ParallelMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
 
 
+def test_process_channel_missing_root(mocker, tmp_path):
+    # mock missing ElementTree root
+    mock_channelxml = mocker.Mock(spec=ET.ElementTree)
+    mock_channelxml.getroot.return_value = None
+
+    resolver = pyhf.readxml.resolver_factory(tmp_path, [])
+
+    with pytest.raises(RuntimeError, match="Root element of ElementTree is missing"):
+        pyhf.readxml.process_channel(mock_channelxml, resolver)
+
+
 def test_import_histogram():
     data, uncert = pyhf.readxml.import_root_histogram(
         lambda x: Path("validation/xmlimport_input/data").joinpath(x),
@@ -486,7 +497,7 @@ def test_import_noChannelData(mocker, datadir):
 
     basedir = datadir.joinpath("xmlimport_noChannelData")
     with pytest.raises(
-        RuntimeError, match="Channel channel1 is missing data. See issue #1911"
+        RuntimeError, match=r"Channel channel1 is missing data. See issue #1911"
     ):
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
 
@@ -499,7 +510,7 @@ def test_import_noChannelDataPaths(mocker, datadir):
     basedir = datadir.joinpath("xmlimport_noChannelDataPaths")
     with pytest.raises(
         NotImplementedError,
-        match="Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566",
+        match=r"Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566",
     ):
         pyhf.readxml.parse(basedir.joinpath("config/example.xml"), basedir)
 

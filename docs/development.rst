@@ -255,7 +255,7 @@ final deployment to PyPI_ can be done by creating a GitHub Release:
 #. Select the release tag that was just pushed, and set the release title to be the tag
    (e.g. ``v1.2.3``).
 #. Use the "Auto-generate release notes" button to generate a skeleton of the release
-   notes and then augment them with the preprepared release notes the release maintainer
+   notes and then augment them with the prepared release notes the release maintainer
    has written.
 #. Select "This is a pre-release" if the release is a release candidate.
 #. Select "Create a discussion for this release" if the release is a stable release.
