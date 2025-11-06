@@ -45,7 +45,6 @@ def wrap_objective(objective, data, pdf, stitch_pars, do_grad=False, jit_pieces=
     Returns:
         objective_and_grad (:obj:`func`): tensor backend wrapped objective,gradient pair
     """
-    _, _ = get_backend()
     # NB: tuple arguments that need to be hashable (static_argnums)
     if do_grad:
 
