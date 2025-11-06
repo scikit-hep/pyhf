@@ -108,6 +108,17 @@ def test_process_normfactor_configs():
     assert result['ParallelMeasurement']['mu_both']['bounds'] == [[1.0, 5.0]]
 
 
+def test_process_channel_missing_root(mocker):
+    # mock missing ElementTree root
+    mock_channelxml = mocker.Mock(spec=ET.ElementTree)
+    mock_channelxml.getroot.return_value = None
+
+    resolver = pyhf.readxml.resolver_factory(Path("/tmp"), [])
+
+    with pytest.raises(RuntimeError, match="Root element of ElementTree is missing"):
+        pyhf.readxml.process_channel(mock_channelxml, resolver)
+
+
 def test_import_histogram():
     data, uncert = pyhf.readxml.import_root_histogram(
         lambda x: Path("validation/xmlimport_input/data").joinpath(x),
