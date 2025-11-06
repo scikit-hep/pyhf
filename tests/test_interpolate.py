@@ -52,7 +52,7 @@ def random_histosets_alphasets_pair():
 
 
 def test_interpolator_structure(interpcode, random_histosets_alphasets_pair):
-    histogramssets, _ = random_histosets_alphasets_pair
+    histogramssets, _alphasets = random_histosets_alphasets_pair
 
     interpolator = pyhf.interpolators.get(interpcode)(
         histogramssets.tolist(), subscribe=False
@@ -66,7 +66,7 @@ def test_interpolator_structure(interpcode, random_histosets_alphasets_pair):
 
 
 def test_interpolator_subscription(mocker, interpcode, random_histosets_alphasets_pair):
-    histogramssets, _ = random_histosets_alphasets_pair
+    histogramssets, _alphasets = random_histosets_alphasets_pair
     ename = 'tensorlib_changed'
 
     interpolator_cls = pyhf.interpolators.get(interpcode)
