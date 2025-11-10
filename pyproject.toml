@@ -171,7 +171,7 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob='*.rst'",
 ]
-log_cli_level = "INFO"
+log_level = "INFO"
 testpaths = "tests"
 markers = [
     "fail_jax",
