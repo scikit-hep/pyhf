@@ -278,3 +278,58 @@ flake8-tidy-imports.ban-relative-imports = "all"
 [tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
 "**.ipynb" = ["F821", "F401", "F841", "F811", "E703"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64"]
+
+[tool.pixi.pypi-dependencies]
+pyhf = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+click = ">=8.0.0"
+jsonpatch = ">=1.15"
+jsonschema = ">=4.15.0"
+pyyaml = ">=5.1"
+scipy = ">=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2"
+tqdm = ">=4.56.0"
+
+[tool.pixi.feature.xmlio.dependencies]
+uproot = ">=4.1.1"
+
+[tool.pixi.feature.jax.dependencies]
+jax = ">=0.4.1"
+
+[tool.pixi.feature.jax-cpu.dependencies]
+jax = ">=0.4.1"
+jaxlib = { version = "*", build = "cpu*" }
+
+[tool.pixi.feature.jax-gpu.dependencies]
+jax = ">=0.4.1"
+
+[tool.pixi.feature.jax-gpu.system-requirements]
+cuda = "12.0"
+
+[tool.pixi.feature.contrib.dependencies]
+matplotlib = ">=3.0.0"
+requests = ">=2.22.0"
+
+[tool.pixi.feature.minuit.dependencies]
+iminuit = ">=2.7.0"
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+jax = { features = ["jax"], solve-group = "default" }
+jax-cpu = { features = ["jax-cpu"], solve-group = "default" }
+jax-gpu = { features = ["jax-gpu"], solve-group = "gpu" }
+xmlio = { features = ["xmlio"], solve-group = "default" }
+minuit = { features = ["minuit"], solve-group = "default" }
+contrib = { features = ["contrib"], solve-group = "default" }
+backends = { features = ["jax", "minuit"], solve-group = "default" }
+all = { features = ["jax", "minuit", "xmlio", "contrib"], solve-group = "default" }
+
+# dev = { features = ["dev"], solve-group = "default" }
+# docs = { features = ["docs"], solve-group = "default" }
+# test = { features = ["test"], solve-group = "default" }
