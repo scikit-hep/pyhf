@@ -319,6 +319,28 @@ requests = ">=2.22.0"
 [tool.pixi.feature.minuit.dependencies]
 iminuit = ">=2.7.0"
 
+[tool.pixi.feature.test.dependencies]
+pytest = ">=6.0"
+scikit-hep-testdata = ">=0.4.11"
+coverage = ">=6.0.0"
+pytest-mock = "*"
+requests-mock = ">=1.9.0"
+pytest-benchmark = "*"
+pytest-console-scripts = ">=1.4.0"
+pytest-mpl = "*"
+ipympl = ">=0.3.0"
+pydocstyle = "*"
+papermill = ">=2.5.0"
+scrapbook = ">=0.5.0"
+notebook = ">=6.5.7"
+graphviz = "*"
+pytest-socket = ">=0.2.0"
+
+[tool.pixi.feature.test.tasks.test]
+cmd = """
+coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
+"""
+
 [tool.pixi.environments]
 default = { solve-group = "default" }
 jax = { features = ["jax"], solve-group = "default" }
@@ -330,6 +352,6 @@ contrib = { features = ["contrib"], solve-group = "default" }
 backends = { features = ["jax", "minuit"], solve-group = "default" }
 all = { features = ["jax", "minuit", "xmlio", "contrib"], solve-group = "default" }
 
+test = { features = ["jax", "minuit", "xmlio", "contrib", "test"], solve-group = "default" }
 # dev = { features = ["dev"], solve-group = "default" }
 # docs = { features = ["docs"], solve-group = "default" }
-# test = { features = ["test"], solve-group = "default" }
