@@ -64,7 +64,6 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 "Source Code" = "https://github.com/scikit-hep/pyhf"
 
 [project.optional-dependencies]
-shellcomplete = ["click_completion"]
 jax = [
     "jax>=0.4.1",  # c.f. PR #2079
     "jaxlib>=0.4.1",  # c.f. PR #2079
@@ -76,7 +75,7 @@ contrib = [
     "requests>=2.22.0",
 ]
 backends = ["pyhf[jax,minuit]"]
-all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
+all = ["pyhf[backends,xmlio,contrib]"]
 
 # Developer extras
 [dependency-groups]
