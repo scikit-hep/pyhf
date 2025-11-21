@@ -1,21 +1,40 @@
 from click.testing import CliRunner
-import sys
-import importlib
 
 
-def test_shllcomplete_cli(isolate_modules):
+def test_shell_completion_cli_bash():
     from pyhf.cli.complete import cli
 
     runner = CliRunner()
-    result = runner.invoke(cli, ['bash'])
-    assert 'complete -F _pyhf_completion -o default pyhf' in result.output
+    result = runner.invoke(cli, ["bash"])
+    assert result.exit_code == 0
+    assert "_PYHF_COMPLETE=bash_source" in result.output
+    assert ".bashrc" in result.output
 
 
-def test_shllcomplete_cli_missing_extra(isolate_modules):
-    sys.modules['click_completion'] = None
-    importlib.reload(sys.modules['pyhf.cli.complete'])
+def test_shell_completion_cli_zsh():
     from pyhf.cli.complete import cli
 
     runner = CliRunner()
-    result = runner.invoke(cli, ['bash'])
-    assert 'You can install it with the shellcomplete extra' in result.output
+    result = runner.invoke(cli, ["zsh"])
+    assert result.exit_code == 0
+    assert "_PYHF_COMPLETE=zsh_source" in result.output
+    assert ".zshrc" in result.output
+
+
+def test_shell_completion_cli_fish():
+    from pyhf.cli.complete import cli
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["fish"])
+    assert result.exit_code == 0
+    assert "_PYHF_COMPLETE=fish_source" in result.output
+    assert "fish/completions" in result.output
+
+
+def test_shell_completion_cli_no_shell():
+    from pyhf.cli.complete import cli
+
+    runner = CliRunner()
+    result = runner.invoke(cli)
+    assert result.exit_code == 0
+    assert "Generate shell completion code" in result.output
