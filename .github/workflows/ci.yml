@@ -39,13 +39,6 @@ jobs:
             python-version: '3.13'
 
     steps:
-    # c.f. https://github.com/actions/runner-images/issues/13358
-    - name: Work around x86 macOS bug for multiple CPU cores
-      if: matrix.os == 'macos-15-intel'
-      run: |
-        sudo defaults -currentHost write /Library/Preferences/com.apple.powerlogd SMCMonitorCadence 0
-        sudo killall PerfPowerServices || true
-
     - uses: actions/checkout@v6
 
     - name: Set up Python ${{ matrix.python-version }}
