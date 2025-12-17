@@ -162,21 +162,15 @@ def process_sample(
 
     sample_list = list(sample.iter())
 
-    # Use a minimal Progress instance if none provided (for direct function calls)
-    if progress is None:
-        console = Console(stderr=True)
-        progress = Progress(console=console, transient=True)
-        progress.start()
-
-    task_id = progress.add_task(
-        "[cyan]  - processing modifiers", total=len(sample), visible=track_progress
-    )
+    if progress is not None and track_progress:
+        task_id = progress.add_task("[cyan]  - processing modifiers", total=len(sample))
 
     for modtag in sample_list:
-        progress.update(
-            task_id,
-            description=f"[cyan]  - modifier {modtag.attrib.get('Name', 'n/a'):s}({modtag.tag:s})",
-        )
+        if track_progress and progress is not None:
+            progress.update(
+                task_id,
+                description=f"[cyan]  - modifier {modtag.attrib.get('Name', 'n/a'):s}({modtag.tag:s})",
+            )
 
         if modtag == sample:
             continue
@@ -274,9 +268,11 @@ def process_sample(
         else:
             log.warning('not considering modifier tag %s', modtag)
 
-        progress.advance(task_id, 1)
+        if track_progress and progress is not None:
+            progress.advance(task_id, 1)
 
-    progress.remove_task(task_id)
+    if track_progress and progress is not None:
+        progress.remove_task(task_id)
 
     return {
         'name': sample.attrib['Name'],
@@ -328,22 +324,18 @@ def process_channel(
     else:
         raise RuntimeError(f"Channel {channel_name} is missing data. See issue #1911.")
 
-    # Use a minimal Progress instance if none provided (for direct function calls)
-    if progress is None:
-        console = Console(stderr=True)
-        progress = Progress(console=console, transient=True)
-        progress.start()
-
-    task_id = progress.add_task(
-        "[cyan]  - processing samples", total=len(sample_list), visible=track_progress
-    )
+    if progress is not None and track_progress:
+        task_id = progress.add_task(
+            "[cyan]  - processing samples", total=len(sample_list)
+        )
 
     results = []
     channel_parameter_configs: list[Parameter] = []
     for sample in sample_list:
-        progress.update(
-            task_id, description=f"[cyan]  - sample {sample.attrib.get('Name')}"
-        )
+        if track_progress and progress is not None:
+            progress.update(
+                task_id, description=f"[cyan]  - sample {sample.attrib.get('Name')}"
+            )
 
         result = process_sample(
             sample,
@@ -357,9 +349,11 @@ def process_channel(
         channel_parameter_configs.extend(result.pop('parameter_configs'))
         results.append(result)
 
-        progress.advance(task_id, 1)
+        if track_progress and progress is not None:
+            progress.advance(task_id, 1)
 
-    progress.remove_task(task_id)
+    if track_progress and progress is not None:
+        progress.remove_task(task_id)
 
     return channel_name, parsed_data, results, channel_parameter_configs
 
@@ -496,32 +490,39 @@ def parse(
     observations: MutableSequence[Observation] = []
     parameter_configs = []
 
-    console = Console(stderr=True)
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        BarColumn(),
-        TaskProgressColumn(),
-        TimeElapsedColumn(),
-        console=console,
-        transient=True,
-        disable=not track_progress,
-    ) as progress:
-        task_id = progress.add_task(
-            "[bold blue]Processing channels",
-            total=len(input_list),
-            visible=track_progress,
-        )
+    if track_progress:
+        console = Console(stderr=True)
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TaskProgressColumn(),
+            TimeElapsedColumn(),
+            console=console,
+            transient=True,
+        ) as progress:
+            task_id = progress.add_task(
+                "[bold blue]Processing channels", total=len(input_list)
+            )
 
+            for inp in input_list:
+                progress.update(task_id, description=f'[bold blue]Processing {inp}')
+                channel, data, samples, channel_parameter_configs = process_channel(
+                    ET.parse(resolver(inp)), resolver, track_progress, progress
+                )
+                channels.append({'name': channel, 'samples': samples})
+                observations.append({'name': channel, 'data': data})
+                parameter_configs.extend(channel_parameter_configs)
+                progress.advance(task_id, 1)
+    else:
+        # No progress tracking - don't create Progress instance
         for inp in input_list:
-            progress.update(task_id, description=f'[bold blue]Processing {inp}')
             channel, data, samples, channel_parameter_configs = process_channel(
-                ET.parse(resolver(inp)), resolver, track_progress, progress
+                ET.parse(resolver(inp)), resolver, track_progress, None
             )
             channels.append({'name': channel, 'samples': samples})
             observations.append({'name': channel, 'data': data})
             parameter_configs.extend(channel_parameter_configs)
-            progress.advance(task_id, 1)
 
     parameter_configs = dedupe_parameters(parameter_configs)
     measurements = process_measurements(
