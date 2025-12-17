@@ -8,10 +8,20 @@ hypotheses.
 Using the calculators hypothesis tests can then be performed.
 """
 
+from __future__ import annotations
+
 from pyhf.infer.mle import fixed_poi_fit
 from pyhf import get_backend
 from pyhf.infer import utils
-import tqdm
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    TaskProgressColumn,
+    TimeElapsedColumn,
+)
+from rich.console import Console
 
 from dataclasses import dataclass
 import logging
@@ -215,11 +225,11 @@ class HypoTestFitResults:
     """
 
     # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
-    asimov_pars: 'Tensor'  # noqa: F821
-    free_fit_to_data: 'Tensor'  # noqa: F821
-    free_fit_to_asimov: 'Tensor'  # noqa: F821
-    fixed_poi_fit_to_data: 'Tensor'  # noqa: F821
-    fixed_poi_fit_to_asimov: 'Tensor'  # noqa: F821
+    asimov_pars: Tensor  # noqa: F821
+    free_fit_to_data: Tensor  # noqa: F821
+    free_fit_to_asimov: Tensor  # noqa: F821
+    fixed_poi_fit_to_data: Tensor  # noqa: F821
+    fixed_poi_fit_to_asimov: Tensor  # noqa: F821
 
 
 class AsymptoticCalculator:
@@ -767,7 +777,7 @@ class ToyCalculator:
 
         Args:
             poi_test (:obj:`float` or :obj:`tensor`): The value for the parameter of interest.
-            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`)
+            track_progress (:obj:`bool`): Whether to display the progress bar or not (outputs to `stderr`)
 
         Returns:
             Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.
@@ -800,40 +810,56 @@ class ToyCalculator:
 
         teststat_func = utils.get_test_stat(self.test_stat)
 
-        tqdm_options = dict(
-            total=self.ntoys,
-            leave=False,
-            disable=not (
-                track_progress if track_progress is not None else self.track_progress
-            ),
-            unit='toy',
+        # Determine whether to show progress
+        show_progress = (
+            track_progress if track_progress is not None else self.track_progress
         )
 
-        signal_teststat = []
-        for sample in tqdm.tqdm(signal_sample, **tqdm_options, desc='Signal-like'):
-            signal_teststat.append(
-                teststat_func(
-                    poi_test,
-                    sample,
-                    self.pdf,
-                    self.init_pars,
-                    self.par_bounds,
-                    self.fixed_params,
-                )
+        console = Console(stderr=True)
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TaskProgressColumn(),
+            TimeElapsedColumn(),
+            console=console,
+            transient=True,
+        ) as progress:
+            # Signal-like toys
+            signal_task = progress.add_task(
+                "[cyan]Signal-like", total=self.ntoys, visible=show_progress
             )
+            signal_teststat = []
+            for sample in signal_sample:
+                signal_teststat.append(
+                    teststat_func(
+                        poi_test,
+                        sample,
+                        self.pdf,
+                        self.init_pars,
+                        self.par_bounds,
+                        self.fixed_params,
+                    )
+                )
+                progress.advance(signal_task, 1)
 
-        bkg_teststat = []
-        for sample in tqdm.tqdm(bkg_sample, **tqdm_options, desc='Background-like'):
-            bkg_teststat.append(
-                teststat_func(
-                    poi_test,
-                    sample,
-                    self.pdf,
-                    self.init_pars,
-                    self.par_bounds,
-                    self.fixed_params,
-                )
+            # Background-like toys
+            bkg_task = progress.add_task(
+                "[cyan]Background-like", total=self.ntoys, visible=show_progress
             )
+            bkg_teststat = []
+            for sample in bkg_sample:
+                bkg_teststat.append(
+                    teststat_func(
+                        poi_test,
+                        sample,
+                        self.pdf,
+                        self.init_pars,
+                        self.par_bounds,
+                        self.fixed_params,
+                    )
+                )
+                progress.advance(bkg_task, 1)
 
         s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
         b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))

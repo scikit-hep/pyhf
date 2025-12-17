@@ -62,7 +62,7 @@ repos:
         name: mypy with Python 3.10
         files: src
         additional_dependencies:
-          ['numpy', 'types-tqdm', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
+          ['numpy', 'rich', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
         args: ["--python-version=3.10"]
       - <<: *mypy
         name: mypy with Python 3.13
