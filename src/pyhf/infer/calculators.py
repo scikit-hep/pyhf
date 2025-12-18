@@ -810,7 +810,6 @@ class ToyCalculator:
 
         teststat_func = utils.get_test_stat(self.test_stat)
 
-        # Determine whether to show progress
         show_progress = (
             track_progress if track_progress is not None else self.track_progress
         )
