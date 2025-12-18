@@ -370,6 +370,10 @@ description = "Serve the docs website"
 depends-on = ["build-docs"]
 cmd = "python -m http.server 8001 -d ./docs/_build/html"
 
+[tool.pixi.feature.dev.dependencies]
+tbump = ">=6.7.0"
+pre-commit = "*"
+
 [tool.pixi.environments]
 default = { solve-group = "default" }
 jax = { features = ["jax"], solve-group = "default" }
@@ -383,4 +387,4 @@ all = { features = ["jax", "minuit", "xmlio", "contrib"], solve-group = "default
 
 test = { features = ["jax", "minuit", "xmlio", "contrib", "test"], solve-group = "default" }
 docs = { features = ["xmlio", "contrib", "docs"], solve-group = "default" }
-# dev = { features = ["dev"], solve-group = "default" }
+dev = { features = ["all", "test", "docs", "dev"], solve-group = "default" }
