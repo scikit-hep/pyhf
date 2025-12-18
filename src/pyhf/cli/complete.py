@@ -3,34 +3,18 @@
 import click
 
 
-@click.command(help="Generate shell completion code.", name="completions")
+@click.command(name="completions")
 @click.argument(
     "shell",
     required=False,
     type=click.Choice(["bash", "zsh", "fish"], case_sensitive=False),
 )
 def cli(shell):
-    """Generate shell completion code for various shells.
+    """
+    Generate shell completion code for various shells.
 
-    Supported shells: bash, zsh, fish
-
-    To enable completion, run the appropriate command for your shell:
-
-    \b
-    Bash:
-      mkdir -p ~/.completions
-      _PYHF_COMPLETE=bash_source pyhf > ~/.completions/pyhf-complete.sh
-      echo -e "\n. ~/.completions/pyhf-complete.sh" >> ~/.bashrc
-
-    \b
-    Zsh:
-      mkdir -p ~/.completions
-      _PYHF_COMPLETE=zsh_source pyhf > ~/.completions/pyhf-complete.zsh
-      echo -e "\n. ~/.completions/pyhf-complete.zsh" >> ~/.zshrc
-
-    \b
-    Fish:
-      _PYHF_COMPLETE=fish_source pyhf >> ~/.config/fish/completions/pyhf.fish
+    The necessary commands to enable completions for pyhf for the specified
+    shell will be printed to stdout.
     """
     if shell is None:
         click.echo(cli.get_help(click.Context(cli)))
@@ -61,5 +45,6 @@ def cli(shell):
     )
     click.echo(
         "and then source your shell configuration or restart your shell."
-        + "\nIt is recommended to press tab twice (<TAB><TAB>) to engage the completion during use."
+        + "\nPressing tab twice (<TAB><TAB>) will show all available subcommands."
+        + "\nOptions are only listed if at least a dash has been entered (-<TAB><TAB>)."
     )
