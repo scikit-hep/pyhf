@@ -104,7 +104,7 @@ docs = [
     "pydata-sphinx-theme>=0.15.3",
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",
-    "intersphinx_registry>=0.2411.17",
+    "intersphinx-registry>=0.2411.17",
     "sphinx-issues",
     "sphinx-copybutton>=0.3.2,!=0.5.1",
     "jupyterlite-sphinx>=0.13.1",  # c.f. https://github.com/scikit-hep/pyhf/pull/2458
@@ -341,6 +341,21 @@ cmd = """
 coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 """
 
+[tool.pixi.feature.docs.dependencies]
+sphinx = ">=9.0.3"
+sphinxcontrib-bibtex = ">=2.1"
+sphinx-click = ">=2.5.0"
+pydata-sphinx-theme = ">=0.15.3"
+nbsphinx = "!=0.8.8"
+ipywidgets = "*"
+intersphinx-registry = ">=0.2411.17"
+sphinx-issues = "*"
+sphinx-copybutton = ">=0.3.2,!=0.5.1"
+jupyterlite-sphinx = ">=0.13.1"
+jupyterlite-pyodide-kernel = ">=0.0.7"
+jupytext = ">=1.14.0"
+ipython = "!=8.7.0"
+
 [tool.pixi.environments]
 default = { solve-group = "default" }
 jax = { features = ["jax"], solve-group = "default" }
@@ -353,5 +368,5 @@ backends = { features = ["jax", "minuit"], solve-group = "default" }
 all = { features = ["jax", "minuit", "xmlio", "contrib"], solve-group = "default" }
 
 test = { features = ["jax", "minuit", "xmlio", "contrib", "test"], solve-group = "default" }
+docs = { features = ["xmlio", "contrib", "docs"], solve-group = "default" }
 # dev = { features = ["dev"], solve-group = "default" }
-# docs = { features = ["docs"], solve-group = "default" }
