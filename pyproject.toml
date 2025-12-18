@@ -336,9 +336,23 @@ notebook = ">=6.5.7"
 graphviz = "*"
 pytest-socket = ">=0.2.0"
 
+
 [tool.pixi.feature.test.tasks.test]
+description = "Run the test suite"
+cmd = """
+coverage run --module pytest
+"""
+
+[tool.pixi.feature.test.tasks.test-core]
+description = "Run the test suite on the core library"
 cmd = """
 coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
+"""
+
+[tool.pixi.feature.test.tasks.test-contrib]
+description = "Run the test suite for the contrib module"
+cmd = """
+coverage run --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
 """
 
 [tool.pixi.feature.docs.dependencies]
