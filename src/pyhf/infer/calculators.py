@@ -728,7 +728,7 @@ class ToyCalculator:
               * ``'q0'``: performs the calculation using the discovery test statistic
                 :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
-            track_progress (:obj:`bool`): Whether to display the `tqdm` progress bar or not (outputs to `stderr`).
+            track_progress (:obj:`bool`): Whether to display the progress bar or not (outputs to `stderr`).
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
