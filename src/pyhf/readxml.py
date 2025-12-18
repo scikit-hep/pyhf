@@ -160,12 +160,12 @@ def process_sample(
         modifier_lumi: LumiSys = {'name': 'lumi', 'type': 'lumi', 'data': None}
         modifiers.append(modifier_lumi)
 
-    sample_list = list(sample.iter())
+    samples = list(sample.iter())
 
     if progress is not None and track_progress:
         task_id = progress.add_task("[cyan]  - processing modifiers", total=len(sample))
 
-    for modtag in sample_list:
+    for modtag in samples:
         if track_progress and progress is not None:
             progress.update(
                 task_id,
@@ -314,7 +314,7 @@ def process_channel(
     inputfile = channel.attrib.get('InputFile', '')
     histopath = channel.attrib.get('HistoPath', '')
 
-    sample_list = channel.findall('Sample')
+    samples = channel.findall("Sample")
 
     channel_name = channel.attrib['Name']
 
@@ -325,13 +325,11 @@ def process_channel(
         raise RuntimeError(f"Channel {channel_name} is missing data. See issue #1911.")
 
     if progress is not None and track_progress:
-        task_id = progress.add_task(
-            "[cyan]  - processing samples", total=len(sample_list)
-        )
+        task_id = progress.add_task("[cyan]  - processing samples", total=len(samples))
 
     results = []
     channel_parameter_configs: list[Parameter] = []
-    for sample in sample_list:
+    for sample in samples:
         if track_progress and progress is not None:
             progress.update(
                 task_id, description=f"[cyan]  - sample {sample.attrib.get('Name')}"
@@ -481,7 +479,7 @@ def parse(
     """
     mounts = mounts or []
     toplvl = ET.parse(configfile)
-    input_list = [x.text for x in toplvl.findall('Input') if x.text]
+    inputs = [x.text for x in toplvl.findall("Input") if x.text]
 
     # create a resolver for finding files
     resolver = resolver_factory(Path(rootdir), mounts)
@@ -501,26 +499,26 @@ def parse(
             console=console,
         ) as progress:
             task_id = progress.add_task(
-                "[bold blue]Processing channels", total=len(input_list)
+                "[bold blue]Processing channels", total=len(inputs)
             )
 
-            for inp in input_list:
-                progress.update(task_id, description=f'[bold blue]Processing {inp}')
+            for input in inputs:
+                progress.update(task_id, description=f"[bold blue]Processing {input}")
                 channel, data, samples, channel_parameter_configs = process_channel(
-                    ET.parse(resolver(inp)), resolver, track_progress, progress
+                    ET.parse(resolver(input)), resolver, track_progress, progress
                 )
-                channels.append({'name': channel, 'samples': samples})
-                observations.append({'name': channel, 'data': data})
+                channels.append({"name": channel, "samples": samples})
+                observations.append({"name": channel, "data": data})
                 parameter_configs.extend(channel_parameter_configs)
                 progress.advance(task_id, 1)
     else:
-        # No progress tracking - don't create Progress instance
-        for inp in input_list:
+        # No progress tracking
+        for input in inputs:
             channel, data, samples, channel_parameter_configs = process_channel(
-                ET.parse(resolver(inp)), resolver, track_progress, None
+                ET.parse(resolver(input)), resolver, track_progress, None
             )
-            channels.append({'name': channel, 'samples': samples})
-            observations.append({'name': channel, 'data': data})
+            channels.append({"name": channel, "samples": samples})
+            observations.append({"name": channel, "data": data})
             parameter_configs.extend(channel_parameter_configs)
 
     parameter_configs = dedupe_parameters(parameter_configs)

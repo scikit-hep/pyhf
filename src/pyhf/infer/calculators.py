@@ -824,7 +824,6 @@ class ToyCalculator:
             TimeElapsedColumn(),
             console=console,
         ) as progress:
-            # Signal-like toys
             signal_task = progress.add_task(
                 "[cyan]Signal-like", total=self.ntoys, visible=show_progress
             )
@@ -842,7 +841,6 @@ class ToyCalculator:
                 )
                 progress.advance(signal_task, 1)
 
-            # Background-like toys
             bkg_task = progress.add_task(
                 "[cyan]Background-like", total=self.ntoys, visible=show_progress
             )
