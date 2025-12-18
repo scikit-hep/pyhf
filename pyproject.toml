@@ -355,6 +355,20 @@ jupyterlite-sphinx = ">=0.13.1"
 jupyterlite-pyodide-kernel = ">=0.0.7"
 jupytext = ">=1.14.0"
 ipython = "!=8.7.0"
+rsync = ">=3.4.1,<4"
+
+[tool.pixi.feature.docs.tasks.build-docs]
+description = "Build the pyhf documentation website"
+cmd = """
+sphinx-build -M html ./docs ./docs/_build -W --keep-going && \
+rsync -r ./docs/_build/html/_static ./docs/_build/html/docs && \
+rsync -r ./src/pyhf/schemas ./docs/_build/html/
+"""
+
+[tool.pixi.feature.docs.tasks.serve]
+description = "Serve the docs website"
+depends-on = ["build-docs"]
+cmd = "python -m http.server 8001 -d ./docs/_build/html"
 
 [tool.pixi.environments]
 default = { solve-group = "default" }
