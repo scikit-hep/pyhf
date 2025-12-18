@@ -336,7 +336,6 @@ notebook = ">=6.5.7"
 python-graphviz = "*"
 pytest-socket = ">=0.2.0"
 
-
 [tool.pixi.feature.test.tasks.test]
 description = "Run the test suite on the core library"
 cmd = "coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py"
@@ -390,6 +389,18 @@ cmd = "python -m http.server 8001 -d ./docs/_build/html"
 tbump = ">=6.7.0"
 pre-commit = ">=4.5.1"
 nox = ">=2025.11.12"
+
+[tool.pixi.feature.dev.tasks.lint]
+description = "Run pre-commit"
+cmd = "pre-commit run --all-files"
+
+[tool.pixi.feature.dev.tasks.build-package]
+description = "Build a sdist and wheel"
+cmd = """
+rm -rf ./dist && \
+pixi exec python-build --installer uv . && \
+pixi exec twine check --strict ./dist/*
+"""
 
 [tool.pixi.environments]
 default = { solve-group = "default" }
