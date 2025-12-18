@@ -338,22 +338,24 @@ pytest-socket = ">=0.2.0"
 
 
 [tool.pixi.feature.test.tasks.test]
-description = "Run the test suite"
-cmd = """
-coverage run --module pytest
-"""
-
-[tool.pixi.feature.test.tasks.test-core]
 description = "Run the test suite on the core library"
-cmd = """
-coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
-"""
+cmd = "coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py"
 
 [tool.pixi.feature.test.tasks.test-contrib]
 description = "Run the test suite for the contrib module"
-cmd = """
-coverage run --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html
-"""
+cmd = "coverage run --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html"
+
+[tool.pixi.feature.test.tasks.benchmarks]
+description = "Run the benchmarks"
+cmd = "coverage run --module pytest tests/benchmarks"
+
+[tool.pixi.feature.test.tasks.notebooks]
+description = "Run the test suite for the notebooks"
+cmd = "pytest --verbose --override-ini filterwarnings= tests/test_notebooks.py"
+
+[tool.pixi.feature.test.tasks.doctest]
+description = "Run the doctest tests"
+cmd = "coverage run --data-file=.coverage-doctest --module pytest src/ README.rst"
 
 [tool.pixi.feature.docs.dependencies]
 sphinx = ">=9.0.3"
