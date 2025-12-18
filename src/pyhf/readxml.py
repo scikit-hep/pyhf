@@ -499,7 +499,6 @@ def parse(
             TaskProgressColumn(),
             TimeElapsedColumn(),
             console=console,
-            transient=True,
         ) as progress:
             task_id = progress.add_task(
                 "[bold blue]Processing channels", total=len(input_list)

@@ -823,7 +823,6 @@ class ToyCalculator:
             TaskProgressColumn(),
             TimeElapsedColumn(),
             console=console,
-            transient=True,
         ) as progress:
             # Signal-like toys
             signal_task = progress.add_task(
