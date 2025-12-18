@@ -59,4 +59,7 @@ def cli(shell):
             bold=True,
         )
     )
-    click.echo("and then source your shell configuration or restart your shell.")
+    click.echo(
+        "and then source your shell configuration or restart your shell."
+        + "\nIt is recommended to press tab twice (<TAB><TAB>) to engage the completion during use."
+    )
