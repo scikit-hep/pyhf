@@ -1,7 +1,7 @@
 # core
 scipy==1.5.4  # c.f. PR #2469
 click==8.0.0  # c.f. PR #1958, #1909
-rich==10.0.0  # c.f. PR #2648
+rich==12.3.0  # c.f. PR #2650
 jsonschema==4.15.0  # c.f. PR #1979
 jsonpatch==1.15
 pyyaml==5.1
