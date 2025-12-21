@@ -294,7 +294,7 @@ jsonpatch = ">=1.15"
 jsonschema = ">=4.15.0"
 pyyaml = ">=5.1"
 scipy = ">=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2"
-rich = ">=10.0.0"
+rich = ">=12.3.0"
 
 [tool.pixi.feature.xmlio.dependencies]
 uproot = ">=4.1.1"
