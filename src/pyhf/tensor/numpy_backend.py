@@ -3,17 +3,11 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
+from typing import Callable, Generic, TypeVar, Union
 from collections.abc import Mapping, Sequence
 
 import numpy as np
-
-# Needed while numpy lower bound is older than v1.21.0
-if TYPE_CHECKING:
-    from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
-else:
-    ArrayLike = "ArrayLike"
-    NBitBase = "NBitBase"
+from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
 
 from scipy import special
 from scipy.special import gammaln, xlogy
@@ -313,9 +307,7 @@ class numpy_backend(Generic[T]):
         tensor_in: Tensor[T],
         q: Tensor[T],
         axis: None | Shape = None,
-        interpolation: Literal[
-            "linear", "lower", "higher", "midpoint", "nearest"
-        ] = "linear",
+        method: Literal["linear", "lower", "higher", "midpoint", "nearest"] = "linear",
     ) -> ArrayLike:
         r"""
         Compute the :math:`q`-th percentile of the tensor along the specified axis.
@@ -334,7 +326,7 @@ class numpy_backend(Generic[T]):
             tensor_in (`tensor`): The tensor containing the data
             q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
             axis (`number` or `tensor`): The dimensions along which to compute
-            interpolation (:obj:`str`): The interpolation method to use when the
+            method (:obj:`str`): The estimation method to use when the
              desired percentile lies between two data points ``i < j``:
 
                 - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
@@ -352,9 +344,12 @@ class numpy_backend(Generic[T]):
             NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         .. versionadded:: 0.7.0
+        .. version-changed:: 0.8.0
+           Argument renamed from *interpolation* to *method* to align with NumPy.
         """
         # see https://github.com/numpy/numpy/issues/22125
-        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, interpolation=interpolation))  # type: ignore[call-overload]
+        # TODO: Investigate proper type annotations to avoid type: ignore
+        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, method=method))  # type: ignore[arg-type]
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)

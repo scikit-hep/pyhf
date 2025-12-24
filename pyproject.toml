@@ -49,7 +49,7 @@ dependencies = [
     # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for excluded v1.16.x versions
     "scipy>=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
     "rich>=10.0.0",  # for progress bars
-    "numpy",  # compatible versions controlled through scipy
+    "numpy>=1.22.0",  # compatible versions controlled through scipy
 ]
 
 [project.scripts]
@@ -185,8 +185,6 @@ markers = [
 ]
 filterwarnings = [
     "error",
-    'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
-    "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
     'ignore: Exception ignored in:pytest.PytestUnraisableExceptionWarning',  #FIXME: Exception ignored in: <_io.FileIO [closed]>
     'ignore:invalid value encountered in (true_)?divide:RuntimeWarning',  #FIXME
     'ignore:invalid value encountered in add:RuntimeWarning',  #FIXME
