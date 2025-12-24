@@ -307,9 +307,7 @@ class numpy_backend(Generic[T]):
         tensor_in: Tensor[T],
         q: float | NDArray[np.floating[T]] | NDArray[np.integer[T]],
         axis: int | Sequence[int] | None = None,
-        interpolation: Literal[
-            "linear", "lower", "higher", "midpoint", "nearest"
-        ] = "linear",
+        method: Literal["linear", "lower", "higher", "midpoint", "nearest"] = "linear",
     ) -> ArrayLike:
         r"""
         Compute the :math:`q`-th percentile of the tensor along the specified axis.
@@ -328,7 +326,7 @@ class numpy_backend(Generic[T]):
             tensor_in (`tensor`): The tensor containing the data
             q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
             axis (`number` or `tensor`): The dimensions along which to compute
-            interpolation (:obj:`str`): The interpolation method to use when the
+            method (:obj:`str`): The estimation method to use when the
              desired percentile lies between two data points ``i < j``:
 
                 - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
@@ -346,11 +344,10 @@ class numpy_backend(Generic[T]):
             NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         .. versionadded:: 0.7.0
+        .. version-changed:: 0.8.0
+           Argument renamed from *interpolation* to *method* to align with NumPy.
         """
-        # see https://github.com/numpy/numpy/issues/22125
-        return cast(
-            ArrayLike, np.percentile(tensor_in, q, axis=axis, method=interpolation)
-        )
+        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, method=method))
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)
