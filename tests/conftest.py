@@ -136,6 +136,13 @@ def backend(request):
         request.node.add_marker(
             pytest.mark.xfail(reason=f"expect {func_name} to fail as specified")
         )
+    
+    # If this backend is not selected by only_* markers, do not even attempt setup
+    if only_backends and param_id not in only_backends:
+        pytest.skip(
+            f"skipping {func_name} as specified to only look at: {', '.join(only_backends)}"
+        )
+
 
     tensor_config, optimizer_config = request.param
 
