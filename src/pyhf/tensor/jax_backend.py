@@ -294,7 +294,7 @@ class jax_backend:
     def exp(self, tensor_in):
         return jnp.exp(tensor_in)
 
-    def percentile(self, tensor_in, q, axis=None, method="linear"):
+    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
         r"""
         Compute the :math:`q`-th percentile of the tensor along the specified axis.
 
@@ -313,7 +313,7 @@ class jax_backend:
             tensor_in (`tensor`): The tensor containing the data
             q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
             axis (`number` or `tensor`): The dimensions along which to compute
-            method (:obj:`str`): The estimation method to use when the
+            interpolation (:obj:`str`): The interpolation method to use when the
              desired percentile lies between two data points ``i < j``:
 
                 - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
@@ -331,10 +331,8 @@ class jax_backend:
             JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         .. versionadded:: 0.7.0
-        .. version-changed:: 0.8.0
-           Argument renamed from *interpolation* to *method* to align with NumPy and JAX.
         """
-        return jnp.percentile(tensor_in, q, axis=axis, method=method)
+        return jnp.percentile(tensor_in, q, axis=axis, method=interpolation)
 
     def stack(self, sequence, axis=0):
         return jnp.stack(sequence, axis=axis)

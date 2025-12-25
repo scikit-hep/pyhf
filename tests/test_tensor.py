@@ -319,15 +319,15 @@ def test_percentile(backend):
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
-def test_percentile_method(backend):
+def test_percentile_interpolation(backend):
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
 
-    assert tb.tolist(tb.percentile(a, 50, method="linear")) == 3.5
-    assert tb.tolist(tb.percentile(a, 50, method="nearest")) == 3.0
-    assert tb.tolist(tb.percentile(a, 50, method="lower")) == 3.0
-    assert tb.tolist(tb.percentile(a, 50, method="midpoint")) == 3.5
-    assert tb.tolist(tb.percentile(a, 50, method="higher")) == 4.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="linear")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="nearest")) == 3.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="lower")) == 3.0
+    assert tb.tolist(tb.percentile(a, 50, interpolation="midpoint")) == 3.5
+    assert tb.tolist(tb.percentile(a, 50, interpolation="higher")) == 4.0
 
 
 def test_tensor_tile(backend):
