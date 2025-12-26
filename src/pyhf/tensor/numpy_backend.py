@@ -3,17 +3,11 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar, Union
+from typing import Callable, Generic, TypeVar, Union
 from collections.abc import Mapping, Sequence
 
 import numpy as np
-
-# Needed while numpy lower bound is older than v1.21.0
-if TYPE_CHECKING:
-    from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
-else:
-    ArrayLike = "ArrayLike"
-    NBitBase = "NBitBase"
+from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
 
 from scipy import special
 from scipy.special import gammaln, xlogy
@@ -311,8 +305,8 @@ class numpy_backend(Generic[T]):
     def percentile(
         self,
         tensor_in: Tensor[T],
-        q: Tensor[T],
-        axis: None | Shape = None,
+        q: float | NDArray[np.floating[T]] | NDArray[np.integer[T]],
+        axis: int | Sequence[int] | None = None,
         interpolation: Literal[
             "linear", "lower", "higher", "midpoint", "nearest"
         ] = "linear",
@@ -354,7 +348,9 @@ class numpy_backend(Generic[T]):
         .. versionadded:: 0.7.0
         """
         # see https://github.com/numpy/numpy/issues/22125
-        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, interpolation=interpolation))  # type: ignore[call-overload]
+        return cast(
+            ArrayLike, np.percentile(tensor_in, q, axis=axis, method=interpolation)
+        )
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)

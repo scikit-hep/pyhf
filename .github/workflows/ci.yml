@@ -51,6 +51,11 @@ jobs:
         python -m pip install uv
         uv pip install --system --upgrade ".[all]" --group test
 
+    # c.f. https://github.com/scikit-hep/pyhf/issues/2653
+    - name: Guard against Python 3.9 pyparsing
+      if: matrix.python-version == '3.9'
+      run: uv pip install --system "pyparsing<3.3.0"
+
     - name: List installed Python packages
       run: python -m pip list
 
