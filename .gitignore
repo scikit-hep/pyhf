@@ -44,3 +44,8 @@ htmlcov
 
 # text editors
 .vscode/
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+pixi.lock
