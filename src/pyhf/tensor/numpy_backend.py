@@ -305,8 +305,8 @@ class numpy_backend(Generic[T]):
     def percentile(
         self,
         tensor_in: Tensor[T],
-        q: Tensor[T],
-        axis: None | Shape = None,
+        q: float | NDArray[np.floating[T]] | NDArray[np.integer[T]],
+        axis: int | Sequence[int] | None = None,
         interpolation: Literal[
             "linear", "lower", "higher", "midpoint", "nearest"
         ] = "linear",
@@ -348,8 +348,9 @@ class numpy_backend(Generic[T]):
         .. versionadded:: 0.7.0
         """
         # see https://github.com/numpy/numpy/issues/22125
-        # TODO: Investigate proper type annotations to avoid type: ignore
-        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, method=interpolation))  # type: ignore[arg-type]
+        return cast(
+            ArrayLike, np.percentile(tensor_in, q, axis=axis, method=interpolation)
+        )
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)
