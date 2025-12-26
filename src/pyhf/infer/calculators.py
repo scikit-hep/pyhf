@@ -687,7 +687,7 @@ class EmpiricalDistribution:
         """
         tensorlib, _ = get_backend()
         return tensorlib.percentile(
-            self.samples, tensorlib.normal_cdf(nsigma) * 100, interpolation="linear"
+            self.samples, tensorlib.normal_cdf(nsigma) * 100, method="linear"
         )
 
 
