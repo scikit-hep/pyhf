@@ -104,7 +104,7 @@ docs = [
     "pydata-sphinx-theme>=0.15.3",
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",
-    "intersphinx_registry>=0.2411.17",
+    "intersphinx-registry>=0.2411.17",
     "sphinx-issues",
     "sphinx-copybutton>=0.3.2,!=0.5.1",
     "jupyterlite-sphinx>=0.13.1",  # c.f. https://github.com/scikit-hep/pyhf/pull/2458
@@ -117,6 +117,7 @@ dev = [
     "tbump>=6.7.0",
     "pre-commit",
     "nox",
+    "sphinx-autobuild>=2025.8.25",
     { include-group = "test" },
     { include-group = "docs" },
 ]
@@ -278,3 +279,150 @@ flake8-tidy-imports.ban-relative-imports = "all"
 [tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
 "**.ipynb" = ["F821", "F401", "F841", "F811", "E703"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64"]
+
+[tool.pixi.pypi-dependencies]
+pyhf = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+click = ">=8.0.0"
+jsonpatch = ">=1.15"
+jsonschema = ">=4.15.0"
+pyyaml = ">=5.1"
+scipy = ">=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2"
+rich = ">=12.3.0"
+numpy = ">=1.22.0"
+
+[tool.pixi.feature.xmlio.dependencies]
+uproot = ">=4.1.1"
+
+[tool.pixi.feature.jax.dependencies]
+jax = ">=0.4.1"
+
+[tool.pixi.feature.jax-cpu.dependencies]
+jax = ">=0.4.1"
+jaxlib = { version = "*", build = "cpu*" }
+
+[tool.pixi.feature.jax-gpu.dependencies]
+jax = ">=0.4.1"
+
+[tool.pixi.feature.jax-gpu.system-requirements]
+cuda = "12.0"
+
+[tool.pixi.feature.contrib.dependencies]
+matplotlib = ">=3.0.0"
+requests = ">=2.22.0"
+
+[tool.pixi.feature.minuit.dependencies]
+iminuit = ">=2.7.0"
+
+[tool.pixi.feature.test.dependencies]
+pytest = ">=6.0"
+scikit-hep-testdata = ">=0.4.11"
+coverage = ">=6.0.0"
+pytest-mock = "*"
+requests-mock = ">=1.9.0"
+pytest-benchmark = "*"
+pytest-console-scripts = ">=1.4.0"
+pytest-mpl = "*"
+ipympl = ">=0.3.0"
+pydocstyle = "*"
+papermill = ">=2.5.0"
+scrapbook = ">=0.5.0"
+notebook = ">=6.5.7"
+python-graphviz = "*"
+pytest-socket = ">=0.2.0"
+
+[tool.pixi.feature.test.tasks.test]
+description = "Run the test suite on the core library"
+cmd = "coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py"
+
+[tool.pixi.feature.test.tasks.test-contrib]
+description = "Run the test suite for the contrib module"
+cmd = "coverage run --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html"
+
+[tool.pixi.feature.test.tasks.benchmarks]
+description = "Run the benchmarks"
+cmd = "coverage run --module pytest tests/benchmarks"
+
+[tool.pixi.feature.test.tasks.notebooks]
+description = "Run the test suite for the notebooks"
+cmd = "pytest --verbose --override-ini filterwarnings= tests/test_notebooks.py"
+
+[tool.pixi.feature.test.tasks.doctest]
+description = "Run the doctest tests"
+cmd = "coverage run --data-file=.coverage-doctest --module pytest src/ README.rst"
+
+[tool.pixi.feature.docs.dependencies]
+sphinx = ">=9.0.3"
+sphinxcontrib-bibtex = ">=2.1"
+sphinx-click = ">=2.5.0"
+pydata-sphinx-theme = ">=0.15.3"
+nbsphinx = "!=0.8.8"
+ipywidgets = "*"
+intersphinx-registry = ">=0.2411.17"
+sphinx-issues = "*"
+sphinx-copybutton = ">=0.3.2,!=0.5.1"
+jupyterlite-sphinx = ">=0.13.1"
+jupyterlite-pyodide-kernel = ">=0.0.7"
+jupytext = ">=1.14.0"
+ipython = "!=8.7.0"
+rsync = ">=3.4.1,<4"
+
+[tool.pixi.feature.docs.tasks.build-docs]
+description = "Build the pyhf documentation website"
+cmd = """
+sphinx-build -M html ./docs ./docs/_build -W --keep-going && \
+rsync -r ./docs/_build/html/_static ./docs/_build/html/docs && \
+rsync -r ./src/pyhf/schemas ./docs/_build/html/
+"""
+
+[tool.pixi.feature.docs.tasks.serve]
+description = "Serve the docs website"
+depends-on = ["build-docs"]
+cmd = "python -m http.server 8001 -d ./docs/_build/html"
+
+[tool.pixi.feature.dev.dependencies]
+tbump = ">=6.7.0"
+pre-commit = ">=4.5.1"
+nox = ">=2025.11.12"
+# docs environment should contain only required dependencies for deploying docs
+sphinx-autobuild = ">=2025.8.25"
+
+[tool.pixi.feature.dev.tasks.lint]
+description = "Run pre-commit"
+cmd = "pre-commit run --all-files"
+
+[tool.pixi.feature.dev.tasks.watch-docs]
+description = "Build the pyhf documentation and auto-reload on changes"
+cmd = """
+sphinx-autobuild --builder html --nitpicky --show-traceback --open-browser ./docs/ ./docs/_build/html
+"""
+
+[tool.pixi.feature.dev.tasks.build-package]
+description = "Build a sdist and wheel"
+cmd = """
+rm -rf ./dist && \
+pixi exec python-build --installer uv . && \
+pixi exec twine check --strict ./dist/*
+"""
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+jax = { features = ["jax"], solve-group = "default" }
+jax-cpu = { features = ["jax-cpu"], solve-group = "default" }
+jax-gpu = { features = ["jax-gpu"], solve-group = "gpu" }
+xmlio = { features = ["xmlio"], solve-group = "default" }
+minuit = { features = ["minuit"], solve-group = "default" }
+contrib = { features = ["contrib"], solve-group = "default" }
+backends = { features = ["jax", "minuit"], solve-group = "default" }
+all = { features = ["jax", "minuit", "xmlio", "contrib"], solve-group = "default" }
+
+test = { features = ["jax", "minuit", "xmlio", "contrib", "test"], solve-group = "default" }
+docs = { features = ["xmlio", "contrib", "docs"], solve-group = "default" }
+dev = { features = ["all", "test", "docs", "dev"], solve-group = "default" }
