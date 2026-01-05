@@ -117,6 +117,7 @@ dev = [
     "tbump>=6.7.0",
     "pre-commit",
     "nox",
+    "sphinx-autobuild>=2025.8.25",
     { include-group = "test" },
     { include-group = "docs" },
 ]
@@ -390,10 +391,18 @@ cmd = "python -m http.server 8001 -d ./docs/_build/html"
 tbump = ">=6.7.0"
 pre-commit = ">=4.5.1"
 nox = ">=2025.11.12"
+# docs environment should contain only required dependencies for deploying docs
+sphinx-autobuild = ">=2025.8.25"
 
 [tool.pixi.feature.dev.tasks.lint]
 description = "Run pre-commit"
 cmd = "pre-commit run --all-files"
+
+[tool.pixi.feature.dev.tasks.watch-docs]
+description = "Build the pyhf documentation and auto-reload on changes"
+cmd = """
+sphinx-autobuild --builder html --nitpicky --show-traceback --open-browser ./docs/ ./docs/_build/html
+"""
 
 [tool.pixi.feature.dev.tasks.build-package]
 description = "Build a sdist and wheel"
