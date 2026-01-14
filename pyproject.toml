@@ -283,6 +283,7 @@ flake8-tidy-imports.ban-relative-imports = "all"
 [tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64"]
+requires-pixi = ">=0.63.0"
 
 [tool.pixi.pypi-dependencies]
 pyhf = { path = ".", editable = true }
@@ -341,22 +342,27 @@ pytest-socket = ">=0.2.0"
 [tool.pixi.feature.test.tasks.test]
 description = "Run the test suite on the core library"
 cmd = "coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py"
+default-environment = "test"
 
 [tool.pixi.feature.test.tasks.test-contrib]
 description = "Run the test suite for the contrib module"
 cmd = "coverage run --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html"
+default-environment = "test"
 
 [tool.pixi.feature.test.tasks.benchmarks]
 description = "Run the benchmarks"
 cmd = "coverage run --module pytest tests/benchmarks"
+default-environment = "test"
 
 [tool.pixi.feature.test.tasks.notebooks]
 description = "Run the test suite for the notebooks"
 cmd = "pytest --verbose --override-ini filterwarnings= tests/test_notebooks.py"
+default-environment = "test"
 
 [tool.pixi.feature.test.tasks.doctest]
 description = "Run the doctest tests"
 cmd = "coverage run --data-file=.coverage-doctest --module pytest src/ README.rst"
+default-environment = "test"
 
 [tool.pixi.feature.docs.dependencies]
 sphinx = ">=9.0.3"
@@ -381,11 +387,13 @@ sphinx-build -M html ./docs ./docs/_build -W --keep-going && \
 rsync -r ./docs/_build/html/_static ./docs/_build/html/docs && \
 rsync -r ./src/pyhf/schemas ./docs/_build/html/
 """
+default-environment = "docs"
 
 [tool.pixi.feature.docs.tasks.serve]
 description = "Serve the docs website"
 depends-on = ["build-docs"]
 cmd = "python -m http.server 8001 -d ./docs/_build/html"
+default-environment = "docs"
 
 [tool.pixi.feature.dev.dependencies]
 tbump = ">=6.7.0"
