@@ -165,6 +165,8 @@ class jax_backend:
         Returns:
             JAX ndarray: The tensor with repeated axes
         """
+        if not isinstance(tensor_in, jnp.ndarray):
+            tensor_in = jnp.array(tensor_in)
         return jnp.tile(tensor_in, repeats)
 
     def conditional(self, predicate, true_callable, false_callable):
