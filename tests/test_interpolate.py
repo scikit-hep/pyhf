@@ -194,6 +194,52 @@ def test_code1_validation(backend, do_tensorized_calc):
     )
 
 
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
+def test_code2_validation(backend, do_tensorized_calc):
+    histogramssets = [[[[0.5], [1.0], [2.0]]]]
+    # Test across all three regions : alpha > 1, alpha < -1 and |alpha| <= 1
+    alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
+    expected = pyhf.tensorlib.astensor([[[[0.75], [0.5], [1.0], [2.0], [2.25]]]])
+
+    interpolator = pyhf.interpolators.get(2, do_tensorized_calc=do_tensorized_calc)(
+        histogramssets, subscribe=False
+    )
+    result_deltas = pyhf.tensorlib.astensor(interpolator(alphasets))
+
+    # Calculate the actual interpolate values: nom + delta
+    histogramssets_tensor = pyhf.tensorlib.astensor(histogramssets)
+    allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum(
+        'sa,shb->shab',
+        pyhf.tensorlib.ones(pyhf.tensorlib.shape(alphasets)),
+        histogramssets_tensor[:, :, 1],
+    )
+    results = allsets_allhistos_noms_repeated + result_deltas
+
+    assert (
+        pytest.approx(np.asarray(pyhf.tensorlib.tolist(results)).ravel().tolist())
+        == np.asarray(pyhf.tensorlib.tolist(expected)).ravel().tolist()
+    )
+
+
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
+def test_code2_fast_slow_consistency_extrapolation(backend, do_tensorized_calc):
+    histogramssets = [[[[0.5], [1.0], [2.0]]]]
+    # Only test the region alpha < -1
+    alphasets = pyhf.tensorlib.astensor([[-2.0]])
+
+    slow_interpolator = pyhf.interpolators.get(2, do_tensorized_calc=False)(
+        histogramssets, subscribe=False
+    )
+    fast_interpolator = pyhf.interpolators.get(2, do_tensorized_calc=True)(
+        histogramssets, subscribe=False
+    )
+
+    slow_result = np.asarray(pyhf.tensorlib.tolist(slow_interpolator(alphasets)))
+    fast_result = np.asarray(pyhf.tensorlib.tolist(fast_interpolator(alphasets)))
+    
+    assert pytest.approx(slow_result.ravel().tolist()) == fast_result.ravel().tolist()
+
+
 def test_invalid_interpcode():
     with pytest.raises(pyhf.exceptions.InvalidInterpCode):
         pyhf.interpolators.get('fake')
