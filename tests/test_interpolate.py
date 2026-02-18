@@ -236,7 +236,7 @@ def test_code2_fast_slow_consistency_extrapolation(backend, do_tensorized_calc):
 
     slow_result = np.asarray(pyhf.tensorlib.tolist(slow_interpolator(alphasets)))
     fast_result = np.asarray(pyhf.tensorlib.tolist(fast_interpolator(alphasets)))
-    
+
     assert pytest.approx(slow_result.ravel().tolist()) == fast_result.ravel().tolist()
 
 
