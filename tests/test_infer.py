@@ -127,7 +127,7 @@ def test_upper_limit(hypotest_args):
 
 def test_upper_limit_with_return_tail_probs(hypotest_args):
     """
-    upper_limit should not raise IndexError when return_tail_probs=True 
+    upper_limit should not raise IndexError when return_tail_probs=True
     """
     _, data, model = hypotest_args
     scan = np.linspace(0, 5, 11)
