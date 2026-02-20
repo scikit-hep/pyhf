@@ -125,6 +125,42 @@ def test_upper_limit(hypotest_args):
     )
 
 
+def test_upper_limit_with_return_tail_probs(hypotest_args):
+    """
+    upper_limit should not raise IndexError when return_tail_probs=True 
+    """
+    _, data, model = hypotest_args
+    scan = np.linspace(0, 5, 11)
+
+    # linear_grid_scan path: passing return_tail_probs=True must not raise
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, scan=scan, return_tail_probs=True
+    )
+    assert len(results) == 2
+    observed_limit, expected_limits = results
+    assert observed_limit == pytest.approx(1.0262704738584554)
+    assert expected_limits == pytest.approx(
+        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+    )
+
+    # linear_grid_scan path: with return_results=True as well
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, scan=scan, return_results=True, return_tail_probs=True
+    )
+    assert len(results) == 3
+    observed_limit, expected_limits, (_scan, point_results) = results
+    assert observed_limit == pytest.approx(1.0262704738584554)
+    assert len(_scan) == len(point_results)
+
+    # toms748_scan path: passing return_tail_probs=True must not raise
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, return_tail_probs=True, rtol=1e-4
+    )
+    assert len(results) == 2
+    observed_limit, expected_limits = results
+    assert observed_limit == pytest.approx(1.01156939, abs=0.1)
+
+
 def test_upper_limit_with_kwargs(hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
