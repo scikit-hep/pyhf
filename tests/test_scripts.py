@@ -239,11 +239,9 @@ def test_import_and_export(tmp_path, script_runner):
 def test_patch(tmp_path, script_runner):
     patch = tmp_path.joinpath('patch.json')
 
-    patch.write_text(
-        '''
+    patch.write_text('''
 [{"op": "replace", "path": "/channels/0/samples/0/data", "value": [5,6]}]
-    '''
-    )
+    ''')
 
     temp = tmp_path.joinpath("parsed_output.json")
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
