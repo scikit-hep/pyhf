@@ -75,6 +75,10 @@ def toms748_scan(
 
     .. versionadded:: 0.7.0
     """
+    # return_tail_probs shifts the hypotest result tuple indices, which would
+    # break the index assumptions below. Strip it out before calling hypotest.
+    hypotest_kwargs.pop("return_tail_probs", None)
+
     cache = {}
 
     def f_cached(poi):
@@ -186,6 +190,8 @@ def linear_grid_scan(
 
     .. versionadded:: 0.7.0
     """
+    hypotest_kwargs.pop("return_tail_probs", None)
+
     tb, _ = get_backend()
     results = [
         hypotest(mu, data, model, return_expected_set=True, **hypotest_kwargs)
