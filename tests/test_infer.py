@@ -642,3 +642,28 @@ def test_deprecated_upperlimit(hypotest_args):
             "pyhf.infer.intervals.upperlimit is deprecated in favor of pyhf.infer.intervals.upper_limits.upper_limit"
             in str(_warning[-1].message)
         )
+
+
+def test_issue2563_toms748_scan_setLevel(tmp_path, hypotest_args):
+    """
+    Test that setting the level actually gives us what we expect for scan=None (using the toms748 algorithm)
+    """
+    _, data, model = hypotest_args
+
+    obs_limit_95, exp_limits_95 = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, rtol=1e-8, level=0.05, scan=None
+    )
+
+    obs_limit_90, exp_limits_90 = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, rtol=1e-8, level=0.10, scan=None
+    )
+
+    assert obs_limit_95 != pytest.approx(
+        obs_limit_90
+    ), "Observed limit at 95% is the same as the observed limit at 90%"
+    for index, (exp_limit_95, exp_limit_90) in enumerate(
+        zip(exp_limits_95, exp_limits_90), 1
+    ):
+        assert exp_limit_95 != pytest.approx(
+            exp_limit_90
+        ), f"Expected limit for 95% is the same as the expected limit at 90% for position {index}"
