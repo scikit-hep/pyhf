@@ -4,10 +4,10 @@ from pathlib import Path
 
 import nox
 
-ALL_PYTHONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+ALL_PYTHONS = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
 
 # Default sessions to run if no session handles are passed
-nox.options.sessions = ["lint", "tests-3.13"]
+nox.options.sessions = ["lint", "tests-3.14"]
 nox.options.default_venv_backend = "uv|virtualenv"
 
 
@@ -31,10 +31,10 @@ def tests(session):
 
     Examples:
 
-        $ nox --session tests --python 3.13
-        $ nox --session tests --python 3.13 -- contrib  # run the contrib module tests
-        $ nox --session tests --python 3.13 -- tests/test_tensor.py  # run specific tests
-        $ nox --session tests --python 3.13 -- coverage  # run with coverage but slower
+        $ nox --session tests --python 3.14
+        $ nox --session tests --python 3.14 -- contrib  # run the contrib module tests
+        $ nox --session tests --python 3.14 -- tests/test_tensor.py  # run specific tests
+        $ nox --session tests --python 3.14 -- coverage  # run with coverage but slower
     """
     session.install("--upgrade", "--editable", ".[all]", "--group", "test")
     session.install("--upgrade", "pytest")
