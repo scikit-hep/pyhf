@@ -63,12 +63,9 @@ jobs:
         jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
 
     - name: Check for broken links
-      run: |
-        pushd docs
-        make linkcheck
-        # Don't ship the linkcheck
-        rm -r _build/linkcheck
-        popd
+      uses: lycheeverse/lychee-action@v2
+      with:
+        args: docs/
 
     - name: Test and build docs
       run: |
