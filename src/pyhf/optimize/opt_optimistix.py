@@ -73,8 +73,8 @@ class optimistix_optimizer(OptimizerMixin):
         # otherwise we can't minimise with optimistix
         if not pyhf.tensorlib.name == 'jax':
             raise ValueError(
-                "The optimistix optimizer can only be used with the JAX backend. " \
-                "Use `pyhf.set_backend('jax', pyhf.optimize.optimistix_optimizer(...)) " \
+                "The optimistix optimizer can only be used with the JAX backend. "
+                "Use `pyhf.set_backend('jax', pyhf.optimize.optimistix_optimizer(...)) "
                 "at the top level of your python code to change your backend to JAX."
             )
 
@@ -91,7 +91,7 @@ class optimistix_optimizer(OptimizerMixin):
         # in the `wrapped_func` before forwarding them to the original `func`.
         x0_floating = list(x0)
         for idx, _ in fixed_vals:
-           x0_floating[idx] = None
+            x0_floating[idx] = None
 
         def wrapped_func(x0, args):
             (fixed_vals,) = args
