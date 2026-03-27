@@ -82,8 +82,9 @@ def reset_backend():
             ("numpy_backend", {"poisson_from_normal": True}),
             ("minuit_optimizer", {}),
         ),
+        (("jax_backend", {}), ("optimistix_optimizer", {})),
     ],
-    ids=["numpy", "jax", "numpy_minuit"],
+    ids=["numpy", "jax", "numpy_minuit", "jax_optimistix"],
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
