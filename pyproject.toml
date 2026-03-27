@@ -70,11 +70,12 @@ jax = [
 ]
 xmlio = ["uproot>=4.1.1"]  # c.f. PR #1567
 minuit = ["iminuit>=2.7.0"]  # c.f. PR #1895
+optimistix = ["optimistix>=0.1.0"]
 contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
 ]
-backends = ["pyhf[jax,minuit]"]
+backends = ["pyhf[jax,minuit,optimistix]"]
 all = ["pyhf[backends,xmlio,contrib]"]
 
 # Developer extras
@@ -322,6 +323,9 @@ requests = ">=2.22.0"
 [tool.pixi.feature.minuit.dependencies]
 iminuit = ">=2.7.0"
 
+[tool.pixi.feature.optimistix.dependencies]
+optimistix = ">=0.1.0"
+
 [tool.pixi.feature.test.dependencies]
 pytest = ">=6.0"
 scikit-hep-testdata = ">=0.4.11"
@@ -427,10 +431,11 @@ jax-cpu = { features = ["jax-cpu"], solve-group = "default" }
 jax-gpu = { features = ["jax-gpu"], solve-group = "gpu" }
 xmlio = { features = ["xmlio"], solve-group = "default" }
 minuit = { features = ["minuit"], solve-group = "default" }
+optimistix = { features = ["optimistix"], solve-group = "default" }
 contrib = { features = ["contrib"], solve-group = "default" }
-backends = { features = ["jax", "minuit"], solve-group = "default" }
-all = { features = ["jax", "minuit", "xmlio", "contrib"], solve-group = "default" }
+backends = { features = ["jax", "minuit", "optimistix"], solve-group = "default" }
+all = { features = ["jax", "minuit", "optimistix", "xmlio", "contrib"], solve-group = "default" }
 
-test = { features = ["jax", "minuit", "xmlio", "contrib", "test"], solve-group = "default" }
+test = { features = ["jax", "minuit", "optimistix", "xmlio", "contrib", "test"], solve-group = "default" }
 docs = { features = ["xmlio", "contrib", "docs"], solve-group = "default" }
 dev = { features = ["all", "test", "docs", "dev"], solve-group = "default" }
