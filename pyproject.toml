@@ -70,7 +70,7 @@ jax = [
 ]
 xmlio = ["uproot>=4.1.1"]  # c.f. PR #1567
 minuit = ["iminuit>=2.7.0"]  # c.f. PR #1895
-optimistix = ["optimistix>=0.1.0"]
+optimistix = ["optimistix>=0.1.0;python_version>='3.11'"]
 contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
@@ -324,7 +324,7 @@ requests = ">=2.22.0"
 iminuit = ">=2.7.0"
 
 [tool.pixi.feature.optimistix.dependencies]
-optimistix = ">=0.1.0"
+optimistix = ">=0.1.0;python_version>='3.11'"
 
 [tool.pixi.feature.test.dependencies]
 pytest = ">=6.0"
