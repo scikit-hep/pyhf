@@ -10,8 +10,8 @@ name = "pyhf"
 dynamic = ["version"]
 description = "pure-Python HistFactory implementation with tensors and autodiff"
 readme = "README.rst"
-license = { text = "Apache-2.0" }  # SPDX short identifier
-requires-python = ">=3.8"
+license = "Apache-2.0"
+requires-python = ">=3.9"
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
     { name = "Matthew Feickert", email = "matthew.feickert@cern.ch" },
@@ -23,35 +23,33 @@ keywords = [
     "jax",
     "numpy",
     "physics",
-    "pytorch",
     "scipy",
-    "tensorflow",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: WebAssembly :: Emscripten",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
 ]
 dependencies = [
     "click>=8.0.0",  # for console scripts
-    "importlib_resources>=1.4.0; python_version < '3.9'",  # for resources in schema
     "jsonpatch>=1.15",
     "jsonschema>=4.15.0",  # for utils
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
-    "scipy>=1.5.1",  # requires numpy, which is required by pyhf and tensorflow
-    "tqdm>=4.56.0",  # for readxml
-    "numpy",  # compatible versions controlled through scipy
+    # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for excluded v1.16.x versions
+    "scipy>=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
+    "rich>=12.3.0",  # for progress bars
+    "numpy>=1.22.0",  # compatible versions controlled through scipy
 ]
 
 [project.scripts]
@@ -66,13 +64,6 @@ Homepage = "https://github.com/scikit-hep/pyhf"
 "Source Code" = "https://github.com/scikit-hep/pyhf"
 
 [project.optional-dependencies]
-shellcomplete = ["click_completion"]
-tensorflow = [
-    "tensorflow>=2.7.0; platform_machine != 'arm64'",  # c.f. PR #1962
-    "tensorflow-macos>=2.7.0; platform_machine == 'arm64' and platform_system == 'Darwin'",  # c.f. PR #2119
-    "tensorflow-probability>=0.11.0",  # c.f. PR #1657
-]
-torch = ["torch>=1.10.0"]  # c.f. PR #1657
 jax = [
     "jax>=0.4.1",  # c.f. PR #2079
     "jaxlib>=0.4.1",  # c.f. PR #2079
@@ -83,10 +74,11 @@ contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
 ]
-backends = ["pyhf[tensorflow,torch,jax,minuit]"]
-all = ["pyhf[backends,xmlio,contrib,shellcomplete]"]
+backends = ["pyhf[jax,minuit]"]
+all = ["pyhf[backends,xmlio,contrib]"]
 
 # Developer extras
+[dependency-groups]
 test = [
     "scikit-hep-testdata>=0.4.11",
     "pytest>=6.0",
@@ -98,33 +90,36 @@ test = [
     "pytest-mpl",
     "ipympl>=0.3.0",
     "pydocstyle",
-    "papermill~=2.3.4",
-    "scrapbook~=0.5.0",
-    "jupyter",
+    "papermill>=2.5.0",
+    "scrapbook>=0.5.0",
+    "notebook>=6.5.7",
     "graphviz",
     "pytest-socket>=0.2.0",  # c.f. PR #1917
 ]
 docs = [
     "pyhf[xmlio,contrib]",
-    "sphinx>=7.0.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2271
-    "sphinxcontrib-bibtex~=2.1",
-    "sphinx-click",
-    "sphinx-rtd-theme>=1.3.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2271
+    "sphinx>=9.0.3",  # c.f. https://github.com/scikit-hep/pyhf/pull/2642
+    "sphinxcontrib-bibtex>=2.1",
+    "sphinx-click>=2.5.0",
+    "pydata-sphinx-theme>=0.15.3",
     "nbsphinx!=0.8.8",  # c.f. https://github.com/spatialaudio/nbsphinx/issues/620
     "ipywidgets",
+    "intersphinx-registry>=0.2411.17",
     "sphinx-issues",
     "sphinx-copybutton>=0.3.2,!=0.5.1",
-    "jupyterlite-sphinx>=0.8.0",
+    "jupyterlite-sphinx>=0.13.1",  # c.f. https://github.com/scikit-hep/pyhf/pull/2458
     "jupyterlite-pyodide-kernel>=0.0.7",
     "jupytext>=1.14.0",
     "ipython!=8.7.0",  # c.f. https://github.com/scikit-hep/pyhf/pull/2068
 ]
-develop = [
-    "pyhf[all,test,docs]",
+dev = [
+    "pyhf[all]",
     "tbump>=6.7.0",
     "pre-commit",
     "nox",
-    "codemetapy>=2.3.0",
+    "sphinx-autobuild>=2025.8.25",
+    { include-group = "test" },
+    { include-group = "docs" },
 ]
 
 [tool.hatch.version]
@@ -176,47 +171,34 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob='*.rst'",
 ]
-log_cli_level = "info"
+log_level = "INFO"
 testpaths = "tests"
 markers = [
     "fail_jax",
     "fail_numpy",
     "fail_numpy_minuit",
-    "fail_pytorch",
-    "fail_pytorch64",
-    "fail_tensorflow",
     "only_jax",
     "only_numpy",
     "only_numpy_minuit",
-    "only_pytorch",
-    "only_pytorch64",
-    "only_tensorflow",
     "skip_jax",
     "skip_numpy",
     "skip_numpy_minuit",
-    "skip_pytorch",
-    "skip_pytorch64",
-    "skip_tensorflow",
 ]
 filterwarnings = [
     "error",
-    'ignore:the imp module is deprecated:DeprecationWarning',  # tensorflow
-    'ignore:distutils Version classes are deprecated:DeprecationWarning',  # tensorflow-probability
-    'ignore:the `interpolation=` argument to percentile was renamed to `method=`, which has additional options:DeprecationWarning',  # Issue #1772
-    "ignore:The interpolation= argument to 'quantile' is deprecated. Use 'method=' instead:DeprecationWarning",  # Issue #1772
     'ignore: Exception ignored in:pytest.PytestUnraisableExceptionWarning',  #FIXME: Exception ignored in: <_io.FileIO [closed]>
     'ignore:invalid value encountered in (true_)?divide:RuntimeWarning',  #FIXME
     'ignore:invalid value encountered in add:RuntimeWarning',  #FIXME
-    "ignore:In future, it will be an error for 'np.bool_' scalars to be interpreted as an index:DeprecationWarning",  #FIXME: tests/test_tensor.py::test_pdf_eval[pytorch]
-    'ignore:Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with:UserWarning',  #FIXME: tests/test_optim.py::test_minimize[no_grad-scipy-pytorch-no_stitch]
     'ignore:divide by zero encountered in (true_)?divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
-    'ignore:Call to deprecated create function:DeprecationWarning',  # protobuf via tensorflow
-    'ignore:`np.bool8` is a deprecated alias for `np.bool_`:DeprecationWarning',  # numpy via tensorflow
-    "ignore:module 'sre_constants' is deprecated:DeprecationWarning",  # tensorflow v2.12.0+ for Python 3.11+
     "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
     "ignore:jsonschema.RefResolver is deprecated as of v4.18.0, in favor of the:DeprecationWarning",  # Issue #2139
     "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
+    "ignore:jax.xla_computation is deprecated. Please use the AOT APIs:DeprecationWarning",  # jax v0.4.30
+    "ignore:'MultiCommand' is deprecated and will be removed in Click 9.0. Use 'Group' instead.:DeprecationWarning",  # Click
+    "ignore:Hesse called with all parameters fixed:iminuit.warnings.IMinuitWarning",  # Issue #2637
+    "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
+    "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning",  # papermill
 ]
 
 [tool.coverage.run]
@@ -234,21 +216,18 @@ exclude_also = [
 
 [tool.mypy]
 files = "src"
-python_version = "3.11"
+python_version = "3.13"
 warn_unused_configs = true
 strict = true
-show_error_codes = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
+plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
 module = [
   'jax.*',
   'matplotlib.*',
   'scipy.*',
-  'tensorflow.*',
-  'tensorflow_probability.*',
-  'torch.*',
   'uproot.*',
 ]
 ignore_missing_imports = true
@@ -278,34 +257,181 @@ module = [
   'pyhf.tensor.common.*',
   'pyhf.tensor',
   'pyhf.tensor.jax_backend.*',
-  'pyhf.tensor.tensorflow_backend.*',
-  'pyhf.tensor.pytorch_backend.*',
 ]
 ignore_errors = true
 
 [tool.ruff]
-src = ["src"]
 line-length = 88
 
 [tool.ruff.lint]
-select = [
-  "E", "F", "W", # flake8
+extend-select = [
   "UP",          # pyupgrade
   "RUF",         # Ruff-specific
   "TID",         # flake8-tidy-imports
 ]
 ignore = [
   "E402",
-  "E501",
   "RUF001", # String contains ambiguous unicode character
   "RUF005", # unpack-instead-of-concatenating-to-collection-literal
 ]
 typing-modules = ["pyhf.typing"]
-unfixable = [
-  "F841", # Removes unused variables
-]
 flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
 "**.ipynb" = ["F821", "F401", "F841", "F811", "E703"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64"]
+requires-pixi = ">=0.63.0"
+
+[tool.pixi.pypi-dependencies]
+pyhf = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+click = ">=8.0.0"
+jsonpatch = ">=1.15"
+jsonschema = ">=4.15.0"
+pyyaml = ">=5.1"
+scipy = ">=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2"
+rich = ">=12.3.0"
+numpy = ">=1.22.0"
+
+[tool.pixi.feature.xmlio.dependencies]
+uproot = ">=4.1.1"
+
+[tool.pixi.feature.jax.dependencies]
+jax = ">=0.4.1"
+
+[tool.pixi.feature.jax-cpu.dependencies]
+jax = ">=0.4.1"
+jaxlib = { version = "*", build = "cpu*" }
+
+[tool.pixi.feature.jax-gpu.dependencies]
+jax = ">=0.4.1"
+
+[tool.pixi.feature.jax-gpu.system-requirements]
+cuda = "12.0"
+
+[tool.pixi.feature.contrib.dependencies]
+matplotlib = ">=3.0.0"
+requests = ">=2.22.0"
+
+[tool.pixi.feature.minuit.dependencies]
+iminuit = ">=2.7.0"
+
+[tool.pixi.feature.test.dependencies]
+pytest = ">=6.0"
+scikit-hep-testdata = ">=0.4.11"
+coverage = ">=6.0.0"
+pytest-mock = "*"
+requests-mock = ">=1.9.0"
+pytest-benchmark = "*"
+pytest-console-scripts = ">=1.4.0"
+pytest-mpl = "*"
+ipympl = ">=0.3.0"
+pydocstyle = "*"
+papermill = ">=2.5.0"
+scrapbook = ">=0.5.0"
+notebook = ">=6.5.7"
+python-graphviz = "*"
+pytest-socket = ">=0.2.0"
+
+[tool.pixi.feature.test.tasks.test]
+description = "Run the test suite on the core library"
+cmd = "coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py"
+default-environment = "test"
+
+[tool.pixi.feature.test.tasks.test-contrib]
+description = "Run the test suite for the contrib module"
+cmd = "coverage run --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline --mpl-generate-summary html"
+default-environment = "test"
+
+[tool.pixi.feature.test.tasks.benchmarks]
+description = "Run the benchmarks"
+cmd = "coverage run --module pytest tests/benchmarks"
+default-environment = "test"
+
+[tool.pixi.feature.test.tasks.notebooks]
+description = "Run the test suite for the notebooks"
+cmd = "pytest --verbose --override-ini filterwarnings= tests/test_notebooks.py"
+default-environment = "test"
+
+[tool.pixi.feature.test.tasks.doctest]
+description = "Run the doctest tests"
+cmd = "coverage run --data-file=.coverage-doctest --module pytest src/ README.rst"
+default-environment = "test"
+
+[tool.pixi.feature.docs.dependencies]
+sphinx = ">=9.0.3"
+sphinxcontrib-bibtex = ">=2.1"
+sphinx-click = ">=2.5.0"
+pydata-sphinx-theme = ">=0.15.3"
+nbsphinx = "!=0.8.8"
+ipywidgets = "*"
+intersphinx-registry = ">=0.2411.17"
+sphinx-issues = "*"
+sphinx-copybutton = ">=0.3.2,!=0.5.1"
+jupyterlite-sphinx = ">=0.13.1"
+jupyterlite-pyodide-kernel = ">=0.0.7"
+jupytext = ">=1.14.0"
+ipython = "!=8.7.0"
+rsync = ">=3.4.1,<4"
+
+[tool.pixi.feature.docs.tasks.build-docs]
+description = "Build the pyhf documentation website"
+cmd = """
+sphinx-build -M html ./docs ./docs/_build -W --keep-going && \
+rsync -r ./docs/_build/html/_static ./docs/_build/html/docs && \
+rsync -r ./src/pyhf/schemas ./docs/_build/html/
+"""
+default-environment = "docs"
+
+[tool.pixi.feature.docs.tasks.serve]
+description = "Serve the docs website"
+depends-on = ["build-docs"]
+cmd = "python -m http.server 8001 -d ./docs/_build/html"
+default-environment = "docs"
+
+[tool.pixi.feature.dev.dependencies]
+tbump = ">=6.7.0"
+pre-commit = ">=4.5.1"
+nox = ">=2025.11.12"
+# docs environment should contain only required dependencies for deploying docs
+sphinx-autobuild = ">=2025.8.25"
+
+[tool.pixi.feature.dev.tasks.lint]
+description = "Run pre-commit"
+cmd = "pre-commit run --all-files"
+
+[tool.pixi.feature.dev.tasks.watch-docs]
+description = "Build the pyhf documentation and auto-reload on changes"
+cmd = """
+sphinx-autobuild --builder html --nitpicky --show-traceback --open-browser ./docs/ ./docs/_build/html
+"""
+
+[tool.pixi.feature.dev.tasks.build-package]
+description = "Build a sdist and wheel"
+cmd = """
+rm -rf ./dist && \
+pixi exec python-build --installer uv . && \
+pixi exec twine check --strict ./dist/*
+"""
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+jax = { features = ["jax"], solve-group = "default" }
+jax-cpu = { features = ["jax-cpu"], solve-group = "default" }
+jax-gpu = { features = ["jax-gpu"], solve-group = "gpu" }
+xmlio = { features = ["xmlio"], solve-group = "default" }
+minuit = { features = ["minuit"], solve-group = "default" }
+contrib = { features = ["contrib"], solve-group = "default" }
+backends = { features = ["jax", "minuit"], solve-group = "default" }
+all = { features = ["jax", "minuit", "xmlio", "contrib"], solve-group = "default" }
+
+test = { features = ["jax", "minuit", "xmlio", "contrib", "test"], solve-group = "default" }
+docs = { features = ["xmlio", "contrib", "docs"], solve-group = "default" }
+dev = { features = ["all", "test", "docs", "dev"], solve-group = "default" }

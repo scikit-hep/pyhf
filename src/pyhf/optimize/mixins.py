@@ -1,4 +1,5 @@
 """Helper Classes for use of automatic differentiation."""
+
 import logging
 
 import numpy as np

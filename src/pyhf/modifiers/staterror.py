@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 import pyhf
 from pyhf import events
@@ -10,7 +9,7 @@ from pyhf.tensor.manager import get_backend
 log = logging.getLogger(__name__)
 
 
-def required_parset(sigmas, fixed: List[bool]):
+def required_parset(sigmas, fixed: list[bool]):
     n_parameters = len(sigmas)
     return {
         'paramset_type': 'constrained_by_normal',
@@ -92,9 +91,12 @@ class staterror_builder:
             relerrs = default_backend.sum(
                 [
                     [
-                        (modifier_data['data']['uncrt'][binnr] / nomsall[binnr]) ** 2
-                        if nomsall[binnr] > 0
-                        else 0.0
+                        (
+                            (modifier_data['data']['uncrt'][binnr] / nomsall[binnr])
+                            ** 2
+                            if nomsall[binnr] > 0
+                            else 0.0
+                        )
                         for binnr in range(len(modifier_data['data']['nom_data']))
                     ]
                     for modifier_data in self.builder_data[modname].values()
@@ -184,9 +186,9 @@ class staterror_combined:
 
                 sample_mask = self._staterror_mask[syst_index][singular_sample_index][0]
                 access_field_for_syst_and_batch[sample_mask] = selection
-                self._access_field[
-                    syst_index, batch_index
-                ] = access_field_for_syst_and_batch
+                self._access_field[syst_index, batch_index] = (
+                    access_field_for_syst_and_batch
+                )
 
     def _precompute(self):
         if not self.param_viewer.index_selection:

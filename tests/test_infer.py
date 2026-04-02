@@ -313,7 +313,7 @@ def test_hypotest_return_calculator(
     Check that the return structure of pyhf.infer.hypotest with the
     addition of the return_calculator keyword arg is as expected
     """
-    *_, model = hypotest_args
+    *_, _model = hypotest_args
 
     # only those return flags where the toggled return value
     # is placed in front of the calculator in the returned tuple
@@ -393,7 +393,7 @@ def test_inferapi_pyhf_independence():
             return pyhf.probability.Poisson(expected_main)
 
         def _make_constraint_pdf(self, pars):
-            mu, gamma = pars
+            _, gamma = pars
             return pyhf.probability.Poisson(gamma * self.factor)
 
         def expected_data(self, pars, include_auxdata=True):
@@ -499,7 +499,7 @@ def test_emperical_distribution(tmp_path, hypotest_args):
     tb = pyhf.tensorlib
     np.random.seed(0)
 
-    mu_test, data, model = hypotest_args
+    mu_test, _, model = hypotest_args
     init_pars = model.config.suggested_init()
     par_bounds = model.config.suggested_bounds()
     fixed_params = model.config.suggested_fixed()

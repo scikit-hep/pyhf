@@ -2,6 +2,7 @@ from jax import config
 
 config.update('jax_enable_x64', True)
 
+from jax.core import Tracer
 from jax import Array
 import jax.numpy as jnp
 from jax.scipy.special import gammaln, xlogy
@@ -12,6 +13,13 @@ import scipy.stats as osp_stats
 import logging
 
 log = logging.getLogger(__name__)
+
+
+def _currently_jitting():
+    """
+    JAX turns arrays into Tracers during jit-compilation, so check for that.
+    """
+    return isinstance(jnp.array(1), Tracer)
 
 
 class _BasicPoisson:
@@ -52,7 +60,7 @@ class _BasicNormal:
 class jax_backend:
     """JAX backend for pyhf"""
 
-    __slots__ = ['name', 'precision', 'dtypemap', 'default_do_grad']
+    __slots__ = ['default_do_grad', 'dtypemap', 'name', 'precision']
 
     #: The array type for jax
     array_type = Array
@@ -184,6 +192,9 @@ class jax_backend:
         return true_callable() if predicate else false_callable()
 
     def tolist(self, tensor_in):
+        if _currently_jitting():
+            # .aval is the abstract value and has a little nicer representation
+            return tensor_in.aval
         try:
             return jnp.asarray(tensor_in).tolist()
         except (TypeError, ValueError):
@@ -283,7 +294,7 @@ class jax_backend:
     def exp(self, tensor_in):
         return jnp.exp(tensor_in)
 
-    def percentile(self, tensor_in, q, axis=None, interpolation="linear"):
+    def percentile(self, tensor_in, q, axis=None, method="linear"):
         r"""
         Compute the :math:`q`-th percentile of the tensor along the specified axis.
 
@@ -302,7 +313,7 @@ class jax_backend:
             tensor_in (`tensor`): The tensor containing the data
             q (:obj:`float` or `tensor`): The :math:`q`-th percentile to compute
             axis (`number` or `tensor`): The dimensions along which to compute
-            interpolation (:obj:`str`): The interpolation method to use when the
+            method (:obj:`str`): The estimation method to use when the
              desired percentile lies between two data points ``i < j``:
 
                 - ``'linear'``: ``i + (j - i) * fraction``, where ``fraction`` is the
@@ -320,8 +331,10 @@ class jax_backend:
             JAX ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
         .. versionadded:: 0.7.0
+        .. version-changed:: 0.8.0
+           Argument renamed from *interpolation* to *method* to align with NumPy and JAX.
         """
-        return jnp.percentile(tensor_in, q, axis=axis, interpolation=interpolation)
+        return jnp.percentile(tensor_in, q, axis=axis, method=method)
 
     def stack(self, sequence, axis=0):
         return jnp.stack(sequence, axis=axis)

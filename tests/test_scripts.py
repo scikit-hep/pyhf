@@ -192,7 +192,7 @@ def test_import_usingMounts_badDelimitedPaths(datadir, tmp_path, script_runner):
     assert 'is not a valid colon-separated option' in ret.stderr
 
 
-@pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
+@pytest.mark.parametrize("backend", ["numpy", "jax"])
 def test_fit_backend_option(tmp_path, script_runner, backend):
     temp = tmp_path.joinpath("parsed_output.json")
     command = f"pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}"
@@ -207,7 +207,7 @@ def test_fit_backend_option(tmp_path, script_runner, backend):
     assert "mle_parameters" in ret_json
 
 
-@pytest.mark.parametrize("backend", ["numpy", "tensorflow", "pytorch", "jax"])
+@pytest.mark.parametrize("backend", ["numpy", "jax"])
 def test_cls_backend_option(tmp_path, script_runner, backend):
     temp = tmp_path.joinpath("parsed_output.json")
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
@@ -239,11 +239,9 @@ def test_import_and_export(tmp_path, script_runner):
 def test_patch(tmp_path, script_runner):
     patch = tmp_path.joinpath('patch.json')
 
-    patch.write_text(
-        '''
+    patch.write_text('''
 [{"op": "replace", "path": "/channels/0/samples/0/data", "value": [5,6]}]
-    '''
-    )
+    ''')
 
     temp = tmp_path.joinpath("parsed_output.json")
     command = f'pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}'
@@ -666,7 +664,12 @@ def test_missing_contrib_download(caplog):
 
         from pyhf.contrib.cli import download
 
-        runner = CliRunner(mix_stderr=False)
+        # mix_stderr removed in Click v8.2.0.
+        # Can simplify once pyhf is Python 3.10+.
+        try:
+            runner = CliRunner(mix_stderr=False)
+        except TypeError:
+            runner = CliRunner()
         result = runner.invoke(
             download,
             [

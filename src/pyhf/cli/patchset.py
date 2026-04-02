@@ -1,4 +1,5 @@
 """The pyhf spec CLI subcommand."""
+
 import logging
 
 import click

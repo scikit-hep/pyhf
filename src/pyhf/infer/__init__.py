@@ -38,6 +38,7 @@ def hypotest(
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -50,8 +51,8 @@ def hypotest(
         ... )
         >>> CLs_obs
         array(0.05251497)
-        >>> CLs_exp_band
-        [array(0.00260626), array(0.01382005), array(0.06445321), array(0.23525644), array(0.57303621)]
+        >>> np.isclose(CLs_exp_band, [0.00260626, 0.01382005, 0.06445321, 0.23525644, 0.57303621])
+        array([ True,  True,  True,  True,  True])
 
     Args:
         poi_test (Number or Tensor): The value of the parameter of interest (POI)
@@ -61,8 +62,8 @@ def hypotest(
         par_bounds (:obj:`tensor`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`tensor` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         calctype (:obj:`str`): The calculator to create. Choose either 'asymptotics' (default) or 'toybased'.
         return_tail_probs (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{s+b}` and :math:`\mathrm{CL}_{b}`
         return_expected (:obj:`bool`): Bool for returning :math:`\mathrm{CL}_{\mathrm{exp}}`
@@ -176,7 +177,7 @@ def hypotest(
             teststat, sig_plus_bkg_distribution, bkg_only_distribution
         )
     )
-    CLsb_exp, CLb_exp, CLs_exp = calc.expected_pvalues(
+    CLsb_exp, _CLb_exp, CLs_exp = calc.expected_pvalues(
         sig_plus_bkg_distribution, bkg_only_distribution
     )
 
@@ -206,7 +207,7 @@ def hypotest(
 
 from pyhf.infer import intervals
 
-__all__ = ["hypotest", "calculators", "intervals", "mle", "test_statistics", "utils"]
+__all__ = ["calculators", "hypotest", "intervals", "mle", "test_statistics", "utils"]
 
 
 def __dir__():

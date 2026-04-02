@@ -1,4 +1,5 @@
 """Piecewise-Linear + Polynomial Interpolation (Code 4p)."""
+
 import logging
 import pyhf
 from pyhf.tensor.manager import get_backend

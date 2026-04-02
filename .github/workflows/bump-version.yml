@@ -12,11 +12,9 @@ on:
         - minor
         - major
       release_candidate:
-        type: choice
-        description: 'Release candidate?'
-        options:
-        - false
-        - true
+        type: boolean
+        description: 'Release candidate'
+        default: false
       new_version:
         description: 'New version to bump to'
         required: true
@@ -27,27 +25,28 @@ on:
         required: true
         type: string
       force:
-        type: choice
-        description: 'Force override check?'
-        options:
-        - false
-        - true
+        type: boolean
+        description: 'Force override check'
+        default: false
       dry_run:
-        type: choice
-        description: 'Perform a dry run to check?'
-        options:
-        - true
-        - false
+        type: boolean
+        description: 'Perform a dry run to check'
+        default: true
+
+permissions:
+  contents: read
 
 jobs:
   bump-version:
+    permissions:
+      contents: write  # for Git to git push
     runs-on: ubuntu-latest
     if: github.repository == 'scikit-hep/pyhf'
 
     steps:
     # Use GitHub PAT to authenticate so other workflows trigger
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6.0.0
       with:
         ref: ${{ github.event.inputs.target_branch }}
         fetch-depth: 0
@@ -196,16 +195,16 @@ jobs:
         echo "steps.script.outputs.old_tag=v${current_tag}"
         echo "old_tag=v${current_tag}" >> $GITHUB_OUTPUT
 
-    - name: Set up Python 3.11
+    - name: Set up Python
       if: success()
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
-        python-version: '3.11'
+        python-version: '3.13'
 
     - name: Install Python dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install tbump
+        python -m pip install uv
+        uv pip install --system tbump
         python -m pip list
 
     - name: Setup Git user to push new tag

@@ -28,9 +28,8 @@ multi-bin histogram-based analysis and its interval estimation is based
 on the asymptotic formulas of “Asymptotic formulae for likelihood-based
 tests of new physics”
 [`arXiv:1007.1727 <https://arxiv.org/abs/1007.1727>`__]. The aim is also
-to support modern computational graph libraries such as PyTorch and
-TensorFlow in order to make use of features such as autodifferentiation
-and GPU acceleration.
+to support modern computational graph libraries such as JAX in order to
+make use of features such as automatic differentiation and GPU acceleration.
 
 ..
   Comment: JupyterLite segment goes here in docs
@@ -61,7 +60,7 @@ This is how you use the ``pyhf`` Python API to build a statistical model and run
    ...     test_mu, data, model, test_stat="qtilde", return_expected=True
    ... )
    >>> print(f"Observed: {CLs_obs:.8f}, Expected: {CLs_exp:.8f}")
-   Observed: 0.05251497, Expected: 0.06445321
+   Observed: 0.05251497, Expected: 0.06445319
 
 Alternatively the statistical model and observational data can be read from its serialized JSON representation (see next section).
 
@@ -144,8 +143,6 @@ Implemented variations:
 
 Computational Backends:
   - ☑ NumPy
-  - ☑ PyTorch
-  - ☑ TensorFlow
   - ☑ JAX
 
 Optimizers:
@@ -309,11 +306,11 @@ the preferred BibTeX entry for citation of ``pyhf`` includes both the
 
    @software{pyhf,
      author = {Lukas Heinrich and Matthew Feickert and Giordon Stark},
-     title = "{pyhf: v0.7.5}",
-     version = {0.7.5},
+     title = "{pyhf: v0.7.6}",
+     version = {0.7.6},
      doi = {10.5281/zenodo.1169739},
      url = {https://doi.org/10.5281/zenodo.1169739},
-     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.5}
+     note = {https://github.com/scikit-hep/pyhf/releases/tag/v0.7.6}
    }
 
    @article{pyhf_joss,
@@ -368,11 +365,11 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://nsf.gov/awardsearch/showAward?AWD_ID=2323298
 .. |NumFOCUS Affiliated Project| image:: https://img.shields.io/badge/NumFOCUS-Affiliated%20Project-orange.svg?style=flat&colorA=E1523D&colorB=007D8A
    :target: https://numfocus.org/sponsored-projects/affiliated-projects
-.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.5-blue.svg
+.. |Docs from latest| image:: https://img.shields.io/badge/docs-v0.7.6-blue.svg
    :target: https://pyhf.readthedocs.io/
 .. |Docs from main| image:: https://img.shields.io/badge/docs-main-blue.svg
    :target: https://scikit-hep.github.io/pyhf
-.. |Jupyter Book tutorial| image:: https://jupyterbook.org/_images/badge.svg
+.. |Jupyter Book tutorial| image:: https://raw.githubusercontent.com/jupyter-book/jupyter-book/next/docs/media/images/badge.svg
    :target: https://pyhf.github.io/pyhf-tutorial/
 .. |Binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/scikit-hep/pyhf/main?labpath=docs%2Fexamples%2Fnotebooks%2Fbinderexample%2FStatisticalAnalysis.ipynb
@@ -383,7 +380,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://prefix.dev/channels/conda-forge/packages/pyhf
 .. |Supported Python versions| image:: https://img.shields.io/pypi/pyversions/pyhf.svg
    :target: https://pypi.org/project/pyhf/
-.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.5-blue?logo=Docker
+.. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.6-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
 .. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/cuda/tags
@@ -398,11 +395,11 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
 
-.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/workflows/CI/CD/badge.svg?branch=main
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ACI%2FCD+branch%3Amain
-.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/workflows/Docs/badge.svg?branch=main
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3ADocs+branch%3Amain
-.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/workflows/publish%20distributions/badge.svg?branch=main
-   :target: https://github.com/scikit-hep/pyhf/actions?query=workflow%3A%22publish+distributions%22+branch%3Amain
-.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg?branch=main
+.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml?query=branch%3Amain
+.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml?query=branch%3Amain
+.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml?query=branch%3Amain
+.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg
    :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amain

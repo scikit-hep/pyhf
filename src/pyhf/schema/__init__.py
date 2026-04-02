@@ -1,6 +1,7 @@
 """
 See :class:`~pyhf.schema.Schema` for documentation.
 """
+
 import pathlib
 import sys
 from pyhf.schema.loader import load_schema
@@ -9,8 +10,8 @@ from pyhf.schema import variables
 
 __all__ = [
     "load_schema",
-    "validate",
     "path",
+    "validate",
     "version",
 ]
 

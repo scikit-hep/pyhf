@@ -120,7 +120,7 @@ def test_no_poi_test_stats():
 
     with pytest.raises(
         pyhf.exceptions.UnspecifiedPOI,
-        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+        match=r"No POI is defined. A POI is required for profile likelihood based test statistics.",
     ):
         pyhf.infer.test_statistics.q0(
             test_poi, data, model, init_pars, par_bounds, fixed_params
@@ -128,7 +128,7 @@ def test_no_poi_test_stats():
 
     with pytest.raises(
         pyhf.exceptions.UnspecifiedPOI,
-        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+        match=r"No POI is defined. A POI is required for profile likelihood based test statistics.",
     ):
         pyhf.infer.test_statistics.qmu(
             test_poi, data, model, init_pars, par_bounds, fixed_params
@@ -136,7 +136,7 @@ def test_no_poi_test_stats():
 
     with pytest.raises(
         pyhf.exceptions.UnspecifiedPOI,
-        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+        match=r"No POI is defined. A POI is required for profile likelihood based test statistics.",
     ):
         pyhf.infer.test_statistics.qmu_tilde(
             test_poi, data, model, init_pars, par_bounds, fixed_params
@@ -144,7 +144,7 @@ def test_no_poi_test_stats():
 
     with pytest.raises(
         pyhf.exceptions.UnspecifiedPOI,
-        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+        match=r"No POI is defined. A POI is required for profile likelihood based test statistics.",
     ):
         pyhf.infer.test_statistics.tmu(
             test_poi, data, model, init_pars, par_bounds, fixed_params
@@ -152,7 +152,7 @@ def test_no_poi_test_stats():
 
     with pytest.raises(
         pyhf.exceptions.UnspecifiedPOI,
-        match="No POI is defined. A POI is required for profile likelihood based test statistics.",
+        match=r"No POI is defined. A POI is required for profile likelihood based test statistics.",
     ):
         pyhf.infer.test_statistics.tmu_tilde(
             test_poi, data, model, init_pars, par_bounds, fixed_params

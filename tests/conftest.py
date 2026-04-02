@@ -1,10 +1,11 @@
 import json
+import os
 import pathlib
+import shutil
 import sys
 import tarfile
 
 import pytest
-from setuptools._distutils import dir_util
 
 import pyhf
 
@@ -15,8 +16,14 @@ def pytest_addoption(parser):
         action="append",
         type=str,
         default=[],
-        choices=["tensorflow", "pytorch", "jax", "minuit"],
+        choices=["jax", "minuit"],
         help="list of backends to disable in tests",
+    )
+    parser.addoption(
+        "--enable-cuda",
+        action="store_true",
+        default=False,
+        help="Allow CUDA enabled backends to run CUDA accelerated code on GPUs",
     )
 
 
@@ -71,21 +78,18 @@ def reset_backend():
     scope='function',
     params=[
         (("numpy_backend", dict()), ("scipy_optimizer", dict())),
-        (("pytorch_backend", dict()), ("scipy_optimizer", dict())),
-        (("pytorch_backend", dict(precision="64b")), ("scipy_optimizer", dict())),
-        (("tensorflow_backend", dict()), ("scipy_optimizer", dict())),
         (("jax_backend", dict()), ("scipy_optimizer", dict())),
         (
             ("numpy_backend", dict(poisson_from_normal=True)),
             ("minuit_optimizer", dict()),
         ),
     ],
-    ids=['numpy', 'pytorch', 'pytorch64', 'tensorflow', 'jax', 'numpy_minuit'],
+    ids=['numpy', 'jax', 'numpy_minuit'],
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing
     param_ids = request._fixturedef.ids
-    # the backend we're using: numpy, tensorflow, etc...
+    # the backend we're using: numpy, jax, etc...
     param_id = param_ids[request.param_index]
     # name of function being called (with params), the original name is .originalname
     func_name = request._pyfuncitem.name
@@ -164,9 +168,17 @@ def datadir(tmp_path, request):
     test_dir = pathlib.Path(request.module.__file__).with_suffix('')
 
     if test_dir.is_dir():
-        dir_util.copy_tree(test_dir, str(tmp_path))
-        # shutil is nicer, but doesn't work: https://bugs.python.org/issue20849
-        # Once pyhf is Python 3.8+ only then the below can be used.
-        # shutil.copytree(test_dir, tmp_path)
+        shutil.copytree(test_dir, tmp_path, dirs_exist_ok=True)
 
     return tmp_path
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_cuda_environment(request):
+    """
+    Automatically force CUDA enabled backends to run in CPU mode unless
+    --enable-cuda is passed.
+    """
+    if not request.config.getoption("--enable-cuda"):
+        # Ensure testing on CPU and not GPU
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""

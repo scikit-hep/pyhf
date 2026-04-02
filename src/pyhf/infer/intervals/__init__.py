@@ -1,4 +1,5 @@
 """Interval estimation"""
+
 import pyhf.infer.intervals.upper_limits
 
 __all__ = ["upper_limits.upper_limit"]

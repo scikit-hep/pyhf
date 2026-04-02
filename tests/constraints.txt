@@ -1,22 +1,16 @@
 # core
-scipy==1.5.1  # c.f. PR #2081
+scipy==1.5.4  # c.f. PR #2469
 click==8.0.0  # c.f. PR #1958, #1909
-tqdm==4.56.0
+rich==12.3.0  # c.f. PR #2650
 jsonschema==4.15.0  # c.f. PR #1979
 jsonpatch==1.15
 pyyaml==5.1
 importlib_resources==1.4.0  # c.f. PR #1979
-numpy==1.21.0 # constrained by jax v0.4.1
+numpy==1.22.0  # c.f. PR #2652
 # xmlio
 uproot==4.1.1
 # minuit
 iminuit==2.7.0  # c.f. PR #1895
-# tensorflow
-tensorflow==2.7.0  # c.f. PR #1962
-tensorflow-probability==0.11.0  # c.f. PR #1657
-protobuf<4.21.0  # c.f. PR #2117
-# torch
-torch==1.10.0
 # jax
 # Use Google Cloud Storage buckets for long term wheel support
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342

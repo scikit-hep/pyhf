@@ -15,11 +15,12 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 
+import importlib.metadata
 import sys
 from pathlib import Path
 
 import jupytext
-from pkg_resources import get_distribution
+from intersphinx_registry import get_intersphinx_mapping
 
 sys.path.insert(0, str(Path('./exts').resolve()))
 
@@ -55,10 +56,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
-    'sphinx_rtd_theme',
     'sphinxcontrib.bibtex',
     'sphinx.ext.napoleon',
-    'sphinx_click.ext',
+    'sphinx_click',
     'nbsphinx',
     'sphinx_issues',
     'sphinx_copybutton',
@@ -81,15 +81,17 @@ bibtex_default_style = "unsrt"
 # external links
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
 
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'numpy': ('https://numpy.org/doc/stable/', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/', None),
-    'matplotlib': ('https://matplotlib.org/stable/', None),
-    'iminuit': ('https://iminuit.readthedocs.io/en/stable/', None),
-    'uproot': ('https://uproot.readthedocs.io/en/latest/', None),
-    'jsonpatch': ('https://python-json-patch.readthedocs.io/en/latest/', None),
-}
+intersphinx_mapping = get_intersphinx_mapping(
+    packages={
+        'python',
+        'numpy',
+        'scipy',
+        'matplotlib',
+        'iminuit',
+        'uproot',
+        'jsonpatch',
+    }
+)
 
 # GitHub repo
 issues_github_path = 'scikit-hep/pyhf'
@@ -123,7 +125,7 @@ author = 'Lukas Heinrich, Matthew Feickert, Giordon Stark'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 # The full version, including alpha/beta/rc tags.
-release = get_distribution('pyhf').version
+release = importlib.metadata.version("pyhf")
 # for example take major/minor/patch
 version = '.'.join(release.split('.')[:3])
 
@@ -144,11 +146,8 @@ language = "en"
 # today_fmt = '%B %d, %Y'
 
 autodoc_mock_imports = [
-    'tensorflow',
-    'torch',
     'jax',
     'iminuit',
-    'tensorflow_probability',
 ]
 
 
@@ -193,17 +192,13 @@ exclude_patterns = [
     'examples/notebooks/ImpactPlot.ipynb',
     'examples/notebooks/Recast.ipynb',
     'examples/notebooks/StatError.ipynb',
-    'examples/notebooks/example-tensorflow.ipynb',
     'examples/notebooks/histogrammar.ipynb',
     'examples/notebooks/histosys.ipynb',
-    'examples/notebooks/histosys-pytorch.ipynb',
     'examples/notebooks/importxml.ipynb',
     'examples/notebooks/multichannel-coupled-normsys.ipynb',
     'examples/notebooks/multichannel-normsys.ipynb',
     'examples/notebooks/normsys.ipynb',
     'examples/notebooks/pullplot.ipynb',
-    'examples/notebooks/pytorch_tests_onoff.ipynb',
-    'examples/notebooks/tensorflow-limit.ipynb',
 ]
 
 # The reST default role (used for this markup: `text`) to use for all
@@ -243,13 +238,13 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'pydata_sphinx_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {}
+html_theme_options = {"header_links_before_dropdown": 6}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = []
@@ -527,9 +522,23 @@ linkcheck_ignore = [
     # and ReadTheDocs need to reference them
     r'https://github.com/scikit-hep/pyhf/releases/tag/.*',
     r'https://pyhf.readthedocs.io/en/.*',
+    # the following are 403s as they map to journals.aps.org or academic.oup.com
+    r'https://doi.org/10.1093/ptep/ptad144',
+    r'https://doi.org/10.1103/PhysRevD.104.055017',
+    r'https://doi.org/10.1103/PhysRevD.107.095021',
+    r'https://doi.org/10.1103/PhysRevD.108.016002',
+    r'https://doi.org/10.1103/PhysRevD.106.032005',
+    r'https://doi.org/10.1103/PhysRevLett.127.181802',
+    r'https://doi.org/10.1103/PhysRevLett.130.231801',
+    r'https://doi.org/10.1103/PhysRevLett.131.211802',
+    # FNAL blocks GitHub Actions?
+    r'https://indico.fnal.gov/event/17566/contributions/44103/',
+    r'https://indico.fnal.gov/event/17566/session/0/contribution/99',
+    # GitHub anchor links don't work
+    r'https://github.com/scikit-hep/pyhf/issues/850#issuecomment-1239975121',
 ]
 linkcheck_retries = 50
 
 # JupyterLite configuration
-# Use Path as jupyterlite-sphinx expects PosixPath
-jupyterlite_dir = Path("lite")
+# jupyterlite-sphinx v0.13.0+ expects str
+jupyterlite_dir = str(Path("lite"))

@@ -2,43 +2,40 @@ import os
 from typing import (
     Any,
     Literal,
-    MutableSequence,
     Protocol,
-    Sequence,
     SupportsIndex,
-    Tuple,
     TypedDict,
     Union,
 )
+from collections.abc import MutableSequence, Sequence
 
 __all__ = (
-    "PathOrStr",
-    "ParameterBase",
-    "Parameter",
-    "Measurement",
-    "ModifierBase",
-    "NormSys",
-    "NormFactor",
-    "HistoSys",
-    "StatError",
-    "ShapeSys",
-    "ShapeFactor",
-    "LumiSys",
-    "Modifier",
-    "Sample",
     "Channel",
-    "Observation",
-    "Workspace",
+    "HistoSys",
     "Literal",
-    "TypedDict",
+    "LumiSys",
+    "Measurement",
+    "Modifier",
+    "ModifierBase",
+    "NormFactor",
+    "NormSys",
+    "Observation",
+    "Parameter",
+    "ParameterBase",
+    "PathOrStr",
     "Protocol",
+    "Sample",
+    "ShapeFactor",
+    "ShapeSys",
+    "StatError",
+    "TypedDict",
+    "Workspace",
 )
 
 
-# TODO: Switch to os.PathLike[str] once Python 3.8 support dropped
-PathOrStr = Union[str, "os.PathLike[str]"]
+PathOrStr = Union[str, os.PathLike[str]]
 
-Shape = Tuple[int, ...]
+Shape = tuple[int, ...]
 ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
 
@@ -150,8 +147,7 @@ class TensorBackend(Protocol):
     precision: str
     default_do_grad: bool
 
-    def _setup(self) -> None:
-        ...
+    def _setup(self) -> None: ...
 
 
 class Optimizer(Protocol):
@@ -159,8 +155,6 @@ class Optimizer(Protocol):
 
 
 class PDF(Protocol):
-    def sample(self, sample_shape: Shape) -> Any:
-        ...
+    def sample(self, sample_shape: Shape) -> Any: ...
 
-    def log_prob(self, value: Any) -> Any:
-        ...
+    def log_prob(self, value: Any) -> Any: ...

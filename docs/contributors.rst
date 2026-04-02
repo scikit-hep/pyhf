@@ -33,3 +33,7 @@ Contributors include:
 - Beojan Stanislaus
 - Daniel Werner
 - Jonas Rembser
+- Lorenz Gaertner
+- Melissa Weber Mendonça
+- Matthias Bussonnier
+- Peter Fackeldey

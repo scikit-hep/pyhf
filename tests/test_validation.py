@@ -996,8 +996,6 @@ def test_shapesys_nuisparfilter_validation():
     [
         pyhf.tensor.numpy_backend,
         pyhf.tensor.jax_backend,
-        pyhf.tensor.tensorflow_backend,
-        pyhf.tensor.pytorch_backend,
     ],
 )
 @pytest.mark.parametrize('optimizer', ['scipy', 'minuit'])
@@ -1021,8 +1019,6 @@ def test_optimizer_stitching(backend, optimizer):
     'backend',
     [
         pyhf.tensor.jax_backend,
-        pyhf.tensor.tensorflow_backend,
-        pyhf.tensor.pytorch_backend,
     ],
 )
 @pytest.mark.parametrize('optimizer,rtol', [('scipy', 1e-6), ('minuit', 1e-3)])

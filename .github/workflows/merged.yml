@@ -5,14 +5,17 @@ on:
     types: [closed]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   binder:
     name: Trigger Binder build
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6.0.0
     - name: Trigger Binder build
       run: |
         # Use Binder build API to trigger repo2docker to build image on Google Cloud and Turing Institute Binder Federation clusters
-        bash binder/trigger_binder.sh https://turing.mybinder.org/build/gh/scikit-hep/pyhf/main
+        bash binder/trigger_binder.sh https://2i2c.mybinder.org/build/gh/scikit-hep/pyhf/main

@@ -1,4 +1,5 @@
 """The inference CLI group."""
+
 import logging
 
 import click
@@ -35,7 +36,7 @@ def cli():
 )
 @click.option(
     "--backend",
-    type=click.Choice(["numpy", "pytorch", "tensorflow", "jax", "np", "torch", "tf"]),
+    type=click.Choice(["numpy", "jax", "np"]),
     help="The tensor backend used for the calculation.",
     default="numpy",
 )
@@ -80,11 +81,7 @@ def fit(
         }
     """
     # set the backend if not NumPy
-    if backend in ["pytorch", "torch"]:
-        set_backend("pytorch", precision="64b")
-    elif backend in ["tensorflow", "tf"]:
-        set_backend("tensorflow", precision="64b")
-    elif backend in ["jax"]:
+    if backend in ["jax"]:
         set_backend("jax")
     tensorlib, _ = get_backend()
 
@@ -149,7 +146,7 @@ def fit(
 )
 @click.option(
     '--backend',
-    type=click.Choice(['numpy', 'pytorch', 'tensorflow', 'jax', 'np', 'torch', 'tf']),
+    type=click.Choice(['numpy', 'jax', 'np']),
     help='The tensor backend used for the calculation.',
     default='numpy',
 )
@@ -212,11 +209,7 @@ def cls(
     )
 
     # set the backend if not NumPy
-    if backend in ['pytorch', 'torch']:
-        set_backend("pytorch", precision="64b")
-    elif backend in ['tensorflow', 'tf']:
-        set_backend("tensorflow", precision="64b")
-    elif backend in ['jax']:
+    if backend in ["jax"]:
         set_backend("jax")
     tensorlib, _ = get_backend()
 

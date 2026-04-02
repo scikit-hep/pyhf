@@ -1,4 +1,5 @@
 """Piecewise-Exponential Interpolation (Code 1)."""
+
 import logging
 import math
 import pyhf

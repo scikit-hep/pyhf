@@ -52,7 +52,7 @@ def random_histosets_alphasets_pair():
 
 
 def test_interpolator_structure(interpcode, random_histosets_alphasets_pair):
-    histogramssets, alphasets = random_histosets_alphasets_pair
+    histogramssets, _alphasets = random_histosets_alphasets_pair
 
     interpolator = pyhf.interpolators.get(interpcode)(
         histogramssets.tolist(), subscribe=False
@@ -66,7 +66,7 @@ def test_interpolator_structure(interpcode, random_histosets_alphasets_pair):
 
 
 def test_interpolator_subscription(mocker, interpcode, random_histosets_alphasets_pair):
-    histogramssets, alphasets = random_histosets_alphasets_pair
+    histogramssets, _alphasets = random_histosets_alphasets_pair
     ename = 'tensorlib_changed'
 
     interpolator_cls = pyhf.interpolators.get(interpcode)
@@ -118,13 +118,7 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
 def test_validate_implementation(backend, interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
-    # single-float precision backends, calculate using single-floats
-    if pyhf.tensorlib.name in ['tensorflow', 'pytorch']:
-        abs_tolerance = 1e-6
-        histogramssets = np.asarray(histogramssets, dtype=np.float32)
-        alphasets = np.asarray(alphasets, dtype=np.float32)
-    else:
-        abs_tolerance = 1e-12
+    abs_tolerance = 1e-12
 
     histogramssets = histogramssets.tolist()
     alphasets = pyhf.tensorlib.astensor(alphasets.tolist())
@@ -178,9 +172,7 @@ def test_code0_validation(backend, do_tensorized_calc):
 def test_code1_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.9], [1.0], [1.1]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
-    expected = pyhf.tensorlib.astensor(
-        [[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]]
-    )
+    expected = pyhf.tensorlib.astensor([[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]])
 
     interpolator = pyhf.interpolators.get(1, do_tensorized_calc=do_tensorized_calc)(
         histogramssets, subscribe=False

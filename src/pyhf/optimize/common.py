@@ -1,4 +1,5 @@
 """Common Backend Shim to prepare minimization for optimizer."""
+
 from pyhf.tensor.manager import get_backend
 from pyhf.tensor.common import _TensorViewer
 
@@ -40,16 +41,6 @@ def _get_tensor_shim():
         from pyhf.optimize.opt_numpy import wrap_objective as numpy_shim
 
         return numpy_shim
-
-    if tensorlib.name == 'tensorflow':
-        from pyhf.optimize.opt_tflow import wrap_objective as tflow_shim
-
-        return tflow_shim
-
-    if tensorlib.name == 'pytorch':
-        from pyhf.optimize.opt_pytorch import wrap_objective as pytorch_shim
-
-        return pytorch_shim
 
     if tensorlib.name == 'jax':
         from pyhf.optimize.opt_jax import wrap_objective as jax_shim

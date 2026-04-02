@@ -1,4 +1,5 @@
 """Module for Maximum Likelihood Estimation."""
+
 from pyhf import get_backend
 from pyhf.exceptions import UnspecifiedPOI
 
@@ -85,6 +86,7 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -92,8 +94,8 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         >>> observations = [51, 48]
         >>> data = pyhf.tensorlib.astensor(observations + model.config.auxdata)
         >>> bestfit_pars, twice_nll = pyhf.infer.mle.fit(data, model, return_fitted_val=True)
-        >>> bestfit_pars
-        array([0.        , 1.0030512 , 0.96266961])
+        >>> np.isclose(bestfit_pars, [0.        , 1.0030512 , 0.96266961])
+        array([ True,  True,  True])
         >>> twice_nll
         array(24.98393521)
         >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll
@@ -106,8 +108,8 @@ def fit(data, pdf, init_pars=None, par_bounds=None, fixed_params=None, **kwargs)
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:
@@ -156,6 +158,7 @@ def fixed_poi_fit(
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -166,8 +169,8 @@ def fixed_poi_fit(
         >>> bestfit_pars, twice_nll = pyhf.infer.mle.fixed_poi_fit(
         ...     test_poi, data, model, return_fitted_val=True
         ... )
-        >>> bestfit_pars
-        array([1.        , 0.97224597, 0.87553894])
+        >>> np.isclose(bestfit_pars, [1.        , 0.97224597, 0.87553894])
+        array([ True,  True,  True])
         >>> twice_nll
         array(28.92218013)
         >>> -2 * model.logpdf(bestfit_pars, data) == twice_nll
@@ -180,8 +183,8 @@ def fixed_poi_fit(
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         kwargs: Keyword arguments passed through to the optimizer API
 
     Returns:

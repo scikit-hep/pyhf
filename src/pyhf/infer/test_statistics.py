@@ -23,7 +23,7 @@ def _qmu_like(
     If the lower bound of the POI is 0 this automatically implements
     qmu_tilde. Otherwise this is qmu (no tilde).
     """
-    tensorlib, optimizer = get_backend()
+    tensorlib, _ = get_backend()
     tmu_like_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=True
     )
@@ -44,7 +44,7 @@ def _tmu_like(
     If the lower bound of the POI is 0 this automatically implements
     tmu_tilde. Otherwise this is tmu (no tilde).
     """
-    tensorlib, optimizer = get_backend()
+    tensorlib, _ = get_backend()
     mubhathat, fixed_poi_fit_lhood_val = fixed_poi_fit(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_val=True
     )
@@ -84,6 +84,7 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -99,10 +100,15 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.9549891)
-        >>> pyhf.infer.test_statistics.qmu(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.qmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
+        >>> np.isclose(test_stat, 3.9549891)
+        np.True_
+        >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
+        array([ True,  True,  True])
+        >>> np.isclose(unconstrained, [-0.06679525,  1.00555369,  0.96930896])
+        array([ True,  True,  True])
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -112,8 +118,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -134,7 +140,8 @@ def qmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
     if par_bounds[pdf.config.poi_index][0] == 0:
         log.warning(
             'qmu test statistic used for fit configuration with POI bounded at zero.\n'
-            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.'
+            + 'Use the qmu_tilde test statistic (pyhf.infer.test_statistics.qmu_tilde) instead.\n'
+            + 'If you called this from pyhf.infer.mle or pyhf.infer.hypotest, set test_stat="qtilde".'
         )
     return _qmu_like(
         mu,
@@ -179,6 +186,7 @@ def qmu_tilde(
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -193,10 +201,15 @@ def qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.93824492)
-        >>> pyhf.infer.test_statistics.qmu_tilde(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.qmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
+        >>> test_stat
+        array(3.93824492)
+        >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
+        array([ True,  True,  True])
+        >>> np.isclose(unconstrained, [0.        , 1.0030512 , 0.96266961])
+        array([ True,  True,  True])
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -206,8 +219,8 @@ def qmu_tilde(
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -229,7 +242,8 @@ def qmu_tilde(
     if par_bounds[pdf.config.poi_index][0] != 0:
         log.warning(
             'qmu_tilde test statistic used for fit configuration with POI not bounded at zero.\n'
-            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.'
+            + 'Use the qmu test statistic (pyhf.infer.test_statistics.qmu) instead.\n'
+            + 'If you called this from pyhf.infer.mle or pyhf.infer.hypotest, set test_stat="q".'
         )
     return _qmu_like(
         mu,
@@ -260,6 +274,7 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -275,10 +290,15 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.9549891)
-        >>> pyhf.infer.test_statistics.tmu(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.tmu(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.9549891), (array([1.        , 0.97224597, 0.87553894]), array([-0.06679525,  1.00555369,  0.96930896])))
+        >>> test_stat
+        array(3.9549891)
+        >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
+        array([ True,  True,  True])
+        >>> np.isclose(unconstrained, [-0.06679525,  1.00555369,  0.96930896])
+        array([ True,  True,  True])
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -288,8 +308,8 @@ def tmu(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=F
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -351,6 +371,7 @@ def tmu_tilde(
     Example:
 
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -365,10 +386,15 @@ def tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params
         ... )
         array(3.93824492)
-        >>> pyhf.infer.test_statistics.tmu_tilde(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.tmu_tilde(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(3.93824492), (array([1.        , 0.97224597, 0.87553894]), array([0.        , 1.0030512 , 0.96266961])))
+        >>> test_stat
+        array(3.93824492)
+        >>> np.isclose(constrained, [1.        , 0.97224597, 0.87553894])
+        array([ True,  True,  True])
+        >>> np.isclose(unconstrained, [0.        , 1.0030512 , 0.96266961])
+        array([ True,  True,  True])
 
     Args:
         mu (Number or Tensor): The signal strength parameter
@@ -378,8 +404,8 @@ def tmu_tilde(
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -431,6 +457,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
 
     Example:
         >>> import pyhf
+        >>> import numpy as np
         >>> pyhf.set_backend("numpy")
         >>> model = pyhf.simplemodels.uncorrelated_background(
         ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -443,10 +470,15 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         >>> fixed_params = model.config.suggested_fixed()
         >>> pyhf.infer.test_statistics.q0(test_mu, data, model, init_pars, par_bounds, fixed_params)
         array(2.98339447)
-        >>> pyhf.infer.test_statistics.q0(
+        >>> test_stat, (constrained, unconstrained) = pyhf.infer.test_statistics.q0(
         ...     test_mu, data, model, init_pars, par_bounds, fixed_params, return_fitted_pars=True
         ... )
-        (array(2.98339447), (array([0.        , 1.03050845, 1.12128752]), array([0.95260667, 0.99635345, 1.02140172])))
+        >>> test_stat
+        array(2.98339447)
+        >>> np.isclose(constrained, [0.        , 1.03050845, 1.12128752])
+        array([ True,  True,  True])
+        >>> np.isclose(unconstrained, [0.95260667, 0.99635345, 1.02140172])
+        array([ True,  True,  True])
 
     Args:
         mu (Number or Tensor): The signal strength parameter (must be set to zero)
@@ -456,8 +488,8 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
             are allowed to reach in the fit.
             The shape should be ``(n, 2)`` for ``n`` model parameters.
-        fixed_params (:obj:`list` of :obj:`bool`): The flag to set a parameter constant to its starting
-            value during minimization.
+        fixed_params (:obj:`tuple` or :obj:`list` of :obj:`bool`): The flag to set a parameter
+            constant to its starting value during minimization.
         return_fitted_pars (:obj:`bool`): Return the best-fit parameter tensors
             the fixed-POI and unconstrained fits have converged on
             (i.e. :math:`\mu, \hat{\hat{\theta}}` and :math:`\hat{\mu}, \hat{\theta}`)
@@ -483,7 +515,7 @@ def q0(mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=Fa
         )
         mu = 0.0
 
-    tensorlib, optimizer = get_backend()
+    tensorlib, _ = get_backend()
 
     tmu_like_stat, (mubhathat, muhatbhat) = _tmu_like(
         mu, data, pdf, init_pars, par_bounds, fixed_params, return_fitted_pars=True

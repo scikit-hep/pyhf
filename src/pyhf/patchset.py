@@ -1,6 +1,7 @@
 """
 pyhf patchset provides a user-friendly interface for interacting with patchsets.
 """
+
 import logging
 import jsonpatch
 from pyhf import exceptions

@@ -1,4 +1,5 @@
 """Polynomial Interpolation (Code 4)."""
+
 import logging
 import math
 import pyhf

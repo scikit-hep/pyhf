@@ -447,7 +447,7 @@ def test_integer_data(datadir, mocker):
     mocker.patch("pyhf.writexml._ROOT_DATA_FILE")
 
     channel = pyhf.writexml.build_channel(spec, channel_spec, {})
-    assert channel
+    assert channel is not None
 
 
 @pytest.mark.parametrize(
