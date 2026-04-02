@@ -94,7 +94,7 @@ def test_optimizer_mixin_extra_kwargs(optimizer):
 
 @pytest.mark.parametrize(
     'backend,backend_new',
-    itertools.permutations([('numpy', False), ('jax', True)], 2),
+    list(itertools.permutations([('numpy', False), ('jax', True)], 2)),
     ids=lambda pair: f'{pair[0]}',
 )
 def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
