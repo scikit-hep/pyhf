@@ -102,7 +102,7 @@ class _ChannelSummaryMixin:
         Check for duplicate samples within each channel.
         Check for duplicate modifiers within each sample.
         """
-        channel_names = [channel['name'] for channel in channels]
+        channel_names = [channel["name"] for channel in channels]
         if len(channel_names) != len(set(channel_names)):
             duplicates = sorted(
                 set([f"'{x}'" for x in channel_names if channel_names.count(x) > 1])
@@ -113,7 +113,7 @@ class _ChannelSummaryMixin:
                 + " found in the model. Rename one of them."
             )
         for channel in channels:
-            sample_names = [samples['name'] for samples in channel['samples']]
+            sample_names = [samples["name"] for samples in channel["samples"]]
             if len(sample_names) != len(set(sample_names)):
                 duplicates = sorted(
                     set([f"'{x}'" for x in sample_names if sample_names.count(x) > 1])
@@ -123,10 +123,10 @@ class _ChannelSummaryMixin:
                     + ", ".join(duplicates)
                     + f" found in the channel '{channel['name']}'. Rename one of them."
                 )
-            for sample in channel['samples']:
+            for sample in channel["samples"]:
                 modifiers = [
-                    (modifier['name'], modifier['type'])
-                    for modifier in sample['modifiers']
+                    (modifier["name"], modifier["type"])
+                    for modifier in sample["modifiers"]
                 ]
                 if len(modifiers) != len(set(modifiers)):
                     duplicates = sorted(

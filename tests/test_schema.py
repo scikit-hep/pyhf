@@ -717,11 +717,11 @@ def test_schema_tensor_type_disallowed(mocker, backend):
 
 
 @pytest.mark.parametrize(
-    'model_file',
+    "model_file",
     [
-        'model_duplicate_channels.json',
-        'model_duplicate_samples.json',
-        'model_duplicate_modifiers.json',
+        "model_duplicate_channels.json",
+        "model_duplicate_samples.json",
+        "model_duplicate_modifiers.json",
     ],
 )
 def test_schema_catch_duplicates(datadir, model_file):
