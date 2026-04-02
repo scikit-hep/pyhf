@@ -138,7 +138,7 @@ class minuit_optimizer(OptimizerMixin):
             # Extra call to hesse() after migrad() is always needed for good error estimates. If you pass a user-provided gradient to MINUIT, convergence is faster.
             minimizer.hesse()
             hess_inv = minimizer.covariance
-            corr = hess_inv.correlation()
+            corr = hess_inv.correlation() if hess_inv is not None else None
             unc = minimizer.errors
 
         return scipy.optimize.OptimizeResult(
