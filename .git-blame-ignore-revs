@@ -1,0 +1,14 @@
+# style: Move formatting from Black to Ruff
+dc3a6cfdb66036e318b2317fde0e4ef17f135925
+
+# style: Add extended Ruff rules from Scientific Python repo review
+ebf841e656a9eb9a6114f95971d890be1bde8c3e
+
+# style: Apply Ruff rules to most notebooks
+7ec8a2161befb71264a5d6d50f841aa3f89b40f6
+
+# style: fix up tests
+018c823cc6800f7ffabaf726de8ef0e504444710
+
+# style: Fix unused-function-argument (ARG001) in tests
+52dfcb3719c6c93aaab0b4ae6c61359fbe3dad5b
