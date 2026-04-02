@@ -9,7 +9,7 @@ from pyhf.optimize.mixins import OptimizerMixin
 
 class optimistix_optimizer(OptimizerMixin):
     """
-    Optimizer that uses :func:`scipy.optimize.minimize`.
+    Optimizer that uses :func:`optimistix.minimise`.
     """
 
     __slots__ = ["name", "options", "solver", "throw"]
