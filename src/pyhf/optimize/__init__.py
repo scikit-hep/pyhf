@@ -31,6 +31,22 @@ class _OptimizerRetriever:
                     "There was a problem importing Minuit. The minuit optimizer cannot be used.",
                     e,
                 )
+        elif name == 'optimistix_optimizer':
+            try:
+                from pyhf.optimize.opt_optimistix import optimistix_optimizer
+
+                assert optimistix_optimizer
+                # hide away one level of the module name
+                # pyhf.optimize.optimistix_optimizer.optimistix_optimizer->pyhf.optimize.optimistix_optimizer
+                optimistix_optimizer.__module__ = __name__
+                # for autocomplete and dir() calls
+                self.optimistix_optimizer = optimistix_optimizer
+                return optimistix_optimizer
+            except ImportError as e:
+                raise exceptions.ImportBackendError(
+                    "There was a problem importing optimistix. The optimistix optimizer cannot be used.",
+                    e,
+                )
         elif name == '__wrapped__':  # doctest
             pass
 
