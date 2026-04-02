@@ -94,7 +94,7 @@ class code2:
             'sa,sa,shb->shab', alphasets, alphasets, self.a
         ) + tensorlib.einsum('sa,shb->shab', alphasets, self.b)
         value_lt1 = tensorlib.einsum(
-            'sa,shb->shab', alphasets + self.mask_off, self.b_minus_2a
+            'sa,shb->shab', alphasets + self.mask_on, self.b_minus_2a
         )
 
         masks_gt1 = tensorlib.astensor(
