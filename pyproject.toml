@@ -252,23 +252,63 @@ line-length = 88
 
 [tool.ruff.lint]
 extend-select = [
-  "UP",  # pyupgrade
-  "RUF",  # Ruff-specific
-  "TID",  # flake8-tidy-imports
-  "I",  # isort
-  "B",  # flake8-bugbear
+  "ARG",   # flake8-unused-arguments
+  "B",     # flake8-bugbear
+  "BLE",   # flake8-blind-except
+  "C4",    # flake8-comprehensions
+  "DTZ",   # flake8-datetimez
+  "EM",    # flake8-errmsg
+  "EXE",   # flake8-executable
+  "FA",    # flake8-future-annotations
+  "FLY",   # flynt
+  "FURB",  # refurb
+  "G",     # flake8-logging-format
+  "I",     # isort
+  "ICN",   # flake8-import-conventions
+  "ISC",   # flake8-implicit-str-concat
+  "LOG",   # flake8-logging
+  "NPY",   # NumPy-specific rules
+  "PD",    # pandas-vet
+  "PERF",  # Perflint
+  "PGH",   # pygrep-hooks
+  "PIE",   # flake8-pie
+  "PL",    # Pylint
+  "PT",    # flake8-pytest-style
+  "PTH",   # flake8-use-pathlib
+  "PYI",   # flake8-pyi
+  "Q",     # flake8-quotes
+  "RET",   # flake8-return
+  "RSE",   # flake8-raise
+  "RUF",   # Ruff-specific
+  "SIM",   # flake8-simplify
+  "SLOT",  # flake8-slots
+  "T10",   # flake8-debugger
+  "T20",   # flake8-print
+  "TC",    # flake8-type-checking
+  "TID",   # flake8-tidy-imports
+  "TRY",   # tryceratops
+  "UP",    # pyupgrade
+  "YTT",   # flake8-2020
 ]
 ignore = [
   "E402",
-  "RUF001", # String contains ambiguous unicode character
-  "RUF005", # unpack-instead-of-concatenating-to-collection-literal
+  "PLC0415", # imports not at top level (revisit)
+  "PLR09",   # Too many X (complexity)
+  "PLR2004", # Magic value comparison
+  "RUF001",  # String contains ambiguous unicode character
+  "RUF005",  # unpack-instead-of-concatenating-to-collection-literal
+  "TC001",   # move application import into TYPE_CHECKING block (revisit)
+  "TC003",   # move stdlib import into TYPE_CHECKING block (revisit)
 ]
 typing-modules = ["pyhf.typing"]
 flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
-"**.ipynb" = ["F821", "F401", "F841", "F811", "E703"]
+"**.ipynb" = ["F821", "F401", "F841", "F811", "E703", "NPY002", "T20"]
+"noxfile.py" = ["T20"]
+"tests/**" = ["T20"]
+"validation/**" = ["T20"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
