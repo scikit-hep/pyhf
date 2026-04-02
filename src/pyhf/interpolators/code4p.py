@@ -1,10 +1,11 @@
 """Piecewise-Linear + Polynomial Interpolation (Code 4p)."""
 
 import logging
+
 import pyhf
-from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf.interpolators import _slow_interpolator_looper
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class code4p:
         )
         self._precompute()
         if subscribe:
-            events.subscribe('tensorlib_changed')(self._precompute)
+            events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -74,12 +75,12 @@ class code4p:
 
         # for a > 1
         alphas_times_deltas_up = tensorlib.einsum(
-            'sa,shb->shab', alphasets, self.deltas_up
+            "sa,shb->shab", alphasets, self.deltas_up
         )
 
         # for a < -1
         alphas_times_deltas_dn = tensorlib.einsum(
-            'sa,shb->shab', alphasets, self.deltas_dn
+            "sa,shb->shab", alphasets, self.deltas_dn
         )
 
         # for |a| < 1
@@ -88,25 +89,25 @@ class code4p:
         tmp2 = asquare * tmp1 + 15.0
         tmp3 = asquare * tmp2
 
-        tmp3_times_A = tensorlib.einsum('sa,shb->shab', tmp3, self.A)
+        tmp3_times_A = tensorlib.einsum("sa,shb->shab", tmp3, self.A)
 
-        alphas_times_S = tensorlib.einsum('sa,shb->shab', alphasets, self.S)
+        alphas_times_S = tensorlib.einsum("sa,shb->shab", alphasets, self.S)
 
         deltas = tmp3_times_A + alphas_times_S
         # end |a| < 1
 
         masks_p1 = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_greater_p1, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_greater_p1, self.broadcast_helper
             ),
-            dtype='bool',
+            dtype="bool",
         )
 
         masks_m1 = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_smaller_m1, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_smaller_m1, self.broadcast_helper
             ),
-            dtype='bool',
+            dtype="bool",
         )
 
         return tensorlib.where(

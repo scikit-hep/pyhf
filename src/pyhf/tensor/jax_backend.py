@@ -1,16 +1,17 @@
 from jax import config
 
-config.update('jax_enable_x64', True)
+config.update("jax_enable_x64", True)
 
-from jax.core import Tracer
-from jax import Array
+import logging
+
 import jax.numpy as jnp
-from jax.scipy.special import gammaln, xlogy
-from jax.scipy import special
-from jax.scipy.stats import norm
 import numpy as np
 import scipy.stats as osp_stats
-import logging
+from jax import Array
+from jax.core import Tracer
+from jax.scipy import special
+from jax.scipy.special import gammaln, xlogy
+from jax.scipy.stats import norm
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ class _BasicNormal:
 class jax_backend:
     """JAX backend for pyhf"""
 
-    __slots__ = ['default_do_grad', 'dtypemap', 'name', 'precision']
+    __slots__ = ["default_do_grad", "dtypemap", "name", "precision"]
 
     #: The array type for jax
     array_type = Array
@@ -69,12 +70,12 @@ class jax_backend:
     array_subtype = Array
 
     def __init__(self, **kwargs):
-        self.name = 'jax'
-        self.precision = kwargs.get('precision', '64b')
+        self.name = "jax"
+        self.precision = kwargs.get("precision", "64b")
         self.dtypemap = {
-            'float': jnp.float64 if self.precision == '64b' else jnp.float32,
-            'int': jnp.int64 if self.precision == '64b' else jnp.int32,
-            'bool': jnp.bool_,
+            "float": jnp.float64 if self.precision == "64b" else jnp.float32,
+            "int": jnp.int64 if self.precision == "64b" else jnp.int32,
+            "bool": jnp.bool_,
         }
         self.default_do_grad = True
 
@@ -240,7 +241,7 @@ class jax_backend:
             dtype = self.dtypemap[dtype]
         except KeyError:
             log.error(
-                'Invalid dtype: dtype must be float, int, or bool.', exc_info=True
+                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
             )
             raise
 

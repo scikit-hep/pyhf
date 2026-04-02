@@ -1,32 +1,29 @@
 from __future__ import annotations
 
 import logging
+import xml.etree.ElementTree as ET
+from collections.abc import Iterable, MutableMapping, MutableSequence, Sequence
+from pathlib import Path
 from typing import (
     IO,
     Callable,
     Union,
     cast,
 )
-from collections.abc import Iterable, MutableMapping, MutableSequence, Sequence
-
-import xml.etree.ElementTree as ET
-from pathlib import Path
 
 import numpy as np
+import uproot
+from rich.console import Console
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
-    TextColumn,
-    BarColumn,
     TaskProgressColumn,
+    TextColumn,
     TimeElapsedColumn,
 )
-from rich.console import Console
-import uproot
 
-from pyhf import compat
-from pyhf import exceptions
-from pyhf import schema
+from pyhf import compat, exceptions, schema
 from pyhf.typing import (
     Channel,
     HistoSys,
@@ -115,8 +112,8 @@ def import_root_histogram(
     filecache = filecache or __FILECACHE__
 
     # strip leading slashes as uproot doesn't use "/" for top-level
-    path = path or ''
-    path = path.strip('/')
+    path = path or ""
+    path = path.strip("/")
     fullpath = str(resolver(filename))
     if fullpath not in filecache:
         f = uproot.open(fullpath)
@@ -133,7 +130,7 @@ def import_root_histogram(
         hist = f[fullname]
     else:
         raise KeyError(
-            f'Both {name} and {fullname} were tried and not found in {fullpath}'
+            f"Both {name} and {fullname} were tried and not found in {fullpath}"
         )
     return hist.to_numpy()[0].tolist(), extract_error(hist)
 
@@ -147,17 +144,17 @@ def process_sample(
     track_progress: bool = False,
     progress: Progress | None = None,
 ) -> Sample:
-    inputfile = sample.attrib.get('InputFile', inputfile)
-    histopath = sample.attrib.get('HistoPath', histopath)
-    histoname = sample.attrib['HistoName']
+    inputfile = sample.attrib.get("InputFile", inputfile)
+    histopath = sample.attrib.get("HistoPath", histopath)
+    histoname = sample.attrib["HistoName"]
 
     data, err = import_root_histogram(resolver, inputfile, histopath, histoname)
 
     parameter_configs: MutableSequence[Parameter] = []
     modifiers: MutableSequence[Modifier] = []
     # first check if we need to add lumi modifier for this sample
-    if sample.attrib.get("NormalizeByTheory", "False") == 'True':
-        modifier_lumi: LumiSys = {'name': 'lumi', 'type': 'lumi', 'data': None}
+    if sample.attrib.get("NormalizeByTheory", "False") == "True":
+        modifier_lumi: LumiSys = {"name": "lumi", "type": "lumi", "data": None}
         modifiers.append(modifier_lumi)
 
     samples = list(sample.iter())
@@ -174,99 +171,99 @@ def process_sample(
 
         if modtag == sample:
             continue
-        if modtag.tag == 'OverallSys':
+        if modtag.tag == "OverallSys":
             modifier_normsys: NormSys = {
-                'name': modtag.attrib['Name'],
-                'type': 'normsys',
-                'data': {
-                    'lo': float(modtag.attrib['Low']),
-                    'hi': float(modtag.attrib['High']),
+                "name": modtag.attrib["Name"],
+                "type": "normsys",
+                "data": {
+                    "lo": float(modtag.attrib["Low"]),
+                    "hi": float(modtag.attrib["High"]),
                 },
             }
             modifiers.append(modifier_normsys)
-        elif modtag.tag == 'NormFactor':
+        elif modtag.tag == "NormFactor":
             modifier_normfactor: NormFactor = {
-                'name': modtag.attrib['Name'],
-                'type': 'normfactor',
-                'data': None,
+                "name": modtag.attrib["Name"],
+                "type": "normfactor",
+                "data": None,
             }
             modifiers.append(modifier_normfactor)
             parameter_config: Parameter = {
-                'name': modtag.attrib['Name'],
-                'bounds': [[float(modtag.attrib['Low']), float(modtag.attrib['High'])]],
-                'inits': [float(modtag.attrib['Val'])],
+                "name": modtag.attrib["Name"],
+                "bounds": [[float(modtag.attrib["Low"]), float(modtag.attrib["High"])]],
+                "inits": [float(modtag.attrib["Val"])],
             }
-            if modtag.attrib.get('Const'):
-                parameter_config['fixed'] = modtag.attrib['Const'] == 'True'
+            if modtag.attrib.get("Const"):
+                parameter_config["fixed"] = modtag.attrib["Const"] == "True"
 
             parameter_configs.append(parameter_config)
-        elif modtag.tag == 'HistoSys':
+        elif modtag.tag == "HistoSys":
             lo, _ = import_root_histogram(
                 resolver,
-                modtag.attrib.get('HistoFileLow', inputfile),
-                modtag.attrib.get('HistoPathLow', ''),
-                modtag.attrib['HistoNameLow'],
+                modtag.attrib.get("HistoFileLow", inputfile),
+                modtag.attrib.get("HistoPathLow", ""),
+                modtag.attrib["HistoNameLow"],
             )
             hi, _ = import_root_histogram(
                 resolver,
-                modtag.attrib.get('HistoFileHigh', inputfile),
-                modtag.attrib.get('HistoPathHigh', ''),
-                modtag.attrib['HistoNameHigh'],
+                modtag.attrib.get("HistoFileHigh", inputfile),
+                modtag.attrib.get("HistoPathHigh", ""),
+                modtag.attrib["HistoNameHigh"],
             )
             modifier_histosys: HistoSys = {
-                'name': modtag.attrib['Name'],
-                'type': 'histosys',
-                'data': {'lo_data': lo, 'hi_data': hi},
+                "name": modtag.attrib["Name"],
+                "type": "histosys",
+                "data": {"lo_data": lo, "hi_data": hi},
             }
             modifiers.append(modifier_histosys)
-        elif modtag.tag == 'StatError' and modtag.attrib['Activate'] == 'True':
-            if modtag.attrib.get('HistoName', '') == '':
+        elif modtag.tag == "StatError" and modtag.attrib["Activate"] == "True":
+            if modtag.attrib.get("HistoName", "") == "":
                 staterr = err
             else:
                 extstat, _ = import_root_histogram(
                     resolver,
-                    modtag.attrib.get('HistoFile', inputfile),
-                    modtag.attrib.get('HistoPath', ''),
-                    modtag.attrib['HistoName'],
+                    modtag.attrib.get("HistoFile", inputfile),
+                    modtag.attrib.get("HistoPath", ""),
+                    modtag.attrib["HistoName"],
                 )
                 staterr = np.multiply(extstat, data).tolist()
             if not staterr:
-                raise RuntimeError('cannot determine stat error.')
+                raise RuntimeError("cannot determine stat error.")
             modifier_staterror: StatError = {
-                'name': f'staterror_{channel_name}',
-                'type': 'staterror',
-                'data': staterr,
+                "name": f"staterror_{channel_name}",
+                "type": "staterror",
+                "data": staterr,
             }
             modifiers.append(modifier_staterror)
-        elif modtag.tag == 'ShapeSys':
+        elif modtag.tag == "ShapeSys":
             # NB: ConstraintType is ignored
-            if modtag.attrib.get('ConstraintType', 'Poisson') != 'Poisson':
+            if modtag.attrib.get("ConstraintType", "Poisson") != "Poisson":
                 log.warning(
-                    'shapesys modifier %s has a non-poisson constraint',
-                    modtag.attrib['Name'],
+                    "shapesys modifier %s has a non-poisson constraint",
+                    modtag.attrib["Name"],
                 )
             shapesys_data, _ = import_root_histogram(
                 resolver,
-                modtag.attrib.get('InputFile', inputfile),
-                modtag.attrib.get('HistoPath', ''),
-                modtag.attrib['HistoName'],
+                modtag.attrib.get("InputFile", inputfile),
+                modtag.attrib.get("HistoPath", ""),
+                modtag.attrib["HistoName"],
             )
             # NB: we convert relative uncertainty to absolute uncertainty
             modifier_shapesys: ShapeSys = {
-                'name': modtag.attrib['Name'],
-                'type': 'shapesys',
-                'data': [a * b for a, b in zip(data, shapesys_data)],
+                "name": modtag.attrib["Name"],
+                "type": "shapesys",
+                "data": [a * b for a, b in zip(data, shapesys_data)],
             }
             modifiers.append(modifier_shapesys)
-        elif modtag.tag == 'ShapeFactor':
+        elif modtag.tag == "ShapeFactor":
             modifier_shapefactor: ShapeFactor = {
-                'name': modtag.attrib['Name'],
-                'type': 'shapefactor',
-                'data': None,
+                "name": modtag.attrib["Name"],
+                "type": "shapefactor",
+                "data": None,
             }
             modifiers.append(modifier_shapefactor)
         else:
-            log.warning('not considering modifier tag %s', modtag)
+            log.warning("not considering modifier tag %s", modtag)
 
         if track_progress and progress is not None:
             progress.advance(task_id, 1)
@@ -275,10 +272,10 @@ def process_sample(
         progress.remove_task(task_id)
 
     return {
-        'name': sample.attrib['Name'],
-        'data': data,
-        'modifiers': modifiers,
-        'parameter_configs': parameter_configs,
+        "name": sample.attrib["Name"],
+        "data": data,
+        "modifiers": modifiers,
+        "parameter_configs": parameter_configs,
     }
 
 
@@ -288,9 +285,9 @@ def process_data(
     inputfile: str,
     histopath: str,
 ) -> list[float]:
-    inputfile = sample.attrib.get('InputFile', inputfile)
-    histopath = sample.attrib.get('HistoPath', histopath)
-    histoname = sample.attrib['HistoName']
+    inputfile = sample.attrib.get("InputFile", inputfile)
+    histopath = sample.attrib.get("HistoPath", histopath)
+    histoname = sample.attrib["HistoName"]
 
     if inputfile == "" or histoname == "":
         raise NotImplementedError(
@@ -311,14 +308,14 @@ def process_channel(
     if channel is None:
         raise RuntimeError("Root element of ElementTree is missing.")
 
-    inputfile = channel.attrib.get('InputFile', '')
-    histopath = channel.attrib.get('HistoPath', '')
+    inputfile = channel.attrib.get("InputFile", "")
+    histopath = channel.attrib.get("HistoPath", "")
 
     samples = channel.findall("Sample")
 
-    channel_name = channel.attrib['Name']
+    channel_name = channel.attrib["Name"]
 
-    data = channel.findall('Data')
+    data = channel.findall("Data")
     if data:
         parsed_data = process_data(data[0], resolver, inputfile, histopath)
     else:
@@ -344,7 +341,7 @@ def process_channel(
             track_progress,
             progress,
         )
-        channel_parameter_configs.extend(result.pop('parameter_configs'))
+        channel_parameter_configs.extend(result.pop("parameter_configs"))
         results.append(result)
 
         if track_progress and progress is not None:
@@ -374,66 +371,66 @@ def process_measurements(
     results: list[Measurement] = []
     other_parameter_configs = other_parameter_configs if other_parameter_configs else []
 
-    for x in toplvl.findall('Measurement'):
+    for x in toplvl.findall("Measurement"):
         parameter_configs_map: MutableMapping[str, Parameter] = {
-            k['name']: dict(**k) for k in other_parameter_configs
+            k["name"]: dict(**k) for k in other_parameter_configs
         }
-        lumi = float(x.attrib['Lumi'])
-        lumierr = lumi * float(x.attrib['LumiRelErr'])
+        lumi = float(x.attrib["Lumi"])
+        lumierr = lumi * float(x.attrib["LumiRelErr"])
 
-        measurement_name = x.attrib['Name']
+        measurement_name = x.attrib["Name"]
 
-        poi = x.find('POI')
+        poi = x.find("POI")
         if poi is None:
             raise RuntimeError(
                 f"Measurement {measurement_name} is missing POI specification"
             )
 
         result: Measurement = {
-            'name': measurement_name,
-            'config': {
-                'poi': poi.text.strip() if poi.text else '',
-                'parameters': [
+            "name": measurement_name,
+            "config": {
+                "poi": poi.text.strip() if poi.text else "",
+                "parameters": [
                     {
-                        'name': 'lumi',
-                        'auxdata': [lumi],
-                        'bounds': [[lumi - 5.0 * lumierr, lumi + 5.0 * lumierr]],
-                        'inits': [lumi],
-                        'sigmas': [lumierr],
+                        "name": "lumi",
+                        "auxdata": [lumi],
+                        "bounds": [[lumi - 5.0 * lumierr, lumi + 5.0 * lumierr]],
+                        "inits": [lumi],
+                        "sigmas": [lumierr],
                     }
                 ],
             },
         }
 
-        for param in x.findall('ParamSetting'):
+        for param in x.findall("ParamSetting"):
             # determine what all parameters in the paramsetting have in common
             overall_param_obj: ParameterBase = {}
-            if param.attrib.get('Const'):
-                overall_param_obj['fixed'] = param.attrib['Const'] == 'True'
-            if param.attrib.get('Val'):
-                overall_param_obj['inits'] = [float(param.attrib['Val'])]
+            if param.attrib.get("Const"):
+                overall_param_obj["fixed"] = param.attrib["Const"] == "True"
+            if param.attrib.get("Val"):
+                overall_param_obj["inits"] = [float(param.attrib["Val"])]
 
             # might be specifying multiple parameters in the same ParamSetting
             if param.text:
-                for param_name in param.text.strip().split(' '):
+                for param_name in param.text.strip().split(" "):
                     param_interpretation = compat.interpret_rootname(param_name)  # type: ignore[no-untyped-call]
-                    if not param_interpretation['is_scalar']:
+                    if not param_interpretation["is_scalar"]:
                         raise ValueError(
                             f'pyhf does not support setting non-scalar parameters ("gammas")  constant, such as for {param_name}.'
                         )
-                    if param_interpretation['name'] == 'lumi':
-                        result['config']['parameters'][0].update(overall_param_obj)  # type: ignore[typeddict-item]
+                    if param_interpretation["name"] == "lumi":
+                        result["config"]["parameters"][0].update(overall_param_obj)  # type: ignore[typeddict-item]
                     else:
                         # pop from parameter_configs_map because we don't want to duplicate
                         param_obj: Parameter = parameter_configs_map.pop(
-                            param_interpretation['name'],
-                            {'name': param_interpretation['name']},
+                            param_interpretation["name"],
+                            {"name": param_interpretation["name"]},
                         )
                         # ParamSetting will always take precedence
                         param_obj.update(overall_param_obj)  # type: ignore[typeddict-item]
                         # add it back in to the parameter_configs_map
-                        parameter_configs_map[param_interpretation['name']] = param_obj
-        result['config']['parameters'].extend(parameter_configs_map.values())
+                        parameter_configs_map[param_interpretation["name"]] = param_obj
+        result["config"]["parameters"].extend(parameter_configs_map.values())
         results.append(result)
 
     return results
@@ -442,7 +439,7 @@ def process_measurements(
 def dedupe_parameters(parameters: Sequence[Parameter]) -> list[Parameter]:
     duplicates: MutableMapping[str, MutableSequence[Parameter]] = {}
     for p in parameters:
-        duplicates.setdefault(p['name'], []).append(p)
+        duplicates.setdefault(p["name"], []).append(p)
     for parname in duplicates:
         parameter_list = duplicates[parname]
         if len(parameter_list) == 1:
@@ -451,10 +448,10 @@ def dedupe_parameters(parameters: Sequence[Parameter]) -> list[Parameter]:
             for p in parameter_list:
                 log.warning(p)
             raise RuntimeError(
-                f'cannot import workspace due to incompatible parameter configurations for {parname:s}.'
+                f"cannot import workspace due to incompatible parameter configurations for {parname:s}."
             )
     # no errors raised, de-dupe and return
-    return list({v['name']: v for v in parameters}.values())
+    return list({v["name"]: v for v in parameters}.values())
 
 
 def parse(
@@ -526,13 +523,13 @@ def parse(
         toplvl, other_parameter_configs=parameter_configs
     )
     result: Workspace = {
-        'measurements': measurements,
-        'channels': channels,
-        'observations': observations,
-        'version': schema.version,  # type: ignore[typeddict-unknown-key]
+        "measurements": measurements,
+        "channels": channels,
+        "observations": observations,
+        "version": schema.version,  # type: ignore[typeddict-unknown-key]
     }
     try:
-        schema.validate(result, 'workspace.json')
+        schema.validate(result, "workspace.json")
     except exceptions.InvalidSpecification as exc:
         if validation_as_error:
             raise exc

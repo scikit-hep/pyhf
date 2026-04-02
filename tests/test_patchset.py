@@ -1,15 +1,17 @@
-import pyhf
-import pytest
-import pyhf.exceptions
-import pyhf.patchset
 import json
 from unittest import mock
 
+import pytest
+
+import pyhf
+import pyhf.exceptions
+import pyhf.patchset
+
 
 @pytest.fixture(
-    scope='function',
-    params=['patchset_good.json', 'patchset_good_2_patches.json'],
-    ids=['patchset_good.json', 'patchset_good_2_patches.json'],
+    scope="function",
+    params=["patchset_good.json", "patchset_good_2_patches.json"],
+    ids=["patchset_good.json", "patchset_good_2_patches.json"],
 )
 def patchset(datadir, request):
     with open(datadir.joinpath(request.param), encoding="utf-8") as spec_file:
@@ -17,19 +19,19 @@ def patchset(datadir, request):
     return pyhf.PatchSet(spec)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def patch():
     return pyhf.patchset.Patch(
-        {'metadata': {'name': 'test', 'values': [1.0, 2.0, 3.0]}, 'patch': {}}
+        {"metadata": {"name": "test", "values": [1.0, 2.0, 3.0]}, "patch": {}}
     )
 
 
 @pytest.mark.parametrize(
-    'patchset_file',
+    "patchset_file",
     [
-        'patchset_bad_empty_patches.json',
-        'patchset_bad_no_version.json',
-        'patchset_bad_wrong_valuetype.json',
+        "patchset_bad_empty_patches.json",
+        "patchset_bad_no_version.json",
+        "patchset_bad_wrong_valuetype.json",
     ],
 )
 def test_patchset_invalid_spec(datadir, patchset_file):
@@ -40,11 +42,11 @@ def test_patchset_invalid_spec(datadir, patchset_file):
 
 
 @pytest.mark.parametrize(
-    'patchset_file',
+    "patchset_file",
     [
-        'patchset_bad_duplicate_patch_name.json',
-        'patchset_bad_duplicate_patch_values.json',
-        'patchset_bad_wrong_values_multiplicity.json',
+        "patchset_bad_duplicate_patch_name.json",
+        "patchset_bad_duplicate_patch_values.json",
+        "patchset_bad_wrong_values_multiplicity.json",
     ],
 )
 def test_patchset_bad(datadir, patchset_file):
@@ -55,16 +57,16 @@ def test_patchset_bad(datadir, patchset_file):
 
 
 def test_patchset_attributes(patchset):
-    assert 'hepdata' in patchset.references
+    assert "hepdata" in patchset.references
     assert patchset.description == "signal patchset for the SUSY Multi-b-jet analysis"
     assert len(patchset.digests) == 1
-    assert patchset.digests['md5'] == "098f6bcd4621d373cade4e832627b4f6"
+    assert patchset.digests["md5"] == "098f6bcd4621d373cade4e832627b4f6"
     assert patchset.labels == ["mass_stop", "mass_neutralino"]
     assert patchset.version == "1.0.0"
 
 
 def test_patchset_get_patch_by_name(patchset):
-    assert patchset['Gtt_2100_5000_800']
+    assert patchset["Gtt_2100_5000_800"]
 
 
 def test_patchset_get_patch_by_values(patchset):
@@ -77,9 +79,9 @@ def test_patchset_get_nonexisting_patch(patchset):
     # Using asserts with str(exc_info.value) over pytest.raises(..., match="...")
     # to make it easier to check multiple strings.
     with pytest.raises(pyhf.exceptions.InvalidPatchLookup) as exc_info:
-        patchset.__getitem__('nonexisting_patch')
-    assert 'No patch associated with' in str(exc_info.value)
-    assert 'nonexisting_patch' in str(exc_info.value)
+        patchset.__getitem__("nonexisting_patch")
+    assert "No patch associated with" in str(exc_info.value)
+    assert "nonexisting_patch" in str(exc_info.value)
 
 
 def test_patchset_iterable(patchset):
@@ -96,9 +98,9 @@ def test_patchset_len(patchset):
 def test_patchset_repr(patchset):
     assert repr(patchset)
     if len(patchset) == 1:
-        assert 'PatchSet object with 1 patch at' in repr(patchset)
+        assert "PatchSet object with 1 patch at" in repr(patchset)
     else:
-        assert f'PatchSet object with {len(patchset)} patches at' in repr(patchset)
+        assert f"PatchSet object with {len(patchset)} patches at" in repr(patchset)
 
 
 def test_patchset_verify(datadir):
@@ -127,14 +129,14 @@ def test_patchset_apply(datadir):
         patchset = pyhf.PatchSet(json.load(patch_file))
     with open(datadir.joinpath("example_bkgonly.json"), encoding="utf-8") as ws_file:
         ws = pyhf.Workspace(json.load(ws_file))
-    with mock.patch('pyhf.patchset.PatchSet.verify') as m:
+    with mock.patch("pyhf.patchset.PatchSet.verify") as m:
         assert m.call_count == 0
-        assert patchset.apply(ws, 'patch_channel1_signal_syst1')
+        assert patchset.apply(ws, "patch_channel1_signal_syst1")
         assert m.call_count == 1
 
 
 def test_patch_hashable(patch):
-    assert patch.name == 'test'
+    assert patch.name == "test"
     assert isinstance(patch.values, tuple)
     assert patch.values == (1.0, 2.0, 3.0)
 
@@ -151,7 +153,7 @@ def test_patch_equality(patch):
 
 def test_patchset_get_string_values(datadir):
     with open(
-        datadir.joinpath('patchset_good_stringvalues.json'), encoding="utf-8"
+        datadir.joinpath("patchset_good_stringvalues.json"), encoding="utf-8"
     ) as patch_file:
         patchset = pyhf.PatchSet(json.load(patch_file))
     assert patchset["Gtt_2100_5000_800"]

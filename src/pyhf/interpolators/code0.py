@@ -1,10 +1,11 @@
 """Piecewise-linear Interpolation. (Code 0)."""
 
 import logging
+
 import pyhf
-from pyhf.tensor.manager import get_backend
 from pyhf import events
 from pyhf.interpolators import _slow_interpolator_looper
+from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ class code0:
         )
         self._precompute()
         if subscribe:
-            events.subscribe('tensorlib_changed')(self._precompute)
+            events.subscribe("tensorlib_changed")(self._precompute)
 
     def _precompute(self):
         tensorlib, _ = get_backend()
@@ -71,15 +72,15 @@ class code0:
         # h: histogram affected by modifier
         # b: bin of histogram
         alphas_times_deltas_up = tensorlib.einsum(
-            'sa,shb->shab', alphasets, self.deltas_up
+            "sa,shb->shab", alphasets, self.deltas_up
         )
         alphas_times_deltas_dn = tensorlib.einsum(
-            'sa,shb->shab', alphasets, self.deltas_dn
+            "sa,shb->shab", alphasets, self.deltas_dn
         )
 
         masks = tensorlib.astensor(
             tensorlib.einsum(
-                'sa,shb->shab', where_alphasets_positive, self.broadcast_helper
+                "sa,shb->shab", where_alphasets_positive, self.broadcast_helper
             ),
             dtype="bool",
         )

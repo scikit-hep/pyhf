@@ -40,8 +40,9 @@ class Callables:
         """
         try:
             # methods
-            callback_ref = weakref.ref(callback.__func__), weakref.ref(
-                callback.__self__
+            callback_ref = (
+                weakref.ref(callback.__func__),
+                weakref.ref(callback.__self__),
             )
         except AttributeError:
             callback_ref = weakref.ref(callback), None

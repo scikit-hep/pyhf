@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 from collections.abc import Sequence
+from typing import Any
 
 from pyhf import exceptions
 from pyhf.typing import Channel
@@ -21,7 +21,7 @@ class _ChannelSummaryMixin:
     """
 
     def __init__(self, *args: Any, **kwargs: Sequence[Channel]):
-        channels = kwargs.pop('channels')
+        channels = kwargs.pop("channels")
         super().__init__(*args, **kwargs)
 
         # check for duplicates
@@ -35,15 +35,15 @@ class _ChannelSummaryMixin:
         # need to keep track in which order we added the constraints
         # so that we can generate correctly-ordered data
         for channel in channels:
-            self._channels.append(channel['name'])
-            self._channel_nbins[channel['name']] = len(channel['samples'][0]['data'])
-            for sample in channel['samples']:
-                self._samples.append(sample['name'])
-                for modifier_def in sample['modifiers']:
+            self._channels.append(channel["name"])
+            self._channel_nbins[channel["name"]] = len(channel["samples"][0]["data"])
+            for sample in channel["samples"]:
+                self._samples.append(sample["name"])
+                for modifier_def in sample["modifiers"]:
                     self._modifiers.append(
                         (
-                            modifier_def['name'],  # mod name
-                            modifier_def['type'],  # mod type
+                            modifier_def["name"],  # mod name
+                            modifier_def["type"],  # mod type
                         )
                     )
 
@@ -102,7 +102,7 @@ class _ChannelSummaryMixin:
         Check for duplicate samples within each channel.
         Check for duplicate modifiers within each sample.
         """
-        channel_names = [channel['name'] for channel in channels]
+        channel_names = [channel["name"] for channel in channels]
         if len(channel_names) != len(set(channel_names)):
             duplicates = sorted(
                 set([f"'{x}'" for x in channel_names if channel_names.count(x) > 1])
@@ -113,7 +113,7 @@ class _ChannelSummaryMixin:
                 + " found in the model. Rename one of them."
             )
         for channel in channels:
-            sample_names = [samples['name'] for samples in channel['samples']]
+            sample_names = [samples["name"] for samples in channel["samples"]]
             if len(sample_names) != len(set(sample_names)):
                 duplicates = sorted(
                     set([f"'{x}'" for x in sample_names if sample_names.count(x) > 1])
@@ -123,10 +123,10 @@ class _ChannelSummaryMixin:
                     + ", ".join(duplicates)
                     + f" found in the channel '{channel['name']}'. Rename one of them."
                 )
-            for sample in channel['samples']:
+            for sample in channel["samples"]:
                 modifiers = [
-                    (modifier['name'], modifier['type'])
-                    for modifier in sample['modifiers']
+                    (modifier["name"], modifier["type"])
+                    for modifier in sample["modifiers"]
                 ]
                 if len(modifiers) != len(set(modifiers)):
                     duplicates = sorted(

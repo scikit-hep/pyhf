@@ -127,25 +127,25 @@ def uncorrelated_background(
     .. versionchanged:: 0.8.0 Added ``poi_name`` argument.
     """
     spec = {
-        'channels': [
+        "channels": [
             {
-                'name': 'singlechannel',
-                'samples': [
+                "name": "singlechannel",
+                "samples": [
                     {
-                        'name': 'signal',
-                        'data': signal,
-                        'modifiers': [
-                            {'name': 'mu', 'type': 'normfactor', 'data': None}
+                        "name": "signal",
+                        "data": signal,
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
                         ],
                     },
                     {
-                        'name': 'background',
-                        'data': bkg,
-                        'modifiers': [
+                        "name": "background",
+                        "data": bkg,
+                        "modifiers": [
                             {
-                                'name': 'uncorr_bkguncrt',
-                                'type': 'shapesys',
-                                'data': bkg_uncertainty,
+                                "name": "uncorr_bkguncrt",
+                                "type": "shapesys",
+                                "data": bkg_uncertainty,
                             }
                         ],
                     },

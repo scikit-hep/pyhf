@@ -60,13 +60,13 @@ class InvalidSpecification(Exception):
         self.exc_info = sys.exc_info()
         self.parent = ValidationError
         self.schema = schema
-        self.path = ''
+        self.path = ""
         for item in ValidationError.path:
             if isinstance(item, int):
-                self.path += f'[{item}]'
+                self.path += f"[{item}]"
             else:
-                self.path += f'.{item}'
-        self.path = self.path.lstrip('.')
+                self.path += f".{item}"
+        self.path = self.path.lstrip(".")
         self.instance = ValidationError.instance
         message = f"{ValidationError.message}.\n\tPath: {self.path}\n\tInstance: {self.instance} Schema: {self.schema}"
         # Call the base class constructor with the parameters it needs
@@ -173,7 +173,7 @@ class FailedMinimization(Exception):
     def __init__(self, result):
         self.result = result
         message = getattr(
-            result, 'message', "Unknown failure. See fit result for more details."
+            result, "message", "Unknown failure. See fit result for more details."
         )
         super().__init__(message)
 
