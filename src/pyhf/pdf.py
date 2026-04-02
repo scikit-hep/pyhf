@@ -848,7 +848,7 @@ class Model:
         # Verify parameter shapes
         if pars.shape[-1] != self.config.npars:
             raise exceptions.InvalidPdfParameters(
-                f'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
             )
 
         return self.make_pdf(pars)[1].expected_data()
@@ -881,10 +881,10 @@ class Model:
         # Verify parameter shapes
         if pars.shape[-1] != self.config.npars:
             raise exceptions.InvalidPdfParameters(
-                f'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
             )
 
-        return self.make_pdf(pars)[0].expected_data()
+        return self.main_model._expected_data_unchecked(pars)
 
     def expected_data(self, pars, include_auxdata=True):
         """
@@ -902,11 +902,11 @@ class Model:
         # Verify parameter shapes
         if pars.shape[-1] != self.config.npars:
             raise exceptions.InvalidPdfParameters(
-                f'eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected'
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
             )
 
         if not include_auxdata:
-            return self.make_pdf(pars)[0].expected_data()
+            return self.main_model._expected_data_unchecked(pars)
         return self.make_pdf(pars).expected_data()
 
     def constraint_logpdf(self, auxdata, pars):
