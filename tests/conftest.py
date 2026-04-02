@@ -74,17 +74,29 @@ def reset_backend():
     pyhf.set_backend("numpy", default=True)
 
 
+_backend_params = [
+    (("numpy_backend", {}), ("scipy_optimizer", {})),
+    (("jax_backend", {}), ("scipy_optimizer", {})),
+    (
+        ("numpy_backend", {"poisson_from_normal": True}),
+        ("minuit_optimizer", {}),
+    ),
+    (("jax_backend", {}), ("optimistix_optimizer", {})),
+]
+_backend_ids = ["numpy", "jax", "numpy_minuit"]
+
+try:
+    import optimistix  # noqa: F401
+
+    _backend_params.append((("jax_backend", {}), ("optimistix_optimizer", {})))
+    _backend_ids.append("jax_optimistix")
+except ImportError:
+    pass
+
+
 @pytest.fixture(
-    params=[
-        (("numpy_backend", {}), ("scipy_optimizer", {})),
-        (("jax_backend", {}), ("scipy_optimizer", {})),
-        (
-            ("numpy_backend", {"poisson_from_normal": True}),
-            ("minuit_optimizer", {}),
-        ),
-        (("jax_backend", {}), ("optimistix_optimizer", {})),
-    ],
-    ids=["numpy", "jax", "numpy_minuit", "jax_optimistix"],
+    params=_backend_params,
+    ids=_backend_ids,
 )
 def backend(request):
     # a better way to get the id? all the backends we have so far for testing

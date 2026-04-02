@@ -361,7 +361,7 @@ requests = ">=2.22.0"
 iminuit = ">=2.7.0"
 
 [tool.pixi.feature.optimistix.dependencies]
-python = ">=3.11.*"
+python = ">=3.11"
 optimistix = ">=0.1.0"
 
 [tool.pixi.feature.test.dependencies]
