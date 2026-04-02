@@ -577,3 +577,16 @@ def test_minuit_param_names(mocker):
         _, result = pyhf.infer.mle.fit(data, pdf, return_result_obj=True)
         assert "minuit" in result
         assert result.minuit.parameters == ("x0", "x1")
+
+
+def test_minuit_all_fixed_params():
+    # Regression test for https://github.com/scikit-hep/pyhf/issues/2637
+    # iminuit v2.32.0+ returns None for covariance when all parameters are fixed
+    # instead of a zero matrix, so .correlation() must be guarded against None.
+    pyhf.set_backend('numpy', 'minuit')
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[10.0], bkg=[70.0], bkg_uncertainty=[10.0]
+    )
+    data = [80] + model.config.auxdata
+    result = pyhf.infer.mle.fit(data, model, fixed_params=[True, True])
+    assert result is not None
