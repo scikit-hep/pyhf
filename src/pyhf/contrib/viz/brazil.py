@@ -25,7 +25,9 @@ def __dir__():
     return __all__
 
 
-@dataclass(slots=True)
+# python 3.10
+# @dataclass(slots=True)
+@dataclass
 class BrazilBandCollection:
     r"""
     :obj:`collections.namedtuple` containing the
