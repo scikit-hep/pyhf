@@ -631,7 +631,7 @@ class _MainModel:
         return True
 
     def make_pdf(self, pars):
-        lambdas_data = self.expected_data(pars)
+        lambdas_data = self._expected_data_unchecked(pars)
         return prob.Independent(prob.Poisson(lambdas_data))
 
     def logpdf(self, maindata, pars):
@@ -678,32 +678,12 @@ class _MainModel:
 
         return deltas, factors
 
-    def expected_data(self, pars, return_by_sample=False):
+    def _expected_data_unchecked(self, pars, return_by_sample=False):
         """
-        Compute the expected rates for given values of parameters.
+        Compute the expected rates for given values of parameters without
+        input validation. For internal use in performance-critical paths.
 
-        For a single channel single sample, we compute:
-
-            Pois(d | fac(pars) * (delta(pars) + nom) ) * Gaus(a | pars[is_gaus], sigmas) * Pois(a * cfac | pars[is_poi] * cfac)
-
-        where:
-            - delta(pars) is the result of an apply(pars) of combined modifiers
-              with 'addition' op_code
-            - factor(pars) is the result of apply(pars) of combined modifiers
-              with 'multiplication' op_code
-            - pars[is_gaus] are the subset of parameters that are constrained by
-              gauss (with sigmas accordingly, some of which are computed by
-              modifiers)
-            - pars[is_pois] are the poissons and their rates (they come with
-              their own additional factors unrelated to factor(pars) which are
-              also computed by the finalize() of the modifier)
-
-        So in the end we only make 3 calls to pdfs
-
-            1. The pdf of data and modified rates
-            2. All Gaussian constraint as one call
-            3. All Poisson constraints as one call
-
+        See :meth:`expected_data` for full documentation.
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
@@ -737,6 +717,41 @@ class _MainModel:
         if self.batch_size is None:
             return newresults[0]
         return newresults
+
+    def expected_data(self, pars, return_by_sample=False):
+        """
+        Compute the expected rates for given values of parameters.
+
+        For a single channel single sample, we compute:
+
+            Pois(d | fac(pars) * (delta(pars) + nom) ) * Gaus(a | pars[is_gaus], sigmas) * Pois(a * cfac | pars[is_poi] * cfac)
+
+        where:
+            - delta(pars) is the result of an apply(pars) of combined modifiers
+              with 'addition' op_code
+            - factor(pars) is the result of apply(pars) of combined modifiers
+              with 'multiplication' op_code
+            - pars[is_gaus] are the subset of parameters that are constrained by
+              gauss (with sigmas accordingly, some of which are computed by
+              modifiers)
+            - pars[is_pois] are the poissons and their rates (they come with
+              their own additional factors unrelated to factor(pars) which are
+              also computed by the finalize() of the modifier)
+
+        So in the end we only make 3 calls to pdfs
+
+            1. The pdf of data and modified rates
+            2. All Gaussian constraint as one call
+            3. All Poisson constraints as one call
+
+        """
+        tensorlib, _ = get_backend()
+        pars = tensorlib.astensor(pars)
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+        return self._expected_data_unchecked(pars, return_by_sample)
 
 
 class Model:
@@ -836,6 +851,12 @@ class Model:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
+        # Verify parameter shapes
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+
         return self.make_pdf(pars)[1].expected_data()
 
     def modifications(self, pars):
@@ -863,7 +884,13 @@ class Model:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
-        return self.make_pdf(pars)[0].expected_data()
+        # Verify parameter shapes
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+
+        return self.main_model._expected_data_unchecked(pars)
 
     def expected_data(self, pars, include_auxdata=True):
         """
@@ -878,8 +905,14 @@ class Model:
         """
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
+        # Verify parameter shapes
+        if pars.shape[-1] != self.config.npars:
+            raise exceptions.InvalidPdfParameters(
+                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            )
+
         if not include_auxdata:
-            return self.make_pdf(pars)[0].expected_data()
+            return self.main_model._expected_data_unchecked(pars)
         return self.make_pdf(pars).expected_data()
 
     def constraint_logpdf(self, auxdata, pars):
