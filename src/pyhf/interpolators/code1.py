@@ -108,13 +108,9 @@ class _slow_code1:
     def product(self, down, nom, up, alpha):
         delta_up = up / nom
         delta_down = down / nom
-        if alpha > 0:
-            delta = math.pow(delta_up, alpha)
-        else:
-            delta = math.pow(delta_down, (-alpha))
-        return delta
+        return math.pow(delta_up, alpha) if alpha > 0 else math.pow(delta_down, -alpha)
 
-    def __init__(self, histogramssets, subscribe=True):
+    def __init__(self, histogramssets, _subscribe=True):
         self._histogramssets = histogramssets
 
     def __call__(self, alphasets):

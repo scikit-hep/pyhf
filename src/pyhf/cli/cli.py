@@ -12,14 +12,14 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 
 
-def _print_citation(ctx, param, value):
+def _print_citation(ctx, param, value):  # noqa: ARG001
     if not value or ctx.resilient_parsing:
         return
     click.echo(utils.citation())
     ctx.exit()
 
 
-@click.group(context_settings=dict(help_option_names=["-h", "--help"]))
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option(version=__version__)
 @click.option(
     "--cite",

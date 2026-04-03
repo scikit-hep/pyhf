@@ -18,7 +18,7 @@ def test_nondefault_backend():
     assert pyhf.tensorlib.name == "jax"
 
 
-@pytest.mark.parametrize("jitted", (False, True))
+@pytest.mark.parametrize("jitted", [False, True])
 def test_diffable_backend(jitted):
     pyhf.set_backend("jax", default=True)
 
@@ -33,8 +33,7 @@ def test_diffable_backend(jitted):
 
     def example_op2(x):
         y = pyhf.default_backend.power(x, 2)
-        z = pyhf.tensorlib.sum(y)
-        return z
+        return pyhf.tensorlib.sum(y)
 
     if jitted:
         assert jax.jacrev(jax.jit(example_op2))(
@@ -71,8 +70,7 @@ def test_diffable_backend_failure():
 
     def example_op2(x):
         y = pyhf.default_backend.power(x, 2)
-        z = pyhf.tensorlib.sum(y)
-        return z
+        return pyhf.tensorlib.sum(y)
 
     with pytest.raises(jax.errors.TracerArrayConversionError):
         jax.jacrev(example_op2)(pyhf.tensorlib.astensor([2.0, 3.0]))

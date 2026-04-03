@@ -6,7 +6,7 @@ from pyhf.parameters import ParamViewer
 log = logging.getLogger(__name__)
 
 
-def required_parset(sample_data, modifier_data):
+def required_parset(_sample_data, _modifier_data):
     return {
         "paramset_type": "constrained_by_normal",
         "n_parameters": 1,
@@ -29,7 +29,7 @@ class normsys_builder:
         self.required_parsets = {}
 
     def collect(self, thismod, nom):
-        maskval = True if thismod else False
+        maskval = bool(thismod)
         lo_factor = thismod["data"]["lo"] if thismod else 1.0
         hi_factor = thismod["data"]["hi"] if thismod else 1.0
         nom_data = [1.0] * len(nom)
@@ -129,7 +129,7 @@ class normsys_combined:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         """
         if not self.param_viewer.index_selection:
-            return
+            return None
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
@@ -139,7 +139,4 @@ class normsys_combined:
         results_norm = self.interpolator(normsys_alphaset)
 
         # either rely on numerical no-op or force with line below
-        results_norm = tensorlib.where(
-            self.normsys_mask, results_norm, self.normsys_default
-        )
-        return results_norm
+        return tensorlib.where(self.normsys_mask, results_norm, self.normsys_default)

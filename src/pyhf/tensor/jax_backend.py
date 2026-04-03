@@ -240,9 +240,7 @@ class jax_backend:
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error(
-                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
-            )
+            log.exception("Invalid dtype: dtype must be float, int, or bool.")
             raise
 
         return jnp.asarray(tensor_in, dtype=dtype)
@@ -260,9 +258,8 @@ class jax_backend:
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap)}.",
-                exc_info=True,
+            log.exception(
+                "Invalid dtype: dtype must be one of %s.", list(self.dtypemap)
             )
             raise
 
@@ -272,9 +269,8 @@ class jax_backend:
         try:
             dtype = self.dtypemap[dtype]
         except KeyError:
-            log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap)}.",
-                exc_info=True,
+            log.exception(
+                "Invalid dtype: dtype must be one of %s.", list(self.dtypemap)
             )
             raise
 

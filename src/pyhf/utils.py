@@ -84,15 +84,13 @@ def digest(obj, algorithm="sha256"):
     try:
         stringified = json.dumps(obj, sort_keys=True, ensure_ascii=False).encode("utf8")
     except TypeError as exc:
-        raise ValueError(
-            "The supplied object is not JSON-serializable for calculating a hash."
-        ) from exc
+        msg = "The supplied object is not JSON-serializable for calculating a hash."
+        raise ValueError(msg) from exc
     try:
         hash_alg = getattr(hashlib, algorithm)
     except AttributeError as exc:
-        raise ValueError(
-            f"{algorithm} is not an algorithm provided by Python's hashlib library."
-        ) from exc
+        msg = f"{algorithm} is not an algorithm provided by Python's hashlib library."
+        raise ValueError(msg) from exc
     return hash_alg(stringified).hexdigest()
 
 

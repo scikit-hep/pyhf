@@ -23,7 +23,7 @@ class _BackendRetriever:
             self._array_types.add(numpy_backend.array_type)
             self._array_subtypes.add(numpy_backend.array_subtype)
             return numpy_backend
-        elif name == "jax_backend":
+        if name == "jax_backend":
             try:
                 from pyhf.tensor.jax_backend import jax_backend
 
@@ -34,10 +34,14 @@ class _BackendRetriever:
                 self._array_subtypes.add(jax_backend.array_subtype)
                 return jax_backend
             except ImportError as exc:
+                msg = (
+                    "There was a problem importing JAX. The jax backend cannot be used."
+                )
                 raise exceptions.ImportBackendError(
-                    "There was a problem importing JAX. The jax backend cannot be used.",
+                    msg,
                     exc,
                 ) from exc
+        return None
 
     @property
     def array_types(self):

@@ -28,9 +28,8 @@ class OptimizerMixin:
         self.verbose = kwargs.pop("verbose", 0)
 
         if kwargs:
-            raise exceptions.Unsupported(
-                f"Unsupported kwargs were passed in: {list(kwargs)}."
-            )
+            msg = f"Unsupported kwargs were passed in: {list(kwargs)}."
+            raise exceptions.Unsupported(msg)
 
     def _internal_minimize(
         self,
@@ -65,7 +64,7 @@ class OptimizerMixin:
         try:
             assert result.success
         except AssertionError as exc:
-            log.error(result, exc_info=True)
+            log.exception(result)
             raise exceptions.FailedMinimization(result) from exc
         return result
 

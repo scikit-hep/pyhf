@@ -15,7 +15,7 @@ class _OptimizerRetriever:
             # for autocomplete and dir() calls
             self.scipy_optimizer = scipy_optimizer
             return scipy_optimizer
-        elif name == "minuit_optimizer":
+        if name == "minuit_optimizer":
             try:
                 from pyhf.optimize.opt_minuit import minuit_optimizer
 
@@ -27,12 +27,14 @@ class _OptimizerRetriever:
                 self.minuit_optimizer = minuit_optimizer
                 return minuit_optimizer
             except ImportError as exc:
+                msg = "There was a problem importing Minuit. The minuit optimizer cannot be used."
                 raise exceptions.ImportBackendError(
-                    "There was a problem importing Minuit. The minuit optimizer cannot be used.",
+                    msg,
                     exc,
                 ) from exc
         elif name == "__wrapped__":  # doctest
             pass
+        return None
 
 
 OptimizerRetriever = _OptimizerRetriever()

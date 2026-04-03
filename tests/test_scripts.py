@@ -13,9 +13,9 @@ from click.testing import CliRunner
 import pyhf
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def tarfile_path(tmp_path):
-    with open(tmp_path.joinpath("test_file.txt"), "w", encoding="utf-8") as write_file:
+    with tmp_path.joinpath("test_file.txt").open("w", encoding="utf-8") as write_file:
         write_file.write("test file")
     with tarfile.open(
         tmp_path.joinpath("test_tar.tar.gz"), mode="w:gz", encoding="utf-8"
@@ -76,7 +76,7 @@ def test_import_prepHistFactory_withProgress(tmp_path, script_runner):
     assert ret.stderr != ""
 
 
-def test_import_prepHistFactory_stdout(tmp_path, script_runner):
+def test_import_prepHistFactory_stdout(script_runner):
     command = "pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/"
     ret = script_runner.run(shlex.split(command))
     assert ret.success
@@ -336,7 +336,7 @@ def test_testpoi(tmp_path, script_runner):
 
 @pytest.mark.parametrize("optimizer", ["scipy", "minuit"])
 @pytest.mark.parametrize(
-    "opts,success", [(["maxiter=1000"], True), (["maxiter=1"], False)]
+    ("opts", "success"), [(["maxiter=1000"], True), (["maxiter=1"], False)]
 )
 def test_fit_optimizer(tmp_path, script_runner, optimizer, opts, success):
     temp = tmp_path.joinpath("parsed_output.json")
@@ -352,7 +352,7 @@ def test_fit_optimizer(tmp_path, script_runner, optimizer, opts, success):
 
 @pytest.mark.parametrize("optimizer", ["scipy", "minuit"])
 @pytest.mark.parametrize(
-    "opts,success", [(["maxiter=1000"], True), (["maxiter=1"], False)]
+    ("opts", "success"), [(["maxiter=1000"], True), (["maxiter=1"], False)]
 )
 def test_cls_optimizer(tmp_path, script_runner, optimizer, opts, success):
     temp = tmp_path.joinpath("parsed_output.json")
@@ -387,14 +387,14 @@ def test_inspect_outfile(tmp_path, script_runner):
     assert ret.success
 
     summary = json.loads(tempout.read_text())
-    assert [
+    assert sorted(summary) == [
         "channels",
         "measurements",
         "modifiers",
         "parameters",
         "samples",
         "systematics",
-    ] == sorted(summary)
+    ]
     assert len(summary["channels"]) == 1
     assert len(summary["measurements"]) == 4
     assert len(summary["modifiers"]) == 6
@@ -547,9 +547,7 @@ def test_combine_merge_channels(tmp_path, script_runner):
 
 
 @pytest.mark.parametrize("do_json", [False, True])
-@pytest.mark.parametrize(
-    "algorithms", [["md5"], ["sha256"], ["sha256", "md5"], ["sha256", "md5"]]
-)
+@pytest.mark.parametrize("algorithms", [["md5"], ["sha256"], ["sha256", "md5"]])
 def test_workspace_digest(tmp_path, script_runner, algorithms, do_json):
     results = {
         "md5": "7de8930ff37e5a4f6a31da11bda7813f",
@@ -596,7 +594,7 @@ def test_workspace_digest(tmp_path, script_runner, algorithms, do_json):
 def test_patchset_download(
     tmp_path, script_runner, requests_mock, tarfile_path, archive
 ):
-    requests_mock.get(archive, content=open(tarfile_path, "rb").read())
+    requests_mock.get(archive, content=tarfile_path.open("rb").read())
     command = f"pyhf contrib download {archive} {tmp_path.joinpath('likelihoods')}"
     ret = script_runner.run(shlex.split(command))
     assert ret.success

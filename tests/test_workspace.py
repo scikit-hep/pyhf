@@ -34,7 +34,7 @@ def workspace_xml(request):
     return pyhf.readxml.parse(*request.param)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def workspace_factory(workspace_xml):
     return lambda: pyhf.Workspace(workspace_xml)
 
@@ -196,10 +196,10 @@ def test_json_serializable(workspace_factory):
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(channels=["fake-name"]),
-        dict(samples=["fake-sample"]),
-        dict(modifiers=["fake-modifier"]),
-        dict(modifier_types=["fake-type"]),
+        {"channels": ["fake-name"]},
+        {"samples": ["fake-sample"]},
+        {"modifiers": ["fake-modifier"]},
+        {"modifier_types": ["fake-type"]},
     ],
 )
 def test_prune_error(workspace_factory, kwargs):
@@ -460,7 +460,7 @@ def test_combine_workspace_diff_version(workspace_factory, join):
         modifiers={
             modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == "lumi"
+            if modifier != "lumi"
         },
         measurements={
             measurement: f"renamed_{measurement}"
@@ -704,7 +704,7 @@ def test_combine_workspace_incompatible_observations(workspace_factory, join):
         modifiers={
             modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == "lumi"
+            if modifier != "lumi"
         },
         measurements={
             measurement: f"renamed_{measurement}"
@@ -729,7 +729,7 @@ def test_combine_workspace_incompatible_observations_left_outer(workspace_factor
         modifiers={
             modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == "lumi"
+            if modifier != "lumi"
         },
         measurements={
             measurement: f"renamed_{measurement}"
@@ -753,7 +753,7 @@ def test_combine_workspace_incompatible_observations_right_outer(workspace_facto
         modifiers={
             modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == "lumi"
+            if modifier != "lumi"
         },
         measurements={
             measurement: f"renamed_{measurement}"
@@ -778,7 +778,7 @@ def test_combine_workspace(workspace_factory, join):
         modifiers={
             modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == "lumi"
+            if modifier != "lumi"
         },
         measurements={
             measurement: f"renamed_{measurement}"
@@ -831,7 +831,7 @@ def test_workspace_inheritance(workspace_factory):
         modifiers={
             modifier: f"renamed_{modifier}"
             for modifier, _ in ws.modifiers
-            if not modifier == "lumi"
+            if modifier != "lumi"
         },
         measurements={
             measurement: f"renamed_{measurement}"
@@ -914,7 +914,7 @@ def test_workspace_poiless(datadir):
     """
     Test that a workspace with a measurement with empty POI string is treated as POI-less
     """
-    with open(datadir.joinpath("poiless.json"), encoding="utf-8") as spec_file:
+    with datadir.joinpath("poiless.json").open(encoding="utf-8") as spec_file:
         spec = json.load(spec_file)
     ws = pyhf.Workspace(spec)
     model = ws.model()

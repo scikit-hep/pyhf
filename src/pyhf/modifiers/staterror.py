@@ -35,7 +35,7 @@ class staterror_builder:
 
     def collect(self, thismod, nom):
         uncrt = thismod["data"] if thismod else [0.0] * len(nom)
-        mask = [True if thismod else False] * len(nom)
+        mask = [bool(thismod)] * len(nom)
         return {"mask": mask, "nom_data": nom, "uncrt": uncrt}
 
     def append(self, key, channel, sample, thismod, defined_samp):
@@ -70,12 +70,13 @@ class staterror_builder:
                     _modifier_type, _modifier_name = modifier_name.split("/")
                     _sample_data_len = len(sample["data"]["nom_data"])
                     _uncrt_len = len(sample["data"]["uncrt"])
-                    raise InvalidModifier(
+                    msg = (
                         f"The '{sample_name}' sample {_modifier_type} modifier"
-                        + f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
-                        + f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
-                        + f" has 'data' of length {_uncrt_len}."
+                        f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
+                        f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        f" has 'data' of length {_uncrt_len}."
                     )
+                    raise InvalidModifier(msg)
 
         for modname in self.builder_data:
             parname = modname.split("/")[1]
@@ -167,7 +168,7 @@ class staterror_combined:
         self._precompute()
         events.subscribe("tensorlib_changed")(self._precompute)
 
-    def _reindex_access_field(self, pdfconfig):
+    def _reindex_access_field(self, _pdfconfig):
         default_backend = pyhf.default_backend
         for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
@@ -204,16 +205,12 @@ class staterror_combined:
 
     def apply(self, pars):
         if not self.param_viewer.index_selection:
-            return
+            return None
 
         tensorlib, _ = get_backend()
-        if self.batch_size is None:
-            flat_pars = pars
-        else:
-            flat_pars = tensorlib.reshape(pars, (-1,))
+        flat_pars = pars if self.batch_size is None else tensorlib.reshape(pars, (-1,))
         statfactors = tensorlib.gather(flat_pars, self.access_field)
         results_staterr = tensorlib.einsum("mab,s->msab", statfactors, self.sample_ones)
-        results_staterr = tensorlib.where(
+        return tensorlib.where(
             self.staterror_mask, results_staterr, self.staterror_default
         )
-        return results_staterr

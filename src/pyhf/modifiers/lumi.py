@@ -6,7 +6,7 @@ from pyhf.parameters import ParamViewer
 log = logging.getLogger(__name__)
 
 
-def required_parset(sample_data, modifier_data):
+def required_parset(_sample_data, _modifier_data):
     return {
         "paramset_type": "constrained_by_normal",
         "n_parameters": 1,
@@ -30,7 +30,7 @@ class lumi_builder:
         self.required_parsets = {}
 
     def collect(self, thismod, nom):
-        maskval = True if thismod else False
+        maskval = bool(thismod)
         mask = [maskval] * len(nom)
         return {"mask": mask}
 
@@ -95,7 +95,7 @@ class lumi_combined:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         """
         if not self.param_viewer.index_selection:
-            return
+            return None
 
         tensorlib, _ = get_backend()
         lumis = self.param_viewer.get(pars)

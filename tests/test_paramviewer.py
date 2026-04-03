@@ -49,7 +49,7 @@ def test_paramviewer_simple_batched(backend):
 
     assert isinstance(view.index_selection, list)
     assert all(
-        [len(x) == 3 for x in view.index_selection]
+        len(x) == 3 for x in view.index_selection
     )  # first dimension is batch dim
 
     assert pyhf.tensorlib.shape(par_slice) == (3, 3)

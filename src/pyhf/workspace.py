@@ -70,7 +70,7 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
         # NB: this will be slow for large numbers of items
         elif (
             join == "none"
-            or (join in ["outer"] and secondary_item not in primary_items)
+            or (join == "outer" and secondary_item not in primary_items)
             or (
                 join in ["left outer", "right outer"]
                 and secondary_item[key] not in keys
@@ -80,7 +80,7 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
     return joined_items
 
 
-def _join_versions(join, left_version, right_version):
+def _join_versions(join, left_version, right_version):  # noqa: ARG001
     """
     Join two workspace versions.
 
@@ -97,9 +97,8 @@ def _join_versions(join, left_version, right_version):
 
     """
     if left_version != right_version:
-        raise exceptions.InvalidWorkspaceOperation(
-            f"Workspaces of different versions cannot be combined: {left_version} != {right_version}"
-        )
+        msg = f"Workspaces of different versions cannot be combined: {left_version} != {right_version}"
+        raise exceptions.InvalidWorkspaceOperation(msg)
     return left_version
 
 
@@ -129,9 +128,8 @@ def _join_channels(join, left_channels, right_channels, merge=False):
             c["name"] for c in right_channels
         )
         if common_channels:
-            raise exceptions.InvalidWorkspaceOperation(
-                f"Workspaces cannot have any channels in common with the same name: {common_channels}. You can also try a different join operation: {Workspace.valid_joins}."
-            )
+            msg = f"Workspaces cannot have any channels in common with the same name: {common_channels}. You can also try a different join operation: {Workspace.valid_joins}."
+            raise exceptions.InvalidWorkspaceOperation(msg)
 
     elif join == "outer":
         counted_channels = collections.Counter(
@@ -141,9 +139,8 @@ def _join_channels(join, left_channels, right_channels, merge=False):
             channel for channel, count in counted_channels.items() if count > 1
         ]
         if incompatible_channels:
-            raise exceptions.InvalidWorkspaceOperation(
-                f"Workspaces cannot have channels in common with incompatible structure: {incompatible_channels}. You can also try a different join operation: {Workspace.valid_joins}."
-            )
+            msg = f"Workspaces cannot have channels in common with incompatible structure: {incompatible_channels}. You can also try a different join operation: {Workspace.valid_joins}."
+            raise exceptions.InvalidWorkspaceOperation(msg)
     return joined_channels
 
 
@@ -169,9 +166,8 @@ def _join_observations(join, left_observations, right_observations):
             obs["name"] for obs in right_observations
         )
         if common_observations:
-            raise exceptions.InvalidWorkspaceOperation(
-                f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
-            )
+            msg = f"Workspaces cannot have any observations in common with the same name: {common_observations}. You can also try a different join operation: {Workspace.valid_joins}."
+            raise exceptions.InvalidWorkspaceOperation(msg)
 
     elif join == "outer":
         counted_observations = collections.Counter(
@@ -183,9 +179,8 @@ def _join_observations(join, left_observations, right_observations):
             if count > 1
         ]
         if incompatible_observations:
-            raise exceptions.InvalidWorkspaceOperation(
-                f"Workspaces cannot have observations in common with incompatible structure: {incompatible_observations}. You can also try a different join operation: {Workspace.valid_joins}."
-            )
+            msg = f"Workspaces cannot have observations in common with incompatible structure: {incompatible_observations}. You can also try a different join operation: {Workspace.valid_joins}."
+            raise exceptions.InvalidWorkspaceOperation(msg)
     return joined_observations
 
 
@@ -215,9 +210,8 @@ def _join_parameter_configs(measurement_name, left_parameters, right_parameters)
         parameter for parameter, count in counted_parameter_configs.items() if count > 1
     ]
     if incompatible_parameter_configs:
-        raise exceptions.InvalidWorkspaceOperation(
-            f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
-        )
+        msg = f"Workspaces cannot have a measurement ({measurement_name}) with incompatible parameter configs: {incompatible_parameter_configs}. You can also try a different join operation: {Workspace.valid_joins}."
+        raise exceptions.InvalidWorkspaceOperation(msg)
     return joined_parameter_configs
 
 
@@ -243,9 +237,8 @@ def _join_measurements(join, left_measurements, right_measurements):
             meas["name"] for meas in right_measurements
         )
         if common_measurements:
-            raise exceptions.InvalidWorkspaceOperation(
-                f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
-            )
+            msg = f"Workspaces cannot have any measurements in common with the same name: {common_measurements}. You can also try a different join operation: {Workspace.valid_joins}."
+            raise exceptions.InvalidWorkspaceOperation(msg)
 
     elif join == "outer":
         # need to store a mapping of measurement name to all measurement objects with that name
@@ -260,9 +253,8 @@ def _join_measurements(join, left_measurements, right_measurements):
             if len({measurement["config"]["poi"] for measurement in measurements}) > 1
         ]
         if incompatible_poi:
-            raise exceptions.InvalidWorkspaceOperation(
-                f"Workspaces cannot have the same measurements with incompatible POI: {incompatible_poi}."
-            )
+            msg = f"Workspaces cannot have the same measurements with incompatible POI: {incompatible_poi}."
+            raise exceptions.InvalidWorkspaceOperation(msg)
 
         joined_measurements = []
         for measurement_name, measurements in _measurement_mapping.items():
@@ -312,7 +304,7 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         # run jsonschema validation of input specification against the (provided) schema
         if validate:
-            log.info(f"Validating spec against schema: {self.schema}")
+            log.info("Validating spec against schema: %s", self.schema)
             schema.validate(spec, self.schema, version=self.version)
 
         super().__init__(spec, channels=spec["channels"])
@@ -326,9 +318,10 @@ class Workspace(_ChannelSummaryMixin, dict):
             self.observations[obs["name"]] = obs["data"]
 
         if config_kwargs:
-            raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(config_kwargs)}."
-            )
+            msg = f"Unsupported options were passed in: {list(config_kwargs)}."
+            raise exceptions.Unsupported(msg)
+
+    __hash__ = None  # type: ignore[assignment]
 
     def __eq__(self, other):
         """Equality is defined as equal dict representations."""
@@ -369,10 +362,9 @@ class Workspace(_ChannelSummaryMixin, dict):
         if self.measurement_names:
             if measurement_name is not None:
                 if measurement_name not in self.measurement_names:
-                    log.debug(f"measurements defined: {self.measurement_names}")
-                    raise exceptions.InvalidMeasurement(
-                        f"no measurement by name '{measurement_name:s}' was found in the workspace, pick from one of the valid ones above"
-                    )
+                    log.debug("measurements defined: %s", self.measurement_names)
+                    msg = f"no measurement by name '{measurement_name:s}' was found in the workspace, pick from one of the valid ones above"
+                    raise exceptions.InvalidMeasurement(msg)
                 measurement = self["measurements"][
                     self.measurement_names.index(measurement_name)
                 ]
@@ -388,11 +380,11 @@ class Workspace(_ChannelSummaryMixin, dict):
                 try:
                     measurement = self["measurements"][measurement_index]
                 except IndexError as exc:
-                    raise exceptions.InvalidMeasurement(
-                        f"The measurement index {measurement_index} is out of bounds as only {len(self.measurement_names)} measurement(s) have been defined."
-                    ) from exc
+                    msg = f"The measurement index {measurement_index} is out of bounds as only {len(self.measurement_names)} measurement(s) have been defined."
+                    raise exceptions.InvalidMeasurement(msg) from exc
         else:
-            raise exceptions.InvalidMeasurement("No measurements have been defined.")
+            msg = "No measurements have been defined."
+            raise exceptions.InvalidMeasurement(msg)
 
         schema.validate(measurement, "measurement.json", version=self.version)
         return measurement
@@ -436,7 +428,7 @@ class Workspace(_ChannelSummaryMixin, dict):
         # set poi_name if the user does not provide it
         config_kwargs.setdefault("poi_name", measurement["config"]["poi"])
 
-        log.debug(f"model being created for measurement {measurement['name']:s}")
+        log.debug("model being created for measurement %s", measurement["name"])
 
         modelspec = {
             "channels": self["channels"],
@@ -471,9 +463,8 @@ class Workspace(_ChannelSummaryMixin, dict):
                 operator.iadd, (self.observations[c] for c in model.config.channels), []
             )
         except KeyError:
-            log.error(
+            log.exception(
                 "Invalid channel: the workspace does not have observation data for one of the channels in the model.",
-                exc_info=True,
             )
             raise
         if include_auxdata:
@@ -542,33 +533,28 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         for modifier_type in prune_modifier_types:
             if modifier_type not in dict(self.modifiers).values():
-                raise exceptions.InvalidWorkspaceOperation(
-                    f"{modifier_type} is not one of the modifier types in this workspace."
-                )
+                msg = f"{modifier_type} is not one of the modifier types in this workspace."
+                raise exceptions.InvalidWorkspaceOperation(msg)
 
         for modifier_name in (*prune_modifiers, *rename_modifiers):
             if modifier_name not in dict(self.modifiers):
-                raise exceptions.InvalidWorkspaceOperation(
-                    f"{modifier_name} is not one of the modifiers in this workspace."
-                )
+                msg = f"{modifier_name} is not one of the modifiers in this workspace."
+                raise exceptions.InvalidWorkspaceOperation(msg)
 
         for sample_name in (*prune_samples, *rename_samples):
             if sample_name not in self.samples:
-                raise exceptions.InvalidWorkspaceOperation(
-                    f"{sample_name} is not one of the samples in this workspace."
-                )
+                msg = f"{sample_name} is not one of the samples in this workspace."
+                raise exceptions.InvalidWorkspaceOperation(msg)
 
         for channel_name in (*prune_channels, *rename_channels):
             if channel_name not in self.channels:
-                raise exceptions.InvalidWorkspaceOperation(
-                    f"{channel_name} is not one of the channels in this workspace."
-                )
+                msg = f"{channel_name} is not one of the channels in this workspace."
+                raise exceptions.InvalidWorkspaceOperation(msg)
 
         for measurement_name in (*prune_measurements, *rename_measurements):
             if measurement_name not in self.measurement_names:
-                raise exceptions.InvalidWorkspaceOperation(
-                    f"{measurement_name} is not one of the measurements in this workspace."
-                )
+                msg = f"{measurement_name} is not one of the measurements in this workspace."
+                raise exceptions.InvalidWorkspaceOperation(msg)
 
         newspec = {
             "channels": [
@@ -745,14 +731,12 @@ class Workspace(_ChannelSummaryMixin, dict):
 
         """
         if join not in Workspace.valid_joins:
-            raise ValueError(
-                f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
-            )
+            msg = f"Workspaces must be joined using one of the valid join operations ({Workspace.valid_joins}); not {join}"
+            raise ValueError(msg)
 
         if merge_channels and join not in ["outer", "left outer", "right outer"]:
-            raise ValueError(
-                f"You can only merge channels using the 'outer', 'left outer', or 'right outer' join operations; not {join}"
-            )
+            msg = f"You can only merge channels using the 'outer', 'left outer', or 'right outer' join operations; not {join}"
+            raise ValueError(msg)
 
         if join in ["left outer", "right outer"]:
             log.warning(
@@ -821,7 +805,7 @@ class Workspace(_ChannelSummaryMixin, dict):
             ~pyhf.workspace.Workspace: A new workspace object
 
         """
-        workspace = copy.deepcopy(dict(channels=model.spec["channels"]))
+        workspace = copy.deepcopy({"channels": model.spec["channels"]})
         workspace["version"] = schema.version
         workspace["measurements"] = [
             {

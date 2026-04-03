@@ -298,7 +298,7 @@ class AsymptoticCalculator:
         self.sqrtqmuA_v = None
         self.fitted_pars = None
 
-    def distributions(self, poi_test):
+    def distributions(self, _poi_test):
         r"""
         Probability distributions of the test statistic, as defined in
         :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
@@ -328,16 +328,16 @@ class AsymptoticCalculator:
 
         """
         if self.sqrtqmuA_v is None:
-            raise RuntimeError("need to call .teststatistic(poi_test) first")
+            msg = "need to call .teststatistic(poi_test) first"
+            raise RuntimeError(msg)
 
         if self.calc_base_dist == "normal":
             cutoff = float("-inf")
         elif self.calc_base_dist == "clipped_normal":
             cutoff = -self.sqrtqmuA_v
         else:
-            raise ValueError(
-                f"unknown base distribution for asymptotics {self.calc_base_dist}"
-            )
+            msg = f"unknown base distribution for asymptotics {self.calc_base_dist}"
+            raise ValueError(msg)
         sb_dist = AsymptoticTestStatDistribution(-self.sqrtqmuA_v, cutoff)
         b_dist = AsymptoticTestStatDistribution(0.0, cutoff)
         return sb_dist, b_dist
@@ -433,14 +433,12 @@ class AsymptoticCalculator:
         else:  # qtilde
 
             def _true_case():
-                teststat = sqrtqmu_v - self.sqrtqmuA_v
-                return teststat
+                return sqrtqmu_v - self.sqrtqmuA_v
 
             def _false_case():
                 qmu = tensorlib.power(sqrtqmu_v, 2)
                 qmu_A = tensorlib.power(self.sqrtqmuA_v, 2)
-                teststat = (qmu - qmu_A) / (2 * self.sqrtqmuA_v)
-                return teststat
+                return (qmu - qmu_A) / (2 * self.sqrtqmuA_v)
 
             # Use '<=' rather than '<' to avoid Issue #1992
             teststat = tensorlib.conditional(
@@ -995,7 +993,7 @@ class ToyCalculator:
 
         """
         teststat_func = utils.get_test_stat(self.test_stat)
-        teststat = teststat_func(
+        return teststat_func(
             poi_test,
             self.data,
             self.pdf,
@@ -1003,4 +1001,3 @@ class ToyCalculator:
             self.par_bounds,
             self.fixed_params,
         )
-        return teststat

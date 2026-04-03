@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import numbers
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Union
 
 import jsonschema
 
@@ -11,7 +12,7 @@ from pyhf.schema import variables
 from pyhf.schema.loader import load_schema
 
 
-def _is_array_or_tensor(checker, instance):
+def _is_array_or_tensor(_checker, instance):
     """
     A helper function for allowing the validation of tensors as list types in schema validation.
 
@@ -39,7 +40,7 @@ def validate(
     spec: Mapping,
     schema_name: str,
     *,
-    version: Union[str, None] = None,
+    version: str | None = None,
     allow_tensors: bool = True,
 ):
     """

@@ -27,7 +27,7 @@ class _BasicPoisson(Generic[T]):
 
     def sample(self, sample_shape: Shape) -> ArrayLike:
         return cast(
-            ArrayLike, poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
+            "ArrayLike", poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
         )
 
     def log_prob(self, value: Tensor[T]) -> ArrayLike:
@@ -42,7 +42,7 @@ class _BasicNormal(Generic[T]):
 
     def sample(self, sample_shape: Shape) -> ArrayLike:
         return cast(
-            ArrayLike,
+            "ArrayLike",
             norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape),
         )
 
@@ -125,7 +125,7 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy ndarray: The values of the error function at the given points.
         """
-        return cast(ArrayLike, special.erf(tensor_in))
+        return cast("ArrayLike", special.erf(tensor_in))
 
     def erfinv(self, tensor_in: Tensor[T]) -> ArrayLike:
         """
@@ -145,7 +145,7 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy ndarray: The values of the inverse of the error function at the given points.
         """
-        return cast(ArrayLike, special.erfinv(tensor_in))
+        return cast("ArrayLike", special.erfinv(tensor_in))
 
     def tile(self, tensor_in: Tensor[T], repeats: int | Sequence[int]) -> ArrayLike:
         """
@@ -208,7 +208,7 @@ class numpy_backend(Generic[T]):
             raise
 
     def outer(self, tensor_in_1: Tensor[T], tensor_in_2: Tensor[T]) -> ArrayLike:
-        return cast(ArrayLike, np.outer(tensor_in_1, tensor_in_2))
+        return cast("ArrayLike", np.outer(tensor_in_1, tensor_in_2))
 
     def gather(self, tensor: Tensor[T], indices: NDArray[np.integer[T]]) -> ArrayLike:
         return tensor[indices]
@@ -245,9 +245,7 @@ class numpy_backend(Generic[T]):
         try:
             dtype_obj = self.dtypemap[dtype]
         except KeyError:
-            log.error(
-                "Invalid dtype: dtype must be float, int, or bool.", exc_info=True
-            )
+            log.exception("Invalid dtype: dtype must be float, int, or bool.")
             raise
 
         return np.asarray(tensor_in, dtype=dtype_obj)
@@ -256,7 +254,7 @@ class numpy_backend(Generic[T]):
         return np.sum(tensor_in, axis=axis)
 
     def product(self, tensor_in: Tensor[T], axis: Shape | None = None) -> ArrayLike:
-        return cast(ArrayLike, np.prod(tensor_in, axis=axis))
+        return cast("ArrayLike", np.prod(tensor_in, axis=axis))
 
     def abs(self, tensor: Tensor[T]) -> ArrayLike:
         return np.abs(tensor)
@@ -265,9 +263,8 @@ class numpy_backend(Generic[T]):
         try:
             dtype_obj = self.dtypemap[dtype]
         except KeyError:
-            log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap)}.",
-                exc_info=True,
+            log.exception(
+                "Invalid dtype: dtype must be one of %s.", list(self.dtypemap)
             )
             raise
 
@@ -277,9 +274,8 @@ class numpy_backend(Generic[T]):
         try:
             dtype_obj = self.dtypemap[dtype]
         except KeyError:
-            log.error(
-                f"Invalid dtype: dtype must be one of {list(self.dtypemap)}.",
-                exc_info=True,
+            log.exception(
+                "Invalid dtype: dtype must be one of %s.", list(self.dtypemap)
             )
             raise
 
@@ -345,7 +341,7 @@ class numpy_backend(Generic[T]):
         .. version-changed:: 0.8.0
            Argument renamed from *interpolation* to *method* to align with NumPy.
         """
-        return cast(ArrayLike, np.percentile(tensor_in, q, axis=axis, method=method))
+        return cast("ArrayLike", np.percentile(tensor_in, q, axis=axis, method=method))
 
     def stack(self, sequence: Sequence[Tensor[T]], axis: int = 0) -> ArrayLike:
         return np.stack(sequence, axis=axis)
@@ -392,7 +388,7 @@ class numpy_backend(Generic[T]):
         return np.broadcast_arrays(*args)
 
     def shape(self, tensor: Tensor[T]) -> Shape:
-        return cast(Shape, tensor.shape)
+        return cast("Shape", tensor.shape)
 
     def reshape(self, tensor: Tensor[T], newshape: Shape) -> ArrayLike:
         return np.reshape(tensor, newshape)
@@ -434,10 +430,10 @@ class numpy_backend(Generic[T]):
         Returns:
             tensor: the calculation based on the Einstein summation convention
         """
-        return cast(ArrayLike, np.einsum(subscripts, *operands))
+        return cast("ArrayLike", np.einsum(subscripts, *operands))
 
     def poisson_logpdf(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
-        return cast(ArrayLike, xlogy(n, lam) - lam - gammaln(n + 1.0))
+        return cast("ArrayLike", xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def poisson(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
         r"""
@@ -481,7 +477,7 @@ class numpy_backend(Generic[T]):
         """
         _n = np.asarray(n)
         _lam = np.asarray(lam)
-        return cast(ArrayLike, np.exp(xlogy(_n, _lam) - _lam - gammaln(_n + 1)))
+        return cast("ArrayLike", np.exp(xlogy(_n, _lam) - _lam - gammaln(_n + 1)))
 
     def normal_logpdf(self, x: Tensor[T], mu: Tensor[T], sigma: Tensor[T]) -> ArrayLike:
         # this is much faster than
@@ -491,7 +487,7 @@ class numpy_backend(Generic[T]):
         root2pi = np.sqrt(2 * np.pi)
         prefactor = -np.log(sigma * root2pi)
         summand = -np.square(np.divide((x - mu), (root2 * sigma)))
-        return cast(ArrayLike, prefactor + summand)
+        return cast("ArrayLike", prefactor + summand)
 
     # def normal_logpdf(self, x, mu, sigma):
     #     return norm.logpdf(x, loc=mu, scale=sigma)
@@ -522,7 +518,7 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy float: Value of Normal(x|mu, sigma)
         """
-        return cast(ArrayLike, norm.pdf(x, loc=mu, scale=sigma))
+        return cast("ArrayLike", norm.pdf(x, loc=mu, scale=sigma))
 
     def normal_cdf(
         self, x: Tensor[T], mu: float | Tensor[T] = 0, sigma: float | Tensor[T] = 1
@@ -548,7 +544,7 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy float: The CDF
         """
-        return cast(ArrayLike, norm.cdf(x, loc=mu, scale=sigma))
+        return cast("ArrayLike", norm.cdf(x, loc=mu, scale=sigma))
 
     def poisson_dist(self, rate: Tensor[T]) -> _BasicPoisson[T]:
         r"""
@@ -648,4 +644,4 @@ class numpy_backend(Generic[T]):
         .. versionadded:: 0.7.0
         """
         # TODO: Casting needed for Python 3.10 mypy but not Python 3.13?
-        return cast(ArrayLike, tensor_in.transpose())
+        return cast("ArrayLike", tensor_in.transpose())

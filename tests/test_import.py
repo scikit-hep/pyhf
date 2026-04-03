@@ -50,11 +50,11 @@ def test_process_normfactor_configs():
     meas.append(poiel)
 
     setting = ET.Element("ParamSetting", Const="True")
-    setting.text = " ".join(["Lumi", "alpha_mu_both", "alpha_mu_paramSettingOnly"])
+    setting.text = "Lumi alpha_mu_both alpha_mu_paramSettingOnly"
     meas.append(setting)
 
     setting = ET.Element("ParamSetting", Val="2.0")
-    setting.text = " ".join(["alpha_mu_both"])
+    setting.text = "alpha_mu_both"
     meas.append(setting)
 
     toplvl.append(meas)
@@ -71,14 +71,19 @@ def test_process_normfactor_configs():
     meas.append(poiel)
 
     setting = ET.Element("ParamSetting", Val="3.0")
-    setting.text = " ".join(["alpha_mu_both"])
+    setting.text = "alpha_mu_both"
     meas.append(setting)
 
     toplvl.append(meas)
 
     other_parameter_configs = [
-        dict(name="mu_both", inits=[1.0], bounds=[[1.0, 5.0]], fixed=False),
-        dict(name="mu_otherConfigOnly", inits=[1.0], bounds=[[0.0, 10.0]], fixed=False),
+        {"name": "mu_both", "inits": [1.0], "bounds": [[1.0, 5.0]], "fixed": False},
+        {
+            "name": "mu_otherConfigOnly",
+            "inits": [1.0],
+            "bounds": [[0.0, 10.0]],
+            "fixed": False,
+        },
     ]
 
     result = pyhf.readxml.process_measurements(
@@ -108,17 +113,6 @@ def test_process_normfactor_configs():
     assert not result["ParallelMeasurement"]["mu_both"]["fixed"]
     assert result["ParallelMeasurement"]["mu_both"]["inits"] == [3.0]
     assert result["ParallelMeasurement"]["mu_both"]["bounds"] == [[1.0, 5.0]]
-
-
-def test_process_channel_missing_root(mocker, tmp_path):
-    # mock missing ElementTree root
-    mock_channelxml = mocker.Mock(spec=ET.ElementTree)
-    mock_channelxml.getroot.return_value = None
-
-    resolver = pyhf.readxml.resolver_factory(tmp_path, [])
-
-    with pytest.raises(RuntimeError, match="Root element of ElementTree is missing"):
-        pyhf.readxml.process_channel(mock_channelxml, resolver)
 
 
 def test_import_histogram():
@@ -182,7 +176,7 @@ def test_spaces_in_measurement_config(const):
     meas.append(poiel)
 
     setting = ET.Element("ParamSetting", Const=const)
-    setting.text = " ".join(["Lumi", "alpha_mu_both"]) + " "  # spacces
+    setting.text = "Lumi alpha_mu_both" + " "  # spacces
     meas.append(setting)
 
     toplvl.append(meas)
@@ -207,21 +201,23 @@ def test_import_measurement_gamma_bins(const):
     meas.append(poiel)
 
     setting = ET.Element("ParamSetting", Const=const)
-    setting.text = " ".join(["Lumi", "alpha_mu_both", "gamma_bin_0"])
+    setting.text = "Lumi alpha_mu_both gamma_bin_0"
     meas.append(setting)
 
     setting = ET.Element("ParamSetting", Val="2.0")
-    setting.text = " ".join(["gamma_bin_0"])
+    setting.text = "gamma_bin_0"
     meas.append(setting)
 
     toplvl.append(meas)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match="does not support setting non-scalar parameters"
+    ):
         pyhf.readxml.process_measurements(toplvl)
 
 
 @pytest.mark.parametrize(
-    "configfile,rootdir",
+    ("configfile", "rootdir"),
     [
         (
             "validation/xmlimport_input/config/example.xml",

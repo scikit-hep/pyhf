@@ -1,11 +1,11 @@
 import json
 
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pytest
 from matplotlib.figure import Figure
 
-import pyhf.contrib.viz.brazil as brazil
+from pyhf.contrib.viz import brazil
 
 # Tests with the @pytest.mark.mpl_image_compare decorator compare against
 # reference images generated via:
@@ -70,7 +70,7 @@ def test_plot_results(datadir):
 def test_plot_results_no_axis(datadir):
     data = json.load(datadir.joinpath("hypotest_results.json").open(encoding="utf-8"))
 
-    matplotlib.use("agg")  # Use non-gui backend
+    mpl.use("agg")  # Use non-gui backend
     fig, ax = plt.subplots()
     ax.set_yscale("log")  # Also test log y detection
     brazil.plot_results(data["testmus"], data["results"], test_size=0.05)
@@ -172,7 +172,7 @@ def test_plot_results_components_data_structure(datadir):
 
     fig = Figure()
     ax = fig.subplots()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="should have len of 3"):
         brazil.plot_results(
             data["testmus"], data["results"], test_size=0.05, ax=ax, components=True
         )

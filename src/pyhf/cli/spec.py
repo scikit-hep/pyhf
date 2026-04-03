@@ -2,6 +2,7 @@
 
 import json
 import logging
+from pathlib import Path
 
 import click
 
@@ -24,7 +25,7 @@ def cli():
     default=None,
 )
 @click.option("--measurement", default=None)
-def inspect(workspace, output_file, measurement):
+def inspect(workspace, output_file, measurement):  # noqa: ARG001
     """
     Inspect a pyhf JSON document.
 
@@ -101,7 +102,7 @@ def inspect(workspace, output_file, measurement):
     maxlen_channels = max(map(len, ws.channels))
     maxlen_samples = max(map(len, ws.samples))
     maxlen_parameters = max(map(len, [p for p, _ in result["parameters"]]))
-    maxlen_measurements = max(map(lambda x: len(x[0]), result["measurements"]))
+    maxlen_measurements = max(len(x[0]) for x in result["measurements"])
     maxlen = max(
         [maxlen_channels, maxlen_samples, maxlen_parameters, maxlen_measurements]
     )
@@ -159,9 +160,9 @@ def inspect(workspace, output_file, measurement):
     click.echo()
 
     if output_file:
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with Path(output_file).open("w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug("Written to %s", output_file)
 
 
 @cli.command()
@@ -205,9 +206,9 @@ def prune(
     if output_file is None:
         click.echo(json.dumps(pruned_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with Path(output_file).open("w+", encoding="utf-8") as out_file:
             json.dump(pruned_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug("Written to %s", output_file)
 
 
 @cli.command()
@@ -268,9 +269,9 @@ def rename(workspace, output_file, channel, sample, modifier, measurement):
     if output_file is None:
         click.echo(json.dumps(renamed_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with Path(output_file).open("w+", encoding="utf-8") as out_file:
             json.dump(renamed_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug("Written to %s", output_file)
 
 
 @cli.command()
@@ -314,9 +315,9 @@ def combine(workspace_one, workspace_two, join, output_file, merge_channels):
     if output_file is None:
         click.echo(json.dumps(combined_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with Path(output_file).open("w+", encoding="utf-8") as out_file:
             json.dump(combined_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug("Written to %s", output_file)
 
 
 @cli.command()
@@ -403,6 +404,6 @@ def sort(workspace, output_file):
     if output_file is None:
         click.echo(json.dumps(sorted_ws, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with Path(output_file).open("w+", encoding="utf-8") as out_file:
             json.dump(sorted_ws, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file}")
+        log.debug("Written to %s", output_file)

@@ -40,7 +40,7 @@ def get_json_from_tarfile():
     return _get_json_from_tarfile
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def isolate_modules():
     """
     This fixture isolates the sys.modules imported in case you need to mess around with them and do not want to break other tests.
@@ -52,7 +52,7 @@ def isolate_modules():
     sys.modules.update(CACHE_MODULES)
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(autouse=True)
 def reset_events():
     """
     This fixture is automatically run to clear out the events registered before and after a test function runs.
@@ -64,7 +64,7 @@ def reset_events():
     pyhf.events.__disabled_events.clear()
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(autouse=True)
 def reset_backend():
     """
     This fixture is automatically run to reset the backend before and after a test function runs.
@@ -75,13 +75,12 @@ def reset_backend():
 
 
 @pytest.fixture(
-    scope="function",
     params=[
-        (("numpy_backend", dict()), ("scipy_optimizer", dict())),
-        (("jax_backend", dict()), ("scipy_optimizer", dict())),
+        (("numpy_backend", {}), ("scipy_optimizer", {})),
+        (("jax_backend", {}), ("scipy_optimizer", {})),
         (
-            ("numpy_backend", dict(poisson_from_normal=True)),
-            ("minuit_optimizer", dict()),
+            ("numpy_backend", {"poisson_from_normal": True}),
+            ("minuit_optimizer", {}),
         ),
     ],
     ids=["numpy", "jax", "numpy_minuit"],
@@ -107,9 +106,8 @@ def backend(request):
     )
 
     if skip_backend and (param_id in only_backends):
-        raise ValueError(
-            f"Must specify skip_{param_id} or only_{param_id} but not both!"
-        )
+        msg = f"Must specify skip_{param_id} or only_{param_id} but not both!"
+        raise ValueError(msg)
 
     if disable_backend:
         pytest.skip(
@@ -144,19 +142,18 @@ def backend(request):
     # actual execution here, after all checks is done
     pyhf.set_backend(tensor, optimizer)
 
-    yield (tensor, optimizer)
+    return (tensor, optimizer)
 
 
 @pytest.fixture(
-    scope="function",
     params=[0, 1, 2, 4],
     ids=["interpcode0", "interpcode1", "interpcode2", "interpcode4"],
 )
 def interpcode(request):
-    yield request.param
+    return request.param
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def datadir(tmp_path, request):
     """
     Fixture responsible for searching a folder with the same name of test

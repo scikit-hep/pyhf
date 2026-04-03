@@ -21,11 +21,10 @@ def generate_source_static(n_bins):
     bkgerr = [10.0] * n_bins
     sig = [30.0] * n_bins
 
-    source = {
+    return {
         "binning": binning,
         "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
-    return source
 
 
 def generate_source_poisson(n_bins):
@@ -46,11 +45,10 @@ def generate_source_poisson(n_bins):
     bkgerr = np.random.poisson(10.0, n_bins).tolist()
     sig = np.random.poisson(30.0, n_bins).tolist()
 
-    source = {
+    return {
         "binning": binning,
         "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
-    return source
 
 
 def hypotest(pdf, data):

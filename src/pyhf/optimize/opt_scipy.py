@@ -34,12 +34,12 @@ class scipy_optimizer(OptimizerMixin):
 
     def _get_minimizer(
         self,
-        objective_and_grad,
-        init_pars,
-        init_bounds,
-        fixed_vals=None,
-        do_grad=False,
-        par_names=None,
+        objective_and_grad,  # noqa: ARG002
+        init_pars,  # noqa: ARG002
+        init_bounds,  # noqa: ARG002
+        fixed_vals=None,  # noqa: ARG002
+        do_grad=False,  # noqa: ARG002
+        par_names=None,  # noqa: ARG002
     ):
         return scipy.optimize.minimize
 
@@ -79,9 +79,8 @@ class scipy_optimizer(OptimizerMixin):
         tolerance = options.pop("tolerance", self.tolerance)
         solver_options = options.pop("solver_options", self.solver_options)
         if options:
-            raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(options)}."
-            )
+            msg = f"Unsupported options were passed in: {list(options)}."
+            raise exceptions.Unsupported(msg)
 
         fixed_vals = fixed_vals or []
         indices = [i for i, _ in fixed_vals]

@@ -7,7 +7,7 @@ import scipy.stats
 import pyhf
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def hypotest_args():
     pdf = pyhf.simplemodels.uncorrelated_background(
         signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
@@ -19,7 +19,7 @@ def hypotest_args():
 
 def check_uniform_type(in_list):
     return all(
-        [isinstance(item, type(pyhf.tensorlib.astensor(item))) for item in in_list]
+        isinstance(item, type(pyhf.tensorlib.astensor(item))) for item in in_list
     )
 
 
@@ -258,10 +258,14 @@ def test_hypotest_poi_outofbounds(tmp_path, hypotest_args):
     )
     data = [51, 48] + pdf.config.auxdata
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"fit initialization parameter.+lies outside of its bounds"
+    ):
         pyhf.infer.hypotest(-1.0, data, pdf)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"fit initialization parameter.+lies outside of its bounds"
+    ):
         pyhf.infer.hypotest(10.1, data, pdf)
 
 
@@ -330,10 +334,10 @@ def test_hypotest_return_expected_set(tmp_path, hypotest_args, test_stat):
 
 
 @pytest.mark.parametrize(
-    "calctype,kwargs,expected_type",
+    ("calctype", "kwargs", "expected_type"),
     [
         ("asymptotics", {}, pyhf.infer.calculators.AsymptoticCalculator),
-        ("toybased", dict(ntoys=1), pyhf.infer.calculators.ToyCalculator),
+        ("toybased", {"ntoys": 1}, pyhf.infer.calculators.ToyCalculator),
     ],
 )
 @pytest.mark.parametrize("return_tail_probs", [True, False])
@@ -481,8 +485,8 @@ def test_clipped_normal_calc(hypotest_args):
     )
     assert expected_clipped_normal[-1] < expected_normal[-1]
 
-    with pytest.raises(ValueError):
-        _ = pyhf.infer.hypotest(
+    with pytest.raises(ValueError, match="unknown base distribution for asymptotics"):
+        pyhf.infer.hypotest(
             mu_test,
             data,
             pdf,
@@ -501,7 +505,7 @@ def test_calculator_distributions_without_teststatistic(test_stat):
 
 
 @pytest.mark.parametrize(
-    "nsigma,expected_pval",
+    ("nsigma", "expected_pval"),
     [
         # values tabulated using ROOT.RooStats.SignificanceToPValue
         # they are consistent with relative difference < 1e-14 with scipy.stats.norm.sf

@@ -6,7 +6,7 @@ import pytest
 import pyhf
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def model_setup(backend):
     np.random.seed(0)
     n_bins = 100

@@ -52,10 +52,11 @@ try:
             valid_hosts = ["www.hepdata.net", "doi.org"]
             netloc = urlsplit(archive_url).netloc
             if netloc not in valid_hosts:
-                raise exceptions.InvalidArchiveHost(
+                msg = (
                     f"{netloc} is not an approved archive host: {', '.join(str(host) for host in valid_hosts)}\n"
-                    + "To download an archive from this host use the --force option."
+                    "To download an archive from this host use the --force option."
                 )
+                raise exceptions.InvalidArchiveHost(msg)
 
         # c.f. https://github.com/scikit-hep/pyhf/issues/1491
         # > Use content negotiation at the landing page for the resource that
@@ -70,62 +71,62 @@ try:
             archive_url, headers={"Accept": "application/x-tar, application/zip"}
         ) as response:
             if response.status_code != 200:
-                raise exceptions.InvalidArchive(
+                msg = (
                     f"{archive_url} gives a response code of {response.status_code}.\n"
-                    + "There is either something temporarily wrong with the archive host"
-                    + f" or {archive_url} is an invalid URL."
+                    "There is either something temporarily wrong with the archive host"
+                    f" or {archive_url} is an invalid URL."
                 )
+                raise exceptions.InvalidArchive(msg)
 
             if compress:
-                with open(output_directory, "wb") as archive:
+                with Path(output_directory).open("wb") as archive:
                     archive.write(response.content)
-            else:
-                if tarfile.is_tarfile(BytesIO(response.content)):
-                    # Use transparent compression to allow for .tar or .tar.gz
-                    with tarfile.open(
-                        mode="r:*", fileobj=BytesIO(response.content)
-                    ) as archive:
-                        # TODO: Simplify after pyhf is Python 3.12+ only
-                        # c.f. https://docs.python.org/3.12/library/tarfile.html#extraction-filters
-                        if hasattr(tarfile, "data_filter"):
-                            archive.extractall(output_directory, filter="data")
-                        else:
-                            archive.extractall(output_directory)
-                elif zipfile.is_zipfile(BytesIO(response.content)):
-                    output_directory = Path(output_directory)
-                    if output_directory.exists():
-                        rmtree(output_directory)
-                    with zipfile.ZipFile(BytesIO(response.content)) as archive:
+            elif tarfile.is_tarfile(BytesIO(response.content)):
+                # Use transparent compression to allow for .tar or .tar.gz
+                with tarfile.open(
+                    mode="r:*", fileobj=BytesIO(response.content)
+                ) as archive:
+                    # TODO: Simplify after pyhf is Python 3.12+ only
+                    # c.f. https://docs.python.org/3.12/library/tarfile.html#extraction-filters
+                    if hasattr(tarfile, "data_filter"):
+                        archive.extractall(output_directory, filter="data")
+                    else:
                         archive.extractall(output_directory)
+            elif zipfile.is_zipfile(BytesIO(response.content)):
+                output_directory = Path(output_directory)
+                if output_directory.exists():
+                    rmtree(output_directory)
+                with zipfile.ZipFile(BytesIO(response.content)) as archive:
+                    archive.extractall(output_directory)
 
-                        # zipfile.ZipFile.extractall extracts to a directory
-                        # below a target directory, so to match the extraction
-                        # path of tarfile.TarFile.extractall move the extracted
-                        # directory to a temporary path and then replace the
-                        # output directory target with the contents at the
-                        # temporary path.
-                        # The directory is moved instead of being extracted one
-                        # directory up and then renamed as the name of the
-                        # zipfile directory is set at zipfile creation time and
-                        # isn't knowable in advance.
-                        child_path = next(iter(output_directory.iterdir()))
-                        _tmp_path = output_directory.parent.joinpath(
-                            Path(output_directory.name + "__tmp__")
-                        )
-                        child_path.replace(_tmp_path)
-                        # the zipfile could contain remnant __MACOSX directories
-                        # from creation time
-                        rmtree(output_directory)
-                        _tmp_path.replace(output_directory)
-                else:
-                    raise exceptions.InvalidArchive(
-                        f"The archive downloaded from {archive_url} is not a tarfile"
-                        + " or a zipfile and so can not be opened as one."
+                    # zipfile.ZipFile.extractall extracts to a directory
+                    # below a target directory, so to match the extraction
+                    # path of tarfile.TarFile.extractall move the extracted
+                    # directory to a temporary path and then replace the
+                    # output directory target with the contents at the
+                    # temporary path.
+                    # The directory is moved instead of being extracted one
+                    # directory up and then renamed as the name of the
+                    # zipfile directory is set at zipfile creation time and
+                    # isn't knowable in advance.
+                    child_path = next(iter(output_directory.iterdir()))
+                    _tmp_path = output_directory.parent.joinpath(
+                        Path(output_directory.name + "__tmp__")
                     )
+                    child_path.replace(_tmp_path)
+                    # the zipfile could contain remnant __MACOSX directories
+                    # from creation time
+                    rmtree(output_directory)
+                    _tmp_path.replace(output_directory)
+            else:
+                msg = (
+                    f"The archive downloaded from {archive_url} is not a tarfile"
+                    " or a zipfile and so can not be opened as one."
+                )
+                raise exceptions.InvalidArchive(msg)
 
 except ModuleNotFoundError:
-    log.error(
+    log.exception(
         "\nInstallation of the contrib extra is required to use pyhf.contrib.utils.download"
-        + "\nPlease install with: python -m pip install 'pyhf[contrib]'\n",
-        exc_info=True,
+        "\nPlease install with: python -m pip install 'pyhf[contrib]'\n",
     )

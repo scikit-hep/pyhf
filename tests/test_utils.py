@@ -4,7 +4,7 @@ import pyhf
 
 
 @pytest.mark.parametrize(
-    "opts,obj",
+    ("opts", "obj"),
     [
         (["a=10"], {"a": 10}),
         (["b=test"], {"b": "test"}),

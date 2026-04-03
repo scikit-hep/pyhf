@@ -45,6 +45,6 @@ def cli(shell):
     )
     click.echo(
         "and then source your shell configuration or restart your shell."
-        + "\nPressing tab twice (<TAB><TAB>) will show all available subcommands."
-        + "\nOptions are only listed if at least a dash has been entered (-<TAB><TAB>)."
+        "\nPressing tab twice (<TAB><TAB>) will show all available subcommands."
+        "\nOptions are only listed if at least a dash has been entered (-<TAB><TAB>)."
     )

@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -356,8 +357,8 @@ def test_pdf_integration_shapesys_zeros(backend):
 
 @pytest.mark.only_numpy
 def test_pdf_integration_histosys(backend):
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
@@ -438,8 +439,8 @@ def test_pdf_integration_histosys(backend):
 
 
 def test_pdf_integration_normsys(backend):
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
@@ -502,8 +503,8 @@ def test_pdf_integration_normsys(backend):
 
 @pytest.mark.only_numpy
 def test_pdf_integration_shapesys(backend):
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
@@ -628,8 +629,8 @@ def test_invalid_modifier_name_resuse():
 
 
 def test_override_paramset_defaults():
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
@@ -664,8 +665,8 @@ def test_override_paramset_defaults():
 
 
 def test_override_paramsets_incorrect_num_parameters():
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
     spec = {
@@ -790,7 +791,7 @@ def test_sample_wrong_bins():
 
 
 @pytest.mark.parametrize(
-    "measurements, msettings",
+    ("measurements", "msettings"),
     [
         (
             None,

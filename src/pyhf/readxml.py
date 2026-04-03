@@ -98,7 +98,7 @@ def extract_error(hist: uproot.behaviors.TH1.TH1) -> list[float]:
     """
 
     variance = hist.variances() if hist.weighted else hist.to_numpy()[0]
-    return cast(list[float], np.sqrt(variance).tolist())
+    return cast("list[float]", np.sqrt(variance).tolist())
 
 
 def import_root_histogram(
@@ -122,16 +122,15 @@ def import_root_histogram(
     else:
         f, keys = filecache[fullpath]
 
-    fullname = "/".join([path, name])
+    fullname = f"{path}/{name}"
 
     if name in keys:
         hist = f[name]
     elif fullname in keys:
         hist = f[fullname]
     else:
-        raise KeyError(
-            f"Both {name} and {fullname} were tried and not found in {fullpath}"
-        )
+        msg = f"Both {name} and {fullname} were tried and not found in {fullpath}"
+        raise KeyError(msg)
     return hist.to_numpy()[0].tolist(), extract_error(hist)
 
 
@@ -228,7 +227,8 @@ def process_sample(
                 )
                 staterr = np.multiply(extstat, data).tolist()
             if not staterr:
-                raise RuntimeError("cannot determine stat error.")
+                msg = "cannot determine stat error."
+                raise RuntimeError(msg)
             modifier_staterror: StatError = {
                 "name": f"staterror_{channel_name}",
                 "type": "staterror",
@@ -290,9 +290,8 @@ def process_data(
     histoname = sample.attrib["HistoName"]
 
     if inputfile == "" or histoname == "":
-        raise NotImplementedError(
-            "Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566"
-        )
+        msg = "Conversion of workspaces without data is currently not supported.\nSee https://github.com/scikit-hep/pyhf/issues/566"
+        raise NotImplementedError(msg)
 
     data, _ = import_root_histogram(resolver, inputfile, histopath, histoname)
     return data
@@ -305,8 +304,6 @@ def process_channel(
     progress: Progress | None = None,
 ) -> tuple[str, list[float], list[Sample], list[Parameter]]:
     channel = channelxml.getroot()
-    if channel is None:
-        raise RuntimeError("Root element of ElementTree is missing.")
 
     inputfile = channel.attrib.get("InputFile", "")
     histopath = channel.attrib.get("HistoPath", "")
@@ -319,7 +316,8 @@ def process_channel(
     if data:
         parsed_data = process_data(data[0], resolver, inputfile, histopath)
     else:
-        raise RuntimeError(f"Channel {channel_name} is missing data. See issue #1911.")
+        msg = f"Channel {channel_name} is missing data. See issue #1911."
+        raise RuntimeError(msg)
 
     if progress is not None and track_progress:
         task_id = progress.add_task("[cyan]  - processing samples", total=len(samples))
@@ -369,7 +367,7 @@ def process_measurements(
 
     """
     results: list[Measurement] = []
-    other_parameter_configs = other_parameter_configs if other_parameter_configs else []
+    other_parameter_configs = other_parameter_configs or []
 
     for x in toplvl.findall("Measurement"):
         parameter_configs_map: MutableMapping[str, Parameter] = {
@@ -382,9 +380,8 @@ def process_measurements(
 
         poi = x.find("POI")
         if poi is None:
-            raise RuntimeError(
-                f"Measurement {measurement_name} is missing POI specification"
-            )
+            msg = f"Measurement {measurement_name} is missing POI specification"
+            raise RuntimeError(msg)
 
         result: Measurement = {
             "name": measurement_name,
@@ -415,9 +412,8 @@ def process_measurements(
                 for param_name in param.text.strip().split(" "):
                     param_interpretation = compat.interpret_rootname(param_name)  # type: ignore[no-untyped-call]
                     if not param_interpretation["is_scalar"]:
-                        raise ValueError(
-                            f'pyhf does not support setting non-scalar parameters ("gammas")  constant, such as for {param_name}.'
-                        )
+                        msg = f'pyhf does not support setting non-scalar parameters ("gammas")  constant, such as for {param_name}.'
+                        raise ValueError(msg)
                     if param_interpretation["name"] == "lumi":
                         result["config"]["parameters"][0].update(overall_param_obj)  # type: ignore[typeddict-item]
                     else:
@@ -444,12 +440,11 @@ def dedupe_parameters(parameters: Sequence[Parameter]) -> list[Parameter]:
         parameter_list = duplicates[parname]
         if len(parameter_list) == 1:
             continue
-        elif any(p != parameter_list[0] for p in parameter_list[1:]):
+        if any(p != parameter_list[0] for p in parameter_list[1:]):
             for p in parameter_list:
                 log.warning(p)
-            raise RuntimeError(
-                f"cannot import workspace due to incompatible parameter configurations for {parname:s}."
-            )
+            msg = f"cannot import workspace due to incompatible parameter configurations for {parname:s}."
+            raise RuntimeError(msg)
     # no errors raised, de-dupe and return
     return list({v["name"]: v for v in parameters}.values())
 
@@ -532,9 +527,8 @@ def parse(
         schema.validate(result, "workspace.json")
     except exceptions.InvalidSpecification as exc:
         if validation_as_error:
-            raise exc
-        else:
-            log.warning(exc)
+            raise
+        log.warning(exc)
     return result
 
 

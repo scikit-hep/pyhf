@@ -1,3 +1,4 @@
+import contextlib
 import sys
 
 import pytest
@@ -29,10 +30,8 @@ def test_missing_backends(isolate_modules, param):
         None,
     )
 
-    try:
+    with contextlib.suppress(AttributeError):
         delattr(pyhf.tensor, module_name)
-    except AttributeError:
-        pass
 
     with expectation:
         getattr(pyhf.tensor, module_name)
@@ -68,10 +67,8 @@ def test_missing_optimizer(isolate_modules, param):
         sys.modules[f"pyhf.optimize.{import_name}"],
         None,
     )
-    try:
+    with contextlib.suppress(AttributeError):
         delattr(pyhf.optimize, module_name)
-    except AttributeError:
-        pass
 
     with expectation:
         getattr(pyhf.optimize, module_name)

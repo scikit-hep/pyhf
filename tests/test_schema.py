@@ -17,7 +17,7 @@ def test_get_schema(version, schema):
 
 
 def test_load_missing_schema():
-    with pytest.raises(IOError):
+    with pytest.raises(pyhf.exceptions.SchemaNotFound, match="fake_schema\.json"):
         pyhf.schema.load_schema("fake_schema.json")
 
 
@@ -48,18 +48,18 @@ def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
     old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / "customschema"
 
-    with pytest.raises(pyhf.exceptions.SchemaNotFound):
-        with open(
-            datadir / "customschema" / "custom.json", encoding="utf-8"
-        ) as spec_file:
-            pyhf.Workspace(json.load(spec_file))
+    with (
+        pytest.raises(pyhf.exceptions.SchemaNotFound),
+        (datadir / "customschema" / "custom.json").open(encoding="utf-8") as spec_file,
+    ):
+        pyhf.Workspace(json.load(spec_file))
 
     pyhf.schema(new_path)
     assert old_path != pyhf.schema.path
     assert new_path == pyhf.schema.path
     assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
-    with open(new_path / "custom.json", encoding="utf-8") as spec_file:
+    with (new_path / "custom.json").open(encoding="utf-8") as spec_file:
         assert pyhf.Workspace(json.load(spec_file))
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
 
@@ -77,7 +77,7 @@ def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_g
         assert new_path == pyhf.schema.path
         assert pyhf.schema.variables.SCHEMA_CACHE is not old_cache
         assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
-        with open(new_path / "custom.json", encoding="utf-8") as spec_file:
+        with (new_path / "custom.json").open(encoding="utf-8") as spec_file:
             assert pyhf.Workspace(json.load(spec_file))
         assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
     assert old_path == pyhf.schema.path
@@ -93,12 +93,11 @@ def test_schema_changeable_context_error(
     old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / "customschema"
 
-    with pytest.raises(ZeroDivisionError):
-        with pyhf.schema(new_path):
-            # this populates the current cache
-            with open(new_path / "custom.json", encoding="utf-8") as spec_file:
-                pyhf.Workspace(json.load(spec_file))
-            raise ZeroDivisionError()
+    with pytest.raises(ZeroDivisionError), pyhf.schema(new_path):
+        # this populates the current cache
+        with (new_path / "custom.json").open(encoding="utf-8") as spec_file:
+            pyhf.Workspace(json.load(spec_file))
+        raise ZeroDivisionError
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
@@ -575,7 +574,7 @@ def test_jsonpatch_fail(patch):
 
 @pytest.mark.parametrize("patchset_file", ["patchset_good.json"])
 def test_patchset(datadir, patchset_file):
-    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
+    with datadir.joinpath(patchset_file).open(encoding="utf-8") as patch_file:
         patchset = json.load(patch_file)
     pyhf.schema.validate(patchset, "patchset.json")
 
@@ -596,7 +595,7 @@ def test_patchset(datadir, patchset_file):
     ],
 )
 def test_patchset_fail(datadir, patchset_file):
-    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
+    with datadir.joinpath(patchset_file).open(encoding="utf-8") as patch_file:
         patchset = json.load(patch_file)
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.schema.validate(patchset, "patchset.json")
@@ -725,7 +724,7 @@ def test_schema_tensor_type_disallowed(mocker, backend):
     ],
 )
 def test_schema_catch_duplicates(datadir, model_file):
-    with open(datadir.joinpath(model_file), encoding="utf-8") as spec_file:
+    with datadir.joinpath(model_file).open(encoding="utf-8") as spec_file:
         model_spec = json.load(spec_file)
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(model_spec)

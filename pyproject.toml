@@ -208,7 +208,6 @@ warn_unused_configs = true
 strict = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
-plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
 module = [
@@ -299,16 +298,20 @@ ignore = [
   "RUF005",  # unpack-instead-of-concatenating-to-collection-literal
   "TC001",   # move application import into TYPE_CHECKING block (revisit)
   "TC003",   # move stdlib import into TYPE_CHECKING block (revisit)
+  "TRY300",  # consider moving to else block (too opinionated)
+  "TRY301",  # abstract raise to inner function (too opinionated)
+  "PLW0602", # global statement used but no assignment (legitimate global reads)
+  "PLW0603", # global statement to update variable (legacy file cache pattern)
 ]
 typing-modules = ["pyhf.typing"]
 flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
-"**.ipynb" = ["F821", "F401", "F841", "F811", "E703", "NPY002", "T20"]
+"**.ipynb" = ["F821", "F401", "F841", "F811", "E703", "NPY002", "T20", "ARG001", "PERF401", "PTH123", "SIM115"]
 "noxfile.py" = ["T20"]
-"tests/**" = ["T20"]
-"validation/**" = ["T20"]
+"tests/**" = ["ARG001", "ARG002", "NPY002", "PLR0124", "PT012", "T20"]
+"validation/**" = ["T20", "PTH123", "NPY002"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]

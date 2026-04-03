@@ -92,13 +92,9 @@ class _slow_code0:
     def summand(self, down, nom, up, alpha):
         delta_up = up - nom
         delta_down = nom - down
-        if alpha > 0:
-            delta = delta_up * alpha
-        else:
-            delta = delta_down * alpha
-        return delta
+        return delta_up * alpha if alpha > 0 else delta_down * alpha
 
-    def __init__(self, histogramssets, subscribe=True):
+    def __init__(self, histogramssets, _subscribe=True):
         self._histogramssets = histogramssets
 
     def __call__(self, alphasets):

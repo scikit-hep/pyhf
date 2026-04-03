@@ -8,7 +8,7 @@ from pyhf.tensor.manager import get_backend
 log = logging.getLogger(__name__)
 
 
-def required_parset(sample_data, modifier_data):
+def required_parset(sample_data, _modifier_data):
     return {
         "paramset_type": "unconstrained",
         "n_parameters": len(sample_data),
@@ -30,7 +30,7 @@ class shapefactor_builder:
         self.required_parsets = {}
 
     def collect(self, thismod, nom):
-        maskval = True if thismod else False
+        maskval = bool(thismod)
         mask = [maskval] * len(nom)
         return {"mask": mask}
 
@@ -203,18 +203,14 @@ class shapefactor_combined:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         """
         if not self.param_viewer.index_selection:
-            return
+            return None
 
         tensorlib, _ = get_backend()
-        if self.batch_size is None:
-            flat_pars = pars
-        else:
-            flat_pars = tensorlib.reshape(pars, (-1,))
+        flat_pars = pars if self.batch_size is None else tensorlib.reshape(pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapefactor = tensorlib.einsum(
             "mab,s->msab", shapefactors, self.sample_ones
         )
-        results_shapefactor = tensorlib.where(
+        return tensorlib.where(
             self.shapefactor_mask, results_shapefactor, self.shapefactor_default
         )
-        return results_shapefactor

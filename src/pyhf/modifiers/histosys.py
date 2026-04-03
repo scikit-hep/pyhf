@@ -9,7 +9,7 @@ from pyhf.tensor.manager import get_backend
 log = logging.getLogger(__name__)
 
 
-def required_parset(sample_data, modifier_data):
+def required_parset(_sample_data, _modifier_data):
     return {
         "paramset_type": "constrained_by_normal",
         "n_parameters": 1,
@@ -85,12 +85,13 @@ class histosys_builder:
                     _sample_data_len = len(sample["data"]["nom_data"])
                     _lo_data_len = len(sample["data"]["lo_data"])
                     _hi_data_len = len(sample["data"]["hi_data"])
-                    raise InvalidModifier(
+                    msg = (
                         f"The '{sample_name}' sample {_modifier_type} modifier"
-                        + f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
-                        + f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
-                        + f" has 'lo_data' of length {_lo_data_len} and 'hi_data' of length {_hi_data_len}."
+                        f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
+                        f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        f" has 'lo_data' of length {_lo_data_len} and 'hi_data' of length {_hi_data_len}."
                     )
+                    raise InvalidModifier(msg)
         return self.builder_data
 
 
@@ -158,7 +159,7 @@ class histosys_combined:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         """
         if not self.param_viewer.index_selection:
-            return
+            return None
 
         tensorlib, _ = get_backend()
         if self.batch_size is None:
@@ -168,7 +169,4 @@ class histosys_combined:
 
         results_histo = self.interpolator(histosys_alphaset)
         # either rely on numerical no-op or force with line below
-        results_histo = tensorlib.where(
-            self.histosys_mask, results_histo, self.histosys_default
-        )
-        return results_histo
+        return tensorlib.where(self.histosys_mask, results_histo, self.histosys_default)

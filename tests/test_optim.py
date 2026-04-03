@@ -22,7 +22,7 @@ def test_scipy_minimize(backend, capsys):
         return sum(100.0 * (x[1:] - x[:-1] ** 2.0) ** 2.0 + (1 - x[:-1]) ** 2.0)
 
     x0 = tensorlib.astensor([1.3, 0.7, 0.8, 1.9, 1.2])
-    res = minimize(rosen, x0, method="SLSQP", options=dict(disp=True))
+    res = minimize(rosen, x0, method="SLSQP", options={"disp": True})
     captured = capsys.readouterr()
     assert "Optimization terminated successfully" in captured.out
     assert pytest.approx([1.0, 1.0, 1.0, 1.0, 1.0], rel=5e-5) == tensorlib.tolist(res.x)
@@ -94,7 +94,7 @@ def test_optimizer_mixin_extra_kwargs(optimizer):
 
 
 @pytest.mark.parametrize(
-    "backend,backend_new",
+    ("backend", "backend_new"),
     list(itertools.permutations([("numpy", False), ("jax", True)], 2)),
     ids=lambda pair: f"{pair[0]}",
 )
@@ -105,7 +105,7 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     # patch all we need
     from pyhf.optimize import mixins
 
-    shim = mocker.patch.object(mixins, "shim", return_value=({}, lambda x: True))
+    shim = mocker.patch.object(mixins, "shim", return_value=({}, lambda _: True))
     mocker.patch.object(OptimizerMixin, "_internal_minimize")
     mocker.patch.object(OptimizerMixin, "_internal_postprocess")
 
@@ -148,7 +148,7 @@ def test_minuit_strategy_do_grad(mocker, backend):
     do_grad = pyhf.tensorlib.default_do_grad
     pyhf.infer.mle.fit(data, m)
     assert spy.call_count == 1
-    assert not spy.spy_return.minuit.strategy == do_grad
+    assert spy.spy_return.minuit.strategy != do_grad
 
     pyhf.infer.mle.fit(data, m, strategy=0)
     assert spy.call_count == 2
@@ -248,7 +248,7 @@ def test_optimizer_return_values(optimizer, return_fitted_val, return_result_obj
 
 @pytest.fixture(scope="module")
 def source():
-    source = {
+    return {
         "binning": [2, -0.5, 1.5],
         "bindata": {
             "data": [120.0, 180.0],
@@ -258,12 +258,11 @@ def source():
             "sig": [30.0, 95.0],
         },
     }
-    return source
 
 
 @pytest.fixture(scope="module")
 def spec(source):
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -293,7 +292,6 @@ def spec(source):
             }
         ]
     }
-    return spec
 
 
 @pytest.mark.parametrize("mu", [1.0], ids=["mu=1"])

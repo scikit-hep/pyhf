@@ -1,9 +1,16 @@
 """Brazil Band Plots."""
 
-from collections import namedtuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, NamedTuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.collections import PolyCollection
+    from matplotlib.lines import Line2D
 
 __all__ = [
     "BrazilBandCollection",
@@ -17,21 +24,15 @@ def __dir__():
     return __all__
 
 
-class BrazilBandCollection(
-    namedtuple(
-        "BrazilBandCollection",
-        (
-            "cls_obs",
-            "cls_exp",
-            "one_sigma_band",
-            "two_sigma_band",
-            "test_size",
-            "clsb",
-            "clb",
-            "axes",
-        ),
-    )
-):
+class BrazilBandCollection(NamedTuple):
+    cls_obs: Line2D | None
+    cls_exp: list[Line2D] | None
+    one_sigma_band: PolyCollection | None
+    two_sigma_band: PolyCollection | None
+    test_size: Line2D | None
+    clsb: Line2D | None
+    clb: Line2D | None
+    axes: Axes | None
     r"""
     :obj:`collections.namedtuple` containing the
     :class:`matplotlib.artist.Artist` objects of the
@@ -319,10 +320,11 @@ def plot_results(test_pois, tests, test_size=0.05, ax=None, **kwargs):
     no_cls = kwargs.pop("no_cls", False)
 
     if plot_components and len(tests[0]) != 3:
-        raise ValueError(
+        msg = (
             f"The components of 'tests' should have len of 3 to visualize the CLs components but have len {len(tests[0])}."
-            + "\n'tests' should have format of: [CLs_obs, [CLsb, CLb], [CLs_exp band]]"
+            "\n'tests' should have format of: [CLs_obs, [CLsb, CLb], [CLs_exp band]]"
         )
+        raise ValueError(msg)
 
     cls_obs = np.array([test[0] for test in tests]).flatten()
     if len(tests[0]) == 3:

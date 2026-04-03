@@ -2,7 +2,7 @@
 # ruff: isort: off
 from pyhf._version import version as __version__
 from pyhf.tensor import BackendRetriever as tensor
-from pyhf.optimize import OptimizerRetriever as optimize  # noqa
+from pyhf.optimize import OptimizerRetriever as optimize
 from pyhf.tensor.manager import get_backend, set_backend
 from pyhf.pdf import Model
 from pyhf.workspace import Workspace
@@ -22,6 +22,7 @@ __all__ = [
     "infer",
     "interpolators",
     "modifiers",
+    "optimize",
     "optimizer",
     "parameters",
     "patchset",

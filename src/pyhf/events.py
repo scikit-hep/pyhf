@@ -124,7 +124,7 @@ def subscribe(event: str):
         __events.setdefault(event, Callables()).append(func)
         return func
 
-    return cast(TCallable, __decorator)
+    return cast("TCallable", __decorator)
 
 
 def register(event: str) -> Callable[[TCallable], TCallable]:
@@ -165,7 +165,7 @@ def register(event: str) -> Callable[[TCallable], TCallable]:
 
     def _register(func: TCallable) -> TCallable:
         @wraps(func)
-        def register_wrapper(*args, **kwargs):  # type: ignore
+        def register_wrapper(*args, **kwargs):
             trigger(f"{event:s}::before")()
             result = func(*args, **kwargs)
             trigger(f"{event:s}::after")()
@@ -173,7 +173,7 @@ def register(event: str) -> Callable[[TCallable], TCallable]:
 
         return register_wrapper
 
-    return cast(TCallable, _register)
+    return cast("TCallable", _register)
 
 
 def trigger(event: str) -> Callables:

@@ -6,7 +6,7 @@ from pyhf.parameters import ParamViewer
 log = logging.getLogger(__name__)
 
 
-def required_parset(sample_data, modifier_data):
+def required_parset(_sample_data, _modifier_data):
     return {
         "paramset_type": "unconstrained",
         "n_parameters": 1,
@@ -28,7 +28,7 @@ class normfactor_builder:
         self.required_parsets = {}
 
     def collect(self, thismod, nom):
-        maskval = True if thismod else False
+        maskval = bool(thismod)
         mask = [maskval] * len(nom)
         return {"mask": mask}
 
@@ -97,7 +97,7 @@ class normfactor_combined:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         """
         if not self.param_viewer.index_selection:
-            return
+            return None
         tensorlib, _ = get_backend()
         if self.batch_size is None:
             normfactors = self.param_viewer.get(pars)
@@ -110,7 +110,6 @@ class normfactor_combined:
                 "msab,ma->msab", self.normfactor_mask, normfactors
             )
 
-        results_normfactor = tensorlib.where(
+        return tensorlib.where(
             self.normfactor_mask_bool, results_normfactor, self.normfactor_default
         )
-        return results_normfactor

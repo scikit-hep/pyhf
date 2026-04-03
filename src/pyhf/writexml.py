@@ -46,7 +46,8 @@ def _make_hist_name(channel, sample, modifier="", prefix="hist", suffix=""):
 
 def _export_root_histogram(hist_name, data):
     if hist_name in _ROOT_DATA_FILE:
-        raise KeyError(f"Duplicate key {hist_name} being written.")
+        msg = f"Duplicate key {hist_name} being written."
+        raise KeyError(msg)
     _ROOT_DATA_FILE[hist_name] = uproot.to_writable(
         (np.asarray(data), np.arange(len(data) + 1))
     )
@@ -64,9 +65,8 @@ def indent(elem, level=0):
             indent(subelem, level + 1)
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
-    else:
-        if level and (not elem.tail or not elem.tail.strip()):
-            elem.tail = i
+    elif level and (not elem.tail or not elem.tail.strip()):
+        elem.tail = i
 
 
 def build_measurement(measurementspec, modifiertypes):
@@ -221,12 +221,13 @@ def build_modifier(spec, modifierspec, channelname, samplename, sampledata):
         pass
     else:
         log.warning(
-            f"Skipping modifier {modifierspec['name']}({modifierspec['type']}) for now"
+            "Skipping modifier %s(%s) for now",
+            modifierspec["name"],
+            modifierspec["type"],
         )
         return None
 
-    modifier = ET.Element(mod_map[modifierspec["type"]], **attrs)
-    return modifier
+    return ET.Element(mod_map[modifierspec["type"]], **attrs)
 
 
 def build_sample(spec, samplespec, channelname):
@@ -285,10 +286,10 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
 
     with uproot.recreate(Path(data_rootdir).joinpath("data.root")) as _ROOT_DATA_FILE:
         for channelspec in spec["channels"]:
-            channelfilename = str(
-                Path(specdir).joinpath(f"{resultprefix}_{channelspec['name']}.xml")
+            channelfilepath = Path(specdir).joinpath(
+                f"{resultprefix}_{channelspec['name']}.xml"
             )
-            with open(channelfilename, "w", encoding="utf-8") as channelfile:
+            with channelfilepath.open("w", encoding="utf-8") as channelfile:
                 channel = build_channel(spec, channelspec, spec.get("observations"))
                 indent(channel)
                 channelfile.write(
@@ -299,7 +300,7 @@ def writexml(spec, specdir, data_rootdir, resultprefix):
                 )
 
             inp = ET.Element("Input")
-            inp.text = channelfilename
+            inp.text = str(channelfilepath)
             combination.append(inp)
 
     # need information about modifier types to get the right prefix in measurement

@@ -9,24 +9,21 @@ from pyhf.simplemodels import uncorrelated_background
 
 def test_astensor_dtype(backend, caplog):
     tb = pyhf.tensorlib
-    with caplog.at_level(logging.INFO, "pyhf.tensor"):
-        with pytest.raises(KeyError):
-            assert tb.astensor([1, 2, 3], dtype="long")
-            assert "Invalid dtype" in caplog.text
+    with caplog.at_level(logging.INFO, "pyhf.tensor"), pytest.raises(KeyError):
+        assert tb.astensor([1, 2, 3], dtype="long")
+        assert "Invalid dtype" in caplog.text
 
 
 def test_ones_dtype(backend, caplog):
-    with caplog.at_level(logging.INFO, "pyhf.tensor"):
-        with pytest.raises(KeyError):
-            assert pyhf.tensorlib.ones([1, 2, 3], dtype="long")
-            assert "Invalid dtype" in caplog.text
+    with caplog.at_level(logging.INFO, "pyhf.tensor"), pytest.raises(KeyError):
+        assert pyhf.tensorlib.ones([1, 2, 3], dtype="long")
+        assert "Invalid dtype" in caplog.text
 
 
 def test_zeros_dtype(backend, caplog):
-    with caplog.at_level(logging.INFO, "pyhf.tensor"):
-        with pytest.raises(KeyError):
-            assert pyhf.tensorlib.zeros([1, 2, 3], dtype="long")
-            assert "Invalid dtype" in caplog.text
+    with caplog.at_level(logging.INFO, "pyhf.tensor"), pytest.raises(KeyError):
+        assert pyhf.tensorlib.zeros([1, 2, 3], dtype="long")
+        assert "Invalid dtype" in caplog.text
 
 
 def test_simple_tensor_ops(backend):
@@ -198,7 +195,7 @@ def test_broadcasting(backend):
             ),
         )
     ) == [[1, 1, 1], [2, 3, 4], [5, 6, 7]]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="shape"):
         tb.simple_broadcast(
             tb.astensor([1]), tb.astensor([2, 3]), tb.astensor([5, 6, 7])
         )
@@ -253,11 +250,11 @@ def test_shape(backend):
 
 def test_pdf_calculations(backend):
     tb = pyhf.tensorlib
-    # FIXME
+
+    assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
+        [0.7881446014166034], 1e-07
+    )
     with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
-        assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
-            [0.7881446014166034], 1e-07
-        )
         assert tb.tolist(
             tb.normal_logpdf(
                 tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
@@ -277,10 +274,14 @@ def test_pdf_calculations(backend):
             ],
             nan_ok=True,
         )
+
+    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
         # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
         assert tb.tolist(
             tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
         ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
+
+    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
         assert tb.tolist(
             tb.poisson_logpdf(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
         ) == pytest.approx(
