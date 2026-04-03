@@ -25,7 +25,7 @@ def __dir__():
     return __all__
 
 
-# python 3.10
+# TODO: Once pyhf is Python 3.10+ use slots
 # @dataclass(slots=True)
 @dataclass
 class BrazilBandCollection:
