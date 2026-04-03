@@ -94,7 +94,7 @@ class _slow_code0:
         delta_down = nom - down
         return delta_up * alpha if alpha > 0 else delta_down * alpha
 
-    def __init__(self, histogramssets, _subscribe=True):
+    def __init__(self, histogramssets, subscribe=True):  # noqa: ARG002
         self._histogramssets = histogramssets
 
     def __call__(self, alphasets):

@@ -110,7 +110,7 @@ class _slow_code1:
         delta_down = down / nom
         return math.pow(delta_up, alpha) if alpha > 0 else math.pow(delta_down, -alpha)
 
-    def __init__(self, histogramssets, _subscribe=True):
+    def __init__(self, histogramssets, subscribe=True):  # noqa: ARG002
         self._histogramssets = histogramssets
 
     def __call__(self, alphasets):

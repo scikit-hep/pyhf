@@ -133,7 +133,7 @@ class _slow_code4p:
             )
         return delta
 
-    def __init__(self, histogramssets, _subscribe=True):
+    def __init__(self, histogramssets, subscribe=True):  # noqa: ARG002
         self._histogramssets = histogramssets
 
     def __call__(self, alphasets):
