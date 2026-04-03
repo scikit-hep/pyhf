@@ -1,4 +1,5 @@
 import logging
+from contextlib import nullcontext
 
 import numpy as np
 import pytest
@@ -254,7 +255,13 @@ def test_pdf_calculations(backend):
     assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
         [0.7881446014166034], 1e-07
     )
-    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
+
+    ctx = (
+        pytest.warns(RuntimeWarning, match="divide by zero encountered in log")
+        if tb.name != "jax"
+        else nullcontext()
+    )
+    with ctx:
         assert tb.tolist(
             tb.normal_logpdf(
                 tb.astensor([0, 0, 1, 1, 0, 0, 1, 1]),
@@ -275,11 +282,10 @@ def test_pdf_calculations(backend):
             nan_ok=True,
         )
 
-    with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
-        # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
-        assert tb.tolist(
-            tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
-        ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
+    # Allow poisson(lambda=0) under limit Poisson(n = 0 | lambda -> 0) = 1
+    assert tb.tolist(
+        tb.poisson(tb.astensor([0, 0, 1, 1]), tb.astensor([0, 1, 0, 1]))
+    ) == pytest.approx([1.0, 0.3678794503211975, 0.0, 0.3678794503211975])
 
     with pytest.warns(RuntimeWarning, match="divide by zero encountered in log"):
         assert tb.tolist(
