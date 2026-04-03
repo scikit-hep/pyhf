@@ -75,6 +75,10 @@ def toms748_scan(
 
     .. versionadded:: 0.7.0
     """
+    # When return_tail_probs=True, hypotest inserts (CLsb, CLb) at index 1,
+    # shifting the expected band from index 1 to index 2.
+    _exp_idx = 2 if hypotest_kwargs.get("return_tail_probs", False) else 1
+
     cache = {}
 
     def f_cached(poi):
@@ -95,7 +99,7 @@ def toms748_scan(
         return (
             f_cached(poi)[0] - level
             if limit == 0
-            else f_cached(poi)[1][limit - 1] - level
+            else f_cached(poi)[_exp_idx][limit - 1] - level
         )
 
     def best_bracket(limit):
@@ -103,7 +107,7 @@ def toms748_scan(
         ks = np.asarray(list(cache))
         vals = np.asarray(
             [
-                value[0] - level if limit == 0 else value[1][limit - 1] - level
+                value[0] - level if limit == 0 else value[_exp_idx][limit - 1] - level
                 for value in cache.values()
             ]
         )
@@ -115,14 +119,14 @@ def toms748_scan(
 
     # extend bounds_low and bounds_up if they don't bracket CLs level
     lower_results = f_cached(bounds_low)
-    # {lower,upper}_results[0] is an array and {lower,upper}_results[1] is a
+    # {lower,upper}_results[0] is an array and {lower,upper}_results[_exp_idx] is a
     # list of arrays so need to turn {lower,upper}_results[0] into list to
     # concatenate them
-    while np.any(np.asarray([lower_results[0]] + lower_results[1]) < level):
+    while np.any(np.asarray([lower_results[0]] + lower_results[_exp_idx]) < level):
         bounds_low /= 2
         lower_results = f_cached(bounds_low)
     upper_results = f_cached(bounds_up)
-    while np.any(np.asarray([upper_results[0]] + upper_results[1]) > level):
+    while np.any(np.asarray([upper_results[0]] + upper_results[_exp_idx]) > level):
         bounds_up *= 2
         upper_results = f_cached(bounds_up)
 
@@ -186,13 +190,17 @@ def linear_grid_scan(
 
     .. versionadded:: 0.7.0
     """
+    # When return_tail_probs=True, hypotest inserts (CLsb, CLb) at index 1,
+    # shifting the expected band from index 1 to index 2.
+    _exp_idx = 2 if hypotest_kwargs.get("return_tail_probs", False) else 1
+
     tb, _ = get_backend()
     results = [
         hypotest(mu, data, model, return_expected_set=True, **hypotest_kwargs)
         for mu in scan
     ]
     obs = tb.astensor([[r[0]] for r in results])
-    exp = tb.astensor([[r[1][idx] for idx in range(5)] for r in results])
+    exp = tb.astensor([[r[_exp_idx][idx] for idx in range(5)] for r in results])
 
     result_array = tb.concatenate([obs, exp], axis=1).T
 

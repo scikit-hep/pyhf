@@ -166,6 +166,46 @@ def test_upper_limit_with_kwargs(hypotest_args):
     )
 
 
+def test_upper_limit_return_tail_probs(hypotest_args):
+    """
+    Regression test for https://github.com/scikit-hep/pyhf/issues/2669.
+    upper_limit should support return_tail_probs=True without raising IndexError.
+    The tail probability information should be accessible in the per-point results.
+    """
+    _, data, model = hypotest_args
+    scan = np.linspace(0, 5, 11)
+
+    # linear_grid_scan: return_tail_probs=True alone
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, scan=scan, return_tail_probs=True
+    )
+    assert len(results) == 2
+    observed_limit, expected_limits = results
+    assert observed_limit == pytest.approx(1.0262704738584554)
+    assert expected_limits == pytest.approx(
+        [0.65765653, 0.87999725, 1.12453992, 1.50243428, 2.09232927]
+    )
+
+    # linear_grid_scan: return_tail_probs=True with return_results=True
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, scan=scan, return_results=True, return_tail_probs=True
+    )
+    assert len(results) == 3
+    observed_limit, expected_limits, (_scan, point_results) = results
+    assert observed_limit == pytest.approx(1.0262704738584554)
+    assert len(_scan) == len(point_results)
+    # Each per-point result has 3 elements: (CLs, [CLsb, CLb], exp_band)
+    assert len(point_results[0]) == 3
+
+    # toms748_scan: return_tail_probs=True
+    results = pyhf.infer.intervals.upper_limits.upper_limit(
+        data, model, return_tail_probs=True, rtol=1e-4
+    )
+    assert len(results) == 2
+    observed_limit, expected_limits = results
+    assert observed_limit == pytest.approx(1.01156939, abs=0.1)
+
+
 def test_mle_fit_default(tmp_path, hypotest_args):
     """
     Check that the default return structure of pyhf.infer.mle.fit is as expected
