@@ -21,10 +21,9 @@ class paramset:
         self.suggested_bounds = kwargs.pop("bounds")
         self._suggested_fixed = kwargs.pop("fixed")
         self.is_scalar = kwargs.pop("is_scalar")
-        if self.is_scalar and not (self.n_parameters == 1):
-            raise ValueError(
-                f"misconfigured parameter set {self.name}. Scalar but N>1 parameters."
-            )
+        if self.is_scalar and self.n_parameters != 1:
+            msg = f"misconfigured parameter set {self.name}. Scalar but N>1 parameters."
+            raise ValueError(msg)
 
     @property
     def suggested_fixed(self) -> list[bool]:
@@ -37,11 +36,12 @@ class paramset:
         """compresses list of same-value bools into single bool"""
         suggested_fixed = self.suggested_fixed
         first = suggested_fixed[0]
-        if all([x == first for x in suggested_fixed]):
+        if all(x == first for x in suggested_fixed):
             return first
-        raise RuntimeError(
+        msg = (
             f"{suggested_fixed} is neither all-True nor all-False, so not compressible"
         )
+        raise RuntimeError(msg)
 
     @suggested_fixed.setter
     def suggested_fixed(self, value):

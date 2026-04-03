@@ -79,11 +79,11 @@ class minuit_optimizer(OptimizerMixin):
     def _minimize(
         self,
         minimizer,
-        func,
-        x0,
+        func,  # noqa: ARG002
+        x0,  # noqa: ARG002
         do_grad=False,
-        bounds=None,
-        fixed_vals=None,
+        bounds=None,  # noqa: ARG002
+        fixed_vals=None,  # noqa: ARG002
         options=None,
     ):
         """
@@ -116,9 +116,8 @@ class minuit_optimizer(OptimizerMixin):
             strategy = 0 if do_grad else 1
         tolerance = options.pop("tolerance", self.tolerance)
         if options:
-            raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(options)}."
-            )
+            msg = f"Unsupported options were passed in: {list(options)}."
+            raise exceptions.Unsupported(msg)
 
         minimizer.strategy = strategy
         minimizer.tol = tolerance

@@ -87,12 +87,13 @@ class shapesys_builder:
                     _modifier_type, _modifier_name = modifier_name.split("/")
                     _sample_data_len = len(sample["data"]["nom_data"])
                     _uncrt_len = len(sample["data"]["uncrt"])
-                    raise InvalidModifier(
+                    msg = (
                         f"The '{sample_name}' sample {_modifier_type} modifier"
-                        + f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
-                        + f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
-                        + f" has 'data' of length {_uncrt_len}."
+                        f" '{_modifier_name}' has data shape inconsistent with the sample.\n"
+                        f"{sample_name} has 'data' of length {_sample_data_len} but {_modifier_name}"
+                        f" has 'data' of length {_uncrt_len}."
                     )
+                    raise InvalidModifier(msg)
         return self.builder_data
 
 
@@ -145,7 +146,7 @@ class shapesys_combined:
         self._precompute()
         events.subscribe("tensorlib_changed")(self._precompute)
 
-    def _reindex_access_field(self, pdfconfig):
+    def _reindex_access_field(self, _pdfconfig):
         default_backend = pyhf.default_backend
 
         for syst_index, syst_access in enumerate(self._access_field):
@@ -188,18 +189,14 @@ class shapesys_combined:
         """
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
-            return
+            return None
         tensorlib, _ = get_backend()
-        if self.batch_size is None:
-            flat_pars = pars
-        else:
-            flat_pars = tensorlib.reshape(pars, (-1,))
+        flat_pars = pars if self.batch_size is None else tensorlib.reshape(pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapesys = tensorlib.einsum(
             "mab,s->msab", shapefactors, self.sample_ones
         )
 
-        results_shapesys = tensorlib.where(
+        return tensorlib.where(
             self.shapesys_mask, results_shapesys, self.shapesys_default
         )
-        return results_shapesys

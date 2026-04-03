@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -10,14 +11,14 @@ import pyhf.writexml
 
 @pytest.fixture(scope="module")
 def source_1bin_shapesys():
-    with open("validation/data/1bin_example1.json", encoding="utf-8") as read_json:
+    with Path("validation/data/1bin_example1.json").open(encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope="module")
 def spec_1bin_shapesys(source_1bin_shapesys):
     source = source_1bin_shapesys
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -44,12 +45,11 @@ def spec_1bin_shapesys(source_1bin_shapesys):
             }
         ]
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
 def expected_result_1bin_shapesys():
-    expected_result = {
+    return {
         "exp": [
             0.06372011644331387,
             0.1509686618126131,
@@ -59,12 +59,13 @@ def expected_result_1bin_shapesys():
         ],
         "obs": 0.45418892944576333,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_1bin_shapesys_q0():
-    with open("validation/data/1bin_example1_q0.json", encoding="utf-8") as read_json:
+    with Path("validation/data/1bin_example1_q0.json").open(
+        encoding="utf-8"
+    ) as read_json:
         return json.load(read_json)
 
 
@@ -74,7 +75,7 @@ source_1bin_shapesys_q0_toys = source_1bin_shapesys_q0
 @pytest.fixture(scope="module")
 def spec_1bin_shapesys_q0(source_1bin_shapesys_q0):
     source = source_1bin_shapesys_q0
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -101,7 +102,6 @@ def spec_1bin_shapesys_q0(source_1bin_shapesys_q0):
             }
         ]
     }
-    return spec
 
 
 spec_1bin_shapesys_q0_toys = spec_1bin_shapesys_q0
@@ -109,7 +109,7 @@ spec_1bin_shapesys_q0_toys = spec_1bin_shapesys_q0
 
 @pytest.fixture(scope="module")
 def expected_result_1bin_shapesys_q0():
-    expected_result = {
+    return {
         "exp": [
             1.2204714710520103e-05,
             0.0006405237426269669,
@@ -119,28 +119,26 @@ def expected_result_1bin_shapesys_q0():
         ],
         "obs": 0.003936883191585841,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def expected_result_1bin_shapesys_q0_toys():
-    expected_result = {
+    return {
         "exp": [0.0, 0.0, 0.0135, 0.1365, 0.39854497],
         "obs": 0.004,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_1bin_lumi():
-    with open("validation/data/1bin_lumi.json", encoding="utf-8") as read_json:
+    with Path("validation/data/1bin_lumi.json").open(encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope="module")
 def spec_1bin_lumi(source_1bin_lumi):
     source = source_1bin_lumi
-    spec = {
+    return {
         "channels": [
             {
                 "name": "channel1",
@@ -175,12 +173,11 @@ def spec_1bin_lumi(source_1bin_lumi):
             }
         ],
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
 def expected_result_1bin_lumi():
-    expected_result = {
+    return {
         "exp": [
             0.01060400765567206,
             0.04022451457730529,
@@ -190,19 +187,18 @@ def expected_result_1bin_lumi():
         ],
         "obs": 0.010473144401519705,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_1bin_normsys():
-    with open("validation/data/1bin_normsys.json", encoding="utf-8") as read_json:
+    with Path("validation/data/1bin_normsys.json").open(encoding="utf-8") as read_json:
         return json.load(read_json)
 
 
 @pytest.fixture(scope="module")
 def spec_1bin_normsys(source_1bin_normsys):
     source = source_1bin_normsys
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -229,12 +225,11 @@ def spec_1bin_normsys(source_1bin_normsys):
             }
         ]
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
 def expected_result_1bin_normsys():
-    expected_result = {
+    return {
         "exp": [
             7.472581399417304e-10,
             5.741738272450336e-08,
@@ -244,13 +239,12 @@ def expected_result_1bin_normsys():
         ],
         "obs": 0.0006735336290569807,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_2bin_histosys():
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as read_json:
         return json.load(read_json)
 
@@ -258,7 +252,7 @@ def source_2bin_histosys():
 @pytest.fixture(scope="module")
 def spec_2bin_histosys(source_2bin_histosys):
     source = source_2bin_histosys
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -288,12 +282,11 @@ def spec_2bin_histosys(source_2bin_histosys):
             }
         ]
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
 def expected_result_2bin_histosys():
-    expected_result = {
+    return {
         "exp": [
             7.133904244038431e-06,
             0.00012547100627138575,
@@ -303,13 +296,12 @@ def expected_result_2bin_histosys():
         ],
         "obs": 0.1001463460725534,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_2bin_2channel():
-    with open(
-        "validation/data/2bin_2channel_example1.json", encoding="utf-8"
+    with Path("validation/data/2bin_2channel_example1.json").open(
+        encoding="utf-8"
     ) as read_json:
         return json.load(read_json)
 
@@ -317,7 +309,7 @@ def source_2bin_2channel():
 @pytest.fixture(scope="module")
 def spec_2bin_2channel(source_2bin_2channel):
     source = source_2bin_2channel
-    spec = {
+    return {
         "channels": [
             {
                 "name": "signal",
@@ -364,12 +356,11 @@ def spec_2bin_2channel(source_2bin_2channel):
             },
         ]
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
 def expected_result_2bin_2channel():
-    expected_result = {
+    return {
         "exp": [
             0.0004349234603527283,
             0.003422361539161119,
@@ -379,13 +370,12 @@ def expected_result_2bin_2channel():
         ],
         "obs": 0.0563327694384318,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_2bin_2channel_couplednorm():
-    with open(
-        "validation/data/2bin_2channel_couplednorm.json", encoding="utf-8"
+    with Path("validation/data/2bin_2channel_couplednorm.json").open(
+        encoding="utf-8"
     ) as read_json:
         return json.load(read_json)
 
@@ -393,7 +383,7 @@ def source_2bin_2channel_couplednorm():
 @pytest.fixture(scope="module")
 def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
     source = source_2bin_2channel_couplednorm
-    spec = {
+    return {
         "channels": [
             {
                 "name": "signal",
@@ -447,7 +437,6 @@ def spec_2bin_2channel_couplednorm(source_2bin_2channel_couplednorm):
             },
         ]
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
@@ -456,7 +445,7 @@ def expected_result_2bin_2channel_couplednorm():
     # Mac:   0.055222676184648795
     # Linux: 0.05522273289103311
     # Fill with midpoint of both values
-    expected_result = {
+    return {
         "exp": [
             0.05522270453784095,
             0.1361301880753241,
@@ -466,13 +455,12 @@ def expected_result_2bin_2channel_couplednorm():
         ],
         "obs": 0.5906216823766879,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_2bin_2channel_coupledhistosys():
-    with open(
-        "validation/data/2bin_2channel_coupledhisto.json", encoding="utf-8"
+    with Path("validation/data/2bin_2channel_coupledhisto.json").open(
+        encoding="utf-8"
     ) as read_json:
         return json.load(read_json)
 
@@ -480,7 +468,7 @@ def source_2bin_2channel_coupledhistosys():
 @pytest.fixture(scope="module")
 def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
     source = source_2bin_2channel_coupledhistosys
-    spec = {
+    return {
         "channels": [
             {
                 "name": "signal",
@@ -555,12 +543,11 @@ def spec_2bin_2channel_coupledhistosys(source_2bin_2channel_coupledhistosys):
             },
         ]
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
 def expected_result_2bin_2channel_coupledhistosys():
-    expected_result = {
+    return {
         "exp": [
             1.7654378902209275e-05,
             0.00026266409358853543,
@@ -570,13 +557,12 @@ def expected_result_2bin_2channel_coupledhistosys():
         ],
         "obs": 0.07967400132261188,
     }
-    return expected_result
 
 
 @pytest.fixture(scope="module")
 def source_2bin_2channel_coupledshapefactor():
-    with open(
-        "validation/data/2bin_2channel_coupledshapefactor.json", encoding="utf-8"
+    with Path("validation/data/2bin_2channel_coupledshapefactor.json").open(
+        encoding="utf-8"
     ) as read_json:
         return json.load(read_json)
 
@@ -584,7 +570,7 @@ def source_2bin_2channel_coupledshapefactor():
 @pytest.fixture(scope="module")
 def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefactor):
     source = source_2bin_2channel_coupledshapefactor
-    spec = {
+    return {
         "channels": [
             {
                 "name": "signal",
@@ -627,12 +613,11 @@ def spec_2bin_2channel_coupledshapefactor(source_2bin_2channel_coupledshapefacto
             },
         ]
     }
-    return spec
 
 
 @pytest.fixture(scope="module")
 def expected_result_2bin_2channel_coupledshapefactor():
-    expected_result = {
+    return {
         "obs": 0.5421679124909312,
         "exp": [
             0.013753299929451691,
@@ -642,7 +627,6 @@ def expected_result_2bin_2channel_coupledshapefactor():
             0.7357169630955912,
         ],
     }
-    return expected_result
 
 
 def validate_hypotest(
@@ -820,7 +804,7 @@ def test_validation(setup):
 
 
 @pytest.mark.parametrize(
-    "top_level, base_dir",
+    ("top_level", "base_dir"),
     [
         (
             "validation/xmlimport_input/config/example.xml",
@@ -981,7 +965,7 @@ def test_shapesys_nuisparfilter_validation():
     )
     data = ws.data(model)
     obs, exp = pyhf.infer.hypotest(1.0, data, model, return_expected_set=True)
-    pyhf_results = {"CLs_obs": obs, "CLs_exp": [e for e in exp]}
+    pyhf_results = {"CLs_obs": obs, "CLs_exp": list(exp)}
 
     assert np.allclose(
         reference_root_results["CLs_obs"], pyhf_results["CLs_obs"], atol=1e-4, rtol=1e-5
@@ -1021,7 +1005,7 @@ def test_optimizer_stitching(backend, optimizer):
         pyhf.tensor.jax_backend,
     ],
 )
-@pytest.mark.parametrize("optimizer,rtol", [("scipy", 1e-6), ("minuit", 1e-3)])
+@pytest.mark.parametrize(("optimizer", "rtol"), [("scipy", 1e-6), ("minuit", 1e-3)])
 def test_optimizer_grad(backend, optimizer, rtol):
     pyhf.set_backend(backend(precision="64b"), optimizer)
 

@@ -60,10 +60,10 @@ def test_interpolator_structure(interpcode, random_histosets_alphasets_pair):
     )
     assert callable(interpolator)
     assert hasattr(interpolator, "alphasets_shape")
-    assert hasattr(interpolator, "_precompute") and callable(interpolator._precompute)
-    assert hasattr(interpolator, "_precompute_alphasets") and callable(
-        interpolator._precompute_alphasets
-    )
+    assert hasattr(interpolator, "_precompute")
+    assert callable(interpolator._precompute)
+    assert hasattr(interpolator, "_precompute_alphasets")
+    assert callable(interpolator._precompute_alphasets)
 
 
 def test_interpolator_subscription(mocker, interpcode, random_histosets_alphasets_pair):

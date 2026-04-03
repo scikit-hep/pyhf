@@ -20,11 +20,10 @@ def generate_source_static(n_bins):
     bkgerr = [10.0] * n_bins
     sig = [30.0] * n_bins
 
-    source = {
+    return {
         "binning": binning,
         "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
-    return source
 
 
 def generate_source_poisson(n_bins):
@@ -45,11 +44,10 @@ def generate_source_poisson(n_bins):
     bkgerr = np.random.poisson(10.0, n_bins).tolist()
     sig = np.random.poisson(30.0, n_bins).tolist()
 
-    source = {
+    return {
         "binning": binning,
         "bindata": {"data": data, "bkg": bkg, "bkgerr": bkgerr, "sig": sig},
     }
-    return source
 
 
 # bins = [1, 10, 50, 100, 200, 500, 800, 1000]
@@ -59,22 +57,18 @@ bin_ids = [f"{n_bins}_bins" for n_bins in bins]
 
 @pytest.mark.parametrize("n_bins", bins, ids=bin_ids)
 @pytest.mark.parametrize("invert_order", [False, True], ids=["normal", "inverted"])
-def test_hypotest_qmu_tilde(n_bins, invert_order, tolerance=None):
+def test_hypotest_qmu_tilde(n_bins, invert_order):
     """
     Check that the different backends all compute a test statistic
     that is within a specific tolerance of each other.
 
     Args:
         n_bins: `list` of number of bins given by pytest parameterization
-        tolerance: `dict` of the maximum differences the test statistics
-                    can differ relative to each other
 
     Returns:
         None
     """
-    if tolerance is None:
-        tolerance = {"numpy": 1e-02, "tensors": 5e-03}
-
+    tolerance = {"numpy": 1e-02, "tensors": 5e-03}
     source = generate_source_static(n_bins)
 
     signal_sample = {
@@ -134,4 +128,4 @@ def test_hypotest_qmu_tilde(n_bins, invert_order, tolerance=None):
         print(
             f"Ratio to NumPy+SciPy exceeded tolerance of {tolerance['numpy']}: {numpy_ratio_delta_unity.tolist()}"
         )
-        raise AssertionError() from None
+        raise AssertionError from None

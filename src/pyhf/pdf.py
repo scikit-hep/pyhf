@@ -1,8 +1,9 @@
 """The main module of pyhf."""
 
+from __future__ import annotations
+
 import copy
 import logging
-from typing import Union
 
 import pyhf
 import pyhf.parameters
@@ -29,14 +30,14 @@ def _finalize_parameters_specs(user_parameters, _paramsets_requirements):
     _paramsets_user_configs = {}
     for parameter in user_parameters:
         if parameter["name"] in _paramsets_user_configs:
-            raise exceptions.InvalidModel(
+            msg = (
                 f"Multiple parameter configurations for {parameter['name']} were found."
             )
+            raise exceptions.InvalidModel(msg)
         _paramsets_user_configs[parameter.get("name")] = parameter
-    _reqs = reduce_paramsets_requirements(
+    return reduce_paramsets_requirements(
         _paramsets_requirements, _paramsets_user_configs
     )
-    return _reqs
 
 
 def _create_parameters_from_spec(_reqs):
@@ -66,10 +67,9 @@ class _nominal_builder:
             if defined_samp
             else [0.0] * self.config.channel_nbins[channel]
         )
-        if not len(nom) == self.config.channel_nbins[channel]:
-            raise exceptions.InvalidModel(
-                f"expected {self.config.channel_nbins[channel]} size sample data but got {len(nom)}"
-            )
+        if len(nom) != self.config.channel_nbins[channel]:
+            msg = f"expected {self.config.channel_nbins[channel]} size sample data but got {len(nom)}"
+            raise exceptions.InvalidModel(msg)
         self.mega_samples[sample]["nom"].append(nom)
 
     def finalize(self):
@@ -81,7 +81,7 @@ class _nominal_builder:
                 for sample in self.config.samples
             ]
         )
-        _nominal_rates = default_backend.reshape(
+        return default_backend.reshape(
             nominal_rates,
             (
                 1,  # modifier dimension.. nominal_rates is the base
@@ -90,7 +90,6 @@ class _nominal_builder:
                 sum(list(self.config.channel_nbins.values())),
             ),
         )
-        return _nominal_rates
 
 
 def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
@@ -120,17 +119,15 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
             moddict = {}
             for x in s["modifiers"]:
                 if x["type"] not in modifier_set:
-                    raise exceptions.InvalidModifier(
-                        f"{x['type']} not among {list(modifier_set)}"
-                    )
+                    msg = f"{x['type']} not among {list(modifier_set)}"
+                    raise exceptions.InvalidModifier(msg)
                 key = f"{x['type']}/{x['name']}"
                 # check if the modifier to be built is allowed to be shared
                 if not modifiers_builders[x["type"]].is_shared and (
                     key in _keys_seen or key in moddict
                 ):
-                    raise exceptions.InvalidModel(
-                        f"Trying to add paramset {key} on {s['name']} sample in {c['name']} channel but other paramsets exist with the same name."
-                    )
+                    msg = f"Trying to add paramset {key} on {s['name']} sample in {c['name']} channel but other paramsets exist with the same name."
+                    raise exceptions.InvalidModel(msg)
 
                 moddict[key] = x
             helper.setdefault(c["name"], {})[s["name"]] = (s, moddict)
@@ -141,9 +138,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     for c in config.channels:
         for s in config.samples:
             helper_data = helper.get(c, {}).get(s)
-            defined_samp, defined_mods = (
-                (None, None) if not helper_data else helper_data
-            )
+            defined_samp, defined_mods = helper_data or (None, None)
             nominal.append(c, s, defined_samp)
             for m, mtype in config.modifiers:
                 key = f"{mtype}/{m}"
@@ -176,7 +171,8 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     )
 
     if not _required_paramsets:
-        raise exceptions.InvalidModel("No parameters specified for the Model.")
+        msg = "No parameters specified for the Model."
+        raise exceptions.InvalidModel(msg)
 
     config.set_parameters(_prameter_objects)
     config.set_auxinfo(_auxdata, _auxdata_order)
@@ -226,9 +222,8 @@ class _ModelConfig(_ChannelSummaryMixin):
         )
 
         if config_kwargs:
-            raise exceptions.Unsupported(
-                f"Unsupported options were passed in: {list(config_kwargs)}."
-            )
+            msg = f"Unsupported options were passed in: {list(config_kwargs)}."
+            raise exceptions.Unsupported(msg)
 
         # prefixed with underscore are documented via @property
         self._par_order = []
@@ -459,14 +454,12 @@ class _ModelConfig(_ChannelSummaryMixin):
             return
 
         if name not in self.parameters:
-            raise exceptions.InvalidModel(
-                f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
-            )
+            msg = f"The parameter of interest '{name:s}' cannot be fit as it is not declared in the model specification."
+            raise exceptions.InvalidModel(msg)
         if self.param_set(name).n_parameters > 1:
             # multi-parameter modifiers are not supported as POIs
-            raise exceptions.InvalidModel(
-                f"The parameter '{name:s}' contains multiple components and is not currently supported as parameter of interest."
-            )
+            msg = f"The parameter '{name:s}' contains multiple components and is not currently supported as parameter of interest."
+            raise exceptions.InvalidModel(msg)
         self._poi_name = name
         self._poi_index = self.par_slice(name).start
 
@@ -551,8 +544,8 @@ class _ConstraintModel:
             pdfobjs.append(poisson_pdf)
 
         if pdfobjs:
-            simpdf = prob.Simultaneous(pdfobjs, self.constraints_tv, self.batch_size)
-            return simpdf
+            return prob.Simultaneous(pdfobjs, self.constraints_tv, self.batch_size)
+        return None
 
     def logpdf(self, auxdata, pars):
         """
@@ -579,8 +572,8 @@ class _MainModel:
         modifiers,
         nominal_rates,
         batch_size=None,
-        clip_sample_data: Union[float, None] = None,
-        clip_bin_data: Union[float, None] = None,
+        clip_sample_data: float | None = None,
+        clip_bin_data: float | None = None,
     ):
         default_backend = pyhf.default_backend
 
@@ -595,11 +588,12 @@ class _MainModel:
 
         if self.clip_sample_data is not None:
             log.warning(
-                f"Clipping expected data per-bin for each sample below {self.clip_sample_data}"
+                "Clipping expected data per-bin for each sample below %s",
+                self.clip_sample_data,
             )
 
         if self.clip_bin_data is not None:
-            log.warning(f"Clipping expected data per-bin below {self.clip_bin_data}")
+            log.warning("Clipping expected data per-bin below %s", self.clip_bin_data)
 
         self._nominal_rates = default_backend.tile(
             nominal_rates, (1, 1, self.batch_size or 1, 1)
@@ -748,8 +742,8 @@ class Model:
         modifier_set=None,
         batch_size=None,
         validate: bool = True,
-        clip_sample_data: Union[float, None] = None,
-        clip_bin_data: Union[float, None] = None,
+        clip_sample_data: float | None = None,
+        clip_bin_data: float | None = None,
         **config_kwargs,
     ):
         """
@@ -777,7 +771,7 @@ class Model:
         self.version = config_kwargs.pop("version", None)
         # run jsonschema validation of input specification against the (provided) schema
         if validate:
-            log.info(f"Validating spec against schema: {self.schema:s}")
+            log.info("Validating spec against schema: %s", self.schema)
             schema.validate(self.spec, self.schema, version=self.version)
         # build up our representation of the specification
         # Default to no POI name
@@ -929,8 +923,7 @@ class Model:
         if constraintpdf:
             pdfobjs.append(constraintpdf)
 
-        simpdf = prob.Simultaneous(pdfobjs, self.fullpdf_tv, self.batch_size)
-        return simpdf
+        return prob.Simultaneous(pdfobjs, self.fullpdf_tv, self.batch_size)
 
     def logpdf(self, pars, data):
         """
@@ -949,16 +942,14 @@ class Model:
             pars, data = tensorlib.astensor(pars), tensorlib.astensor(data)
             # Verify parameter and data shapes
             if pars.shape[-1] != self.config.npars:
-                raise exceptions.InvalidPdfParameters(
-                    f"eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected"
-                )
+                msg = f"eval failed as pars has len {pars.shape[-1]} but {self.config.npars} was expected"
+                raise exceptions.InvalidPdfParameters(msg)
 
             if data.shape[-1] != self.nominal_rates.shape[-1] + len(
                 self.config.auxdata
             ):
-                raise exceptions.InvalidPdfData(
-                    f"eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected"
-                )
+                msg = f"eval failed as data has len {data.shape[-1]} but {self.config.nmaindata + self.config.nauxdata} was expected"
+                raise exceptions.InvalidPdfData(msg)
 
             result = self.make_pdf(pars).log_prob(data)
 
@@ -968,9 +959,10 @@ class Model:
                 return tensorlib.reshape(result, (1,))
             return result
         except Exception:
-            log.error(
-                f"Eval failed for data {tensorlib.tolist(data)} pars: {tensorlib.tolist(pars)}",
-                exc_info=True,
+            log.exception(
+                "Eval failed for data %s pars: %s",
+                tensorlib.tolist(data),
+                tensorlib.tolist(pars),
             )
             raise
 

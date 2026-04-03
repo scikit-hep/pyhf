@@ -9,17 +9,16 @@ import pyhf.patchset
 
 
 @pytest.fixture(
-    scope="function",
     params=["patchset_good.json", "patchset_good_2_patches.json"],
     ids=["patchset_good.json", "patchset_good_2_patches.json"],
 )
 def patchset(datadir, request):
-    with open(datadir.joinpath(request.param), encoding="utf-8") as spec_file:
+    with datadir.joinpath(request.param).open(encoding="utf-8") as spec_file:
         spec = json.load(spec_file)
     return pyhf.PatchSet(spec)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def patch():
     return pyhf.patchset.Patch(
         {"metadata": {"name": "test", "values": [1.0, 2.0, 3.0]}, "patch": {}}
@@ -35,7 +34,7 @@ def patch():
     ],
 )
 def test_patchset_invalid_spec(datadir, patchset_file):
-    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
+    with datadir.joinpath(patchset_file).open(encoding="utf-8") as patch_file:
         patchsetspec = json.load(patch_file)
     with pytest.raises(pyhf.exceptions.InvalidSpecification):
         pyhf.PatchSet(patchsetspec)
@@ -50,7 +49,7 @@ def test_patchset_invalid_spec(datadir, patchset_file):
     ],
 )
 def test_patchset_bad(datadir, patchset_file):
-    with open(datadir.joinpath(patchset_file), encoding="utf-8") as patch_file:
+    with datadir.joinpath(patchset_file).open(encoding="utf-8") as patch_file:
         patchsetspec = json.load(patch_file)
     with pytest.raises(pyhf.exceptions.InvalidPatchSet):
         pyhf.PatchSet(patchsetspec)
@@ -104,30 +103,24 @@ def test_patchset_repr(patchset):
 
 
 def test_patchset_verify(datadir):
-    with open(
-        datadir.joinpath("example_patchset.json"), encoding="utf-8"
-    ) as patch_file:
+    with datadir.joinpath("example_patchset.json").open(encoding="utf-8") as patch_file:
         patchset = pyhf.PatchSet(json.load(patch_file))
-    with open(datadir.joinpath("example_bkgonly.json"), encoding="utf-8") as ws_file:
+    with datadir.joinpath("example_bkgonly.json").open(encoding="utf-8") as ws_file:
         ws = pyhf.Workspace(json.load(ws_file))
     assert patchset.verify(ws) is None
 
 
 def test_patchset_verify_failure(datadir):
-    with open(
-        datadir.joinpath("example_patchset.json"), encoding="utf-8"
-    ) as patch_file:
+    with datadir.joinpath("example_patchset.json").open(encoding="utf-8") as patch_file:
         patchset = pyhf.PatchSet(json.load(patch_file))
     with pytest.raises(pyhf.exceptions.PatchSetVerificationError):
         assert patchset.verify({})
 
 
 def test_patchset_apply(datadir):
-    with open(
-        datadir.joinpath("example_patchset.json"), encoding="utf-8"
-    ) as patch_file:
+    with datadir.joinpath("example_patchset.json").open(encoding="utf-8") as patch_file:
         patchset = pyhf.PatchSet(json.load(patch_file))
-    with open(datadir.joinpath("example_bkgonly.json"), encoding="utf-8") as ws_file:
+    with datadir.joinpath("example_bkgonly.json").open(encoding="utf-8") as ws_file:
         ws = pyhf.Workspace(json.load(ws_file))
     with mock.patch("pyhf.patchset.PatchSet.verify") as m:
         assert m.call_count == 0
@@ -152,8 +145,8 @@ def test_patch_equality(patch):
 
 
 def test_patchset_get_string_values(datadir):
-    with open(
-        datadir.joinpath("patchset_good_stringvalues.json"), encoding="utf-8"
+    with datadir.joinpath("patchset_good_stringvalues.json").open(
+        encoding="utf-8"
     ) as patch_file:
         patchset = pyhf.PatchSet(json.load(patch_file))
     assert patchset["Gtt_2100_5000_800"]

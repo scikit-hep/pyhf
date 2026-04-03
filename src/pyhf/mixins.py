@@ -47,9 +47,9 @@ class _ChannelSummaryMixin:
                         )
                     )
 
-        self._channels = sorted(list(set(self._channels)))
-        self._samples = sorted(list(set(self._samples)))
-        self._modifiers = sorted(list(set(self._modifiers)))
+        self._channels = sorted(set(self._channels))
+        self._samples = sorted(set(self._samples))
+        self._modifiers = sorted(set(self._modifiers))
         self._channel_nbins = {
             channel: self._channel_nbins[channel] for channel in self._channels
         }
@@ -105,7 +105,7 @@ class _ChannelSummaryMixin:
         channel_names = [channel["name"] for channel in channels]
         if len(channel_names) != len(set(channel_names)):
             duplicates = sorted(
-                set([f"'{x}'" for x in channel_names if channel_names.count(x) > 1])
+                {f"'{x}'" for x in channel_names if channel_names.count(x) > 1}
             )
             raise exceptions.InvalidModel(
                 "Duplicate channels "
@@ -116,7 +116,7 @@ class _ChannelSummaryMixin:
             sample_names = [samples["name"] for samples in channel["samples"]]
             if len(sample_names) != len(set(sample_names)):
                 duplicates = sorted(
-                    set([f"'{x}'" for x in sample_names if sample_names.count(x) > 1])
+                    {f"'{x}'" for x in sample_names if sample_names.count(x) > 1}
                 )
                 raise exceptions.InvalidModel(
                     "Duplicate samples "
@@ -130,7 +130,7 @@ class _ChannelSummaryMixin:
                 ]
                 if len(modifiers) != len(set(modifiers)):
                     duplicates = sorted(
-                        set([f"'{x[0]}'" for x in modifiers if modifiers.count(x) > 1])
+                        {f"'{x[0]}'" for x in modifiers if modifiers.count(x) > 1}
                     )
                     raise exceptions.InvalidModel(
                         "Duplicate modifiers "

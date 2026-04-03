@@ -3,10 +3,10 @@ import pytest
 import pyhf
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def default_backend(backend):
     pyhf.set_backend(*backend, default=True)
-    yield backend
+    return backend
 
 
 def test_correlated_background(backend):

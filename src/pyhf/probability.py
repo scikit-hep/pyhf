@@ -185,8 +185,7 @@ class Independent(_SimpleDistributionMixin):
         """
         tensorlib, _ = get_backend()
         result = super().log_prob(value)
-        result = tensorlib.sum(result, axis=-1)
-        return result
+        return tensorlib.sum(result, axis=-1)
 
 
 class Simultaneous:

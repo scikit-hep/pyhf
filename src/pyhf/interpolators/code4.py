@@ -357,7 +357,7 @@ class _slow_code4:
             delta = math.pow(delta_down, (-alpha))
         return delta
 
-    def __init__(self, histogramssets, subscribe=True, alpha0=1):
+    def __init__(self, histogramssets, alpha0=1, subscribe=True):  # noqa: ARG002
         self._histogramssets = histogramssets
         self.alpha0 = alpha0
 

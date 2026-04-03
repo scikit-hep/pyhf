@@ -65,6 +65,8 @@ class Patch(jsonpatch.JsonPatch):
         qualname = type(self).__qualname__
         return f"<{module}.{qualname} object '{self.name}{self.values}' at {hex(id(self))}>"
 
+    __hash__ = None  # type: ignore[assignment]
+
     def __eq__(self, other):
         """Equality for subclass with new attributes"""
         if not isinstance(other, Patch):
@@ -165,7 +167,7 @@ class PatchSet:
         self._version = config_kwargs.pop("version", spec.get("version", None))
 
         # run jsonschema validation of input specification against the (provided) schema
-        log.info(f"Validating spec against schema: {self.schema}")
+        log.info("Validating spec against schema: %s", self.schema)
         schema.validate(spec, self.schema, version=self._version)
 
         # set properties based on metadata
@@ -181,19 +183,16 @@ class PatchSet:
             patch = Patch(patchspec)
 
             if patch.name in self._patches_by_key:
-                raise exceptions.InvalidPatchSet(
-                    f"Multiple patches were defined by name for {patch}."
-                )
+                msg = f"Multiple patches were defined by name for {patch}."
+                raise exceptions.InvalidPatchSet(msg)
 
             if patch.values in self._patches_by_key:
-                raise exceptions.InvalidPatchSet(
-                    f"Multiple patches were defined by values for {patch}."
-                )
+                msg = f"Multiple patches were defined by values for {patch}."
+                raise exceptions.InvalidPatchSet(msg)
 
             if len(patch.values) != len(self.labels):
-                raise exceptions.InvalidPatchSet(
-                    f"Incompatible number of values ({len(patch.values)} for {patch} in patchset. Expected {len(self.labels)}."
-                )
+                msg = f"Incompatible number of values ({len(patch.values)} for {patch} in patchset. Expected {len(self.labels)}."
+                raise exceptions.InvalidPatchSet(msg)
 
             # all good, register patch
             self._patches.append(patch)
@@ -258,9 +257,8 @@ class PatchSet:
         try:
             return self._patches_by_key[key]
         except KeyError as exc:
-            raise exceptions.InvalidPatchLookup(
-                f'No patch associated with "{key}" is defined in patchset.'
-            ) from exc
+            msg = f'No patch associated with "{key}" is defined in patchset.'
+            raise exceptions.InvalidPatchLookup(msg) from exc
 
     def __iter__(self):
         """
@@ -295,10 +293,9 @@ class PatchSet:
         """
         for hash_alg, digest in self.digests.items():
             digest_calc = utils.digest(spec, algorithm=hash_alg)
-            if not digest_calc == digest:
-                raise exceptions.PatchSetVerificationError(
-                    f"The digest verification failed for hash algorithm '{hash_alg}'. Expected: {digest}. Got: {digest_calc}"
-                )
+            if digest_calc != digest:
+                msg = f"The digest verification failed for hash algorithm '{hash_alg}'. Expected: {digest}. Got: {digest_calc}"
+                raise exceptions.PatchSetVerificationError(msg)
 
     def apply(self, spec, key):
         """

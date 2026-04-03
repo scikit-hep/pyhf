@@ -94,9 +94,8 @@ def set_backend(
 
         precision = precision.lower()
         if precision not in _supported_precisions:
-            raise exceptions.Unsupported(
-                f"The backend precision provided is not supported: {precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
-            )
+            msg = f"The backend precision provided is not supported: {precision:s}. Select from one of the supported precisions: {', '.join([str(v) for v in _supported_precisions])}"
+            raise exceptions.Unsupported(msg)
 
         backend_kwargs["precision"] = precision
 
@@ -111,18 +110,15 @@ def set_backend(
                 BackendRetriever, f"{backend:s}_backend"
             )(**backend_kwargs)
         except TypeError as exc:
-            raise exceptions.InvalidBackend(
-                f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, jax"
-            ) from exc
+            msg = f"The backend provided is not supported: {backend:s}. Select from one of the supported backends: numpy, jax"
+            raise exceptions.InvalidBackend(msg) from exc
     else:
         new_backend = backend
 
     _name_supported = getattr(BackendRetriever, f"{new_backend.name:s}_backend")
-    if _name_supported:
-        if not isinstance(new_backend, _name_supported):
-            raise AttributeError(
-                f"'{new_backend.name:s}' is not a valid name attribute for backend type {type(new_backend)}\n                 Custom backends must have names unique from supported backends"
-            )
+    if _name_supported and not isinstance(new_backend, _name_supported):
+        msg = f"'{new_backend.name:s}' is not a valid name attribute for backend type {type(new_backend)}\n                 Custom backends must have names unique from supported backends"
+        raise AttributeError(msg)
 
     # If "precision" arg passed, it should always win
     # If no "precision" arg, defer to tensor backend object API if set there
@@ -145,20 +141,17 @@ def set_backend(
                     OptimizerRetriever, f"{custom_optimizer.lower()!s}_optimizer"
                 )()
             except TypeError as exc:
-                raise exceptions.InvalidOptimizer(
-                    f"The optimizer provided is not supported: {custom_optimizer!s}. Select from one of the supported optimizers: scipy, minuit"
-                ) from exc
+                msg = f"The optimizer provided is not supported: {custom_optimizer!s}. Select from one of the supported optimizers: scipy, minuit"
+                raise exceptions.InvalidOptimizer(msg) from exc
         else:
             new_optimizer = custom_optimizer
 
         _name_supported = getattr(
             OptimizerRetriever, f"{new_optimizer.name:s}_optimizer"
         )
-        if _name_supported:
-            if not isinstance(new_optimizer, _name_supported):
-                raise AttributeError(
-                    f"'{new_optimizer.name}' is not a valid name attribute for optimizer type {type(new_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
-                )
+        if _name_supported and not isinstance(new_optimizer, _name_supported):
+            msg = f"'{new_optimizer.name}' is not a valid name attribute for optimizer type {type(new_optimizer)}\n                 Custom optimizers must have names unique from supported optimizers"
+            raise AttributeError(msg)
 
     # need to determine if the tensorlib changed or the optimizer changed for events
     tensorlib_changed = bool(

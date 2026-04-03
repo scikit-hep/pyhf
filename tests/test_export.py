@@ -1,6 +1,7 @@
 import json
 import logging
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import pytest
 import uproot
@@ -10,7 +11,7 @@ import pyhf.writexml
 
 
 def spec_staterror():
-    spec = {
+    return {
         "channels": [
             {
                 "name": "firstchannel",
@@ -49,15 +50,14 @@ def spec_staterror():
             }
         ]
     }
-    return spec
 
 
 def spec_histosys():
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -87,15 +87,14 @@ def spec_histosys():
             }
         ]
     }
-    return spec
 
 
 def spec_normsys():
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -122,15 +121,14 @@ def spec_normsys():
             }
         ]
     }
-    return spec
 
 
 def spec_shapesys():
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -153,15 +151,14 @@ def spec_shapesys():
             }
         ]
     }
-    return spec
 
 
 def spec_shapefactor():
-    with open(
-        "validation/data/2bin_histosys_example2.json", encoding="utf-8"
+    with Path("validation/data/2bin_histosys_example2.json").open(
+        encoding="utf-8"
     ) as spec_file:
         source = json.load(spec_file)
-    spec = {
+    return {
         "channels": [
             {
                 "name": "singlechannel",
@@ -184,7 +181,6 @@ def spec_shapefactor():
             }
         ]
     }
-    return spec
 
 
 def test_export_measurement():
@@ -236,7 +232,7 @@ def test_export_measurement():
 
 
 @pytest.mark.parametrize(
-    "spec, has_root_data, attrs, modtype",
+    ("spec", "has_root_data", "attrs", "modtype"),
     [
         (spec_staterror(), True, ["Activate", "HistoName"], "staterror"),
         (spec_histosys(), True, ["HistoNameHigh", "HistoNameLow"], "histosys"),
@@ -290,12 +286,12 @@ def test_export_bad_modifier(caplog):
 
 
 @pytest.mark.parametrize(
-    "spec, normfactor_config",
+    ("spec", "normfactor_config"),
     [
-        (spec_staterror(), dict(name="mu", inits=[1.0], bounds=[[0.0, 8.0]])),
-        (spec_histosys(), dict()),
-        (spec_normsys(), dict(name="mu", inits=[2.0], bounds=[[0.0, 10.0]])),
-        (spec_shapesys(), dict(name="mu", inits=[1.0], bounds=[[5.0, 10.0]])),
+        (spec_staterror(), {"name": "mu", "inits": [1.0], "bounds": [[0.0, 8.0]]}),
+        (spec_histosys(), {}),
+        (spec_normsys(), {"name": "mu", "inits": [2.0], "bounds": [[0.0, 10.0]]}),
+        (spec_shapesys(), {"name": "mu", "inits": [1.0], "bounds": [[5.0, 10.0]]}),
     ],
     ids=["upper-bound", "empty-config", "init", "lower-bound"],
 )
@@ -439,8 +435,8 @@ def test_integer_data(datadir, mocker):
     """
     Test that a spec with only integer data will be written correctly
     """
-    with open(
-        datadir.joinpath("workspace_integer_data.json"), encoding="utf-8"
+    with datadir.joinpath("workspace_integer_data.json").open(
+        encoding="utf-8"
     ) as spec_file:
         spec = json.load(spec_file)
     channel_spec = spec["channels"][0]
@@ -451,15 +447,15 @@ def test_integer_data(datadir, mocker):
 
 
 @pytest.mark.parametrize(
-    "fname,val,low,high",
+    ("fname", "val", "low", "high"),
     [
         ("workspace_no_parameter_inits.json", "1", "-5", "5"),
         ("workspace_no_parameter_bounds.json", "5", "0", "10"),
     ],
     ids=["no_inits", "no_bounds"],
 )
-def test_issue1814(datadir, mocker, fname, val, low, high):
-    with open(datadir / fname, encoding="utf-8") as spec_file:
+def test_issue1814(datadir, fname, val, low, high):
+    with (datadir / fname).open(encoding="utf-8") as spec_file:
         spec = json.load(spec_file)
 
     modifierspec = {"data": None, "name": "mu_sig", "type": "normfactor"}

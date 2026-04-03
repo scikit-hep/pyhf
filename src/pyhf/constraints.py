@@ -42,7 +42,7 @@ class gaussian_constraint_combined:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not parset.pdf_type == "normal":
+            if parset.pdf_type != "normal":
                 continue
 
             normal_constraint_data.append(thisauxdata)
@@ -108,10 +108,7 @@ class gaussian_constraint_combined:
         tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
-        if self.batch_size is None:
-            flat_pars = pars
-        else:
-            flat_pars = tensorlib.reshape(pars, (-1,))
+        flat_pars = pars if self.batch_size is None else tensorlib.reshape(pars, (-1,))
 
         normal_means = tensorlib.gather(flat_pars, self.access_field)
 
@@ -119,10 +116,9 @@ class gaussian_constraint_combined:
         if self.batch_size is None:
             normal_means = normal_means[0]
 
-        result = prob.Independent(
+        return prob.Independent(
             prob.Normal(normal_means, self.sigmas), batch_size=self.batch_size
         )
-        return result
 
     def logpdf(self, auxdata, pars):
         """
@@ -174,7 +170,7 @@ class poisson_constraint_combined:
             end_index = start_index + parset.n_parameters
             thisauxdata = self.data_indices[start_index:end_index]
             start_index = end_index
-            if not parset.pdf_type == "poisson":
+            if parset.pdf_type != "poisson":
                 continue
 
             poisson_constraint_data.append(thisauxdata)
@@ -231,10 +227,7 @@ class poisson_constraint_combined:
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
-        if self.batch_size is None:
-            flat_pars = pars
-        else:
-            flat_pars = tensorlib.reshape(pars, (-1,))
+        flat_pars = pars if self.batch_size is None else tensorlib.reshape(pars, (-1,))
         nuispars = tensorlib.gather(flat_pars, self.access_field)
 
         # similar to expected_data() in constrained_by_poisson

@@ -140,7 +140,7 @@ def test_bool_compression():
 
 
 def test_scalar_multiparam_failure():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="misconfigured parameter"):
         paramsets.paramset(
             name="foo",
             is_scalar=True,

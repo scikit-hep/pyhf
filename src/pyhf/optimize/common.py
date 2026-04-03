@@ -20,7 +20,7 @@ def _make_stitch_pars(tv=None, fixed_values=None):
         callable (:obj:`func`): a callable that takes nuisance parameter values as input
     """
     if tv is None or fixed_values is None:
-        return lambda pars, stitch_with=None: pars
+        return lambda pars, stitch_with=None: pars  # noqa: ARG005
 
     def stitch_pars(pars, stitch_with=fixed_values):
         tb, _ = get_backend()
@@ -46,7 +46,8 @@ def _get_tensor_shim():
         from pyhf.optimize.opt_jax import wrap_objective as jax_shim
 
         return jax_shim
-    raise ValueError(f"No optimizer shim for {tensorlib.name}.")
+    msg = f"No optimizer shim for {tensorlib.name}."
+    raise ValueError(msg)
 
 
 def shim(
@@ -137,12 +138,12 @@ def shim(
         },
     )
 
-    minimizer_kwargs = dict(
-        func=objective_and_grad,
-        x0=variable_init,
-        do_grad=do_grad,
-        bounds=variable_bounds,
-        fixed_vals=minimizer_fixed_vals,
-    )
+    minimizer_kwargs = {
+        "func": objective_and_grad,
+        "x0": variable_init,
+        "do_grad": do_grad,
+        "bounds": variable_bounds,
+        "fixed_vals": minimizer_fixed_vals,
+    }
 
     return minimizer_kwargs, stitch_pars

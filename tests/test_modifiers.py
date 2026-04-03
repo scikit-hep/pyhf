@@ -1,6 +1,6 @@
 import json
 
-import numpy
+import numpy as np
 import pytest
 from jsonpatch import JsonPatch
 
@@ -87,10 +87,8 @@ def test_staterror_holes():
         False,
     ]
     assert all(
-        [
-            isinstance(fixed, bool)
-            for fixed in model.config.param_set("staterror_1").suggested_fixed
-        ]
+        isinstance(fixed, bool)
+        for fixed in model.config.param_set("staterror_1").suggested_fixed
     )
     assert model.config.param_set("staterror_2").suggested_fixed == [
         False,
@@ -99,16 +97,14 @@ def test_staterror_holes():
         False,
     ]
     assert all(
-        [
-            isinstance(fixed, bool)
-            for fixed in model.config.param_set("staterror_2").suggested_fixed
-        ]
+        isinstance(fixed, bool)
+        for fixed in model.config.param_set("staterror_2").suggested_fixed
     )
     assert (factors[1][0, 0, 0, :] == [2.0, 1.0, 1.0, 3.0, 1.0, 1.0, 1.0, 1.0]).all()
     assert (factors[1][1, 0, 0, :] == [1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 5.0, 6.0]).all()
 
     data = model.expected_data(model.config.suggested_init())
-    assert numpy.isfinite(model.logpdf(model.config.suggested_init(), data)).all()
+    assert np.isfinite(model.logpdf(model.config.suggested_init(), data)).all()
 
 
 def test_shapesys_holes():
@@ -184,12 +180,12 @@ def test_invalid_bin_wise_modifier(datadir, patch_file):
     Test that bin-wise modifiers will raise an exception if their data shape
     differs from their sample's.
     """
-    with open(datadir.joinpath("spec.json"), encoding="utf-8") as spec_file:
+    with datadir.joinpath("spec.json").open(encoding="utf-8") as spec_file:
         spec = json.load(spec_file)
 
     assert pyhf.Model(spec)
 
-    with open(datadir.joinpath(patch_file), encoding="utf-8") as spec_file:
+    with datadir.joinpath(patch_file).open(encoding="utf-8") as spec_file:
         patch = JsonPatch.from_string(spec_file.read())
     bad_spec = patch.apply(spec)
 
@@ -198,8 +194,8 @@ def test_invalid_bin_wise_modifier(datadir, patch_file):
 
 
 def test_issue1720_staterror_builder_mask(datadir):
-    with open(
-        datadir.joinpath("issue1720_greedy_staterror.json"), encoding="utf-8"
+    with datadir.joinpath("issue1720_greedy_staterror.json").open(
+        encoding="utf-8"
     ) as spec_file:
         spec = json.load(spec_file)
 
@@ -238,8 +234,8 @@ def test_issue1720_greedy_staterror(datadir, inits):
     """
     Test that the staterror does not affect more samples than shapesys equivalently.
     """
-    with open(
-        datadir.joinpath("issue1720_greedy_staterror.json"), encoding="utf-8"
+    with datadir.joinpath("issue1720_greedy_staterror.json").open(
+        encoding="utf-8"
     ) as spec_file:
         spec = json.load(spec_file)
 

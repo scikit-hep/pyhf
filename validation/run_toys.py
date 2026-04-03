@@ -6,7 +6,7 @@ import numpy as np
 import ROOT
 
 import pyhf
-import pyhf.contrib.viz.brazil as brazil
+from pyhf.contrib.viz import brazil
 
 
 def run_toys_ROOT(infile, ntoys):

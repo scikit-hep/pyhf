@@ -10,7 +10,7 @@ import scrapbook as sb
 os.environ["MPLBACKEND"] = "agg"
 
 
-@pytest.fixture()
+@pytest.fixture
 def common_kwargs(tmp_path):
     outputnb = tmp_path.joinpath("output.ipynb")
     return {

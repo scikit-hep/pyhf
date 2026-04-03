@@ -2,6 +2,7 @@
 
 import json
 import logging
+from pathlib import Path
 
 import click
 
@@ -80,7 +81,7 @@ def fit(
         }
     """
     # set the backend if not NumPy
-    if backend in ["jax"]:
+    if backend == "jax":
         set_backend("jax")
     tensorlib, _ = get_backend()
 
@@ -124,9 +125,9 @@ def fit(
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with Path(output_file).open("w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug("Written to %s", output_file)
 
 
 @cli.command()
@@ -208,7 +209,7 @@ def cls(
     )
 
     # set the backend if not NumPy
-    if backend in ["jax"]:
+    if backend == "jax":
         set_backend("jax")
     tensorlib, _ = get_backend()
 
@@ -239,6 +240,6 @@ def cls(
     if output_file is None:
         click.echo(json.dumps(result, indent=4, sort_keys=True))
     else:
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with Path(output_file).open("w+", encoding="utf-8") as out_file:
             json.dump(result, out_file, indent=4, sort_keys=True)
-        log.debug(f"Written to {output_file:s}")
+        log.debug("Written to %s", output_file)

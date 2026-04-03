@@ -68,9 +68,9 @@ class _TensorViewer:
 
 def _tensorviewer_from_slices(target_slices, names, batch_size):
     default_backend = pyhf.default_backend
-    ranges = []
-    for sl in target_slices:
-        ranges.append(default_backend.astensor(range(sl.start, sl.stop)))
+    ranges = [
+        default_backend.astensor(range(sl.start, sl.stop)) for sl in target_slices
+    ]
     if not target_slices:
         return None
     return _TensorViewer(ranges, names=names, batch_size=batch_size)

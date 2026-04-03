@@ -40,9 +40,8 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                 combined_paramset.setdefault(k, set()).add(v)
 
             if len(combined_paramset[k]) != 1:
-                raise exceptions.InvalidNameReuse(
-                    f"Multiple values for '{k}' ({list(combined_paramset[k])}) were found for {paramset_name}. Use unique modifier names when constructing the pdf."
-                )
+                msg = f"Multiple values for '{k}' ({list(combined_paramset[k])}) were found for {paramset_name}. Use unique modifier names when constructing the pdf."
+                raise exceptions.InvalidNameReuse(msg)
 
             default_v = combined_paramset[k].pop()
             # get user-defined-config if it exists or set to default config
@@ -54,13 +53,11 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
                 v = list(v)
             # this implies user-configured, so check that it has the right number of elements
             elif isinstance(v, list) and default_v and len(v) != len(default_v):
-                raise exceptions.InvalidModel(
-                    f"Incorrect number of values ({len(v)}) for {k} were configured by you, expected {len(default_v)}."
-                )
+                msg = f"Incorrect number of values ({len(v)}) for {k} were configured by you, expected {len(default_v)}."
+                raise exceptions.InvalidModel(msg)
             elif v and default_v == "undefined":
-                raise exceptions.InvalidModel(
-                    f"{paramset_name} does not use the {k} attribute."
-                )
+                msg = f"{paramset_name} does not use the {k} attribute."
+                raise exceptions.InvalidModel(msg)
 
             combined_paramset[k] = v
 

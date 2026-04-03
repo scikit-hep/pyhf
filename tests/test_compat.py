@@ -30,10 +30,10 @@ def test_interpretation():
     interp = pyhf.compat.interpret_rootname("Lumi")
     assert interp["name"] == "lumi"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="confusing rootname"):
         pyhf.compat.interpret_rootname("gamma_foo")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="confusing rootname"):
         pyhf.compat.interpret_rootname("alpha_")
 
 

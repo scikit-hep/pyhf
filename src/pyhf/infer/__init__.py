@@ -4,16 +4,14 @@ from pyhf import exceptions, get_backend
 from pyhf.infer import utils
 
 
-def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):
+def _check_hypotest_prerequisites(pdf, data, init_pars, par_bounds, fixed_params):  # noqa: ARG001
     if pdf.config.poi_index is None:
-        raise exceptions.UnspecifiedPOI(
-            "No POI is defined. A POI is required to run a hypothesis test."
-        )
+        msg = "No POI is defined. A POI is required to run a hypothesis test."
+        raise exceptions.UnspecifiedPOI(msg)
 
     if not utils.all_pois_floating(pdf, fixed_params):
-        raise exceptions.InvalidModel(
-            f"POI at index [{pdf.config.poi_index}] is set as fixed, which makes profile likelihood ratio based inference impossible. Please unfix the POI to continue."
-        )
+        msg = f"POI at index [{pdf.config.poi_index}] is set as fixed, which makes profile likelihood ratio based inference impossible. Please unfix the POI to continue."
+        raise exceptions.InvalidModel(msg)
 
 
 def hypotest(
