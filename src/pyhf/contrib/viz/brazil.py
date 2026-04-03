@@ -25,14 +25,6 @@ def __dir__():
 
 
 class BrazilBandCollection(NamedTuple):
-    cls_obs: Line2D | None
-    cls_exp: list[Line2D] | None
-    one_sigma_band: PolyCollection | None
-    two_sigma_band: PolyCollection | None
-    test_size: Line2D | None
-    clsb: Line2D | None
-    clb: Line2D | None
-    axes: Axes | None
     r"""
     :obj:`collections.namedtuple` containing the
     :class:`matplotlib.artist.Artist` objects of the
@@ -63,6 +55,15 @@ class BrazilBandCollection(NamedTuple):
 
     :param axes: The :class:`matplotlib.axes.Axes` the artists are plotted on.
     """
+
+    cls_obs: Line2D | None
+    cls_exp: list[Line2D] | None
+    one_sigma_band: PolyCollection | None
+    two_sigma_band: PolyCollection | None
+    test_size: Line2D | None
+    clsb: Line2D | None
+    clb: Line2D | None
+    axes: Axes | None
 
 
 def plot_brazil_band(test_pois, cls_obs, cls_exp, test_size, ax, **kwargs):
