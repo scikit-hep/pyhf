@@ -17,7 +17,7 @@ def test_get_schema(version, schema):
 
 
 def test_load_missing_schema():
-    with pytest.raises(pyhf.exceptions.SchemaNotFound, match="fake_schema\.json"):
+    with pytest.raises(pyhf.exceptions.SchemaNotFound, match=r"fake_schema.json"):
         pyhf.schema.load_schema("fake_schema.json")
 
 
