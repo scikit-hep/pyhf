@@ -2,7 +2,10 @@
 # ruff: isort: off
 from pyhf._version import version as __version__
 from pyhf.tensor import BackendRetriever as tensor
-from pyhf.optimize import OptimizerRetriever as optimize
+
+# Intentionally keep optimize out of __all__
+# c.f. https://github.com/scikit-hep/pyhf/pull/1403
+from pyhf.optimize import OptimizerRetriever as optimize  # noqa: F401
 from pyhf.tensor.manager import get_backend, set_backend
 from pyhf.pdf import Model
 from pyhf.workspace import Workspace
@@ -22,7 +25,6 @@ __all__ = [
     "infer",
     "interpolators",
     "modifiers",
-    "optimize",
     "optimizer",
     "parameters",
     "patchset",
