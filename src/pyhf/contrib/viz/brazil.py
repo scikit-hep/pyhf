@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, NamedTuple
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,7 +25,8 @@ def __dir__():
     return __all__
 
 
-class BrazilBandCollection(NamedTuple):
+@dataclass(slots=True)
+class BrazilBandCollection:
     r"""
     :obj:`collections.namedtuple` containing the
     :class:`matplotlib.artist.Artist` objects of the
