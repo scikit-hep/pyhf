@@ -1,0 +1,5 @@
+# style: Move formatting from Black to Ruff
+dc3a6cfdb66036e318b2317fde0e4ef17f135925
+
+# style: Add extended Ruff rules from Scientific Python repo review
+ebf841e656a9eb9a6114f95971d890be1bde8c3e
