@@ -93,11 +93,13 @@ def test_schema_changeable_context_error(
     old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / "customschema"
 
-    with pytest.raises(ZeroDivisionError), pyhf.schema(new_path):
+    with pyhf.schema(new_path):
         # this populates the current cache
         with (new_path / "custom.json").open(encoding="utf-8") as spec_file:
             pyhf.Workspace(json.load(spec_file))
-        raise ZeroDivisionError
+
+        with pytest.raises(ZeroDivisionError):
+            raise ZeroDivisionError
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 

@@ -82,7 +82,7 @@ def test_missing_poi():
     modifier_set.update(**pyhf.modifiers.histfactory_set)
 
     with pytest.raises(exceptions.InvalidModel):
-        model = pyhf.Model(
+        pyhf.Model(
             {
                 "channels": [
                     {
@@ -108,4 +108,3 @@ def test_missing_poi():
             poi_name="non_existent_poi",
             validate=False,
         )
-        assert model

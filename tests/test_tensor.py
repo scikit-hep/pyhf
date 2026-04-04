@@ -10,20 +10,23 @@ from pyhf.simplemodels import uncorrelated_background
 
 def test_astensor_dtype(backend, caplog):
     tb = pyhf.tensorlib
-    with caplog.at_level(logging.INFO, "pyhf.tensor"), pytest.raises(KeyError):
-        assert tb.astensor([1, 2, 3], dtype="long")
+    with caplog.at_level(logging.INFO, "pyhf.tensor"):
+        with pytest.raises(KeyError):
+            assert tb.astensor([1, 2, 3], dtype="long")
         assert "Invalid dtype" in caplog.text
 
 
 def test_ones_dtype(backend, caplog):
-    with caplog.at_level(logging.INFO, "pyhf.tensor"), pytest.raises(KeyError):
-        assert pyhf.tensorlib.ones([1, 2, 3], dtype="long")
+    with caplog.at_level(logging.INFO, "pyhf.tensor"):
+        with pytest.raises(KeyError):
+            assert pyhf.tensorlib.ones([1, 2, 3], dtype="long")
         assert "Invalid dtype" in caplog.text
 
 
 def test_zeros_dtype(backend, caplog):
-    with caplog.at_level(logging.INFO, "pyhf.tensor"), pytest.raises(KeyError):
-        assert pyhf.tensorlib.zeros([1, 2, 3], dtype="long")
+    with caplog.at_level(logging.INFO, "pyhf.tensor"):
+        with pytest.raises(KeyError):
+            assert pyhf.tensorlib.zeros([1, 2, 3], dtype="long")
         assert "Invalid dtype" in caplog.text
 
 
