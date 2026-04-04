@@ -117,7 +117,7 @@ def test_bool_compression2():
     )
     assert pset.factors == [1] * 5
     with pytest.raises(RuntimeError):
-        print(pset.suggested_fixed_as_bool)
+        print(pset.suggested_fixed_as_bool)  # noqa: T201
 
 
 def test_bool_compression():
