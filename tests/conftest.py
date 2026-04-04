@@ -145,6 +145,12 @@ def backend(request):
     return (tensor, optimizer)
 
 
+@pytest.fixture
+def _backend(backend):
+    """Alias for the backend fixture for use in fixtures that need the backend
+    side-effect but don't use the return value."""
+
+
 @pytest.fixture(
     params=[0, 1, 2, 4],
     ids=["interpcode0", "interpcode1", "interpcode2", "interpcode4"],

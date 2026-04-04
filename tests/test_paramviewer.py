@@ -1,10 +1,12 @@
+import pytest
 from skhep_testdata import data_path
 
 import pyhf
 from pyhf.parameters import ParamViewer
 
 
-def test_paramviewer_simple_nonbatched(backend):
+@pytest.mark.usefixtures("backend")
+def test_paramviewer_simple_nonbatched():
     pars = pyhf.tensorlib.astensor([1, 2, 3, 4, 5, 6, 7])
 
     parshape = pyhf.tensorlib.shape(pars)
@@ -35,7 +37,8 @@ def test_paramviewer_order(get_json_from_tarfile):
     assert list(pv.allpar_viewer.names) == model.config.par_order
 
 
-def test_paramviewer_simple_batched(backend):
+@pytest.mark.usefixtures("backend")
+def test_paramviewer_simple_batched():
     pars = pyhf.tensorlib.astensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
 
     parshape = pyhf.tensorlib.shape(pars)

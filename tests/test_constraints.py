@@ -32,7 +32,8 @@ class MockConfig:
         return self.par_map[name]["paramset"]
 
 
-def test_numpy_pdf_inputs(backend):
+@pytest.mark.usefixtures("backend")
+def test_numpy_pdf_inputs():
     spec = {
         "channels": [
             {
@@ -131,7 +132,8 @@ def test_numpy_pdf_inputs(backend):
     assert pytest.approx(slow_result) == fast_result
 
 
-def test_batched_constraints(backend):
+@pytest.mark.usefixtures("backend")
+def test_batched_constraints():
     config = MockConfig(
         par_order=["pois1", "pois2", "norm1", "norm2"],
         par_map={

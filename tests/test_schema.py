@@ -603,10 +603,8 @@ def test_patchset_fail(datadir, patchset_file):
         pyhf.schema.validate(patchset, "patchset.json")
 
 
-def test_defs_always_cached(
-    socket_disabled,  # noqa: F811
-    isolate_modules,
-):
+@pytest.mark.usefixtures("socket_disabled", "isolate_modules")
+def test_defs_always_cached():
     """
     Schema definitions should always be loaded from the local files and cached at first import.
     Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id

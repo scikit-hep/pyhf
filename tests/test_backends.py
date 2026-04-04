@@ -86,7 +86,8 @@ def test_tensor_array_types():
 
 
 @pytest.mark.only_jax
-def test_jax_data_shape_mismatch_during_jitting(backend):
+@pytest.mark.usefixtures("backend")
+def test_jax_data_shape_mismatch_during_jitting():
     """
     Validate that during JAX tracing time pyhf doesn't try
     to convert the data to a list, which is not possible with tracers,

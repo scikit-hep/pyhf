@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 import pyhf
 from pyhf.modifiers.histosys import histosys_combined
@@ -44,7 +45,8 @@ class MockConfig:
         return self.par_map[name]["paramset"]
 
 
-def test_histosys(backend):
+@pytest.mark.usefixtures("backend")
+def test_histosys():
     mc = MockConfig(
         par_map={
             "hello": {
@@ -149,7 +151,8 @@ def test_histosys(backend):
     assert np.allclose(mod[0, 0, 3], [1.0, 2.0, 3.0])
 
 
-def test_normsys(backend):
+@pytest.mark.usefixtures("backend")
+def test_normsys():
     mc = MockConfig(
         par_map={
             "hello": {
@@ -256,7 +259,8 @@ def test_normsys(backend):
     assert np.allclose(mod[0, 0, 3], [1.1, 1.1, 1.1])
 
 
-def test_lumi(backend):
+@pytest.mark.usefixtures("backend")
+def test_lumi():
     mc = MockConfig(
         par_map={
             "lumi": {
@@ -315,7 +319,8 @@ def test_lumi(backend):
     assert np.allclose(mod[0, 0, 3], [4.0, 4.0, 4.0])
 
 
-def test_stat(backend):
+@pytest.mark.usefixtures("backend")
+def test_stat():
     mc = MockConfig(
         par_map={
             "staterror_chan1": {
@@ -406,7 +411,8 @@ def test_stat(backend):
     assert np.allclose(mod[1, 0, 0], [1, 1.2, 1.3])
 
 
-def test_shapesys(backend):
+@pytest.mark.usefixtures("backend")
+def test_shapesys():
     mc = MockConfig(
         par_map={
             "dummy1": {
@@ -519,7 +525,8 @@ def test_shapesys(backend):
     assert np.allclose(mod[1, 0, 0], [1, 1.2, 1.3])
 
 
-def test_normfactor(backend):
+@pytest.mark.usefixtures("backend")
+def test_normfactor():
     mc = MockConfig(
         par_map={
             "mu1": {
@@ -609,7 +616,8 @@ def test_normfactor(backend):
     assert np.allclose(mod[1, 0, 3], [1.0, 8.0, 8.0])
 
 
-def test_shapesys_zero(backend):
+@pytest.mark.usefixtures("backend")
+def test_shapesys_zero():
     mc = MockConfig(
         par_map={
             "SigXsecOverSM": {
@@ -675,7 +683,8 @@ def test_shapesys_zero(backend):
     assert mod[0, 1, 0, 2] == 1.0
 
 
-def test_shapefactor(backend):
+@pytest.mark.usefixtures("backend")
+def test_shapefactor():
     mc = MockConfig(
         par_map={
             "shapefac1": {

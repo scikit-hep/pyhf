@@ -132,7 +132,8 @@ def test_minimize_do_grad_autoconfig(mocker, backend, backend_new):
     assert shim.call_args[1]["do_grad"] != pyhf.tensorlib.default_do_grad
 
 
-def test_minuit_strategy_do_grad(mocker, backend):
+@pytest.mark.usefixtures("backend")
+def test_minuit_strategy_do_grad(mocker):
     """
     ref: gh#1172
 
@@ -160,7 +161,8 @@ def test_minuit_strategy_do_grad(mocker, backend):
 
 
 @pytest.mark.parametrize("strategy", [0, 1, 2])
-def test_minuit_strategy_global(mocker, backend, strategy):
+@pytest.mark.usefixtures("backend")
+def test_minuit_strategy_global(mocker, strategy):
     pyhf.set_backend(
         pyhf.tensorlib, pyhf.optimize.minuit_optimizer(strategy=strategy, tolerance=0.2)
     )
@@ -189,7 +191,8 @@ def test_minuit_strategy_global(mocker, backend, strategy):
     assert spy.spy_return.minuit.strategy == 2
 
 
-def test_set_tolerance(backend):
+@pytest.mark.usefixtures("backend")
+def test_set_tolerance():
     m = pyhf.simplemodels.uncorrelated_background([50.0], [100.0], [10.0])
     data = pyhf.tensorlib.astensor([125.0] + m.config.auxdata)
 
@@ -295,7 +298,8 @@ def spec(source):
 
 
 @pytest.mark.parametrize("mu", [1.0], ids=["mu=1"])
-def test_optim(backend, source, spec, mu):
+@pytest.mark.usefixtures("backend")
+def test_optim(source, spec, mu):
     pdf = pyhf.Model(spec, poi_name="mu")
     data = source["bindata"]["data"] + pdf.config.auxdata
 
@@ -319,7 +323,8 @@ def test_optim(backend, source, spec, mu):
 
 
 @pytest.mark.parametrize("mu", [1.0], ids=["mu=1"])
-def test_optim_with_value(backend, source, spec, mu):
+@pytest.mark.usefixtures("backend")
+def test_optim_with_value(source, spec, mu):
     pdf = pyhf.Model(spec, poi_name="mu")
     data = source["bindata"]["data"] + pdf.config.auxdata
 
@@ -347,7 +352,8 @@ def test_optim_with_value(backend, source, spec, mu):
 
 @pytest.mark.parametrize("mu", [1.0], ids=["mu=1"])
 @pytest.mark.only_numpy_minuit
-def test_optim_uncerts(backend, source, spec, mu):
+@pytest.mark.usefixtures("backend")
+def test_optim_uncerts(source, spec, mu):
     pdf = pyhf.Model(spec, poi_name="mu")
     data = source["bindata"]["data"] + pdf.config.auxdata
 
@@ -376,7 +382,8 @@ def test_optim_uncerts(backend, source, spec, mu):
 
 @pytest.mark.parametrize("mu", [1.0], ids=["mu=1"])
 @pytest.mark.only_numpy_minuit
-def test_optim_correlations(backend, source, spec, mu):
+@pytest.mark.usefixtures("backend")
+def test_optim_correlations(source, spec, mu):
     pdf = pyhf.Model(spec, poi_name="mu")
     data = source["bindata"]["data"] + pdf.config.auxdata
 
@@ -532,7 +539,8 @@ def test_solver_options_behavior_scipy(mocker):
     assert minimizer.call_args[1]["options"]["arbitrary_option"] == "baz"
 
 
-def test_solver_options_scipy(mocker):
+@pytest.mark.usefixtures("mocker")
+def test_solver_options_scipy():
     optimizer = pyhf.optimize.scipy_optimizer(solver_options={"ftol": 1e-5})
     pyhf.set_backend("numpy", optimizer)
     assert pyhf.optimizer.solver_options == {"ftol": 1e-5}
@@ -545,7 +553,8 @@ def test_solver_options_scipy(mocker):
 # Note: in this case, scipy won't usually raise errors for arbitrary options
 # so this test exists as a sanity reminder that scipy is not perfect.
 # It does raise a scipy.optimize.OptimizeWarning though.
-def test_bad_solver_options_scipy(mocker):
+@pytest.mark.usefixtures("mocker")
+def test_bad_solver_options_scipy():
     optimizer = pyhf.optimize.scipy_optimizer(
         solver_options={"arbitrary_option": "foobar"}
     )
@@ -561,7 +570,8 @@ def test_bad_solver_options_scipy(mocker):
         assert pyhf.infer.mle.fit(data, model).tolist()
 
 
-def test_minuit_param_names(mocker):
+@pytest.mark.usefixtures("mocker")
+def test_minuit_param_names():
     pyhf.set_backend("numpy", "minuit")
     pdf = pyhf.simplemodels.uncorrelated_background([5], [10], [3.5])
     data = [10] + pdf.config.auxdata

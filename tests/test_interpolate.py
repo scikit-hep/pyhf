@@ -89,9 +89,8 @@ def test_interpolator_subscription(mocker, interpcode, random_histosets_alphaset
     assert spy.call_count == 2
 
 
-def test_interpolator_alphaset_change(
-    backend, interpcode, random_histosets_alphasets_pair
-):
+@pytest.mark.usefixtures("backend")
+def test_interpolator_alphaset_change(interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
     interpolator = pyhf.interpolators.get(interpcode)(
         histogramssets.tolist(), subscribe=False
@@ -104,7 +103,8 @@ def test_interpolator_alphaset_change(
     assert interpolator.alphasets_shape == alphasets.shape
 
 
-def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
+@pytest.mark.usefixtures("backend")
+def test_interpolator(interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     interpolator = pyhf.interpolators.get(interpcode)(
@@ -116,7 +116,8 @@ def test_interpolator(backend, interpcode, random_histosets_alphasets_pair):
     assert interpolator.alphasets_shape == alphasets.shape
 
 
-def test_validate_implementation(backend, interpcode, random_histosets_alphasets_pair):
+@pytest.mark.usefixtures("backend")
+def test_validate_implementation(interpcode, random_histosets_alphasets_pair):
     histogramssets, alphasets = random_histosets_alphasets_pair
 
     abs_tolerance = 1e-12
@@ -144,7 +145,8 @@ def test_validate_implementation(backend, interpcode, random_histosets_alphasets
 
 
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
-def test_code0_validation(backend, do_tensorized_calc):
+@pytest.mark.usefixtures("backend")
+def test_code0_validation(do_tensorized_calc):
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
     expected = pyhf.tensorlib.astensor([[[[0], [0.5], [1.0], [2.0], [3.0]]]])
@@ -170,7 +172,8 @@ def test_code0_validation(backend, do_tensorized_calc):
 
 
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
-def test_code1_validation(backend, do_tensorized_calc):
+@pytest.mark.usefixtures("backend")
+def test_code1_validation(do_tensorized_calc):
     histogramssets = [[[[0.9], [1.0], [1.1]]]]
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
     expected = pyhf.tensorlib.astensor([[[[0.9**2], [0.9], [1.0], [1.1], [1.1**2]]]])
