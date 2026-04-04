@@ -23,7 +23,8 @@ def check_uniform_type(in_list):
     )
 
 
-def test_toms748_scan(tmp_path, hypotest_args):
+@pytest.mark.usefixtures("tmp_path")
+def test_toms748_scan(hypotest_args):
     """
     Test the upper limit toms748 scan returns the correct structure and values
     """
@@ -206,7 +207,8 @@ def test_upper_limit_return_tail_probs(hypotest_args):
     assert observed_limit == pytest.approx(1.01156939, abs=0.1)
 
 
-def test_mle_fit_default(tmp_path, hypotest_args):
+@pytest.mark.usefixtures("tmp_path")
+def test_mle_fit_default(hypotest_args):
     """
     Check that the default return structure of pyhf.infer.mle.fit is as expected
     """
@@ -220,7 +222,8 @@ def test_mle_fit_default(tmp_path, hypotest_args):
     assert pyhf.tensorlib.shape(result) == (model.config.npars,)
 
 
-def test_mle_fit_return_fitted_val(tmp_path, hypotest_args):
+@pytest.mark.usefixtures("tmp_path")
+def test_mle_fit_return_fitted_val(hypotest_args):
     """
     Check that the return structure of pyhf.infer.mle.fit with the
     return_fitted_val keyword arg is as expected
@@ -236,7 +239,8 @@ def test_mle_fit_return_fitted_val(tmp_path, hypotest_args):
     assert pyhf.tensorlib.shape(result[1]) == ()
 
 
-def test_hypotest_default(tmp_path, hypotest_args):
+@pytest.mark.usefixtures("tmp_path")
+def test_hypotest_default(hypotest_args):
     """
     Check that the default return structure of pyhf.infer.hypotest is as expected
     """
@@ -249,7 +253,8 @@ def test_hypotest_default(tmp_path, hypotest_args):
     assert isinstance(result, type(tb.astensor(result)))
 
 
-def test_hypotest_poi_outofbounds(tmp_path, hypotest_args):
+@pytest.mark.usefixtures("tmp_path", "hypotest_args")
+def test_hypotest_poi_outofbounds():
     """
     Check that the fit errors for POI outside of parameter bounds
     """
@@ -270,7 +275,8 @@ def test_hypotest_poi_outofbounds(tmp_path, hypotest_args):
 
 
 @pytest.mark.parametrize("test_stat", ["q0", "q", "qtilde"])
-def test_hypotest_return_tail_probs(tmp_path, hypotest_args, test_stat):
+@pytest.mark.usefixtures("tmp_path")
+def test_hypotest_return_tail_probs(hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     return_tail_probs keyword arg is as expected
@@ -287,7 +293,8 @@ def test_hypotest_return_tail_probs(tmp_path, hypotest_args, test_stat):
 
 
 @pytest.mark.parametrize("test_stat", ["q0", "q", "qtilde"])
-def test_hypotest_return_expected(tmp_path, hypotest_args, test_stat):
+@pytest.mark.usefixtures("tmp_path")
+def test_hypotest_return_expected(hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     addition of the return_expected keyword arg is as expected
@@ -309,7 +316,8 @@ def test_hypotest_return_expected(tmp_path, hypotest_args, test_stat):
 
 
 @pytest.mark.parametrize("test_stat", ["q0", "q", "qtilde"])
-def test_hypotest_return_expected_set(tmp_path, hypotest_args, test_stat):
+@pytest.mark.usefixtures("tmp_path")
+def test_hypotest_return_expected_set(hypotest_args, test_stat):
     """
     Check that the return structure of pyhf.infer.hypotest with the
     addition of the return_expected_set keyword arg is as expected
@@ -343,8 +351,8 @@ def test_hypotest_return_expected_set(tmp_path, hypotest_args, test_stat):
 @pytest.mark.parametrize("return_tail_probs", [True, False])
 @pytest.mark.parametrize("return_expected", [True, False])
 @pytest.mark.parametrize("return_expected_set", [True, False])
+@pytest.mark.usefixtures("tmp_path")
 def test_hypotest_return_calculator(
-    tmp_path,
     hypotest_args,
     calctype,
     kwargs,
@@ -391,7 +399,8 @@ def test_hypotest_return_calculator(
     [{"calctype": "asymptotics"}, {"calctype": "toybased", "ntoys": 5}],
     ids=lambda x: x["calctype"],
 )
-def test_hypotest_backends(backend, kwargs):
+@pytest.mark.usefixtures("backend")
+def test_hypotest_backends(kwargs):
     """
     Check that hypotest runs fully across all backends for all calculator types.
     """
@@ -535,7 +544,8 @@ def test_significance_to_pvalue_roundtrip(backend):
     assert np.allclose(sigma, back_to_sigma, atol=0, rtol=rtol)
 
 
-def test_emperical_distribution(tmp_path, hypotest_args):
+@pytest.mark.usefixtures("tmp_path")
+def test_emperical_distribution(hypotest_args):
     """
     Check that the empirical distribution of the test statistic gives
     expected results
@@ -581,7 +591,8 @@ def test_emperical_distribution(tmp_path, hypotest_args):
     )
 
 
-def test_toy_calculator(tmp_path, hypotest_args):
+@pytest.mark.usefixtures("tmp_path")
+def test_toy_calculator(hypotest_args):
     """
     Check that the toy calculator is performing as expected
     """

@@ -93,11 +93,13 @@ def test_schema_changeable_context_error(
     old_path, old_cache = self_restoring_schema_globals
     new_path = datadir / "customschema"
 
-    with pytest.raises(ZeroDivisionError), pyhf.schema(new_path):
+    with pyhf.schema(new_path):
         # this populates the current cache
         with (new_path / "custom.json").open(encoding="utf-8") as spec_file:
             pyhf.Workspace(json.load(spec_file))
-        raise ZeroDivisionError
+
+        with pytest.raises(ZeroDivisionError):
+            raise ZeroDivisionError
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
@@ -601,10 +603,8 @@ def test_patchset_fail(datadir, patchset_file):
         pyhf.schema.validate(patchset, "patchset.json")
 
 
-def test_defs_always_cached(
-    socket_disabled,  # noqa: F811
-    isolate_modules,
-):
+@pytest.mark.usefixtures("socket_disabled", "isolate_modules")
+def test_defs_always_cached():
     """
     Schema definitions should always be loaded from the local files and cached at first import.
     Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id

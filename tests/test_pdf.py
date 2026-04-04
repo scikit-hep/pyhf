@@ -170,7 +170,8 @@ def test_pdf_basicapi_tests(backend):
 
 
 @pytest.mark.only_numpy
-def test_core_pdf_broadcasting(backend):
+@pytest.mark.usefixtures("backend")
+def test_core_pdf_broadcasting():
     data = [10, 11, 12, 13, 14, 15]
     lambdas = [15, 14, 13, 12, 11, 10]
     naive_python = [pyhf.tensorlib.poisson(d, lam) for d, lam in zip(data, lambdas)]
@@ -248,7 +249,8 @@ def test_pdf_integration_staterror(backend):
     )
 
 
-def test_poiless_model(backend):
+@pytest.mark.usefixtures("backend")
+def test_poiless_model():
     spec = {
         "channels": [
             {
@@ -281,7 +283,8 @@ def test_poiless_model(backend):
         pyhf.infer.hypotest(1.0, data, model)
 
 
-def test_poiless_model_empty_string(backend):
+@pytest.mark.usefixtures("backend")
+def test_poiless_model_empty_string():
     spec = {
         "channels": [
             {
@@ -356,7 +359,8 @@ def test_pdf_integration_shapesys_zeros(backend):
 
 
 @pytest.mark.only_numpy
-def test_pdf_integration_histosys(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_integration_histosys():
     with Path("validation/data/2bin_histosys_example2.json").open(
         encoding="utf-8"
     ) as spec_file:
@@ -438,7 +442,8 @@ def test_pdf_integration_histosys(backend):
     ]
 
 
-def test_pdf_integration_normsys(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_integration_normsys():
     with Path("validation/data/2bin_histosys_example2.json").open(
         encoding="utf-8"
     ) as spec_file:
@@ -502,7 +507,8 @@ def test_pdf_integration_normsys(backend):
 
 
 @pytest.mark.only_numpy
-def test_pdf_integration_shapesys(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_integration_shapesys():
     with Path("validation/data/2bin_histosys_example2.json").open(
         encoding="utf-8"
     ) as spec_file:
@@ -1090,7 +1096,8 @@ def test_make_model_with_tensors():
     )
 
 
-def test_pdf_clipping(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_clipping():
     tensorlib, optimizer = pyhf.get_backend()
 
     spec = {
