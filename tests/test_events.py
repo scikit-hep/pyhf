@@ -76,7 +76,7 @@ def test_subscribe_function(capsys):
     ename = "test"
 
     def add(a, b):
-        print(a + b)
+        print(a + b)  # noqa: T201
 
     events.subscribe(ename)(add)
     events.trigger(ename)(1, 2)
@@ -91,7 +91,7 @@ def test_trigger_function(capsys):
     ename = "test"
 
     def add(a, b):
-        print(a + b)
+        print(a + b)  # noqa: T201
 
     precall = mock.Mock()
     postcall = mock.Mock()

@@ -310,7 +310,7 @@ flake8-tidy-imports.ban-relative-imports = "all"
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
 "**.ipynb" = ["F821", "F401", "F841", "F811", "E703", "NPY002", "T20", "ARG001", "PERF401", "PTH123", "SIM115"]
 "noxfile.py" = ["T20"]
-"tests/**" = ["ARG001", "ARG002", "NPY002", "PLR0124", "T20"]
+"tests/**" = ["ARG001", "ARG002", "NPY002", "PLR0124"]
 "validation/**" = ["T20", "PTH123", "NPY002"]
 
 [tool.pixi.workspace]
