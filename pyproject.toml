@@ -312,7 +312,7 @@ flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
-"**.ipynb" = ["T20", "ARG001", "PTH123"]
+"**.ipynb" = ["T20", "PTH123"]
 "noxfile.py" = ["T20"]
 "tests/**" = ["ARG001", "ARG002", "NPY002", "PLR0124", "PT012", "T20"]
 "validation/**" = ["T20", "PTH123", "NPY002"]
