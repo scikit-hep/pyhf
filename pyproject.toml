@@ -248,6 +248,10 @@ ignore_errors = true
 
 [tool.ruff]
 line-length = 88
+extend-exclude = [
+  "docs/examples/notebooks/histogrammar.ipynb",
+  "docs/examples/notebooks/StatError.ipynb"
+]
 
 [tool.ruff.lint]
 extend-select = [
@@ -308,7 +312,7 @@ flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "docs/lite/jupyterlite.py" = ["F401", "F704"]
-"**.ipynb" = ["F821", "F401", "F841", "F811", "E703", "NPY002", "T20", "ARG001", "PERF401", "PTH123", "SIM115"]
+"**.ipynb" = ["F401", "F841", "F811", "E703", "NPY002", "T20", "ARG001", "PERF401", "PTH123", "SIM115"]
 "noxfile.py" = ["T20"]
 "tests/**" = ["ARG001", "ARG002", "NPY002", "PLR0124", "PT012", "T20"]
 "validation/**" = ["T20", "PTH123", "NPY002"]
