@@ -69,7 +69,8 @@ bin_ids = [f"{n_bins}_bins" for n_bins in bins]
 
 
 @pytest.mark.parametrize("n_bins", bins, ids=bin_ids)
-def test_hypotest(benchmark, backend, n_bins):
+@pytest.mark.usefixtures("backend")
+def test_hypotest(benchmark, n_bins):
     """
     Benchmark the performance of pyhf.utils.hypotest()
     for various numbers of bins and different backends

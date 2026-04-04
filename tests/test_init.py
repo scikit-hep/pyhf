@@ -19,7 +19,8 @@ import pyhf
     ],
     ids=["numpy", "jax"],
 )
-def test_missing_backends(isolate_modules, param):
+@pytest.mark.usefixtures("isolate_modules")
+def test_missing_backends(param):
     backend_name, module_name, import_name, expectation = param
 
     # hide
@@ -57,7 +58,8 @@ def test_missing_backends(isolate_modules, param):
     ],
     ids=["scipy", "minuit"],
 )
-def test_missing_optimizer(isolate_modules, param):
+@pytest.mark.usefixtures("isolate_modules")
+def test_missing_optimizer(param):
     backend_name, module_name, import_name, expectation = param
 
     # hide

@@ -8,7 +8,8 @@ import pyhf
 from pyhf.simplemodels import uncorrelated_background
 
 
-def test_astensor_dtype(backend, caplog):
+@pytest.mark.usefixtures("backend")
+def test_astensor_dtype(caplog):
     tb = pyhf.tensorlib
     with caplog.at_level(logging.INFO, "pyhf.tensor"):
         with pytest.raises(KeyError):
@@ -16,21 +17,24 @@ def test_astensor_dtype(backend, caplog):
         assert "Invalid dtype" in caplog.text
 
 
-def test_ones_dtype(backend, caplog):
+@pytest.mark.usefixtures("backend")
+def test_ones_dtype(caplog):
     with caplog.at_level(logging.INFO, "pyhf.tensor"):
         with pytest.raises(KeyError):
             assert pyhf.tensorlib.ones([1, 2, 3], dtype="long")
         assert "Invalid dtype" in caplog.text
 
 
-def test_zeros_dtype(backend, caplog):
+@pytest.mark.usefixtures("backend")
+def test_zeros_dtype(caplog):
     with caplog.at_level(logging.INFO, "pyhf.tensor"):
         with pytest.raises(KeyError):
             assert pyhf.tensorlib.zeros([1, 2, 3], dtype="long")
         assert "Invalid dtype" in caplog.text
 
 
-def test_simple_tensor_ops(backend):
+@pytest.mark.usefixtures("backend")
+def test_simple_tensor_ops():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.astensor([1, 2, 3]) + tb.astensor([4, 5, 6])) == [5, 7, 9]
     assert tb.tolist(tb.astensor([1]) + tb.astensor([4, 5, 6])) == [5, 6, 7]
@@ -91,12 +95,14 @@ def test_simple_tensor_ops(backend):
     ]
 
 
-def test_tensor_where_scalar(backend):
+@pytest.mark.usefixtures("backend")
+def test_tensor_where_scalar():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.where(tb.astensor([1, 0, 1], dtype="bool"), 1, 2)) == [1, 2, 1]
 
 
-def test_tensor_where_tensor(backend):
+@pytest.mark.usefixtures("backend")
+def test_tensor_where_tensor():
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.where(
@@ -107,13 +113,15 @@ def test_tensor_where_tensor(backend):
     ) == [1, 2, 1]
 
 
-def test_tensor_to_numpy(backend):
+@pytest.mark.usefixtures("backend")
+def test_tensor_to_numpy():
     tb = pyhf.tensorlib
     array = [[1, 2, 3], [4, 5, 6]]
     assert np.array_equal(tb.to_numpy(tb.astensor(array)), np.array(array))
 
 
-def test_tensor_ravel(backend):
+@pytest.mark.usefixtures("backend")
+def test_tensor_ravel():
     tb = pyhf.tensorlib
     assert (
         tb.tolist(
@@ -129,7 +137,8 @@ def test_tensor_ravel(backend):
     ) == [1, 2, 3, 4, 5, 6]
 
 
-def test_complex_tensor_ops(backend):
+@pytest.mark.usefixtures("backend")
+def test_complex_tensor_ops():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.outer(tb.astensor([1, 2, 3]), tb.astensor([4, 5, 6]))) == [
         [4, 5, 6],
@@ -155,25 +164,29 @@ def test_complex_tensor_ops(backend):
     ]
 
 
-def test_ones(backend):
+@pytest.mark.usefixtures("backend")
+def test_ones():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.ones((2, 3))) == [[1, 1, 1], [1, 1, 1]]
     assert tb.tolist(tb.ones((4, 5))) == [[1.0] * 5] * 4
 
 
-def test_normal(backend):
+@pytest.mark.usefixtures("backend")
+def test_normal():
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.normal_logpdf(tb.astensor([0]), tb.astensor([0]), tb.astensor([1]))
     ) == pytest.approx([-0.9189385332046727], 1e-07)
 
 
-def test_zeros(backend):
+@pytest.mark.usefixtures("backend")
+def test_zeros():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.zeros((4, 5))) == [[0.0] * 5] * 4
 
 
-def test_broadcasting(backend):
+@pytest.mark.usefixtures("backend")
+def test_broadcasting():
     tb = pyhf.tensorlib
     assert list(
         map(
@@ -205,12 +218,14 @@ def test_broadcasting(backend):
         )
 
 
-def test_reshape(backend):
+@pytest.mark.usefixtures("backend")
+def test_reshape():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.reshape(tb.ones((1, 2, 3)), (-1,))) == [1, 1, 1, 1, 1, 1]
 
 
-def test_swap(backend):
+@pytest.mark.usefixtures("backend")
+def test_swap():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.einsum("ij...->ji...", tb.astensor([[1, 2, 3]]))) == [
         [1],
@@ -227,7 +242,8 @@ def test_swap(backend):
     ]
 
 
-def test_shape(backend):
+@pytest.mark.usefixtures("backend")
+def test_shape():
     tb = pyhf.tensorlib
     assert tb.shape(tb.ones((1, 2, 3, 4, 5))) == (1, 2, 3, 4, 5)
     assert tb.shape(tb.ones((0, 0))) == (0, 0)
@@ -252,7 +268,8 @@ def test_shape(backend):
         )
 
 
-def test_pdf_calculations(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_calculations():
     tb = pyhf.tensorlib
 
     assert tb.tolist(tb.normal_cdf(tb.astensor([0.8]))) == pytest.approx(
@@ -303,7 +320,8 @@ def test_pdf_calculations(backend):
     ) == pytest.approx([0.4151074974205947, 0.3515379040027489, 0.2767383316137298])
 
 
-def test_boolean_mask(backend):
+@pytest.mark.usefixtures("backend")
+def test_boolean_mask():
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.boolean_mask(
@@ -319,7 +337,8 @@ def test_boolean_mask(backend):
     ) == [1, 2, 4]
 
 
-def test_percentile(backend):
+@pytest.mark.usefixtures("backend")
+def test_percentile():
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
     assert tb.tolist(tb.percentile(a, 0)) == 1
@@ -329,7 +348,8 @@ def test_percentile(backend):
     assert tb.tolist(tb.percentile(a, 50, axis=1)) == [7.0, 2.0]
 
 
-def test_percentile_method(backend):
+@pytest.mark.usefixtures("backend")
+def test_percentile_method():
     tb = pyhf.tensorlib
     a = tb.astensor([[10, 7, 4], [3, 2, 1]])
 
@@ -340,7 +360,8 @@ def test_percentile_method(backend):
     assert tb.tolist(tb.percentile(a, 50, method="higher")) == 4.0
 
 
-def test_tensor_tile(backend):
+@pytest.mark.usefixtures("backend")
+def test_tensor_tile():
     a = [[1], [2], [3]]
     tb = pyhf.tensorlib
     assert tb.tolist(tb.tile(tb.astensor(a), (1, 2))) == [[1, 1], [2, 2], [3, 3]]
@@ -356,7 +377,8 @@ def test_tensor_tile(backend):
     ]
 
 
-def test_1D_gather(backend):
+@pytest.mark.usefixtures("backend")
+def test_1D_gather():
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.gather(
@@ -370,7 +392,8 @@ def test_1D_gather(backend):
     ) == [[5, 1], [4, 3]]
 
 
-def test_ND_gather(backend):
+@pytest.mark.usefixtures("backend")
+def test_ND_gather():
     tb = pyhf.tensorlib
     assert tb.tolist(
         tb.gather(
@@ -379,7 +402,8 @@ def test_ND_gather(backend):
     ) == [[3, 4], [1, 2]]
 
 
-def test_isfinite(backend):
+@pytest.mark.usefixtures("backend")
+def test_isfinite():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.isfinite(tb.astensor([1.0, float("nan"), float("inf")]))) == [
         True,
@@ -388,7 +412,8 @@ def test_isfinite(backend):
     ]
 
 
-def test_einsum(backend):
+@pytest.mark.usefixtures("backend")
+def test_einsum():
     tb = pyhf.tensorlib
     x = np.arange(20).reshape(5, 4).tolist()
 
@@ -401,7 +426,8 @@ def test_einsum(backend):
     )
 
 
-def test_list_to_list(backend):
+@pytest.mark.usefixtures("backend")
+def test_list_to_list():
     tb = pyhf.tensorlib
     # test when no other tensor operations are done
     assert tb.tolist([1, 2, 3, 4]) == [1, 2, 3, 4]
@@ -409,13 +435,15 @@ def test_list_to_list(backend):
     assert tb.tolist([[1, 2], 3, [4]]) == [[1, 2], 3, [4]]
 
 
-def test_tensor_to_list(backend):
+@pytest.mark.usefixtures("backend")
+def test_tensor_to_list():
     tb = pyhf.tensorlib
     assert tb.tolist(tb.astensor([1, 2, 3, 4])) == [1, 2, 3, 4]
     assert tb.tolist(tb.astensor([[1], [2], [3], [4]])) == [[1], [2], [3], [4]]
 
 
-def test_pdf_eval(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_eval():
     source = {
         "binning": [2, -0.5, 1.5],
         "bindata": {
@@ -463,7 +491,8 @@ def test_pdf_eval(backend):
     )
 
 
-def test_pdf_eval_2(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_eval_2():
     source = {
         "binning": [2, -0.5, 1.5],
         "bindata": {
