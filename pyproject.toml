@@ -249,8 +249,8 @@ ignore_errors = true
 [tool.ruff]
 line-length = 88
 extend-exclude = [
-  "docs/examples/notebooks/histogrammar.ipynb",
-  "docs/examples/notebooks/StatError.ipynb"
+  "docs/examples/notebooks/histogrammar.ipynb",  # issue 2689: revise or remove
+  "docs/examples/notebooks/StatError.ipynb"  # issue 2689: revise or remove
 ]
 
 [tool.ruff.lint]
