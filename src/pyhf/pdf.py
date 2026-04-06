@@ -742,9 +742,8 @@ class _MainModel:
         tensorlib, _ = get_backend()
         pars = tensorlib.astensor(pars)
         if pars.shape[-1] != self.config.npars:
-            raise exceptions.InvalidPdfParameters(
-                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
-            )
+            msg = f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            raise exceptions.InvalidPdfParameters(msg)
         return self._expected_data_unchecked(pars, return_by_sample)
 
 
@@ -847,9 +846,8 @@ class Model:
         pars = tensorlib.astensor(pars)
         # Verify parameter shapes
         if pars.shape[-1] != self.config.npars:
-            raise exceptions.InvalidPdfParameters(
-                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
-            )
+            msg = f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            raise exceptions.InvalidPdfParameters(msg)
 
         return self.make_pdf(pars)[1].expected_data()
 
@@ -880,9 +878,8 @@ class Model:
         pars = tensorlib.astensor(pars)
         # Verify parameter shapes
         if pars.shape[-1] != self.config.npars:
-            raise exceptions.InvalidPdfParameters(
-                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
-            )
+            msg = f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            raise exceptions.InvalidPdfParameters(msg)
 
         return self.main_model._expected_data_unchecked(pars)
 
@@ -901,9 +898,8 @@ class Model:
         pars = tensorlib.astensor(pars)
         # Verify parameter shapes
         if pars.shape[-1] != self.config.npars:
-            raise exceptions.InvalidPdfParameters(
-                f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
-            )
+            msg = f"Evaluation failed as parameters have length {pars.shape[-1]} but model requires {self.config.npars}."
+            raise exceptions.InvalidPdfParameters(msg)
 
         if not include_auxdata:
             return self.main_model._expected_data_unchecked(pars)
