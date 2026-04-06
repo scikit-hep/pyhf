@@ -195,7 +195,7 @@ def test_code1_validation(backend, do_tensorized_calc):
     )
 
 
-@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
 def test_code2_validation(backend, do_tensorized_calc):
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
     # Test across all three regions : alpha > 1, alpha < -1 and |alpha| <= 1
@@ -210,7 +210,7 @@ def test_code2_validation(backend, do_tensorized_calc):
     # Calculate the actual interpolate values: nom + delta
     histogramssets_tensor = pyhf.tensorlib.astensor(histogramssets)
     allsets_allhistos_noms_repeated = pyhf.tensorlib.einsum(
-        'sa,shb->shab',
+        "sa,shb->shab",
         pyhf.tensorlib.ones(pyhf.tensorlib.shape(alphasets)),
         histogramssets_tensor[:, :, 1],
     )
@@ -222,7 +222,7 @@ def test_code2_validation(backend, do_tensorized_calc):
     )
 
 
-@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=['slow', 'fast'])
+@pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
 def test_code2_fast_slow_consistency_extrapolation(backend, do_tensorized_calc):
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
     # Only test the region alpha < -1
