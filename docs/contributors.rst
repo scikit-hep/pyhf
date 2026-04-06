@@ -37,3 +37,4 @@ Contributors include:
 - Melissa Weber Mendonça
 - Matthias Bussonnier
 - Peter Fackeldey
+- Alok Kumar
