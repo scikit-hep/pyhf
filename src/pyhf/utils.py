@@ -10,13 +10,6 @@ import yaml
 
 from pyhf import __version__
 
-# importlib.resources.as_file wasn't added until Python 3.9
-# c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
-if sys.version_info >= (3, 9):
-    from importlib import resources
-else:
-    import importlib_resources as resources
-
 __all__ = [
     "EqDelimStringParamType",
     "citation",
@@ -158,17 +151,16 @@ def environment_info():
             def freedesktop_os_release():
                 os_release_path = Path("/etc") / "os-release"
                 if os_release_path.exists():
-                    with open(os_release_path, encoding="utf8") as read_file:
+                    with os_release_path.open(encoding="utf8") as read_file:
                         os_release_file = read_file.read()
                     os_release_list = os_release_file.split("\n")
                     # Remove all trailing lines
                     os_release_list = list(filter(("").__ne__, os_release_list))
                     return {
-                        token.split("=")[0]: token.split("=")[1].replace('"', '')
+                        token.split("=")[0]: token.split("=")[1].replace('"', "")
                         for token in os_release_list
                     }
-                else:
-                    raise OSError
+                raise OSError
 
         try:
             os_release = freedesktop_os_release()
