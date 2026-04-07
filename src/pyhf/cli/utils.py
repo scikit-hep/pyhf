@@ -1,4 +1,5 @@
 """The pyhf utils CLI subcommand."""
+
 import logging
 from pathlib import Path
 
@@ -28,7 +29,7 @@ def environment(output_file):
         output_file = Path(output_file)
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, "w+", encoding="utf-8") as out_file:
+        with output_file.open("w+", encoding="utf-8") as out_file:
             out_file.write(environment_info)
         log.environment(f"Written to {output_file}")
     else:
