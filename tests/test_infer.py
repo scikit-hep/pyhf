@@ -702,12 +702,12 @@ def test_issue2563_toms748_scan_set_level(hypotest_args):
         data, model, rtol=1e-8, level=0.10, scan=None
     )
 
-    assert obs_limit_95 != pytest.approx(
-        obs_limit_90
-    ), "Observed limit at 95% is the same as the observed limit at 90%"
+    assert obs_limit_95 != pytest.approx(obs_limit_90), (
+        "Observed limit at 95% is the same as the observed limit at 90%"
+    )
     for index, (exp_limit_95, exp_limit_90) in enumerate(
         zip(exp_limits_95, exp_limits_90), 1
     ):
-        assert exp_limit_95 != pytest.approx(
-            exp_limit_90
-        ), f"Expected limit for 95% is the same as the expected limit at 90% for position {index}"
+        assert exp_limit_95 != pytest.approx(exp_limit_90), (
+            f"Expected limit for 95% is the same as the expected limit at 90% for position {index}"
+        )
