@@ -794,7 +794,8 @@ class ToyCalculator:
 
         """
 
-        print('skip?', self.skip_failing_toys)
+        # DEBUG
+        # print("skip?", self.skip_failing_toys)
 
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
@@ -857,9 +858,7 @@ class ToyCalculator:
                         raise
 
                 if (value is not None) and (tensorlib.isfinite(value)):
-                    signal_teststat.append(
-                        value
-                    )
+                    signal_teststat.append(value)
                 progress.advance(signal_task, 1)
 
             bkg_task = progress.add_task(
@@ -875,7 +874,7 @@ class ToyCalculator:
                         self.init_pars,
                         self.par_bounds,
                         self.fixed_params,
-                )
+                    )
                 except RuntimeError:
                     if self.skip_failing_toys:
                         value = None
@@ -883,9 +882,7 @@ class ToyCalculator:
                         raise
 
                 if (value is not None) and (tensorlib.isfinite(value)):
-                    bkg_teststat.append(
-                        value
-                    )
+                    bkg_teststat.append(value)
                 progress.advance(bkg_task, 1)
 
         s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
