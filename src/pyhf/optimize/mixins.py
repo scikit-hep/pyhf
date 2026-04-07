@@ -92,7 +92,7 @@ class OptimizerMixin:
         # TODO: handle various backends
         for par_index, (fitted_par, bound) in enumerate(zip(fitresult.x, par_bounds)):
             if fitted_par in bound:
-                log.warning(f'parameter at index {par_index} is at the bounds')
+                log.warning(f"parameter at index {par_index} is at the bounds")
 
         # stitch in missing parameters (e.g. fixed parameters)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
@@ -215,7 +215,7 @@ class OptimizerMixin:
         result = self._internal_postprocess(
             result,
             stitch_pars,
-            par_bounds=minimizer_kwargs['bounds'],
+            par_bounds=minimizer_kwargs["bounds"],
             return_uncertainties=return_uncertainties,
         )
 
