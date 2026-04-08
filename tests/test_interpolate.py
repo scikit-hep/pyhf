@@ -199,7 +199,7 @@ def test_code1_validation(do_tensorized_calc):
 
 
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
-def test_code2_validation(backend, do_tensorized_calc):
+def test_code2_validation(backend, do_tensorized_calc):  # noqa: ARG001
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
     # Test across all three regions : alpha > 1, alpha < -1 and |alpha| <= 1
     alphasets = pyhf.tensorlib.astensor([[-2, -1, 0, 1, 2]])
@@ -226,7 +226,10 @@ def test_code2_validation(backend, do_tensorized_calc):
 
 
 @pytest.mark.parametrize("do_tensorized_calc", [False, True], ids=["slow", "fast"])
-def test_code2_fast_slow_consistency_extrapolation(backend, do_tensorized_calc):
+def test_code2_fast_slow_consistency_extrapolation(
+    backend,  # noqa: ARG001
+    do_tensorized_calc,  # noqa: ARG001
+):
     histogramssets = [[[[0.5], [1.0], [2.0]]]]
     # Only test the region alpha < -1
     alphasets = pyhf.tensorlib.astensor([[-2.0]])
