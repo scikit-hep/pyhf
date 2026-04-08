@@ -140,7 +140,7 @@ def test_patch_repr(patch):
 
 
 def test_patch_equality(patch):
-    assert patch == patch
+    assert patch == patch  # noqa: PLR0124
     assert patch != object()
 
 

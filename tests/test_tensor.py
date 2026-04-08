@@ -79,10 +79,10 @@ def test_simple_tensor_ops():
     b = tb.astensor(2)
     assert tb.tolist(a < b) is True
     assert tb.tolist(b < a) is False
-    assert tb.tolist(a < a) is False
+    assert tb.tolist(a < a) is False  # noqa: PLR0124
     assert tb.tolist(a > b) is False
     assert tb.tolist(b > a) is True
-    assert tb.tolist(a > a) is False
+    assert tb.tolist(a > a) is False  # noqa: PLR0124
     a = tb.astensor(4)
     b = tb.astensor(5)
     assert tb.tolist(tb.conditional((a < b), lambda: a + b, lambda: a - b)) == 9.0

@@ -818,7 +818,7 @@ def test_combine_workspace_without_validation(mocker, workspace_factory, join):
 def test_workspace_equality(workspace_factory):
     ws = workspace_factory()
     ws_other = workspace_factory()
-    assert ws == ws
+    assert ws == ws  # noqa: PLR0124
     assert ws == ws_other
     assert ws != "not a workspace"
 
