@@ -99,7 +99,7 @@ def test_supported_precision(precision_level):
 
 def test_custom_backend_name_supported():
     class custom_backend:
-        def __init__(self, **kwargs):
+        def __init__(self, **_):
             self.name = "jax"
             self.precision = "64b"
 
@@ -112,7 +112,7 @@ def test_custom_backend_name_supported():
 
 def test_custom_optimizer_name_supported():
     class custom_optimizer:
-        def __init__(self, **kwargs):
+        def __init__(self, **_):
             self.name = "scipy"
 
     with pytest.raises(AttributeError):
@@ -121,7 +121,7 @@ def test_custom_optimizer_name_supported():
 
 def test_custom_backend_name_notsupported():
     class custom_backend:
-        def __init__(self, **kwargs):
+        def __init__(self, **_):
             self.name = "notsupported"
             self.precision = "64b"
 
@@ -136,7 +136,7 @@ def test_custom_backend_name_notsupported():
 
 def test_custom_optimizer_name_notsupported():
     class custom_optimizer:
-        def __init__(self, **kwargs):
+        def __init__(self, **_):
             self.name = "notsupported"
 
     optimizer = custom_optimizer()
