@@ -1,5 +1,6 @@
 import json
 import sys
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -74,7 +75,7 @@ def standard_hypo_test_demo(
 
 def pyhf_version(ntoys=5000, seed=0):
     np.random.seed(seed)
-    with open("validation/xmlimport_input_bkg.json", encoding="utf-8") as ws_json:
+    with Path("validation/xmlimport_input_bkg.json").open(encoding="utf-8") as ws_json:
         workspace = pyhf.Workspace(json.load(ws_json))
 
     model = workspace.model()

@@ -1,5 +1,6 @@
 import json
 import sys
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,7 +54,7 @@ def run_toys_ROOT(infile, ntoys):
         for idx in range(n_points)
     ]
 
-    with open("scan.json", "w", encoding="utf-8") as write_file:
+    with Path("scan.json").open("w", encoding="utf-8") as write_file:
         json.dump(data, write_file)
 
     canvas = ROOT.TCanvas()
@@ -70,7 +71,7 @@ def run_toys_ROOT(infile, ntoys):
 def run_toys_pyhf(ntoys=2_000, seed=0):
     np.random.seed(seed)
     # with open("validation/xmlimport_input_bkg.json") as ws_json:
-    with open("debug/issue_workpace/issue_ws.json", encoding="utf-8") as ws_json:
+    with Path("debug/issue_workpace/issue_ws.json").open(encoding="utf-8") as ws_json:
         workspace = pyhf.Workspace(json.load(ws_json))
 
     model = workspace.model()

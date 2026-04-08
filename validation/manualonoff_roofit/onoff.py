@@ -1,8 +1,9 @@
 import json
+from pathlib import Path
 
 import ROOT
 
-with open("data/source.json", encoding="utf-8") as source_file:
+with Path("data/source.json").open(encoding="utf-8") as source_file:
     d = json.load(source_file)
 nobs = d["bindata"]["data"][0]
 b = d["bindata"]["bkg"][0]

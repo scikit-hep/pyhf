@@ -1,10 +1,11 @@
 import json
 import sys
+from pathlib import Path
 
 import ROOT
 
 if __name__ == "__main__":
-    with open(sys.argv[1], encoding="utf-8") as source_file:
+    with Path(sys.argv[1]).open(encoding="utf-8") as source_file:
         source_data = json.load(source_file)
     root_file = sys.argv[2]
 
