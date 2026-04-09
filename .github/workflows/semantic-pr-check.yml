@@ -7,7 +7,7 @@ name: Semantic Pull Request
 # executes anything from the PR and token permissions are restricted below.
 # c.f. https://github.blog/changelog/2026-06-18-safer-pull_request_target-defaults-for-github-actions-checkout/
 on:
-  pull_request_target:
+  pull_request_target:  # zizmor: ignore[dangerous-triggers]
     types:
       - opened
       - edited
