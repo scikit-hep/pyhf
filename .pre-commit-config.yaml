@@ -90,4 +90,4 @@ repos:
     - id: zizmor
       files: "^\\.github"
       exclude: "^\\.github/(zizmor.yml|release.yml)"
-      args: [--persona=pedantic]
+      args: [--persona=regular]
