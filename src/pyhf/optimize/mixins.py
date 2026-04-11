@@ -223,7 +223,7 @@ class OptimizerMixin:
         result = self._internal_postprocess(
             result,
             stitch_pars,
-            par_bounds=minimizer_kwargs["bounds"],
+            par_bounds=par_bounds,
             return_uncertainties=return_uncertainties,
         )
 
