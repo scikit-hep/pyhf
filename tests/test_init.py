@@ -68,8 +68,9 @@ def test_missing_backends(param):
 def test_missing_optimizer(param):
     backend_name, module_name, import_name, expectation = param
 
-    # hide
-    CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None
+    # hide - use .get() since the package may not be installed (e.g. optimistix on py<3.11)
+    CACHE_BACKEND = sys.modules.get(backend_name)
+    sys.modules[backend_name] = None
     sys.modules.setdefault(f"pyhf.optimize.{import_name}", None)
     CACHE_MODULE, sys.modules[f"pyhf.optimize.{import_name}"] = (
         sys.modules[f"pyhf.optimize.{import_name}"],
@@ -82,7 +83,10 @@ def test_missing_optimizer(param):
         getattr(pyhf.optimize, module_name)
 
     # put back
-    CACHE_BACKEND, sys.modules[backend_name] = None, CACHE_BACKEND
+    if CACHE_BACKEND is None:
+        sys.modules.pop(backend_name, None)
+    else:
+        sys.modules[backend_name] = CACHE_BACKEND
     CACHE_MODULE, sys.modules[f"pyhf.optimize.{import_name}"] = (
         None,
         CACHE_MODULE,
