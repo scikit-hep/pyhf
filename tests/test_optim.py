@@ -599,3 +599,50 @@ def test_minuit_all_fixed_params():
     data = [80] + model.config.auxdata
     result = pyhf.infer.mle.fit(data, model, fixed_params=[True, True])
     assert result is not None
+
+
+def test_optimistix_no_solver():
+    pytest.importorskip("optimistix")
+    with pytest.raises(ValueError, match="needs a solver"):
+        pyhf.optimize.optimistix_optimizer(solver=None)
+
+
+def test_optimistix_wrong_backend():
+    pytest.importorskip("optimistix")
+    pyhf.set_backend("numpy", pyhf.optimize.optimistix_optimizer())
+    model = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [3.5])
+    data = pyhf.tensorlib.astensor([10.0] + model.config.auxdata)
+    with pytest.raises(ValueError, match="JAX backend"):
+        pyhf.infer.mle.fit(data, model)
+
+
+def test_optimistix_minimize():
+    pytest.importorskip("optimistix")
+    pyhf.set_backend("jax", pyhf.optimize.optimistix_optimizer())
+    model = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [3.5])
+    data = pyhf.tensorlib.astensor([10.0] + model.config.auxdata)
+    result = pyhf.infer.mle.fit(data, model)
+    assert result is not None
+    assert len(result) == 2
+
+
+def test_optimistix_minimize_fixed_params():
+    pytest.importorskip("optimistix")
+    pyhf.set_backend("jax", pyhf.optimize.optimistix_optimizer())
+    model = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [3.5])
+    data = pyhf.tensorlib.astensor([10.0] + model.config.auxdata)
+    # fix mu=1.0 and float nuisance parameter only
+    result = pyhf.infer.mle.fit(data, model, fixed_params=[True, False])
+    assert result is not None
+    assert pytest.approx(1.0) == float(result[0])
+
+
+def test_optimistix_return_result_obj():
+    pytest.importorskip("optimistix")
+    pyhf.set_backend("jax", pyhf.optimize.optimistix_optimizer())
+    model = pyhf.simplemodels.uncorrelated_background([5.0], [10.0], [3.5])
+    data = pyhf.tensorlib.astensor([10.0] + model.config.auxdata)
+    _fitted_pars, result = pyhf.infer.mle.fit(data, model, return_result_obj=True)
+    assert isinstance(result, OptimizeResult)
+    assert result.success
+    assert "optx_state" in result

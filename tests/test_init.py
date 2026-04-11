@@ -55,8 +55,14 @@ def test_missing_backends(param):
             "opt_minuit",
             pytest.raises(pyhf.exceptions.ImportBackendError),
         ],
+        [
+            "optimistix",
+            "optimistix_optimizer",
+            "opt_optimistix",
+            pytest.raises(pyhf.exceptions.ImportBackendError),
+        ],
     ],
-    ids=["scipy", "minuit"],
+    ids=["scipy", "minuit", "optimistix"],
 )
 @pytest.mark.usefixtures("isolate_modules")
 def test_missing_optimizer(param):
