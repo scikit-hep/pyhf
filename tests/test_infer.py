@@ -1,3 +1,4 @@
+import types
 import warnings
 
 import numpy as np
@@ -696,8 +697,6 @@ def test_toy_calculator_default_raises_on_failure(hypotest_args, monkeypatch):
         call_count[0] += 1
         if call_count[0] == 3:
             # Simulate a failed fit result
-            import types
-
             fake_result = types.SimpleNamespace(
                 success=False, message="simulated failure"
             )
@@ -731,8 +730,6 @@ def test_toy_calculator_failure_threshold_allows_failures(hypotest_args, monkeyp
         idx = call_count[0]
         call_count[0] += 1
         if idx in fail_on:
-            import types
-
             fake_result = types.SimpleNamespace(
                 success=False, message="simulated failure"
             )
@@ -781,8 +778,6 @@ def test_toy_calculator_failure_threshold_exceeded_raises(hypotest_args, monkeyp
     def always_fails(*args, **kwargs):
         call_count[0] += 1
         if call_count[0] >= 2:
-            import types
-
             fake_result = types.SimpleNamespace(
                 success=False, message="simulated failure"
             )
@@ -814,8 +809,6 @@ def test_toy_calculator_failure_warning_logged(hypotest_args, monkeypatch, caplo
         idx = call_count[0]
         call_count[0] += 1
         if idx == 1:
-            import types
-
             fake_result = types.SimpleNamespace(
                 success=False, message="simulated failure"
             )
@@ -849,8 +842,6 @@ def test_toy_calculator_failure_threshold_via_hypotest(hypotest_args, monkeypatc
         # Fail on call 5 so at least 4 signal toys succeed first, keeping the
         # failure fraction at 1/5 = 20% well below failure_threshold=0.5.
         if idx == 5:
-            import types
-
             fake_result = types.SimpleNamespace(
                 success=False, message="simulated failure"
             )
