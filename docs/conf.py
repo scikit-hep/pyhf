@@ -292,7 +292,6 @@ html_css_files = [
 ]
 
 html_js_files = [
-    "js/custom.js",
     (
         "https://views.scientific-python.org/js/plausible.js",
         {"data-domain": "pyhf.readthedocs.io", "defer": "defer"},
