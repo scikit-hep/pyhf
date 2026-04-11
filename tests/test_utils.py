@@ -1,4 +1,5 @@
 import importlib.metadata
+import pathlib
 import platform
 import sys
 
@@ -96,6 +97,21 @@ def test_environment_info_linux_oserror(monkeypatch):
 
     monkeypatch.setattr(
         platform, "freedesktop_os_release", raise_oserror, raising=False
+    )
+    info = pyhf.utils.environment_info()
+    assert "* os version: Cannot be determined" in info
+
+
+def test_environment_info_linux_fallback_no_os_release_file(monkeypatch):
+    # Simulate Python 3.9 (no platform.freedesktop_os_release) with no /etc/os-release
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.delattr(platform, "freedesktop_os_release", raising=False)
+
+    original_exists = pathlib.Path.exists
+    monkeypatch.setattr(
+        pathlib.Path,
+        "exists",
+        lambda self: False if "os-release" in str(self) else original_exists(self),
     )
     info = pyhf.utils.environment_info()
     assert "* os version: Cannot be determined" in info
