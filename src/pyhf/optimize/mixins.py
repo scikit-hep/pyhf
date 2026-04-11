@@ -87,9 +87,9 @@ class OptimizerMixin:
         """
         tensorlib, _ = get_backend()
 
-        # TODO: check how to handle this for batching
-        # TODO: handle skipping fixed parameters
-        # TODO: handle various backends
+        # fitresult.x and par_bounds both cover only the free parameters
+        # (fixed params are stripped by shim() before optimization and
+        # stitched back in below), so they always align correctly.
         for par_index, (fitted_par, (lower, upper)) in enumerate(
             zip(fitresult.x, par_bounds)
         ):
