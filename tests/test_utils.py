@@ -1,3 +1,5 @@
+import importlib.metadata
+
 import pytest
 
 import pyhf
@@ -53,3 +55,38 @@ def test_citation(oneline):
     assert citation
     if oneline:
         assert "\n" not in citation
+
+
+def test_environment_info():
+    info = pyhf.utils.environment_info()
+    assert isinstance(info, str)
+    assert "* os version:" in info
+    assert "* kernel version:" in info
+    assert "* python version:" in info
+    assert f"* pyhf version: {pyhf.__version__}" in info
+    assert "* numpy version:" in info
+    assert "* scipy version:" in info
+    assert "* iminuit version:" in info
+    assert "* jax version:" in info
+    assert "* jaxlib version:" in info
+    # Output should be markdown bullet list lines
+    for line in info.strip().splitlines():
+        assert line.startswith("* ")
+
+
+def test_environment_info_missing_optional(monkeypatch):
+    original_version = importlib.metadata.version
+
+    def mock_version(name):
+        if name in ("iminuit", "jax", "jaxlib"):
+            raise importlib.metadata.PackageNotFoundError(name)
+        return original_version(name)
+
+    monkeypatch.setattr(importlib.metadata, "version", mock_version)
+    info = pyhf.utils.environment_info()
+    assert "* iminuit version: not installed" in info
+    assert "* jax version: not installed" in info
+    assert "* jaxlib version: not installed" in info
+    # Core packages still present
+    assert "* numpy version:" in info
+    assert "* scipy version:" in info

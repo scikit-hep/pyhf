@@ -1,4 +1,5 @@
 import hashlib
+import importlib.metadata
 import json
 import platform
 import sys
@@ -126,15 +127,27 @@ def citation(oneline=False):
 
 def environment_info():
     """
-    Produce OS / environment information useful for filing a bug report
+    Produce OS / environment information useful for filing a bug report.
+
+    The output is formatted as a Markdown bullet list for easy copy-paste
+    into GitHub issues.
 
     Example:
 
         >>> import pyhf
-        >>> pyhf.utils.environment_info()
+        >>> print(pyhf.utils.environment_info())  # doctest: +ELLIPSIS
+        * os version: ...
+        * kernel version: ...
+        * python version: ...
+        * pyhf version: ...
+        * numpy version: ...
+        * scipy version: ...
+        * iminuit version: ...
+        * jax version: ...
+        * jaxlib version: ...
 
     Returns:
-        os_info (:obj:`str`): The operating system and environment information
+        :obj:`str`: The operating system and environment information
         for the host machine.
     """
 
@@ -170,8 +183,29 @@ def environment_info():
     elif sys.platform == "darwin":
         os_version = f"macOS {platform.mac_ver()[0]}"
 
-    os_info = f"* os version: {os_version}\n"
-    kernel_info = f"* kernel version: {platform.system()} {platform.release()} {platform.machine()}\n"
-    python_info = f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler()}]\n"
-    pyhf_version = f"* pyhf version: {__version__}\n"
-    return os_info + kernel_info + python_info + pyhf_version
+    lines = [
+        f"* os version: {os_version}",
+        f"* kernel version: {platform.system()} {platform.release()} {platform.machine()}",
+        f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler()}]",
+        f"* pyhf version: {__version__}",
+        f"* numpy version: {importlib.metadata.version('numpy')}",
+        f"* scipy version: {importlib.metadata.version('scipy')}",
+    ]
+
+    # Optional backends — show "not installed" if absent
+    try:
+        lines.append(f"* iminuit version: {importlib.metadata.version('iminuit')}")
+    except importlib.metadata.PackageNotFoundError:
+        lines.append("* iminuit version: not installed")
+
+    try:
+        lines.append(f"* jax version: {importlib.metadata.version('jax')}")
+    except importlib.metadata.PackageNotFoundError:
+        lines.append("* jax version: not installed")
+
+    try:
+        lines.append(f"* jaxlib version: {importlib.metadata.version('jaxlib')}")
+    except importlib.metadata.PackageNotFoundError:
+        lines.append("* jaxlib version: not installed")
+
+    return "\n".join(lines) + "\n"
