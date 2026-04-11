@@ -1371,7 +1371,8 @@ def test_multi_component_poi():
         pyhf.Workspace(spec).model()
 
 
-def test_pdf_invalid_parameter_shapes(backend):
+@pytest.mark.usefixtures("backend")
+def test_pdf_invalid_parameter_shapes():
     nbins = np.random.randint(2, 10)
 
     signal = np.random.random(nbins).tolist()
