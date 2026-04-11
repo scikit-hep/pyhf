@@ -27,6 +27,7 @@ from pyhf import get_backend
 from pyhf.exceptions import FailedMinimization
 from pyhf.infer import utils
 from pyhf.infer.mle import fixed_poi_fit
+from pyhf.tensor.numpy_backend import Tensor
 
 log = logging.getLogger(__name__)
 
@@ -227,12 +228,11 @@ class HypoTestFitResults:
     :py:meth:`AsymptoticCalculator.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`
     """
 
-    # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
-    asimov_pars: Tensor  # noqa: F821
-    free_fit_to_data: Tensor  # noqa: F821
-    free_fit_to_asimov: Tensor  # noqa: F821
-    fixed_poi_fit_to_data: Tensor  # noqa: F821
-    fixed_poi_fit_to_asimov: Tensor  # noqa: F821
+    asimov_pars: Tensor
+    free_fit_to_data: Tensor
+    free_fit_to_asimov: Tensor
+    fixed_poi_fit_to_data: Tensor
+    fixed_poi_fit_to_asimov: Tensor
 
 
 class AsymptoticCalculator:
@@ -703,10 +703,9 @@ class ToyResult:
     <pyhf.infer.calculators.ToyCalculator.distributions>`.
     """
 
-    # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
     successful: list[float]
     """Test statistic values for toys where the fit succeeded."""
-    failed: list[tuple[int, Tensor, FailedMinimization]]  # noqa: F821
+    failed: list[tuple[int, Tensor, FailedMinimization]]
     """
     Entries for each toy that raised :py:exc:`~pyhf.exceptions.FailedMinimization`.
     Each entry is a ``(toy_index, sample, exception)`` tuple so callers can
