@@ -1,4 +1,6 @@
 import importlib.metadata
+import platform
+import sys
 
 import pytest
 
@@ -72,6 +74,41 @@ def test_environment_info():
     # Output should be markdown bullet list lines
     for line in info.strip().splitlines():
         assert line.startswith("* ")
+
+
+def test_environment_info_linux(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(
+        platform,
+        "freedesktop_os_release",
+        lambda: {"NAME": "Ubuntu", "VERSION": "22.04.2 LTS (Jammy Jellyfish)"},
+    )
+    info = pyhf.utils.environment_info()
+    assert "* os version: Ubuntu 22.04.2 LTS (Jammy Jellyfish)" in info
+
+
+def test_environment_info_linux_oserror(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "linux")
+
+    def raise_oserror():
+        raise OSError
+
+    monkeypatch.setattr(platform, "freedesktop_os_release", raise_oserror)
+    info = pyhf.utils.environment_info()
+    assert "* os version: Cannot be determined" in info
+
+
+def test_environment_info_darwin(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "darwin")
+    monkeypatch.setattr(platform, "mac_ver", lambda: ("14.1.0", ("", "", ""), ""))
+    info = pyhf.utils.environment_info()
+    assert "* os version: macOS 14.1.0" in info
+
+
+def test_environment_info_unknown_platform(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "win32")
+    info = pyhf.utils.environment_info()
+    assert "* os version: Cannot be determined" in info
 
 
 def test_environment_info_missing_optional(monkeypatch):
