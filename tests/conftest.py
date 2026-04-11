@@ -81,7 +81,6 @@ _backend_params = [
         ("numpy_backend", {"poisson_from_normal": True}),
         ("minuit_optimizer", {}),
     ),
-    (("jax_backend", {}), ("optimistix_optimizer", {})),
 ]
 _backend_ids = ["numpy", "jax", "numpy_minuit"]
 
