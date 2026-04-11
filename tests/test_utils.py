@@ -82,6 +82,7 @@ def test_environment_info_linux(monkeypatch):
         platform,
         "freedesktop_os_release",
         lambda: {"NAME": "Ubuntu", "VERSION": "22.04.2 LTS (Jammy Jellyfish)"},
+        raising=False,
     )
     info = pyhf.utils.environment_info()
     assert "* os version: Ubuntu 22.04.2 LTS (Jammy Jellyfish)" in info
@@ -93,7 +94,9 @@ def test_environment_info_linux_oserror(monkeypatch):
     def raise_oserror():
         raise OSError
 
-    monkeypatch.setattr(platform, "freedesktop_os_release", raise_oserror)
+    monkeypatch.setattr(
+        platform, "freedesktop_os_release", raise_oserror, raising=False
+    )
     info = pyhf.utils.environment_info()
     assert "* os version: Cannot be determined" in info
 
