@@ -599,3 +599,42 @@ def test_minuit_all_fixed_params():
     data = [80] + model.config.auxdata
     result = pyhf.infer.mle.fit(data, model, fixed_params=[True, True])
     assert result is not None
+
+
+@pytest.mark.parametrize(
+    ("fitted_x", "par_bounds", "expect_warning"),
+    [
+        # exactly at lower bound
+        ([3.0], [(3.0, 10.0)], True),
+        # exactly at upper bound
+        ([10.0], [(3.0, 10.0)], True),
+        # interior — no warning
+        ([5.0], [(3.0, 10.0)], False),
+    ],
+    ids=["lower_bound", "upper_bound", "no_bound"],
+)
+def test_parameter_at_bounds_warning(caplog, fitted_x, par_bounds, expect_warning):
+    # Regression test for https://github.com/scikit-hep/pyhf/issues/2525
+    # Test _internal_postprocess directly with controlled fit results so the
+    # check is independent of optimizer-specific floating-point behaviour.
+    import logging
+
+    from scipy.optimize import OptimizeResult
+
+    from pyhf.optimize.mixins import OptimizerMixin
+
+    def stitch_pars(x, _stitch_with=None):
+        return x
+
+    mixin = OptimizerMixin()
+    result = OptimizeResult(x=np.array(fitted_x), fun=0.0, success=True)
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(result, stitch_pars, par_bounds=par_bounds)
+
+    warning_records = [r for r in caplog.records if "is at a bound" in r.message]
+    if expect_warning:
+        assert len(warning_records) == 1
+        assert "bounds" in warning_records[0].message
+    else:
+        assert len(warning_records) == 0

@@ -90,9 +90,17 @@ class OptimizerMixin:
         # TODO: check how to handle this for batching
         # TODO: handle skipping fixed parameters
         # TODO: handle various backends
-        for par_index, (fitted_par, bound) in enumerate(zip(fitresult.x, par_bounds)):
-            if fitted_par in bound:
-                log.warning(f"parameter at index {par_index} is at the bounds")
+        for par_index, (fitted_par, (lower, upper)) in enumerate(
+            zip(fitresult.x, par_bounds)
+        ):
+            if fitted_par in (lower, upper):
+                log.warning(
+                    "fit result for parameter at index %d is at a bound: value=%g, bounds=(%g, %g)",
+                    par_index,
+                    fitted_par,
+                    lower,
+                    upper,
+                )
 
         # stitch in missing parameters (e.g. fixed parameters)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
