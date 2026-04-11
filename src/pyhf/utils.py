@@ -193,19 +193,11 @@ def environment_info():
     ]
 
     # Optional backends — show "not installed" if absent
-    try:
-        lines.append(f"* iminuit version: {importlib.metadata.version('iminuit')}")
-    except importlib.metadata.PackageNotFoundError:
-        lines.append("* iminuit version: not installed")
-
-    try:
-        lines.append(f"* jax version: {importlib.metadata.version('jax')}")
-    except importlib.metadata.PackageNotFoundError:
-        lines.append("* jax version: not installed")
-
-    try:
-        lines.append(f"* jaxlib version: {importlib.metadata.version('jaxlib')}")
-    except importlib.metadata.PackageNotFoundError:
-        lines.append("* jaxlib version: not installed")
+    for package in ("iminuit", "jax", "jaxlib"):
+        try:
+            version = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            version = "not installed"
+        lines.append(f"* {package} version: {version}")
 
     return "\n".join(lines) + "\n"
