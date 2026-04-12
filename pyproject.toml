@@ -163,6 +163,7 @@ log_level = "INFO"
 testpaths = "tests"
 markers = [
     "fail_jax",
+    "fail_jax_optimistix",
     "fail_numpy",
     "fail_numpy_minuit",
     "only_jax",
