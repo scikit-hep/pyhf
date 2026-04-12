@@ -88,36 +88,52 @@ class optimistix_optimizer(OptimizerMixin):
         options = options.pop("options", self.options)
 
         fixed_vals = fixed_vals or []
-        # for optimistix we re-express the func such that the x0 only contains
-        # floating point values for params (x0) that the optimizer should minimise.
-        # Fixed parameters are set to None (static pytree leaf-type) and thus won't receive
-        # a gradient update by the minimizer. We patch/set back their fixed values
-        # in the `wrapped_func` before forwarding them to the original `func`.
-        x0_floating = list(x0)
-        for idx, _ in fixed_vals:
-            x0_floating[idx] = None
+        # for optimistix we re-express the func such that the fixed values will be
+        # 'patched' into the correct indices again. This trick essentially zeros the
+        # gradients of fixed values because the optimizer never sees them.
+        # We also only pass the free params to the optimizer (without the fixed ones!)
+        # that way the hessian is only as big as it has to be. This is much more efficient
+        # as we only calculate gradients for the free parameters and not just zero the
+        # gradients for the fixed ones manually.
+        x0_full = pyhf.tensorlib.astensor(x0, dtype="float")
 
-        def wrapped_func(x0, args):
-            (fixed_vals,) = args
-            for idx, val in fixed_vals:
-                x0[idx] = val
-            return func(x0)
+        fixed_idxs, fixed_vals_arr = zip(*fixed_vals) if fixed_vals else ((), ())
+        fixed_idxs = pyhf.tensorlib.astensor(fixed_idxs, dtype="int")
+        fixed_vals_arr = pyhf.tensorlib.astensor(fixed_vals_arr, dtype="float")
+
+        npars = x0_full.shape[0]
+        all_idxs = pyhf.tensorlib.arange(npars)
+        free_mask = pyhf.tensorlib.ones(npars, dtype="bool").at[fixed_idxs].set(False)
+        free_idxs = all_idxs[free_mask]
+
+        x0_free = x0_full[free_idxs]
+
+        def wrapped_func(x0_free, args):
+            free_idxs, fixed_idxs, fixed_vals_arr, npars = args
+
+            x_full = pyhf.tensorlib.empty((npars,), dtype="float")
+            x_full = x_full.at[free_idxs].set(x0_free)
+            x_full = x_full.at[fixed_idxs].set(fixed_vals_arr)
+
+            return func(x_full)
+
+        args = (free_idxs, fixed_idxs, fixed_vals_arr, npars)
 
         res = minimizer(
             fn=wrapped_func,
             solver=solver,
-            y0=x0_floating,
-            args=(fixed_vals,),
+            y0=x0_free,
+            args=args,
             max_steps=max_steps,
             throw=throw,
             has_aux=True,
             options=options,
         )
 
-        # patch fixed values back in:
-        x = list(res.value)
-        for idx, val in fixed_vals:
-            x[idx] = val
+        # reconstruct output params vector
+        x_res = pyhf.tensorlib.empty((npars,), dtype="float")
+        x_res = x_res.at[free_idxs].set(res.value)
+        x_res = x_res.at[fixed_idxs].set(fixed_vals_arr)
 
         converged = res.result == optx.RESULTS.successful
         message = "Optimization terminated successfully."
@@ -125,7 +141,7 @@ class optimistix_optimizer(OptimizerMixin):
             message = "Optimization failed."
 
         return scipy.optimize.OptimizeResult(
-            x=x,
+            x=x_res.tolist(),
             unc=None,
             corr=None,
             success=converged,
