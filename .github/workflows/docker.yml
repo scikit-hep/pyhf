@@ -28,7 +28,9 @@ jobs:
     permissions:
       contents: read
       packages: write  # for docker to push to registry
-    environment: ci
+    environment:
+      name: ci
+      deployment: false
     runs-on: ubuntu-latest
 
     steps:

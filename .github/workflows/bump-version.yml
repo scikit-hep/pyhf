@@ -41,7 +41,9 @@ jobs:
     permissions:
       contents: write  # for Git to git push
     runs-on: ubuntu-latest
-    environment: ci
+    environment:
+      name: ci
+      deployment: false
     if: github.repository == 'scikit-hep/pyhf'
 
     steps:

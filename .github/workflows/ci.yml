@@ -23,7 +23,9 @@ jobs:
 
     name: CI
     runs-on: ${{ matrix.os }}
-    environment: ci
+    environment:
+      name: ci
+      deployment: false
     # On push events run the CI only on main by default, but run on any branch if the commit message contains '[ci all]'
     if: >-
       github.event_name != 'push'
