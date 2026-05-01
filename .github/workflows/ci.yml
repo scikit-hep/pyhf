@@ -21,7 +21,6 @@ permissions:
 jobs:
   test:
 
-    name: CI
     runs-on: ${{ matrix.os }}
     environment:
       name: ci
