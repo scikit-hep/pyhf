@@ -89,5 +89,5 @@ repos:
   hooks:
     - id: zizmor
       files: "^\\.github"
-      exclude: "^\\.github/(zizmor.yml|release.yml)"
+      exclude: "^\\.github/(zizmor.yml)"
       args: [--persona=regular]
