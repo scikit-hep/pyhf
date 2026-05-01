@@ -16,7 +16,6 @@ permissions:
 jobs:
   test:
 
-    name: Windows CI
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
