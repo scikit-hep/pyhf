@@ -1,6 +1,9 @@
 rules:
   unpinned-uses:
-    disable: true
+    # c.f. https://docs.zizmor.sh/audits/#unpinned-uses-configuration
+    config:
+      policies:
+        "*": ref-pin
 
   concurrency-limits:
     ignore:
