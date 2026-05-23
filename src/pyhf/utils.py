@@ -1,15 +1,21 @@
 import hashlib
+import importlib.metadata
 import json
+import platform
+import sys
 from gettext import gettext
 from importlib import resources
 
 import click
 import yaml
 
+from pyhf import __version__
+
 __all__ = [
     "EqDelimStringParamType",
     "citation",
     "digest",
+    "environment_info",
     "options_from_eqdelimstring",
 ]
 
@@ -117,3 +123,81 @@ def citation(oneline=False):
     if oneline:
         data = "".join(data.splitlines())
     return data
+
+
+def environment_info():
+    """
+    Produce OS / environment information useful for filing a bug report.
+
+    The output is formatted as a Markdown bullet list for easy copy-paste
+    into GitHub issues.
+
+    Example:
+
+        >>> import pyhf
+        >>> print(pyhf.utils.environment_info())  # doctest: +ELLIPSIS
+        * os version: ...
+        * kernel version: ...
+        * python version: ...
+        * pyhf version: ...
+        * numpy version: ...
+        * scipy version: ...
+        * iminuit version: ...
+        * jax version: ...
+        * jaxlib version: ...
+
+    Returns:
+        :obj:`str`: The operating system and environment information
+        for the host machine.
+    """
+
+    os_version = "Cannot be determined"
+    if sys.platform == "linux":
+        try:
+            # platform.freedesktop_os_release added in Python 3.10
+            # Remove when Python 3.9 support dropped
+            from platform import freedesktop_os_release
+        except ImportError:
+            # c.f. https://docs.python.org/3/library/platform.html#platform.freedesktop_os_release
+            from pathlib import Path
+
+            def freedesktop_os_release():
+                os_release_path = Path("/etc") / "os-release"
+                if os_release_path.exists():
+                    with os_release_path.open(encoding="utf8") as read_file:
+                        os_release_file = read_file.read()
+                    os_release_list = os_release_file.split("\n")
+                    # Remove all trailing lines
+                    os_release_list = list(filter(("").__ne__, os_release_list))
+                    return {
+                        token.split("=")[0]: token.split("=")[1].replace('"', "")
+                        for token in os_release_list
+                    }
+                raise OSError
+
+        try:
+            os_release = freedesktop_os_release()
+            os_version = f"{os_release['NAME']} {os_release['VERSION']}"
+        except OSError:
+            os_version = "Cannot be determined"
+    elif sys.platform == "darwin":
+        os_version = f"macOS {platform.mac_ver()[0]}"
+
+    lines = [
+        f"* os version: {os_version}",
+        f"* kernel version: {platform.system()} {platform.release()} {platform.machine()}",
+        f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler()}]",
+        f"* pyhf version: {__version__}",
+        f"* numpy version: {importlib.metadata.version('numpy')}",
+        f"* scipy version: {importlib.metadata.version('scipy')}",
+    ]
+
+    # Optional backends — show "not installed" if absent
+    for package in ("iminuit", "jax", "jaxlib"):
+        try:
+            version = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            version = "not installed"
+        lines.append(f"* {package} version: {version}")
+
+    return "\n".join(lines) + "\n"
