@@ -92,6 +92,10 @@ intersphinx_mapping = get_intersphinx_mapping(
         "jsonpatch",
     }
 )
+intersphinx_mapping["optimistix"] = (
+    "https://docs.kidger.site/optimistix/",
+    "https://docs.kidger.site/optimistix/objects.inv",
+)
 
 # GitHub repo
 issues_github_path = "scikit-hep/pyhf"
