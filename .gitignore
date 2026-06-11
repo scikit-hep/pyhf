@@ -9,6 +9,7 @@ docs/config.rst
 docs/gh-pages
 docs/pyhf.*.rst
 docs/_*/
+!docs/_static/switcher.json
 *.py[co]
 __pycache__
 *.egg-info

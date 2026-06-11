@@ -22,10 +22,6 @@
    release-notes
    contributors
 
-.. raw:: html
-
-   <p id="dev-version"><strong>Warning:</strong> This is a development version. The latest stable version is at <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
-
 ..
   Comment: Splice the JupyterLite example into the README by looking for a particular comment
 
