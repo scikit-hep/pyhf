@@ -18,7 +18,7 @@ def _qmu_like(
 ):
     """
     Clipped version of _tmu_like where the returned test statistic
-    is 0 if muhat > 0 else tmu_like_stat.
+    is 0 if muhat > mu else tmu_like_stat.
 
     If the lower bound of the POI is 0 this automatically implements
     qmu_tilde. Otherwise this is qmu (no tilde).
