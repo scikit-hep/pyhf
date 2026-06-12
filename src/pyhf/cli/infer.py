@@ -99,10 +99,10 @@ def fit(
     with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
     ws = Workspace(spec)
-    patches = [
-        json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
-        for pfile in patch
-    ]
+    patches = []
+    for pfile in patch:
+        with click.open_file(pfile, "r", encoding="utf-8") as f:
+            patches.append(json.load(f))
 
     model = ws.model(
         measurement_name=measurement,
@@ -195,10 +195,10 @@ def cls(
 
     ws = Workspace(spec)
 
-    patches = [
-        json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
-        for pfile in patch
-    ]
+    patches = []
+    for pfile in patch:
+        with click.open_file(pfile, "r", encoding="utf-8") as f:
+            patches.append(json.load(f))
     model = ws.model(
         measurement_name=measurement,
         patches=patches,
