@@ -78,3 +78,11 @@ repos:
       args: ["--verbose"]
     - id: check-github-workflows
       args: ["--verbose"]
+
+- repo: https://github.com/zizmorcore/zizmor-pre-commit
+  rev: v1.24.1
+  hooks:
+    - id: zizmor
+      files: "^\\.github"
+      exclude: "^\\.github/(zizmor.yml)"
+      args: [--persona=regular]

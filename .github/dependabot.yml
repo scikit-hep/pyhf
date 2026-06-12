@@ -14,6 +14,8 @@ updates:
       - "dependencies"
     reviewers:
       - "matthewfeickert"
+    cooldown:
+      default-days: 7
 
   # Ignore all pip dependencies to avoid PRs to update tests/constraints.txt
   - package-ecosystem: "pip"
@@ -22,3 +24,5 @@ updates:
       interval: "weekly"
     ignore:
       - dependency-name: "*"
+    cooldown:
+      default-days: 7

@@ -28,6 +28,9 @@ jobs:
     permissions:
       contents: read
       packages: write  # for docker to push to registry
+    environment:
+      name: ci
+      deployment: false
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +38,7 @@ jobs:
         uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Prepare
         id: prep
         run: |
@@ -94,7 +98,9 @@ jobs:
           push: false
 
       - name: Image digest
-        run: echo ${{ steps.docker_build_test.outputs.digest }}
+        run: echo ${STEPS_DOCKER_BUILD_TEST_OUTPUTS_DIGEST}
+        env:
+          STEPS_DOCKER_BUILD_TEST_OUTPUTS_DIGEST: ${{ steps.docker_build_test.outputs.digest }}
 
       - name: List built images
         run: docker images

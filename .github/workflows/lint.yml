@@ -19,6 +19,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6.0.0
+      with:
+        persist-credentials: false
 
     - name: Lint Dockerfile
       uses: hadolint/hadolint-action@v3.3.0

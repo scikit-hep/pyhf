@@ -16,6 +16,7 @@ permissions:
 jobs:
   release-candidates:
 
+    name: PyPI release candidates
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -25,6 +26,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
@@ -47,6 +50,7 @@ jobs:
 
   scipy:
 
+    name: SciPy nightly wheel
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -56,6 +60,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6.0.0
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
@@ -77,6 +83,7 @@ jobs:
 
   iminuit:
 
+    name: iminuit nightly source
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -86,6 +93,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6.0.0
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
       with:
@@ -104,6 +113,7 @@ jobs:
 
   uproot5:
 
+    name: uproot nightly wheel
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -113,6 +123,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6.0.0
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
       with:
@@ -130,6 +142,7 @@ jobs:
 
   matplotlib:
 
+    name: Matplotlib nightly wheel
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -139,6 +152,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6.0.0
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
@@ -169,6 +184,7 @@ jobs:
 
   pytest:
 
+    name: pytest nightly source
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -178,6 +194,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6.0.0
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
       with:

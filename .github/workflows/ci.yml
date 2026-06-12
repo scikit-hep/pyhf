@@ -22,6 +22,9 @@ jobs:
   test:
 
     runs-on: ${{ matrix.os }}
+    environment:
+      name: ci
+      deployment: false
     # On push events run the CI only on main by default, but run on any branch if the commit message contains '[ci all]'
     if: >-
       github.event_name != 'push'
@@ -40,6 +43,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
