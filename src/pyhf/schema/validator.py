@@ -5,11 +5,13 @@ from collections.abc import Mapping
 from pathlib import Path
 
 import jsonschema
+from referencing import Registry, Resource
+from referencing.jsonschema import DRAFT6
 
 import pyhf.exceptions
 from pyhf import tensor
 from pyhf.schema import variables
-from pyhf.schema.loader import load_schema
+from pyhf.schema.loader import load_schema, read_schema
 
 
 def _is_array_or_tensor(_checker, instance):
@@ -34,6 +36,25 @@ def _is_number_or_tensor_subtype(checker, instance):
     if is_number:
         return True
     return isinstance(instance, (numbers.Number, *tensor.array_subtypes))
+
+
+def _retrieve_schema(uri: str) -> Resource:
+    """
+    A ``referencing`` retrieve callback that loads a pyhf schema by its URI.
+
+    Cross-schema ``$ref``\\ s (e.g. ``defs.json``) are resolved against the
+    referring schema's ``$id``. For the bundled schemas these are absolute URIs
+    under :data:`pyhf.schema.variables.SCHEMA_BASE`; for custom schemas (see
+    :class:`pyhf.schema.Schema`) they are paths relative to
+    :attr:`pyhf.schema.path`. In both cases stripping the base leaves the disk
+    path relative to :attr:`pyhf.schema.path`.
+
+    The schema is read directly from disk via :func:`read_schema` so that
+    resolving references does not pollute :data:`pyhf.schema.variables.SCHEMA_CACHE`.
+    """
+    schema_id = uri.removeprefix(variables.SCHEMA_BASE)
+    schema = read_schema(schema_id)
+    return Resource.from_contents(schema, default_specification=DRAFT6)
 
 
 def validate(
@@ -75,14 +96,15 @@ def validate(
 
     schema = load_schema(str(Path(version).joinpath(schema_name)))
 
-    # note: trailing slash needed for RefResolver to resolve correctly and by
-    # design, pathlib strips trailing slashes. See ref below:
-    # * https://bugs.python.org/issue21039
-    # * https://github.com/python/cpython/issues/65238
-    resolver = jsonschema.RefResolver(
-        base_uri=f"{Path(variables.schemas).joinpath(version).as_uri()}/",
-        referrer=schema_name,
-        store=variables.SCHEMA_CACHE,
+    schema_id = schema["$id"]
+
+    # Resolve cross-schema ``$ref``\ s (e.g. ``defs.json#/...``) relative to the
+    # canonical schema ``$id``\ s. The ``_retrieve_schema`` callback lazily loads
+    # any referenced schema from disk so the active schema search path
+    # (see :class:`pyhf.schema.Schema`) is honored.
+    registry = Registry(retrieve=_retrieve_schema).with_resource(
+        uri=schema_id,
+        resource=Resource.from_contents(schema, default_specification=DRAFT6),
     )
 
     Validator = jsonschema.Draft6Validator
@@ -93,7 +115,14 @@ def validate(
         ).redefine("number", _is_number_or_tensor_subtype)
         Validator = jsonschema.validators.extend(Validator, type_checker=type_checker)
 
-    validator = Validator(schema, resolver=resolver, format_checker=None)
+    validator = Validator(schema, registry=registry, format_checker=None)
+
+    # The pyhf schemas carry a top-level ``$ref`` (e.g. ``model.json`` points at
+    # ``defs.json#/definitions/model``). Under draft-06 a sibling ``$ref``
+    # suppresses ``$id``, so jsonschema cannot infer the base URI of the root
+    # schema and relative references like ``defs.json`` fail to resolve. Anchor
+    # the resolver at the schema ``$id`` so those references resolve correctly.
+    validator._resolver = registry.resolver(base_uri=schema_id)
 
     try:
         return validator.validate(spec)

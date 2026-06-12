@@ -38,15 +38,35 @@ def load_schema(schema_id: str):
     except KeyError:
         pass
 
+    schema = read_schema(schema_id)
+    variables.SCHEMA_CACHE[schema["$id"]] = schema
+    return variables.SCHEMA_CACHE[schema["$id"]]
+
+
+def read_schema(schema_id: str):
+    """
+    Read a schema by relative path directly from disk, bypassing the cache.
+
+    Unlike :func:`load_schema`, this does not consult or mutate
+    :data:`pyhf.schema.variables.SCHEMA_CACHE`. It is used to resolve
+    cross-schema ``$ref``\\ s during validation without polluting the cache.
+
+    Args:
+        schema_id (str): Relative path to schema from :attr:`pyhf.schema.path`
+
+    Returns:
+        schema (dict): The loaded schema.
+
+    Raises:
+        ~pyhf.exceptions.SchemaNotFound: if the provided ``schema_id`` cannot be found.
+    """
     ref = variables.schemas.joinpath(schema_id)
     with resources.as_file(ref) as path:
         if not path.exists():
             msg = f"The schema {schema_id} was not found. Do you have the right version or the right path? {path}"
             raise pyhf.exceptions.SchemaNotFound(msg)
         with path.open(encoding="utf-8") as json_schema:
-            schema = json.load(json_schema)
-            variables.SCHEMA_CACHE[schema["$id"]] = schema
-        return variables.SCHEMA_CACHE[schema["$id"]]
+            return json.load(json_schema)
 
 
 # pre-populate the cache to avoid network access
