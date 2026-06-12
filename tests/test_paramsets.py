@@ -1,6 +1,44 @@
 import pytest
 
-from pyhf.parameters import paramsets
+import pyhf
+from pyhf.parameters import paramsets, reduce_paramsets_requirements
+
+
+def _normsys_requirement():
+    return {
+        "paramset_type": "constrained_by_normal",
+        "n_parameters": 1,
+        "is_scalar": True,
+        "inits": (0.0,),
+        "bounds": ((-5.0, 5.0),),
+        "fixed": False,
+        "auxdata": (0.0,),
+    }
+
+
+def test_reduce_paramsets_requirements_no_leftover_empty_sets():
+    # a normsys parset does not support 'sigmas'/'factors'; those keys must not
+    # leak into the reduced requirements as leftover empty sets
+    reduced = reduce_paramsets_requirements(
+        {"foo": [_normsys_requirement()]}, {"foo": {"name": "foo"}}
+    )["foo"]
+    assert "sigmas" not in reduced
+    assert "factors" not in reduced
+    # no leftover empty-set values for any key
+    assert not any(isinstance(v, set) for v in reduced.values())
+    assert reduced["inits"] == [0.0]
+
+
+def test_reduce_paramsets_requirements_unsupported_attribute():
+    # configuring an attribute the modifier does not use raises a clear error
+    with pytest.raises(
+        pyhf.exceptions.InvalidModel,
+        match=r"foo does not use the sigmas attribute\.",
+    ):
+        reduce_paramsets_requirements(
+            {"foo": [_normsys_requirement()]},
+            {"foo": {"name": "foo", "sigmas": [1.0]}},
+        )
 
 
 def test_paramset_unconstrained():
