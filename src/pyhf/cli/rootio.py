@@ -94,7 +94,8 @@ def json2xml(workspace, output_dir, specroot, dataroot, resultprefix, patch):
     with click.open_file(workspace, "r", encoding="utf-8") as specstream:
         spec = json.load(specstream)
         for pfile in patch:
-            patch = json.loads(click.open_file(pfile, "r", encoding="utf-8").read())
+            with click.open_file(pfile, "r", encoding="utf-8") as pf:
+                patch = json.load(pf)
             spec = jsonpatch.JsonPatch(patch).apply(spec)
         Path(output_dir).joinpath(specroot).mkdir(parents=True, exist_ok=True)
         Path(output_dir).joinpath(dataroot).mkdir(parents=True, exist_ok=True)

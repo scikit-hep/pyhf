@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, MutableMapping, MutableSequence, Sequence
@@ -215,7 +216,10 @@ def process_sample(
                 "data": {"lo_data": lo, "hi_data": hi},
             }
             modifiers.append(modifier_histosys)
-        elif modtag.tag == "StatError" and modtag.attrib["Activate"] == "True":
+        elif (
+            modtag.tag == "StatError"
+            and modtag.attrib.get("Activate", "False") == "True"
+        ):
             if modtag.attrib.get("HistoName", "") == "":
                 staterr = err
             else:
@@ -534,4 +538,7 @@ def parse(
 
 def clear_filecache() -> None:
     global __FILECACHE__
+    for f, _ in __FILECACHE__.values():
+        with contextlib.suppress(Exception):
+            f.close()
     __FILECACHE__ = {}
