@@ -599,3 +599,25 @@ def test_minuit_all_fixed_params():
     data = [80] + model.config.auxdata
     result = pyhf.infer.mle.fit(data, model, fixed_params=[True, True])
     assert result is not None
+
+
+def test_postprocess_correlations_without_uncertainties():
+    # Regression test: _internal_postprocess must not raise when a fit result
+    # carries correlations but no uncertainties (num_fixed_pars was previously
+    # only defined inside the uncertainties branch).
+    pyhf.set_backend("numpy")
+
+    fitresult = OptimizeResult(
+        x=np.asarray([1.0, 2.0]),
+        fun=0.0,
+        corr=np.asarray([[1.0, 0.5], [0.5, 1.0]]),
+    )
+
+    def stitch_pars(pars, stitch_with=None):  # noqa: ARG001
+        return pars
+
+    optimizer = OptimizerMixin()
+    result = optimizer._internal_postprocess(fitresult, stitch_pars)
+
+    assert result.unc is None
+    assert np.allclose(pyhf.tensorlib.tolist(result.corr), [[1.0, 0.5], [0.5, 1.0]])
