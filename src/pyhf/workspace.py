@@ -51,15 +51,18 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
     else:
         primary_items, secondary_items = left_items, right_items
     joined_items = copy.deepcopy(primary_items)
-    keys = [item[key] for item in joined_items]
+    # Build a dict from key value to index for O(1) lookups.
+    # NB: this dict is intentionally NOT updated when items are appended below,
+    # preserving the original behaviour that secondary items with duplicate
+    # key values are each appended rather than merged.
+    key_to_index = {item[key]: idx for idx, item in enumerate(joined_items)}
     for secondary_item in secondary_items:
         # first, check for deep merging
-        if secondary_item[key] in keys and deep_merge_key is not None:
-            _deep_left_items = joined_items[keys.index(secondary_item[key])][
-                deep_merge_key
-            ]
+        if secondary_item[key] in key_to_index and deep_merge_key is not None:
+            idx = key_to_index[secondary_item[key]]
+            _deep_left_items = joined_items[idx][deep_merge_key]
             _deep_right_items = secondary_item[deep_merge_key]
-            joined_items[keys.index(secondary_item[key])][deep_merge_key] = _join_items(
+            joined_items[idx][deep_merge_key] = _join_items(
                 "left outer", _deep_left_items, _deep_right_items
             )
         # next, move over whole items where possible:
@@ -67,13 +70,12 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
         #   - if outer join and item on right is not in left
         #   - if left outer join and item (by name) is on right and not in left
         #   - if right outer join and item (by name) is on left and not in right
-        # NB: this will be slow for large numbers of items
         elif (
             join == "none"
             or (join == "outer" and secondary_item not in primary_items)
             or (
                 join in ["left outer", "right outer"]
-                and secondary_item[key] not in keys
+                and secondary_item[key] not in key_to_index
             )
         ):
             joined_items.append(copy.deepcopy(secondary_item))
