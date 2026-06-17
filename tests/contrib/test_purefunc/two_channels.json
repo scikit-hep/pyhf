@@ -1,0 +1,95 @@
+{
+  "channels": [
+    {
+      "name": "channel1",
+      "samples": [
+        {
+          "name": "c1s1",
+          "data": [
+            5.0,
+            1.0
+          ],
+          "modifiers": [
+            {
+              "name": "func1",
+              "type": "purefunc"
+            }
+          ]
+        },
+        {
+          "name": "c1s2",
+          "data": [1.0, 5.0],
+          "modifiers": [
+            {
+              "name": "func2",
+              "type": "purefunc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "channel2",
+      "samples": [
+        {
+          "name": "c2s1",
+          "data": [
+            10.0,
+            1.0,
+            1.0
+          ],
+          "modifiers": [
+            {
+              "name": "func1",
+              "type": "purefunc"
+            }
+          ]
+        },
+        {
+          "name": "c2s2",
+          "data": [1.0, 5.0, 1.0],
+          "modifiers": [
+            {
+              "name": "func3",
+              "type": "purefunc"
+            }
+          ]
+        }
+      ]
+  }
+  ],
+  "functions": [
+    {
+      "name": "func1",
+      "formula": "kappa ** 2"      
+    },
+    {
+      "name": "func2",
+      "formula": "kappa**3 + alpha"
+    },
+    {
+      "name": "func3",
+      "formula": "alpha + theta"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "kappa",
+      "inits": [1.0],
+      "bounds": [[0.0, 10.0]],
+      "fixed": false
+    },
+    {
+      "name": "alpha",
+      "inits": [4.0],
+      "bounds": [[2.0, 15.0]],
+      "fixed": false
+    },
+    {
+      "name": "theta",
+      "inits": [10],
+      "bounds": [[0.0, 20.0]],
+      "fixed": false
+    }
+  ]
+}
