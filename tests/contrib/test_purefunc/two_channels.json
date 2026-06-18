@@ -61,7 +61,7 @@
   "functions": [
     {
       "name": "func1",
-      "formula": "kappa ** 2"      
+      "formula": "kappa ** 2"
     },
     {
       "name": "func2",
@@ -87,7 +87,7 @@
     },
     {
       "name": "theta",
-      "inits": [10],
+      "inits": [10.0],
       "bounds": [[0.0, 20.0]],
       "fixed": false
     }
