@@ -18,12 +18,12 @@ def create_modifiers():
             self.encountered_expressions = {}
 
         def collect(self, thismod, nom):
-            maskval = True if thismod else False
+            maskval = bool(thismod)
             mask = [maskval] * len(nom)
             return {"mask": mask}
 
         def require_symbols_as_scalars(self, symbols):
-            param_spec = {
+            return {
                 p: [
                     {
                         "paramset_type": "unconstrained",
@@ -37,7 +37,6 @@ def create_modifiers():
                 ]
                 for p in symbols
             }
-            return param_spec
 
         def append(self, key, channel, sample, thismod, defined_samp):
             self.builder_data["local"].setdefault(key, {}).setdefault(
@@ -69,15 +68,15 @@ def create_modifiers():
             list_of_symbols = [str(x) for x in self.builder_data["global"]["symbols"]]
             self.required_parsets = self.require_symbols_as_scalars(list_of_symbols)
             self.builder_data["global"]["symbol_names"] = list_of_symbols
-            for modname, modspec in self.builder_data["local"].items():
-                for sample, samplespec in modspec.items():
-                    for channel, channelspec in samplespec["channels"].items():
+            for _modname, modspec in self.builder_data["local"].items():  # noqa: PERF102
+                for _sample, samplespec in modspec.items():  # noqa: PERF102
+                    for _channel, channelspec in samplespec["channels"].items():  # noqa: PERF102
                         if channelspec["parsed"] is not None:
                             channelspec["jaxfunc"] = sympy.lambdify(
                                 list_of_symbols, channelspec["parsed"], "jax"
                             )
                         else:
-                            channelspec["jaxfunc"] = lambda *args: 1.0
+                            channelspec["jaxfunc"] = lambda *args: 1.0  # noqa: ARG005
             return self.builder_data
 
     class PureFunctionModifierApplicator:
