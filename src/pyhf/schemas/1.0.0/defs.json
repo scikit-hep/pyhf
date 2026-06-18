@@ -197,7 +197,6 @@
             "properties": {
                 "name": { "type": "string" },
                 "formula": { "type": "string" },
-                "parameters": { "type": "array", "items": { "$ref": "#/definitions/parameter" } },
                 "required": ["name", "formula"]
             }
         },
