@@ -1,59 +1,92 @@
-import pytest
-import numpy as np
-import pyhf
-from pyhf.contrib.extended_modifiers import purefunc
 import json
 
-def test_missing_func(datadir, reset_backend):
-    reset_backend
+import numpy as np
+import pytest
 
-    modifier_set = purefunc.enable()
+import pyhf
+from pyhf.contrib.extended_modifiers import purefunc
+
+
+@pytest.fixture
+def modifier_set():
+    return purefunc.enable()
+
+
+def test_missing_func(datadir, modifier_set):
+
     with datadir.joinpath("single_func.json").open() as spec_file:
         spec = json.load(spec_file)
-    del spec['functions']
+    del spec["functions"]
     with pytest.raises(pyhf.exceptions.InvalidModel):
-        model = pyhf.Model(
+        pyhf.Model(
             spec,
-            modifier_set=modifier_set, 
-            poi_name="kappa", validate=True, schema="defs.json")
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="defs.json",
+        )
 
-def test_backend(datadir, reset_backend):
 
-    # what to test:
-    # exception if backend isnt jax
-    # exception if function isnt declared
-    # func shared across samples
-    # func shared across channels
-    # func sharing parameters
-    reset_backend
+def test_backend(datadir, modifier_set):
     with datadir.joinpath("single_func.json").open() as spec_file:
         spec = json.load(spec_file)
 
-    modifier_set = purefunc.enable()
     with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
-        model = pyhf.Model(spec, modifier_set=modifier_set, poi_name="kappa", validate=True, schema="defs.json")
-    pyhf.set_backend("jax")
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="defs.json",
+        )
 
-    model = pyhf.Model(spec, poi_name="kappa", validate=True, schema="defs.json")
-    assert model
 
-def test_single_func(datadir, reset_backend):
-    reset_backend
+def test_single_func(datadir, modifier_set):
     with datadir.joinpath("single_func.json").open() as spec_file:
         spec = json.load(spec_file)
-
-    modifier_set = purefunc.enable()
-    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
-        model = pyhf.Model(spec, modifier_set=modifier_set,poi_name="kappa", validate=True, schema="defs.json")
     pyhf.set_backend("jax")
 
-    model = pyhf.Model(spec, modifier_set=modifier_set,poi_name="kappa", validate=True, schema="defs.json")
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="kappa",
+        validate=True,
+        schema="defs.json",
+    )
 
-    assert model.config.suggested_init() == [1.5]
-    assert model.config.suggested_bounds() == [[0., 12.]]
-    pars = np.array(model.config.suggested_init())
-
+    assert model.config.suggested_init() == pytest.approx([1.5])
+    assert model.config.suggested_bounds()[0] == pytest.approx([0.0, 12.0])
     observation = [24, 24]
-
     inferred = pyhf.infer.mle.fit(data=observation, pdf=model)
-    print(inferred)
+
+    assert pytest.approx(2.0, rel=1e-3) == inferred[0]
+
+
+def test_multi_channel(datadir, modifier_set):
+    with datadir.joinpath("two_channels.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="kappa",
+        validate=True,
+        schema="defs.json",
+    )
+
+    assert len(model.config.parameters) == 3
+    bounds = np.array(model.config.suggested_bounds())
+    alpha_idx = model.config.par_slice("alpha")
+    theta_idx = model.config.par_slice("theta")
+    kappa_idx = model.config.par_slice("kappa")
+
+    assert np.all(np.isclose(bounds[alpha_idx], [[2.0, 15.0]]))
+    assert np.all(np.isclose(bounds[theta_idx], [[0.0, 20.0]]))
+    assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
+
+    observation = [33, 69, 47, 39, 11]
+    inferred = pyhf.infer.mle.fit(data=observation, pdf=model)
+    assert inferred[alpha_idx] == pytest.approx(5.0, rel=1e-3)
+    assert inferred[theta_idx] == pytest.approx(2.0, rel=1e-3)
+    assert inferred[kappa_idx] == pytest.approx(2.0, rel=1e-3)
