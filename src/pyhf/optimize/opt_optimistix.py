@@ -31,7 +31,7 @@ class optimistix_optimizer(OptimizerMixin):
             msg = f"{type(self).__name__} needs a solver"
             raise ValueError(msg)
         self.options = kwargs.pop("options", None)
-        self.throw = kwargs.pop("throw", True)
+        self.throw = kwargs.pop("throw", False)
 
         # the default for maxiter is too high for optimistix, so we'll lower it here:
         self.maxiter = kwargs.pop("maxiter", 1000)
