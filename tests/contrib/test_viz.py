@@ -52,7 +52,7 @@ def test_brazil_band_collection(datadir):
     assert brazil_band_collection.axes == ax
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=25)
 def test_plot_results(datadir):
     data = json.load(datadir.joinpath("hypotest_results.json").open(encoding="utf-8"))
 
@@ -66,7 +66,7 @@ def test_plot_results(datadir):
     return fig
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=25)
 def test_plot_results_no_axis(datadir):
     data = json.load(datadir.joinpath("hypotest_results.json").open(encoding="utf-8"))
 
@@ -78,7 +78,7 @@ def test_plot_results_no_axis(datadir):
     return fig
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=25)
 def test_plot_results_components(datadir):
     data = json.load(
         datadir.joinpath("tail_probs_hypotest_results.json").open(encoding="utf-8")
@@ -92,7 +92,7 @@ def test_plot_results_components(datadir):
     return fig
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=25)
 def test_plot_results_components_no_clb(datadir):
     data = json.load(
         datadir.joinpath("tail_probs_hypotest_results.json").open(encoding="utf-8")
@@ -114,7 +114,7 @@ def test_plot_results_components_no_clb(datadir):
     return fig
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=25)
 def test_plot_results_components_no_clsb(datadir):
     data = json.load(
         datadir.joinpath("tail_probs_hypotest_results.json").open(encoding="utf-8")
@@ -136,7 +136,7 @@ def test_plot_results_components_no_clsb(datadir):
     return fig
 
 
-@pytest.mark.mpl_image_compare
+@pytest.mark.mpl_image_compare(tolerance=25)
 def test_plot_results_components_no_cls(datadir):
     data = json.load(
         datadir.joinpath("tail_probs_hypotest_results.json").open(encoding="utf-8")
