@@ -29,17 +29,19 @@
       ]
     }
   ],
-  "functions": [
+  "bindings": [
     {
-      "name": "func1",
-      "formula": "kappa ** 2"
+      "names": ["func1"],
+      "expression": "kappa ** 2",
+      "language": "sympy"
     }
   ],
   "parameters": [
     {
       "name": "kappa",
       "inits": [1.5],
-      "bounds": [[0.0, 12.0]]
+      "bounds": [[0.0, 12.0]],
+      "language": "sympy"
     }
   ]
 }

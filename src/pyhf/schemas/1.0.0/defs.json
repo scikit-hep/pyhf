@@ -8,7 +8,7 @@
               "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"}, "minItems": 1 },
               "measurements": { "type": "array", "items": {"$ref": "#/definitions/measurement"}, "minItems": 1 },
               "observations": { "type": "array", "items": {"$ref": "#/definitions/observation" }, "minItems": 1 },
-              "functions": {"type": "array", "items": {"$ref": "#/definitions/purefunction"}},
+              "bindings": {"type": "array", "items": {"$ref": "#/definitions/binding"}},
               "version": { "const": "1.0.0" }
           },
           "additionalProperties": false,
@@ -192,13 +192,14 @@
                 }
             }
         },
-        "purefunction": {
+        "binding": {
             "type": "object",
             "properties": {
-                "name": { "type": "string" },
-                "formula": { "type": "string" },
-                "required": ["name", "formula"]
-            }
+                "names": { "type": "array", "items": {"type": "string"} },
+                "expression": { "type": "string" },
+                "language": { "type": "string" }
+            },
+            "required": ["names", "expression", "language"]
         },
         "jsonpatch": {
             "description": "an array of patch operations (copied from http://json.schemastore.org/json-patch)",

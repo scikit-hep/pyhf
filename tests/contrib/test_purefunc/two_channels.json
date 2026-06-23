@@ -58,18 +58,16 @@
       ]
   }
   ],
-  "functions": [
+  "bindings": [
     {
-      "name": "func1",
-      "formula": "kappa ** 2"
+      "names": ["func1"],
+      "expression": "kappa ** 2",
+      "language": "sympy"
     },
     {
-      "name": "func2",
-      "formula": "kappa**3 + alpha"
-    },
-    {
-      "name": "func3",
-      "formula": "alpha + theta"
+      "names": ["func2", "func3"],
+      "expression": "(kappa**3 + alpha, alpha + theta)",
+      "language": "sympy"
     }
   ],
   "parameters": [

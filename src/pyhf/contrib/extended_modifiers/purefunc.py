@@ -6,6 +6,12 @@ import sympy.parsing.sympy_parser as parser
 from pyhf.parameters import ParamViewer
 
 
+class InvalidLanguage(Exception):
+    """
+    InvalidLanguage is raised when a specified language parsing an expression is declared.
+    """
+
+
 def create_modifiers():
 
     class PureFunctionModifierBuilder:
@@ -50,10 +56,30 @@ def create_modifiers():
             )
             moddata = self.collect(thismod, nom)
             self.builder_data["local"][key][sample]["data"]["mask"] += moddata["mask"]
-
             if thismod is not None:
-                formula = thismod["function"]["formula"]
-                parsed = parser.parse_expr(formula)
+                bindings = [_["names"] for _ in thismod["bindings"]]
+                exp = [_["expression"] for _ in thismod["bindings"]]
+                language = [_["language"] for _ in thismod["bindings"]]
+                # Parse list of all binding names and find inner/outer index of requested one
+                for _outer_idx, binding in enumerate(bindings):
+                    try:
+                        _inner_idx = binding.index(thismod["name"])
+                        break
+                    except ValueError:
+                        pass
+                else:
+                    msg = f"Binding for {thismod['name']} not declared."
+                    raise sympy.exceptions.InvalidModel(msg)
+                formula = exp[_outer_idx]
+                lang = language[_outer_idx]
+                if lang == "sympy":
+                    parsed = parser.parse_expr(formula)
+                else:
+                    msg = f"Parser {lang} is not implemented."
+                    raise InvalidLanguage(msg)
+                # If this particular binding is a tuple use inner_idx
+                if len(bindings[_outer_idx]) > 1:
+                    parsed = parsed[_inner_idx]
                 free_symbols = parsed.free_symbols
                 for x in free_symbols:
                     if x not in self.encountered_expressions:
