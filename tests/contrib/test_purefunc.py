@@ -12,11 +12,11 @@ def modifier_set():
     return purefunc.enable()
 
 
-def test_missing_func(datadir, modifier_set):
+def test_missing_bindings(datadir, modifier_set):
 
     with datadir.joinpath("single_func.json").open() as spec_file:
         spec = json.load(spec_file)
-    del spec["functions"]
+    del spec["bindings"]
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(
             spec,
@@ -90,3 +90,19 @@ def test_multi_channel(datadir, modifier_set):
     assert inferred[alpha_idx] == pytest.approx(5.0, rel=1e-3)
     assert inferred[theta_idx] == pytest.approx(2.0, rel=1e-3)
     assert inferred[kappa_idx] == pytest.approx(2.0, rel=1e-3)
+
+
+def test_language(datadir, modifier_set):
+    with datadir.joinpath("single_func.json").open() as spec_file:
+        spec = json.load(spec_file)
+    spec["bindings"][0]["language"] = "not_sympy"
+    pyhf.set_backend("jax")
+
+    with pytest.raises(purefunc.InvalidLanguage):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="defs.json",
+        )

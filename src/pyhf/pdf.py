@@ -111,10 +111,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
         key: builder(config) for key, (builder, _) in modifier_set.items()
     }
 
-    modifier_functions = spec.get("functions")
-    purefunc_modifier_functions = {}
-    if modifier_functions is not None:
-        purefunc_modifier_functions = {_["name"]: _ for _ in modifier_functions}
+    modifier_bindings = spec.get("bindings")
 
     # 2. make a helper that maps channel-name/sample-name to pairs of channel-sample structs
     helper = {}
@@ -135,13 +132,13 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                     raise exceptions.InvalidModel(msg)
                 # if the modifier is purefunc, append the required information of the function to the moddict
                 if x["type"] == "purefunc":
-                    if not purefunc_modifier_functions.keys():
+                    if modifier_bindings is None:
                         msg = "Trying to use purefunc modifier without specifying a function."
                         raise exceptions.InvalidModel(msg)
-                    if not isinstance(pyhf.get_backend()[0], pyhf.tensor.jax_backend):
+                    if pyhf.tensorlib.name != "jax":
                         msg = "For purefunc modifiers the `jax` backend has to be set."
                         raise exceptions.InvalidWorkspaceOperation(msg)
-                    x["function"] = purefunc_modifier_functions[x["name"]]
+                    x["bindings"] = modifier_bindings
                 moddict[key] = x
             helper.setdefault(c["name"], {})[s["name"]] = (s, moddict)
             # add in all keys seen
