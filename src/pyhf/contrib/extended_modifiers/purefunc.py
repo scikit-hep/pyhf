@@ -12,16 +12,77 @@ class InvalidLanguage(Exception):
     """
 
 
+class InvalidExpression(Exception):
+    """
+    InvalidExpression is raised when the expressions cannot be fully resolved.
+    """
+
+
 def create_modifiers():
 
     class PureFunctionModifierBuilder:
         is_shared = True
 
-        def __init__(self, pdfconfig):
+        def __init__(self, pdfconfig, transforms):
             self.config = pdfconfig
+            self.transforms = transforms
             self.required_parsets = {}
             self.builder_data = {"local": {}, "global": {"symbols": set()}}
-            self.encountered_expressions = {}
+            self.parsed_expressions = {}
+            self.languages = {}
+            self.free_symbols = set()
+            self.parse_expressions()
+
+        def parse_expressions(self):
+            # Collect all bindings (names), expressions, and the parser language
+            bindings = [_["names"] for _ in self.transforms]
+            expressions = [_["expression"] for _ in self.transforms]
+            languages = [_["language"] for _ in self.transforms]
+            free_symbols = set()
+
+            for bind, exp, lang in zip(bindings, expressions, languages):
+                if lang != "sympy":
+                    msg = f"Parser {lang} is not implemented."
+                    raise InvalidLanguage(msg)
+                parsed = parser.parse_expr(exp)
+
+                if len(bind) > 1:
+                    # TODO check that bind and parsed have same length
+                    # Additional loop over tuple of expressions
+                    for c, b in enumerate(bind):
+                        sub_exp = parsed[c]
+                        self.parsed_expressions[b] = sub_exp
+                        self.languages[b] = lang
+                else:
+                    self.parsed_expressions[bind[0]] = parsed
+                    self.languages[bind[0]] = lang
+
+            # walk through all bindings-expressions pairs and substitute
+            # bindings used as free symbols
+            # throw an exception if the substitution is across languages (for future proofing)
+            for binding, exp in self.parsed_expressions.items():
+                symbols = exp.free_symbols
+                for symb in symbols:
+                    if str(symb) in self.parsed_expressions:
+                        if self.languages[binding] != self.languages[str(symb)]:
+                            msg = f"{binding} and {symb} must be parsed in the same language."
+                            raise InvalidLanguage(msg)
+                        exp = exp.subs(symb, self.parsed_expressions[str(symb)])  # noqa: PLW2901
+                if self.languages[binding] == "sympy":
+                    exp = sympy.simplify(exp)  # noqa: PLW2901
+                self.parsed_expressions[binding] = exp
+                free_symbols.update(exp.free_symbols)
+
+            # check if any bindings remain in free_symbols, if so we have some cyclic dependency
+            # and should throw an exception
+            for symbol in free_symbols:
+                self.builder_data["global"].setdefault("symbols", set()).add(symbol)
+                if str(symbol) in self.parsed_expressions:
+                    msg = f"{symbol} remains unresolved, you should investigate the expressions."
+                    raise InvalidExpression(msg)
+            list_of_symbols = [str(x) for x in free_symbols]
+            self.required_parsets = self.require_symbols_as_scalars(list_of_symbols)
+            self.builder_data["global"]["symbol_names"] = list_of_symbols
 
         def collect(self, thismod, nom):
             maskval = bool(thismod)
@@ -57,43 +118,16 @@ def create_modifiers():
             moddata = self.collect(thismod, nom)
             self.builder_data["local"][key][sample]["data"]["mask"] += moddata["mask"]
             if thismod is not None:
-                bindings = [_["names"] for _ in thismod["bindings"]]
-                exp = [_["expression"] for _ in thismod["bindings"]]
-                language = [_["language"] for _ in thismod["bindings"]]
-                # Parse list of all binding names and find inner/outer index of requested one
-                for _outer_idx, binding in enumerate(bindings):
-                    try:
-                        _inner_idx = binding.index(thismod["name"])
-                        break
-                    except ValueError:
-                        pass
-                else:
-                    msg = f"Binding for {thismod['name']} not declared."
-                    raise sympy.exceptions.InvalidModel(msg)
-                formula = exp[_outer_idx]
-                lang = language[_outer_idx]
-                if lang == "sympy":
-                    parsed = parser.parse_expr(formula)
-                else:
-                    msg = f"Parser {lang} is not implemented."
-                    raise InvalidLanguage(msg)
-                # If this particular binding is a tuple use inner_idx
-                if len(bindings[_outer_idx]) > 1:
-                    parsed = parsed[_inner_idx]
-                free_symbols = parsed.free_symbols
-                for x in free_symbols:
-                    if x not in self.encountered_expressions:
-                        self.builder_data["global"].setdefault("symbols", set()).add(x)
+                binding = thismod.get("name", None)
+                expr = self.parsed_expressions[binding]
             else:
-                parsed = None
+                expr = None
             self.builder_data["local"].setdefault(key, {}).setdefault(
                 sample, {}
-            ).setdefault("channels", {}).setdefault(channel, {})["parsed"] = parsed
+            ).setdefault("channels", {}).setdefault(channel, {})["parsed"] = expr
 
         def finalize(self):
-            list_of_symbols = [str(x) for x in self.builder_data["global"]["symbols"]]
-            self.required_parsets = self.require_symbols_as_scalars(list_of_symbols)
-            self.builder_data["global"]["symbol_names"] = list_of_symbols
+            list_of_symbols = self.builder_data["global"]["symbol_names"]
             for _modname, modspec in self.builder_data["local"].items():  # noqa: PERF102
                 for _sample, samplespec in modspec.items():  # noqa: PERF102
                     for _channel, channelspec in samplespec["channels"].items():  # noqa: PERF102
