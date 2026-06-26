@@ -17,6 +17,7 @@ def test_missing_bindings(datadir, modifier_set):
     with datadir.joinpath("single_func.json").open() as spec_file:
         spec = json.load(spec_file)
     del spec["bindings"]
+    pyhf.set_backend("jax")
     with pytest.raises(pyhf.exceptions.InvalidModel):
         pyhf.Model(
             spec,
@@ -56,10 +57,10 @@ def test_single_func(datadir, modifier_set):
 
     assert model.config.suggested_init() == pytest.approx([1.5])
     assert model.config.suggested_bounds()[0] == pytest.approx([0.0, 12.0])
-    observation = [24, 24]
+    observation = [10, 2]
     inferred = pyhf.infer.mle.fit(data=observation, pdf=model)
 
-    assert pytest.approx(2.0, rel=1e-3) == inferred[0]
+    assert pytest.approx(np.sqrt(2), rel=1e-3) == inferred[0]
 
 
 def test_multi_channel(datadir, modifier_set):
@@ -99,6 +100,50 @@ def test_language(datadir, modifier_set):
     pyhf.set_backend("jax")
 
     with pytest.raises(purefunc.InvalidLanguage):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="defs.json",
+        )
+
+
+def test_backward_bindings(datadir, modifier_set):
+    with datadir.joinpath("backward_binding.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="kappa",
+        validate=True,
+        schema="defs.json",
+    )
+
+    assert set(model.config.parameters) == {"kappa", "theta"}
+
+
+def test_forward_bindings(datadir, modifier_set):
+    with datadir.joinpath("backward_binding.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="kappa",
+        validate=True,
+        schema="defs.json",
+    )
+
+    assert set(model.config.parameters) == {"kappa", "theta"}
+
+
+def test_circular_bindings(datadir, modifier_set):
+    with datadir.joinpath("circular_binding.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    with pytest.raises(purefunc.InvalidExpression):
         pyhf.Model(
             spec,
             modifier_set=modifier_set,

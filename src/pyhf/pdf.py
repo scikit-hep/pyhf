@@ -108,7 +108,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     nominal = _nominal_builder(config)
 
     kwargs_list = dict.fromkeys(modifier_set, ())
-    kwargs_list["purefunc"] = (spec["bindings"],)
+    kwargs_list["purefunc"] = (spec.get("bindings"),)
     modifiers_builders = {
         key: builder(config, *kwargs_list[key])
         for key, (builder, _) in modifier_set.items()
@@ -236,7 +236,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self._poi_index = None
         self._nmaindata = sum(self.channel_nbins.values())
         self._auxdata = []
-        self._transforms = spec["bindings"]
+        self._transforms = spec.get("bindings")
 
         # these are not documented properties
         self.par_map = {}
