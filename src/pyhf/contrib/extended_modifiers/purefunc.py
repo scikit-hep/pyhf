@@ -3,6 +3,7 @@ import jax.numpy as jnp
 import sympy
 import sympy.parsing.sympy_parser as parser
 
+from pyhf import exceptions
 from pyhf.parameters import ParamViewer
 
 
@@ -34,6 +35,8 @@ def create_modifiers():
             self.parse_expressions()
 
         def parse_expressions(self):
+            if not self.transforms:
+                return
             # Collect all bindings (names), expressions, and the parser language
             bindings = [_["names"] for _ in self.transforms]
             expressions = [_["expression"] for _ in self.transforms]
@@ -119,7 +122,10 @@ def create_modifiers():
             self.builder_data["local"][key][sample]["data"]["mask"] += moddata["mask"]
             if thismod is not None:
                 binding = thismod.get("name", None)
-                expr = self.parsed_expressions[binding]
+                expr = self.parsed_expressions.get(binding)
+                if expr is None:
+                    msg = f"{binding} is used as purefunc modifier but not declared."
+                    raise exceptions.InvalidModel(msg)
             else:
                 expr = None
             self.builder_data["local"].setdefault(key, {}).setdefault(
