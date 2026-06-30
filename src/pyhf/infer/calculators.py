@@ -440,9 +440,15 @@ class AsymptoticCalculator:
                 qmu_A = tensorlib.power(self.sqrtqmuA_v, 2)
                 return (qmu - qmu_A) / (2 * self.sqrtqmuA_v)
 
-            # Use '<=' rather than '<' to avoid Issue #1992
+            # Use '<=' rather than '<' to avoid Issue #1992.
+            # sqrtqmuA_v == 0 when poi_test == asimov_mu (e.g. the poi=0 scan
+            # point); the q̃_mu > q̃_mu,A branch of arXiv:1007.1727 Eq. 16 is then
+            # 0/0, so route to the Gaussian-regime expression instead of
+            # dividing by zero (Issue #2722).
             teststat = tensorlib.conditional(
-                (sqrtqmu_v <= self.sqrtqmuA_v), _true_case, _false_case
+                (sqrtqmu_v <= self.sqrtqmuA_v) | (self.sqrtqmuA_v == 0),
+                _true_case,
+                _false_case,
             )
         return tensorlib.astensor(teststat)
 
