@@ -120,7 +120,7 @@ def test_import_prepHistFactory_and_fit(tmp_path, script_runner):
         command += f" --output-file {tmp_out}"
         ret = script_runner.run(shlex.split(command))
         assert ret.success
-        ret_json = json.load(tmp_out.open())
+        ret_json = json.loads(tmp_out.read_text())
         assert "mle_parameters" in ret_json
         assert "twice_nll" in ret_json
 
@@ -159,7 +159,7 @@ def test_import_prepHistFactory_and_cls(tmp_path, script_runner):
         command += f" --output-file {tmp_out}"
         ret = script_runner.run(shlex.split(command))
         assert ret.success
-        d = json.load(tmp_out.open())
+        d = json.loads(tmp_out.read_text())
         assert "CLs_obs" in d
         assert "CLs_exp" in d
 
@@ -260,14 +260,16 @@ def test_patch(tmp_path, script_runner):
 
     command = f"pyhf cls {temp} --patch -"
 
-    ret = script_runner.run(shlex.split(command), stdin=patch.open())
+    with patch.open() as patch_stdin:
+        ret = script_runner.run(shlex.split(command), stdin=patch_stdin)
     assert ret.success
 
     output_dir_path = tmp_path / "output_2"
     output_dir_path.mkdir(exist_ok=True)
 
     command = f"pyhf json2xml {temp} --output-dir {output_dir_path} --patch -"
-    ret = script_runner.run(shlex.split(command), stdin=patch.open())
+    with patch.open() as patch_stdin:
+        ret = script_runner.run(shlex.split(command), stdin=patch_stdin)
     assert ret.success
 
 
@@ -594,7 +596,7 @@ def test_workspace_digest(tmp_path, script_runner, algorithms, do_json):
 def test_patchset_download(
     tmp_path, script_runner, requests_mock, tarfile_path, archive
 ):
-    requests_mock.get(archive, content=tarfile_path.open("rb").read())
+    requests_mock.get(archive, content=tarfile_path.read_bytes())
     command = f"pyhf contrib download {archive} {tmp_path.joinpath('likelihoods')}"
     ret = script_runner.run(shlex.split(command))
     assert ret.success
@@ -716,8 +718,8 @@ def test_patchset_extract(datadir, tmp_path, script_runner, output_file, with_me
     else:
         assert (
             extracted_output
-            == json.load(
-                datadir.joinpath("example_patchset.json").open(encoding="utf-8")
+            == json.loads(
+                datadir.joinpath("example_patchset.json").read_text(encoding="utf-8")
             )["patches"][0]["patch"]
         )
 
