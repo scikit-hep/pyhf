@@ -445,7 +445,7 @@ class AsymptoticCalculator:
             # sqrtqmuA_v == 0 happens when poi_test == asimov_mu
             # (the poi=0 scan point) which results in the muhat < 0 branch
             # of Equation 16 from https://arxiv.org/abs/1007.1727 (_false_case)
-            # being 0/0. To avoid this route this degenerate case to muhat >= 0
+            # being 0/0. To avoid this, route this degenerate case to muhat >= 0
             # (_true_case) (using bitwise OR) instead of dividing by zero
             # (avoids Issue #2722).
             teststat = tensorlib.conditional(

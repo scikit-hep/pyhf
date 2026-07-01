@@ -688,7 +688,7 @@ def test_teststatistic_poi0_no_divide_by_zero(hypotest_args):
     # At poi_test == asimov_mu (poi=0 for qtilde) sqrtqmuA_v == 0,
     # results in the muhat < 0 branch of Equation 16 from
     # https://arxiv.org/abs/1007.1727 being 0/0. This only occurs when the
-    # observed q̃_0 rounds to a tiny positive (happens on macOS amr64).
+    # observed q̃_0 rounds to a tiny positive (happens on macOS arm64).
     # Raise as an error to ensure this guard does not regress.
     _, data, model = hypotest_args
 
