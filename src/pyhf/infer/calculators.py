@@ -441,10 +441,13 @@ class AsymptoticCalculator:
                 return (qmu - qmu_A) / (2 * self.sqrtqmuA_v)
 
             # Use '<=' rather than '<' to avoid Issue #1992.
-            # sqrtqmuA_v == 0 when poi_test == asimov_mu (e.g. the poi=0 scan
-            # point); the q̃_mu > q̃_mu,A branch of arXiv:1007.1727 Eq. 16 is then
-            # 0/0, so route to the Gaussian-regime expression instead of
-            # dividing by zero (Issue #2722).
+            #
+            # sqrtqmuA_v == 0 happens when poi_test == asimov_mu
+            # (the poi=0 scan point) which results in the muhat < 0 branch
+            # of Equation 16 from https://arxiv.org/abs/1007.1727 (_false_case)
+            # being 0/0. To avoid this route this degenerate case to muhat >= 0
+            # (_true_case) (using bitwise OR) instead of dividing by zero
+            # (avoids Issue #2722).
             teststat = tensorlib.conditional(
                 (sqrtqmu_v <= self.sqrtqmuA_v) | (self.sqrtqmuA_v == 0),
                 _true_case,

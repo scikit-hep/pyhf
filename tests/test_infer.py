@@ -684,11 +684,12 @@ def test_teststat_nan_guard():
 
 
 def test_teststatistic_poi0_no_divide_by_zero(hypotest_args):
-    # Issue #2722: at poi_test == asimov_mu (poi=0 for qtilde) sqrtqmuA_v == 0,
-    # so the q̃_mu > q̃_mu,A branch of arXiv:1007.1727 Eq. 16 is 0/0. The
-    # divide-by-zero only surfaces when the observed q̃_0 rounds to a tiny
-    # positive (e.g. macOS arm64); promote it to an error here independently of
-    # the project filterwarnings so the guard does not regress.
+    # Issue https://github.com/scikit-hep/pyhf/issues/2722
+    # At poi_test == asimov_mu (poi=0 for qtilde) sqrtqmuA_v == 0,
+    # results in the muhat < 0 branch of Equation 16 from
+    # https://arxiv.org/abs/1007.1727 being 0/0. This only occurs when the
+    # observed q̃_0 rounds to a tiny positive (happens on macOS amr64).
+    # Raise as an error to ensure this guard does not regress.
     _, data, model = hypotest_args
 
     calc = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
