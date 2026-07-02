@@ -73,19 +73,19 @@
   "parameters": [
     {
       "name": "kappa",
-      "inits": [1.0],
+      "inits": [1.8],
       "bounds": [[0.0, 10.0]],
       "fixed": false
     },
     {
       "name": "alpha",
       "inits": [4.0],
-      "bounds": [[2.0, 15.0]],
+      "bounds": [[2.0, 10.0]],
       "fixed": false
     },
     {
       "name": "theta",
-      "inits": [10.0],
+      "inits": [1.8],
       "bounds": [[0.0, 20.0]],
       "fixed": false
     }
