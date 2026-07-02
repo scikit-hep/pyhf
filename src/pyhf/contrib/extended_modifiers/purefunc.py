@@ -1,3 +1,5 @@
+"""Purefunc modifier."""
+
 import jax
 import jax.numpy as jnp
 import sympy
@@ -20,8 +22,11 @@ class InvalidExpression(Exception):
 
 
 def create_modifiers():
+    """Create Purefunc modifier builder and applier"""
 
     class PureFunctionModifierBuilder:
+        """Builder class for collecting purefunc modifier expressions"""
+
         is_shared = True
 
         def __init__(self, pdfconfig, transforms):
@@ -217,6 +222,8 @@ from pyhf.modifiers import histfactory_set
 
 
 def enable():
+    """Inserts purefunc in modifier set and returns it"""
+
     modifier_set = {}
     modifier_set.update(**histfactory_set)
 
