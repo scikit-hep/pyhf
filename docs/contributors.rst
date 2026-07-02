@@ -38,3 +38,4 @@ Contributors include:
 - Matthias Bussonnier
 - Peter Fackeldey
 - Alok Kumar
+- Julian Kuhlmann
