@@ -82,7 +82,7 @@ def test_multi_channel(datadir, modifier_set):
     theta_idx = model.config.par_slice("theta")
     kappa_idx = model.config.par_slice("kappa")
 
-    assert np.all(np.isclose(bounds[alpha_idx], [[2.0, 15.0]]))
+    assert np.all(np.isclose(bounds[alpha_idx], [[2.0, 10.0]]))
     assert np.all(np.isclose(bounds[theta_idx], [[0.0, 20.0]]))
     assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
 
