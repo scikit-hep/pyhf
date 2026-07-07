@@ -320,8 +320,8 @@ flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
-platforms = ["linux-64", "osx-arm64"]
-requires-pixi = ">=0.63.0"
+platforms = ["linux-64", "osx-arm64", { name = "linux-64-cuda", platform = "linux-64", cuda = "12" }]
+requires-pixi = ">=0.71.0"
 
 [tool.pixi.pypi-dependencies]
 pyhf = { path = ".", editable = true }
@@ -347,11 +347,11 @@ jax = ">=0.4.1"
 jax = ">=0.4.1"
 jaxlib = { version = "*", build = "cpu*" }
 
+[tool.pixi.feature.jax-gpu]
+platforms = ["linux-64-cuda"]
+
 [tool.pixi.feature.jax-gpu.dependencies]
 jax = ">=0.4.1"
-
-[tool.pixi.feature.jax-gpu.system-requirements]
-cuda = "12.0"
 
 [tool.pixi.feature.contrib.dependencies]
 matplotlib = ">=3.0.0"

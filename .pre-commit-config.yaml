@@ -36,7 +36,7 @@ repos:
     - id: rst-inline-touching-normal
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.15.15"
+  rev: "v0.15.20"
   hooks:
     - id: ruff-check
       args: ["--fix", "--show-fixes"]
@@ -53,15 +53,20 @@ repos:
     # check the oldest and newest supported Pythons
     # except skip python 3.9 for numpy, due to poor typing
     hooks:
-      - &mypy
-        id: mypy
+      - id: mypy
         name: mypy with Python 3.10
         files: src
+        # NumPy v2.5.0+ is Python 3.12+ and uses PEP 695 'type' statements in
+        # its stubs, which mypy cannot parse under --python-version=3.10
         additional_dependencies:
-          ['numpy', 'rich', 'click', 'types-jsonpatch', 'types-pyyaml', 'types-jsonschema', 'importlib_metadata', 'packaging']
+          ["numpy<2.5.0", "rich", "click", "types-jsonpatch", "types-pyyaml", "types-jsonschema", "importlib_metadata", "packaging"]
         args: ["--python-version=3.10"]
-      - <<: *mypy
+
+      - id: mypy
         name: mypy with Python 3.13
+        files: src
+        additional_dependencies:
+          ["numpy", "rich", "click", "types-jsonpatch", "types-pyyaml", "types-jsonschema", "importlib_metadata", "packaging"]
         args: ["--python-version=3.13"]
 
 -   repo: https://github.com/codespell-project/codespell
@@ -72,7 +77,7 @@ repos:
       args: ["-w", "-L", "hist,gaus"]
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.37.2
+  rev: 0.37.4
   hooks:
     - id: check-readthedocs
       args: ["--verbose"]
