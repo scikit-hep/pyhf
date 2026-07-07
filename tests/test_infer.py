@@ -683,6 +683,30 @@ def test_teststat_nan_guard():
     assert all(~np.isnan(result) for result in test_results)
 
 
+def test_teststatistic_poi0_no_divide_by_zero(hypotest_args):
+    # Issue https://github.com/scikit-hep/pyhf/issues/2722
+    # At poi_test == asimov_mu (poi=0 for qtilde) sqrtqmuA_v == 0,
+    # results in the muhat < 0 branch of Equation 16 from
+    # https://arxiv.org/abs/1007.1727 being 0/0. This only occurs when the
+    # observed q̃_0 rounds to a tiny positive (happens on macOS arm64).
+    # Raise as an error to ensure this guard does not regress.
+    _, data, model = hypotest_args
+
+    calc = pyhf.infer.calculators.AsymptoticCalculator(data, model, test_stat="qtilde")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("error", "divide by zero encountered")
+        teststat = calc.teststatistic(0.0)
+    assert np.isfinite(np.asarray(teststat))
+
+    # CLs at the background-only point must be finite and ~1 (mu=0 is never
+    # excluded), not NaN from a +inf test statistic.
+    with warnings.catch_warnings():
+        warnings.filterwarnings("error", "divide by zero encountered")
+        CLs_obs = pyhf.infer.hypotest(0.0, data, model, test_stat="qtilde")
+    assert np.isfinite(CLs_obs)
+    assert CLs_obs == pytest.approx(1.0, abs=1e-3)
+
+
 # TODO: Remove after pyhf v0.9.0 is released
 def test_deprecated_upperlimit(hypotest_args):
     with warnings.catch_warnings(record=True) as _warning:
