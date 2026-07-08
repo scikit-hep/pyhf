@@ -247,6 +247,10 @@ def test_patch(tmp_path, script_runner):
     command = f"pyhf xml2json validation/xmlimport_input/config/example.xml --basedir validation/xmlimport_input/ --output-file {temp}"
     ret = script_runner.run(shlex.split(command))
 
+    command = f"pyhf fit {temp} --patch {patch}"
+    ret = script_runner.run(shlex.split(command))
+    assert ret.success
+
     command = f"pyhf cls {temp} --patch {patch}"
     ret = script_runner.run(shlex.split(command))
     assert ret.success
