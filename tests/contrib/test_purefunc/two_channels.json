@@ -44,16 +44,6 @@
               "type": "purefunc"
             }
           ]
-        },
-        {
-          "name": "c2s2",
-          "data": [0.0, 10.0, 0.0],
-          "modifiers": [
-            {
-              "name": "func3",
-              "type": "purefunc"
-            }
-          ]
         }
       ]
   }
@@ -65,8 +55,8 @@
       "language": "sympy"
     },
     {
-      "names": ["func2", "func3"],
-      "expression": "(kappa + alpha ** 2, theta + alpha)",
+      "names": ["func2"],
+      "expression": "(kappa + alpha ** 2)",
       "language": "sympy"
     }
   ],
