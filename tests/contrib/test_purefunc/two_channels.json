@@ -47,7 +47,7 @@
         },
         {
           "name": "c2s2",
-          "data": [1.0, 5.0, 1.0],
+          "data": [0.0, 10.0, 0.0],
           "modifiers": [
             {
               "name": "func3",
@@ -61,12 +61,12 @@
   "bindings": [
     {
       "names": ["func1"],
-      "expression": "kappa ** 2",
+      "expression": "kappa",
       "language": "sympy"
     },
     {
       "names": ["func2", "func3"],
-      "expression": "(kappa**3 + alpha, alpha + theta)",
+      "expression": "(kappa + alpha ** 2, theta + alpha)",
       "language": "sympy"
     }
   ],
@@ -79,13 +79,13 @@
     },
     {
       "name": "alpha",
-      "inits": [4.0],
+      "inits": [3.8],
       "bounds": [[2.0, 10.0]],
       "fixed": false
     },
     {
       "name": "theta",
-      "inits": [1.8],
+      "inits": [10],
       "bounds": [[0.0, 20.0]],
       "fixed": false
     }
