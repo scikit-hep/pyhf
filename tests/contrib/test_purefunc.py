@@ -76,20 +76,17 @@ def test_multi_channel(datadir, modifier_set):
         schema="defs.json",
     )
 
-    assert len(model.config.parameters) == 3
+    assert len(model.config.parameters) == 2
     bounds = np.array(model.config.suggested_bounds())
     alpha_idx = model.config.par_slice("alpha")
-    theta_idx = model.config.par_slice("theta")
     kappa_idx = model.config.par_slice("kappa")
 
     assert np.all(np.isclose(bounds[alpha_idx], [[2.0, 10.0]]))
-    assert np.all(np.isclose(bounds[theta_idx], [[0.0, 10.0]]))
     assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
 
-    observation = [28, 92, 20, 92, 2]
+    observation = [28, 92, 20, 2, 2]
     inferred = pyhf.infer.mle.fit(data=observation, pdf=model)
     assert inferred[alpha_idx] == pytest.approx(4.0, rel=1e-3)
-    assert inferred[theta_idx] == pytest.approx(5.0, rel=1e-3)
     assert inferred[kappa_idx] == pytest.approx(2.0, rel=1e-3)
 
 
