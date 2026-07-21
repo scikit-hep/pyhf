@@ -1,3 +1,8 @@
+import importlib.metadata
+import pathlib
+import platform
+import sys
+
 import pytest
 
 import pyhf
@@ -53,3 +58,91 @@ def test_citation(oneline):
     assert citation
     if oneline:
         assert "\n" not in citation
+
+
+def test_environment_info():
+    info = pyhf.utils.environment_info()
+    assert isinstance(info, str)
+    assert "* os version:" in info
+    assert "* kernel version:" in info
+    assert "* python version:" in info
+    assert f"* pyhf version: {pyhf.__version__}" in info
+    assert "* numpy version:" in info
+    assert "* scipy version:" in info
+    assert "* iminuit version:" in info
+    assert "* jax version:" in info
+    assert "* jaxlib version:" in info
+    # Output should be markdown bullet list lines
+    for line in info.strip().splitlines():
+        assert line.startswith("* ")
+
+
+def test_environment_info_linux(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(
+        platform,
+        "freedesktop_os_release",
+        lambda: {"NAME": "Ubuntu", "VERSION": "22.04.2 LTS (Jammy Jellyfish)"},
+        raising=False,
+    )
+    info = pyhf.utils.environment_info()
+    assert "* os version: Ubuntu 22.04.2 LTS (Jammy Jellyfish)" in info
+
+
+def test_environment_info_linux_oserror(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "linux")
+
+    def raise_oserror():
+        raise OSError
+
+    monkeypatch.setattr(
+        platform, "freedesktop_os_release", raise_oserror, raising=False
+    )
+    info = pyhf.utils.environment_info()
+    assert "* os version: Cannot be determined" in info
+
+
+def test_environment_info_linux_fallback_no_os_release_file(monkeypatch):
+    # Simulate Python 3.9 (no platform.freedesktop_os_release) with no /etc/os-release
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.delattr(platform, "freedesktop_os_release", raising=False)
+
+    original_exists = pathlib.Path.exists
+    monkeypatch.setattr(
+        pathlib.Path,
+        "exists",
+        lambda self: False if "os-release" in str(self) else original_exists(self),
+    )
+    info = pyhf.utils.environment_info()
+    assert "* os version: Cannot be determined" in info
+
+
+def test_environment_info_darwin(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "darwin")
+    monkeypatch.setattr(platform, "mac_ver", lambda: ("14.1.0", ("", "", ""), ""))
+    info = pyhf.utils.environment_info()
+    assert "* os version: macOS 14.1.0" in info
+
+
+def test_environment_info_unknown_platform(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "win32")
+    info = pyhf.utils.environment_info()
+    assert "* os version: Cannot be determined" in info
+
+
+def test_environment_info_missing_optional(monkeypatch):
+    original_version = importlib.metadata.version
+
+    def mock_version(name):
+        if name in ("iminuit", "jax", "jaxlib"):
+            raise importlib.metadata.PackageNotFoundError(name)
+        return original_version(name)
+
+    monkeypatch.setattr(importlib.metadata, "version", mock_version)
+    info = pyhf.utils.environment_info()
+    assert "* iminuit version: not installed" in info
+    assert "* jax version: not installed" in info
+    assert "* jaxlib version: not installed" in info
+    # Core packages still present
+    assert "* numpy version:" in info
+    assert "* scipy version:" in info
