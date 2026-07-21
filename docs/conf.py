@@ -16,6 +16,7 @@
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 
 import importlib.metadata
+import os
 import sys
 from pathlib import Path
 
@@ -244,7 +245,19 @@ html_theme = "pydata_sphinx_theme"
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {"header_links_before_dropdown": 6}
+html_theme_options = {
+    "header_links_before_dropdown": 6,
+    "switcher": {
+        # Always fetched from latest so the JSON is always current
+        "json_url": "https://pyhf.readthedocs.io/en/latest/_static/switcher.json",
+        # On RTD this is set to "latest", "stable", or "v0.7.6" etc.
+        # For local builds default to "latest" to avoid a missing-version warning.
+        "version_match": os.environ.get("READTHEDOCS_VERSION", "latest"),
+    },
+    "show_version_warning_banner": True,
+    "navbar_end": ["version-switcher", "navbar-icon-links"],
+    "check_switcher": False,
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = []
@@ -279,7 +292,6 @@ html_css_files = [
 ]
 
 html_js_files = [
-    "js/custom.js",
     (
         "https://views.scientific-python.org/js/plausible.js",
         {"data-domain": "pyhf.readthedocs.io", "defer": "defer"},

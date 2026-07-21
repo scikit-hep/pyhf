@@ -1,0 +1,143 @@
+[
+  {
+    "name": "v0.8.0 (dev)",
+    "version": "latest",
+    "url": "https://pyhf.readthedocs.io/en/latest/"
+  },
+  {
+    "name": "v0.7.6 (stable)",
+    "version": "stable",
+    "url": "https://pyhf.readthedocs.io/en/stable/",
+    "preferred": true
+  },
+  {
+    "name": "v0.7.6",
+    "version": "v0.7.6",
+    "url": "https://pyhf.readthedocs.io/en/v0.7.6/"
+  },
+  {
+    "name": "v0.7.5",
+    "version": "v0.7.5",
+    "url": "https://pyhf.readthedocs.io/en/v0.7.5/"
+  },
+  {
+    "name": "v0.7.4",
+    "version": "v0.7.4",
+    "url": "https://pyhf.readthedocs.io/en/v0.7.4/"
+  },
+  {
+    "name": "v0.7.3",
+    "version": "v0.7.3",
+    "url": "https://pyhf.readthedocs.io/en/v0.7.3/"
+  },
+  {
+    "name": "v0.7.2",
+    "version": "v0.7.2",
+    "url": "https://pyhf.readthedocs.io/en/v0.7.2/"
+  },
+  {
+    "name": "v0.7.1",
+    "version": "v0.7.1",
+    "url": "https://pyhf.readthedocs.io/en/v0.7.1/"
+  },
+  {
+    "name": "v0.7.0",
+    "version": "v0.7.0",
+    "url": "https://pyhf.readthedocs.io/en/v0.7.0/"
+  },
+  {
+    "name": "v0.6.3",
+    "version": "v0.6.3",
+    "url": "https://pyhf.readthedocs.io/en/v0.6.3/"
+  },
+  {
+    "name": "v0.6.2",
+    "version": "v0.6.2",
+    "url": "https://pyhf.readthedocs.io/en/v0.6.2/"
+  },
+  {
+    "name": "v0.6.1",
+    "version": "v0.6.1",
+    "url": "https://pyhf.readthedocs.io/en/v0.6.1/"
+  },
+  {
+    "name": "v0.6.0",
+    "version": "v0.6.0",
+    "url": "https://pyhf.readthedocs.io/en/v0.6.0/"
+  },
+  {
+    "name": "v0.5.4",
+    "version": "v0.5.4",
+    "url": "https://pyhf.readthedocs.io/en/v0.5.4/"
+  },
+  {
+    "name": "v0.5.3",
+    "version": "v0.5.3",
+    "url": "https://pyhf.readthedocs.io/en/v0.5.3/"
+  },
+  {
+    "name": "v0.5.2",
+    "version": "v0.5.2",
+    "url": "https://pyhf.readthedocs.io/en/v0.5.2/"
+  },
+  {
+    "name": "v0.5.1",
+    "version": "v0.5.1",
+    "url": "https://pyhf.readthedocs.io/en/v0.5.1/"
+  },
+  {
+    "name": "v0.5.0",
+    "version": "v0.5.0",
+    "url": "https://pyhf.readthedocs.io/en/v0.5.0/"
+  },
+  {
+    "name": "v0.4.4",
+    "version": "v0.4.4",
+    "url": "https://pyhf.readthedocs.io/en/v0.4.4/"
+  },
+  {
+    "name": "v0.4.3",
+    "version": "v0.4.3",
+    "url": "https://pyhf.readthedocs.io/en/v0.4.3/"
+  },
+  {
+    "name": "v0.4.2",
+    "version": "v0.4.2",
+    "url": "https://pyhf.readthedocs.io/en/v0.4.2/"
+  },
+  {
+    "name": "v0.4.1",
+    "version": "v0.4.1",
+    "url": "https://pyhf.readthedocs.io/en/v0.4.1/"
+  },
+  {
+    "name": "v0.4.0",
+    "version": "v0.4.0",
+    "url": "https://pyhf.readthedocs.io/en/v0.4.0/"
+  },
+  {
+    "name": "v0.3.4",
+    "version": "v0.3.4",
+    "url": "https://pyhf.readthedocs.io/en/v0.3.4/"
+  },
+  {
+    "name": "v0.3.3",
+    "version": "v0.3.3",
+    "url": "https://pyhf.readthedocs.io/en/v0.3.3/"
+  },
+  {
+    "name": "v0.3.2",
+    "version": "v0.3.2",
+    "url": "https://pyhf.readthedocs.io/en/v0.3.2/"
+  },
+  {
+    "name": "v0.3.1",
+    "version": "v0.3.1",
+    "url": "https://pyhf.readthedocs.io/en/v0.3.1/"
+  },
+  {
+    "name": "v0.3.0",
+    "version": "v0.3.0",
+    "url": "https://pyhf.readthedocs.io/en/v0.3.0/"
+  }
+]
