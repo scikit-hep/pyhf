@@ -49,11 +49,9 @@ class code1:
         if subscribe:
             events.subscribe("tensorlib_changed")(self._precompute)
 
-    def _precompute(self):
+    def _precompute_alphaset_dependent(self):
+        # terms that depend on the alphasets_shape, recomputed when it changes
         tensorlib, _ = get_backend()
-        self.deltas_up = tensorlib.astensor(self._deltas_up)
-        self.deltas_dn = tensorlib.astensor(self._deltas_dn)
-        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
         self.bases_up = tensorlib.einsum(
             "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
@@ -63,20 +61,18 @@ class code1:
         self.mask_on = tensorlib.ones(self.alphasets_shape)
         self.mask_off = tensorlib.zeros(self.alphasets_shape)
 
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.deltas_up = tensorlib.astensor(self._deltas_up)
+        self.deltas_dn = tensorlib.astensor(self._deltas_dn)
+        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
+        self._precompute_alphaset_dependent()
+
     def _precompute_alphasets(self, alphasets_shape):
         if alphasets_shape == self.alphasets_shape:
             return
-        tensorlib, _ = get_backend()
         self.alphasets_shape = alphasets_shape
-        self.bases_up = tensorlib.einsum(
-            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
-        )
-        self.bases_dn = tensorlib.einsum(
-            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_dn
-        )
-        self.mask_on = tensorlib.ones(self.alphasets_shape)
-        self.mask_off = tensorlib.zeros(self.alphasets_shape)
-        return
+        self._precompute_alphaset_dependent()
 
     def __call__(self, alphasets):
         """Compute Interpolated Values."""
