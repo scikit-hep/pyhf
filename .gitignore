@@ -44,8 +44,18 @@ htmlcov
 
 # text editors
 .vscode/
+.ropeproject/
 
 # pixi environments
 .pixi/*
 !.pixi/config.toml
 pixi.lock
+
+# venv's (uv)
+.venv/
+
+# ruff
+.ruff_cache/
+
+# mypy
+.mypy_cache/
