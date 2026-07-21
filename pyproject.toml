@@ -44,7 +44,8 @@ classifiers = [
 dependencies = [
     "click>=8.0.0",  # for console scripts
     "jsonpatch>=1.15",
-    "jsonschema>=4.15.0",  # for utils
+    "jsonschema>=4.18.0",  # for utils; 4.18.0 for referencing-based ref resolution
+    "referencing>=0.28.4",  # for schema $ref resolution (replaces jsonschema.RefResolver)
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
     # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for excluded v1.16.x versions
     "scipy>=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
@@ -179,7 +180,6 @@ filterwarnings = [
     'ignore:divide by zero encountered in (true_)?divide:RuntimeWarning',  #FIXME: pytest tests/test_tensor.py::test_pdf_calculations[numpy]
     'ignore:[A-Z]+ is deprecated and will be removed in Pillow 10:DeprecationWarning',  # keras
     "ignore:ml_dtypes.float8_e4m3b11 is deprecated.",  #FIXME: Can remove when jaxlib>=0.4.12
-    "ignore:jsonschema.RefResolver is deprecated as of v4.18.0, in favor of the:DeprecationWarning",  # Issue #2139
     "ignore:Skipping device Apple Paravirtual device that does not support Metal 2.0:UserWarning",  # Can't fix given hardware/virtualized device
     "ignore:jax.xla_computation is deprecated. Please use the AOT APIs:DeprecationWarning",  # jax v0.4.30
     "ignore:'MultiCommand' is deprecated and will be removed in Click 9.0. Use 'Group' instead.:DeprecationWarning",  # Click
@@ -330,7 +330,8 @@ pyhf = { path = ".", editable = true }
 [tool.pixi.dependencies]
 click = ">=8.0.0"
 jsonpatch = ">=1.15"
-jsonschema = ">=4.15.0"
+jsonschema = ">=4.18.0"
+referencing = ">=0.28.4"
 pyyaml = ">=5.1"
 scipy = ">=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2"
 rich = ">=12.3.0"
