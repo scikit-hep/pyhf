@@ -148,3 +148,31 @@ def test_circular_bindings(datadir, modifier_set):
             validate=True,
             schema="defs.json",
         )
+
+
+def test_single_binding_tuple_expr(datadir, modifier_set):
+    with datadir.joinpath("single_binding_tuple_expr.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    with pytest.raises(purefunc.InvalidExpression):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="defs.json",
+        )
+
+
+def test_tuple_binding_single_expr(datadir, modifier_set):
+    with datadir.joinpath("tuple_binding_single_expr.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    with pytest.raises(purefunc.InvalidExpression):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="defs.json",
+        )

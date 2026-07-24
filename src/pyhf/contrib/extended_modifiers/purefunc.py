@@ -71,7 +71,14 @@ def create_modifiers():
             # bindings used as free symbols
             # throw an exception if the substitution is across languages (for future proofing)
             for binding, exp in self.parsed_expressions.items():
-                symbols = exp.free_symbols
+                try:
+                    symbols = exp.free_symbols
+                except AttributeError as e:
+                    # Check for declaration of multiple expressions to one binding
+                    if "'tuple' object has no attribute 'free_symbols'" in repr(e):
+                        msg = f"{bind} declares {len(bind)} names but the expression does not resolve to a matching-length tuple."
+                        raise InvalidExpression(msg) from None
+                    raise e from e
                 for symb in symbols:
                     if str(symb) in self.parsed_expressions:
                         if self.languages[binding] != self.languages[str(symb)]:
