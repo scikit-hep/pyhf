@@ -189,7 +189,9 @@
                 "properties": {
                     "name": { "type": "string" },
                     "type": { "const": "purefunc" }
-                }
+                },
+                "required": ["name", "type"],
+                "additionalProperties": false
             }
         },
         "binding": {
@@ -199,7 +201,8 @@
                 "expression": { "type": "string" },
                 "language": { "type": "string" }
             },
-            "required": ["names", "expression", "language"]
+            "required": ["names", "expression", "language"],
+            "additionalProperties": false
         },
         "jsonpatch": {
             "description": "an array of patch operations (copied from http://json.schemastore.org/json-patch)",

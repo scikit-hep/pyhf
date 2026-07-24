@@ -34,6 +34,7 @@ def create_modifiers():
             self.transforms = transforms
             self.required_parsets = {}
             self.builder_data = {"local": {}, "global": {"symbols": set()}}
+            self.builder_data["global"]["symbol_names"] = []
             self.parsed_expressions = {}
             self.languages = {}
             self.free_symbols = set()
@@ -55,8 +56,9 @@ def create_modifiers():
                 parsed = parser.parse_expr(exp)
 
                 if len(bind) > 1:
-                    # TODO check that bind and parsed have same length
-                    # Additional loop over tuple of expressions
+                    if not hasattr(parsed, "__len__") or len(parsed) != len(bind):
+                        msg = f"{bind} declares {len(bind)} names but the expression does not resolve to a matching-length tuple."
+                        raise InvalidExpression(msg)
                     for c, b in enumerate(bind):
                         sub_exp = parsed[c]
                         self.parsed_expressions[b] = sub_exp
