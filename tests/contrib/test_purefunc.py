@@ -125,7 +125,7 @@ def test_backward_bindings(datadir, modifier_set):
 
 
 def test_forward_bindings(datadir, modifier_set):
-    with datadir.joinpath("backward_binding.json").open() as spec_file:
+    with datadir.joinpath("forward_binding.json").open() as spec_file:
         spec = json.load(spec_file)
     pyhf.set_backend("jax")
     model = pyhf.Model(
