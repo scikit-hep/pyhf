@@ -53,8 +53,12 @@ def create_modifiers():
                 if lang != "sympy":
                     msg = f"Parser {lang} is not implemented."
                     raise InvalidLanguage(msg)
-                parsed = parser.parse_expr(exp)
-
+                # Safeguard against code injection
+                safe_dict = {
+                    k: v for k, v in sympy.__dict__.items() if not k.startswith("_")
+                }
+                global_dict = {"__builtins__": {}, **safe_dict}
+                parsed = parser.parse_expr(exp, global_dict=global_dict)
                 if len(bind) > 1:
                     if not hasattr(parsed, "__len__") or len(parsed) != len(bind):
                         msg = f"{bind} declares {len(bind)} names but the expression does not resolve to a matching-length tuple."
