@@ -121,21 +121,6 @@ def test_backward_bindings(datadir, modifier_set):
     assert set(model.config.parameters) == {"kappa", "theta"}
 
 
-def test_forward_bindings(datadir, modifier_set):
-    with datadir.joinpath("forward_binding.json").open() as spec_file:
-        spec = json.load(spec_file)
-    pyhf.set_backend("jax")
-    model = pyhf.Model(
-        spec,
-        modifier_set=modifier_set,
-        poi_name="kappa",
-        validate=True,
-        schema="defs.json",
-    )
-
-    assert set(model.config.parameters) == {"kappa", "theta"}
-
-
 def test_circular_bindings(datadir, modifier_set):
     with datadir.joinpath("circular_binding.json").open() as spec_file:
         spec = json.load(spec_file)

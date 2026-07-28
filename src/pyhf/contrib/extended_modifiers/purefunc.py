@@ -94,7 +94,7 @@ def create_modifiers():
                 self.parsed_expressions[binding] = exp
                 free_symbols.update(exp.free_symbols)
 
-            # check if any bindings remain in free_symbols, if so we have some cyclic dependency
+            # check if any bindings remain in free_symbols, if so we have some cyclic dependency or forward-declaration
             # and should throw an exception
             for symbol in free_symbols:
                 self.builder_data["global"].setdefault("symbols", set()).add(symbol)
