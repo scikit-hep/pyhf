@@ -18,7 +18,7 @@
         },
         {
           "name": "c1s2",
-          "data": [1.0, 5.0],
+          "data": [1.0, 10.0],
           "modifiers": [
             {
               "name": "func2",
@@ -69,8 +69,8 @@
     },
     {
       "name": "alpha",
-      "inits": [3.8],
-      "bounds": [[2.0, 10.0]],
+      "inits": [5.2],
+      "bounds": [[3.0, 10.0]],
       "fixed": false
     }
   ]
