@@ -105,7 +105,7 @@ def create_modifiers():
                 if str(symbol) in self.parsed_expressions:
                     msg = f"{symbol} remains unresolved, you should investigate the expressions."
                     raise InvalidExpression(msg)
-            list_of_symbols = [str(x) for x in free_symbols]
+            list_of_symbols = sorted([str(x) for x in free_symbols])
             self.required_parsets = self.require_symbols_as_scalars(list_of_symbols)
             self.builder_data["global"]["symbol_names"] = list_of_symbols
 
