@@ -59,10 +59,14 @@ def create_modifiers():
                 }
                 global_dict = {"__builtins__": {}, **safe_dict}
                 parsed = parser.parse_expr(exp, global_dict=global_dict)
-                if len(bind) > 1:
-                    if not hasattr(parsed, "__len__") or len(parsed) != len(bind):
-                        msg = f"{bind} declares {len(bind)} names but the expression does not resolve to a matching-length tuple."
+                if hasattr(parsed, "__len__"):
+                    if len(parsed) != len(bind):
+                        msg = f"{parsed} declares a tuple of {len(parsed)} expressions but {bind} does not resolve to a matching-lenght tuple."
                         raise InvalidExpression(msg)
+                elif len(bind) > 1:
+                    msg = f"{bind} declares {len(bind)} names but the expression does not resolve to a matching-length tuple."
+                    raise InvalidExpression(msg)
+                if len(bind) > 1:
                     for c, b in enumerate(bind):
                         sub_exp = parsed[c]
                         self.parsed_expressions[b] = sub_exp

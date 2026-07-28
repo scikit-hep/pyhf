@@ -197,7 +197,7 @@
         "binding": {
             "type": "object",
             "properties": {
-                "names": { "type": "array", "items": {"type": "string"} },
+                "names": { "type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
                 "expression": { "type": "string" },
                 "language": { "type": "string" }
             },
