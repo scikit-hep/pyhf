@@ -161,3 +161,21 @@ def test_tuple_binding_single_expr(datadir, modifier_set):
             validate=True,
             schema="defs.json",
         )
+
+
+def test_no_purefunc(datadir, modifier_set):
+    with datadir.joinpath("no_purefunc.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="mu",
+        validate=True,
+        schema="defs.json",
+    )
+
+    assert np.all(
+        np.isclose(model.expected_data([1.0, 1.0, 1.0]), [55.0, 70.0, 100.0, 25.0])
+    )
