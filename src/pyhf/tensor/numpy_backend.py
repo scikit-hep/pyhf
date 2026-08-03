@@ -351,7 +351,7 @@ class numpy_backend(Generic[T]):
     ) -> ArrayLike:
         return np.where(mask, tensor_in_1, tensor_in_2)
 
-    def concatenate(self, sequence: Tensor[T], axis: None | int = 0) -> ArrayLike:
+    def concatenate(self, sequence: Tensor[T], axis: int | None = 0) -> ArrayLike:
         """
         Join a sequence of arrays along an existing axis.
 
