@@ -18,7 +18,8 @@
           "type": "object",
           "properties": {
               "channels": { "type": "array", "items": {"$ref": "#/definitions/channel"}, "minItems": 1 },
-              "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} }
+              "parameters": { "type": "array", "items": {"$ref": "#/definitions/parameter"} },
+              "bindings": {"type": "array", "items": {"$ref": "#/definitions/binding"}}
           },
           "additionalProperties": false,
           "required": ["channels"]
