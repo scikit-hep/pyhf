@@ -63,8 +63,8 @@ class minuit_optimizer(OptimizerMixin):
 
         # Minuit requires jac=callable
         if do_grad:
-            wrapped_objective = lambda pars: objective_and_grad(pars)[0]  # noqa: E731
-            jac = lambda pars: objective_and_grad(pars)[1]  # noqa: E731
+            wrapped_objective = lambda pars: objective_and_grad(pars)[0]
+            jac = lambda pars: objective_and_grad(pars)[1]
         else:
             wrapped_objective = objective_and_grad
             jac = None
