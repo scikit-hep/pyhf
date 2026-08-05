@@ -84,9 +84,9 @@ def test_multi_channel(datadir, modifier_set):
     assert np.all(np.isclose(bounds[alpha_idx], [[3.0, 10.0]]))
     assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
 
-    observation = [40.0, 106.0, 60.0, 6.0, 6.0]
+    observation = [37.0, 272.0, 20.0, 2.0, 2.0]
     inferred = pyhf.infer.mle.fit(data=observation, pdf=model)
-    assert inferred[alpha_idx] == pytest.approx(6.0, rel=1e-3)
+    assert inferred[alpha_idx] == pytest.approx(5.0, rel=1e-3)
     assert inferred[kappa_idx] == pytest.approx(2.0, rel=1e-3)
 
 
