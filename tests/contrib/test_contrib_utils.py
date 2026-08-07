@@ -73,15 +73,15 @@ def test_download_archive_type(
     archive_url = "https://www.hepdata.net/record/resource/1408476?view=true"
     output_directory = tmp_path.joinpath("likelihoods")
     # Give BytesIO a tarfile
-    requests_mock.get(archive_url, content=tarfile_path.open("rb").read())
+    requests_mock.get(archive_url, content=tarfile_path.read_bytes())
     download(archive_url, output_directory)
 
     # Give BytesIO an uncompressed tarfile
-    requests_mock.get(archive_url, content=tarfile_uncompressed_path.open("rb").read())
+    requests_mock.get(archive_url, content=tarfile_uncompressed_path.read_bytes())
     download(archive_url, output_directory)
 
     # Give BytesIO a zipfile
-    requests_mock.get(archive_url, content=zipfile_path.open("rb").read())
+    requests_mock.get(archive_url, content=zipfile_path.read_bytes())
     # Run without and with existing output_directory to cover both
     # cases of the shutil.rmtree logic
     rmtree(output_directory)
@@ -97,9 +97,7 @@ def test_download_archive_type(
 
 def test_download_archive_force(tmp_path, requests_mock, tarfile_path):
     archive_url = "https://www.cern.ch/record/resource/123456789"
-    requests_mock.get(
-        archive_url, content=tarfile_path.open("rb").read(), status_code=200
-    )
+    requests_mock.get(archive_url, content=tarfile_path.read_bytes(), status_code=200)
 
     with pytest.raises(InvalidArchiveHost):
         download(archive_url, tmp_path.joinpath("likelihoods"), force=False)
