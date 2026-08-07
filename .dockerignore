@@ -1,2 +1,4 @@
 .nox
 .*cache
+.venv
+.pixi

@@ -22,7 +22,7 @@ RUN apt-get -qq -y update && \
 
 FROM base
 
-USER root
+USER 0
 
 SHELL [ "/bin/bash", "-c" ]
 ENV PATH=/usr/local/venv/bin:"${PATH}"
@@ -44,12 +44,12 @@ RUN adduser \
     chown -R moby /home/moby && \
     mkdir /work && \
     chown -R moby /work && \
-    echo -e "\nexport PATH=/usr/local/venv/bin:${PATH}\n" >> /home/moby/.bashrc
+    printf '\nexport PATH=/usr/local/venv/bin:%s\n\n' "${PATH}" >> /home/moby/.bashrc
 
 COPY --from=builder --chown=moby /usr/local/venv /usr/local/venv/
 
 # Does NOT define USER as ENV
-USER moby
+USER 1000
 
 ENV USER=moby
 ENV HOME=/home/moby
