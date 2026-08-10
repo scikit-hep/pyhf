@@ -64,14 +64,14 @@
   "parameters": [
     {
       "name": "kappa",
-      "inits": [2.0],
+      "inits": [3.0],
       "bounds": [[0.0, 10.0]],
       "fixed": false
     },
     {
       "name": "alpha",
-      "inits": [5],
-      "bounds": [[4.2, 6.0]],
+      "inits": [3.0],
+      "bounds": [[0, 6.0]],
       "fixed": false
     }
   ]

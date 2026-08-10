@@ -35,11 +35,10 @@ class PureFunctionModifierBuilder:
         self.config = pdfconfig
         self.transforms = transforms
         self.required_parsets = {}
-        self.builder_data = {"local": {}, "global": {"symbols": set()}}
+        self.builder_data = {"local": {}, "global": {}}
         self.builder_data["global"]["symbol_names"] = []
         self.parsed_expressions = {}
         self.languages = {}
-        self.free_symbols = set()
         self.parse_expressions()
 
     def parse_expressions(self):
@@ -113,11 +112,10 @@ class PureFunctionModifierBuilder:
         # check if any bindings remain in free_symbols, if so we have some cyclic dependency or forward-declaration
         # and should throw an exception
         for symbol in free_symbols:
-            self.builder_data["global"].setdefault("symbols", set()).add(symbol)
             if str(symbol) in self.parsed_expressions:
                 msg = f"{symbol} remains unresolved, you should investigate the expressions."
                 raise InvalidExpression(msg)
-        list_of_symbols = sorted([str(x) for x in free_symbols])
+        list_of_symbols = [str(x) for x in free_symbols]
         self.required_parsets = self.require_symbols_as_scalars(list_of_symbols)
         self.builder_data["global"]["symbol_names"] = list_of_symbols
 
@@ -209,7 +207,7 @@ class PureFunctionModifierApplicator:
         self.builder_data = builder_data
         self.batch_size = batch_size
         self.pdfconfig = pdfconfig
-        self.inputs = [str(x) for x in builder_data["global"]["symbols"]]
+        self.inputs = [str(x) for x in builder_data["global"]["symbol_names"]]
 
         self.keys = [f"{mtype}/{m}" for m, mtype in modifiers]
         self.modifiers = [m for m, _ in modifiers]
