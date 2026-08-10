@@ -4,10 +4,10 @@
       "name": "channel1",
       "samples": [
         {
-          "name": "c1s1",
+          "name": "c1sa",
           "data": [
-            5.0,
-            1.0
+            1.0,
+            0.0
           ],
           "modifiers": [
             {
@@ -17,8 +17,11 @@
           ]
         },
         {
-          "name": "c1s2",
-          "data": [1.0, 10.0],
+          "name": "c1sb",
+          "data": [
+            0.0,
+            1.0
+          ],
           "modifiers": [
             {
               "name": "func2",
@@ -32,15 +35,13 @@
       "name": "channel2",
       "samples": [
         {
-          "name": "c2s1",
+          "name": "c2sc",
           "data": [
-            10.0,
-            1.0,
             1.0
           ],
           "modifiers": [
             {
-              "name": "func1",
+              "name": "func2",
               "type": "purefunc"
             }
           ]
@@ -63,15 +64,15 @@
   "parameters": [
     {
       "name": "kappa",
-      "inits": [1.8],
+      "inits": [2.0],
       "bounds": [[0.0, 10.0]],
       "fixed": false
     },
     {
       "name": "alpha",
-      "inits": [4.98329765],
+      "inits": [5],
       "bounds": [[4.2, 6.0]],
-      "fixed": true
+      "fixed": false
     }
   ]
 }
