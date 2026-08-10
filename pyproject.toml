@@ -187,6 +187,7 @@ filterwarnings = [
     "ignore:Hesse called with all parameters fixed:iminuit.warnings.IMinuitWarning",  # Issue #2637
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
     "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning",  # papermill
+    "ignore:_pytest.python.CallSpec2 has been renamed to CallSpec",  # anyio, c.f. https://github.com/scikit-hep/pyhf/pull/2738
 ]
 
 [tool.coverage.run]
