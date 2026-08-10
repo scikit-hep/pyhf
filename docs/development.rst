@@ -97,7 +97,7 @@ contrib module, or notebooks, and so instead to test the core codebase a develop
 
 .. code-block:: console
 
-    nox --session tests --python 3.13
+    nox --session tests --python 3.14
 
 Contrib module matplotlib image tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -107,7 +107,7 @@ To run the visualization tests for the ``contrib`` module with the ``pytest-mpl`
 
 .. code-block:: console
 
-    nox --session tests --python 3.13 -- contrib
+    nox --session tests --python 3.14 -- contrib
 
 If the image files need to be regenerated, run the tests with the
 ``--mpl-generate-path=tests/contrib/baseline`` option or just run
@@ -141,7 +141,7 @@ or pass ``coverage`` as a positional argument to the ``nox`` ``tests`` session
 
 .. code-block:: console
 
-    nox --session tests --python 3.13 -- coverage
+    nox --session tests --python 3.14 -- coverage
 
 Coverage Report
 ^^^^^^^^^^^^^^^
