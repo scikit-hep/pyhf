@@ -2,7 +2,8 @@
 scipy==1.5.4  # c.f. PR #2469
 click==8.0.0  # c.f. PR #1958, #1909
 rich==12.3.0  # c.f. PR #2650
-jsonschema==4.15.0  # c.f. PR #1979
+jsonschema==4.18.0  # c.f. PR #2716
+referencing==0.28.4  # c.f. PR #2716
 jsonpatch==1.15
 pyyaml==5.1
 importlib_resources==1.4.0  # c.f. PR #1979
