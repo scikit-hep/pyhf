@@ -27,6 +27,11 @@ class PureFunctionModifierBuilder:
     is_shared = True
 
     def __init__(self, pdfconfig, transforms):
+        """
+        Args:
+            pdfconfig: Model configuration
+            transforms: Transformations
+        """
         self.config = pdfconfig
         self.transforms = transforms
         self.required_parsets = {}
@@ -38,6 +43,8 @@ class PureFunctionModifierBuilder:
         self.parse_expressions()
 
     def parse_expressions(self):
+        """Parses all expressions discoveres required parameters"""
+
         if not self.transforms:
             return
         # Collect all bindings (names), expressions, and the parser language
@@ -115,11 +122,19 @@ class PureFunctionModifierBuilder:
         self.builder_data["global"]["symbol_names"] = list_of_symbols
 
     def collect(self, thismod, nom):
+        """Creates mask encoding whether to apply this modifier."""
+
         maskval = bool(thismod)
         mask = [maskval] * len(nom)
         return {"mask": mask}
 
     def require_symbols_as_scalars(self, symbols):
+        """Create default dictionary of parameter settings
+
+        Args:
+            symbols: List of symbols
+        """
+
         return {
             p: [
                 {
@@ -136,6 +151,8 @@ class PureFunctionModifierBuilder:
         }
 
     def append(self, key, channel, sample, thismod, defined_samp):
+        """Append modifier to relevant sample"""
+
         self.builder_data["local"].setdefault(key, {}).setdefault(
             sample, {}
         ).setdefault("data", {"mask": []})
@@ -160,6 +177,8 @@ class PureFunctionModifierBuilder:
         ).setdefault("channels", {}).setdefault(channel, {})["parsed"] = expr
 
     def finalize(self):
+        """Create sympy expressions for modifier functions"""
+
         list_of_symbols = self.builder_data["global"]["symbol_names"]
         for _modname, modspec in self.builder_data["local"].items():  # noqa: PERF102
             for _sample, samplespec in modspec.items():  # noqa: PERF102
@@ -180,6 +199,13 @@ class PureFunctionModifierApplicator:
     def __init__(
         self, modifiers=None, pdfconfig=None, builder_data=None, batch_size=None
     ):
+        """
+        Args:
+            modifiers: Purefunc modifiers
+            pdfconfig: Model configuration
+            builder_data: Builder data created by :py:class:`PureFunctionModifierBuilder`
+            batch_size: The size of the batch
+        """
         self.builder_data = builder_data
         self.batch_size = batch_size
         self.pdfconfig = pdfconfig
@@ -198,6 +224,8 @@ class PureFunctionModifierApplicator:
         self.create_jax_eval()
 
     def create_jax_eval(self):
+        """Create jax function to evaluate purefunc expression"""
+
         def eval_func(pars):
             return jnp.array(
                 [
@@ -220,12 +248,17 @@ class PureFunctionModifierApplicator:
         self.jaxeval = eval_func
 
     def apply_nonbatched(self, pars):
+        """Return evaluation function for non batched analyses"""
+
         return jnp.expand_dims(self.jaxeval(pars), 2)
 
     def apply_batched(self, pars):
+        """Return evaluation for batched analyses"""
         return jax.vmap(self.jaxeval, in_axes=(1,), out_axes=2)(pars)
 
     def apply(self, pars):
+        """Apply modifier"""
+
         if not self.param_viewer.index_selection:
             return None
         if self.batch_size is None:
@@ -241,7 +274,14 @@ from pyhf.modifiers import histfactory_set
 
 
 def enable():
-    """Inserts purefunc in modifier set and returns it"""
+    """
+    Inserts purefunc in modifier set and provides schema
+
+    Returns:
+        A tuple (modifier_set, schema), where modifier_set contains
+        all modifiers and purefunc, and schema is the updated schema
+        to validate workspaces and models against.
+    """
 
     modifier_set = {}
     modifier_set.update(**histfactory_set)

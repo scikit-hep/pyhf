@@ -69,9 +69,9 @@
     },
     {
       "name": "alpha",
-      "inits": [5.2],
-      "bounds": [[3.0, 10.0]],
-      "fixed": false
+      "inits": [4.98329765],
+      "bounds": [[4.2, 6.0]],
+      "fixed": true
     }
   ]
 }

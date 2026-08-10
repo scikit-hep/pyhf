@@ -81,13 +81,13 @@ def test_multi_channel(datadir, modifier_set):
     alpha_idx = model.config.par_slice("alpha")
     kappa_idx = model.config.par_slice("kappa")
 
-    assert np.all(np.isclose(bounds[alpha_idx], [[3.0, 10.0]]))
+    assert np.all(np.isclose(bounds[alpha_idx], [[4.2, 6.0]]))
     assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
 
-    observation = [37.0, 272.0, 20.0, 2.0, 2.0]
+    observation = [11.0, 2.0, 270.0, 27.0, 27.0]
     inferred = pyhf.infer.mle.fit(data=observation, pdf=model)
-    assert inferred[alpha_idx] == pytest.approx(5.0, rel=1e-3)
-    assert inferred[kappa_idx] == pytest.approx(2.0, rel=1e-3)
+    assert inferred[alpha_idx] == pytest.approx(4.98329765, rel=1e-3)
+    assert inferred[kappa_idx] == pytest.approx(2.16671042, rel=1e-3)
 
 
 def test_language(datadir, modifier_set):
