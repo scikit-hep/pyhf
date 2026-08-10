@@ -82,7 +82,7 @@ all = ["pyhf[backends,xmlio,contrib]"]
 [dependency-groups]
 test = [
     "scikit-hep-testdata>=0.4.11",
-    "pytest>=6.0",
+    "pytest>=8.4.0",
     "coverage[toml]>=6.0.0",
     "pytest-mock",
     "requests-mock>=1.9.0",
@@ -187,6 +187,7 @@ filterwarnings = [
     "ignore:Hesse called with all parameters fixed:iminuit.warnings.IMinuitWarning",  # Issue #2637
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
     "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning",  # papermill
+    "ignore:_pytest.python.CallSpec2 has been renamed to CallSpec",  # anyio, c.f. https://github.com/scikit-hep/pyhf/pull/2738
 ]
 
 [tool.coverage.run]
@@ -361,7 +362,7 @@ requests = ">=2.22.0"
 iminuit = ">=2.7.0"
 
 [tool.pixi.feature.test.dependencies]
-pytest = ">=6.0"
+pytest = ">=8.4.0"
 scikit-hep-testdata = ">=0.4.11"
 coverage = ">=6.0.0"
 pytest-mock = "*"
