@@ -1,8 +1,8 @@
 import json
 
+import jax.numpy as jnp
 import numpy as np
 import pytest
-import jax.numpy as jnp
 
 import pyhf
 from pyhf.contrib.extended_modifiers import purefunc
@@ -11,6 +11,7 @@ from pyhf.contrib.extended_modifiers import purefunc
 @pytest.fixture
 def modifier_set():
     return purefunc.enable()
+
 
 """
 def test_missing_bindings(datadir, modifier_set):
@@ -64,6 +65,7 @@ def test_single_func(datadir, modifier_set):
     assert pytest.approx(np.sqrt(2), rel=1e-3) == inferred[0]
 """
 
+
 def test_multi_channel(datadir, modifier_set):
     with datadir.joinpath("two_channels.json").open() as spec_file:
         spec = json.load(spec_file)
@@ -94,8 +96,9 @@ def test_multi_channel(datadir, modifier_set):
     assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
 
     observation = [2, 27, 27]
-    
+
     assert model.expected_actualdata(pars) == pytest.approx(observation, rel=1e-3)
+
 
 """
 def test_language(datadir, modifier_set):
