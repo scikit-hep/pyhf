@@ -188,6 +188,7 @@ filterwarnings = [
     "ignore:Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",  # papermill
     "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning",  # papermill
     "ignore:_pytest.python.CallSpec2 has been renamed to CallSpec",  # anyio, c.f. https://github.com/scikit-hep/pyhf/pull/2738
+    "ignore:FileType is deprecated. Simply open files after parsing arguments.:PendingDeprecationWarning",  # pytest-benchmark, c.f. https://github.com/scikit-hep/pyhf/pull/2739
 ]
 
 [tool.coverage.run]
