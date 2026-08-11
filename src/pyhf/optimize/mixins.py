@@ -80,12 +80,12 @@ class OptimizerMixin:
         # stitch in missing parameters (e.g. fixed parameters)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
 
+        # extract number of fixed parameters
+        num_fixed_pars = len(fitted_pars) - len(fitresult.x)
+
         # check if uncertainties were provided (and stitch just in case)
         uncertainties = getattr(fitresult, "unc", None)
         if uncertainties is not None:
-            # extract number of fixed parameters
-            num_fixed_pars = len(fitted_pars) - len(fitresult.x)
-
             # FIXME: Set uncertainties for fixed parameters to 0 manually
             # https://github.com/scikit-hep/iminuit/issues/762
             # https://github.com/scikit-hep/pyhf/issues/1918
@@ -185,6 +185,11 @@ class OptimizerMixin:
             par_names = pdf.config.par_names
         except AttributeError:
             par_names = None
+
+        # defensive copy: par_names is mutated in place below, and duck-typed
+        # configs may return a stored list rather than a fresh one
+        if par_names is not None:
+            par_names = list(par_names)
 
         # need to remove parameters that are fixed in the fit
         if par_names and do_stitch and fixed_vals:
