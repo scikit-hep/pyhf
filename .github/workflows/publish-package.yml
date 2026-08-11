@@ -117,10 +117,10 @@ jobs:
       with:
         subject-path: "${{ steps.baipp.outputs.dist }}/pyhf-*"
 
-  publish-testpypi:
-    name: Publish Python distribution to TestPyPI
+  publish:
+    name: Publish Python distribution to (Test)PyPI
     needs: build
-    if: needs.build.outputs.publish-target == 'testpypi'
+    if: needs.build.outputs.publish-target != ''
     runs-on: ubuntu-latest
     # Mandatory for publishing with a trusted publisher
     # c.f. https://docs.pypi.org/trusted-publishers/using-a-publisher/
@@ -152,48 +152,10 @@ jobs:
         REPOSITORY: ${{ github.repository }}
       run: gh attestation verify dist/pyhf-*.whl --repo "${REPOSITORY}"
 
-    - name: Publish distribution 📦 to Test PyPI
+    - name: Publish distribution 📦 to (Test)PyPI
       uses: pypa/gh-action-pypi-publish@v1.14.2
       with:
-        repository-url: https://test.pypi.org/legacy/
-        print-hash: true
-
-  publish-pypi:
-    name: Publish Python distribution to PyPI
-    needs: build
-    if: needs.build.outputs.publish-target == 'pypi'
-    runs-on: ubuntu-latest
-    # Mandatory for publishing with a trusted publisher
-    # c.f. https://docs.pypi.org/trusted-publishers/using-a-publisher/
-    permissions:
-      id-token: write
-    # Restrict to the environment set for the trusted publisher
-    environment:
-      name: publish-package
-
-    steps:
-    - name: Download distribution artifact
-      uses: actions/download-artifact@v8
-      with:
-        name: Packages
-        path: dist
-
-    - name: List all files
-      run: ls -lh dist
-
-    - name: Verify sdist artifact attestation
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        REPOSITORY: ${{ github.repository }}
-      run: gh attestation verify dist/pyhf-*.tar.gz --repo "${REPOSITORY}"
-
-    - name: Verify wheel artifact attestation
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        REPOSITORY: ${{ github.repository }}
-      run: gh attestation verify dist/pyhf-*.whl --repo "${REPOSITORY}"
-
-    - name: Publish distribution 📦 to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.14.2
-      with:
+        # Both URLs explicit, as an empty string would override the action's
+        # default URL instead of selecting it
+        repository-url: ${{ needs.build.outputs.publish-target == 'testpypi' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
         print-hash: true
