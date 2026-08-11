@@ -35,6 +35,8 @@ jobs:
     permissions:
       id-token: write
       attestations: write
+    outputs:
+      publish-target: ${{ steps.gate.outputs.target }}
 
     steps:
     - uses: actions/checkout@v7
@@ -42,41 +44,48 @@ jobs:
         fetch-depth: 0
         persist-credentials: false
 
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: '3.14'
-
-    - name: Install python-build and twine
+    # The single definition of when the built distribution gets published:
+    # a Git tag push deploys to TestPyPI for verification in advance of the
+    # release, a GitHub release publication deploys to PyPI, and a manual
+    # workflow dispatch can deploy a dev release snapshot to TestPyPI
+    - name: Determine publish target
+      id: gate
+      if: github.repository == 'scikit-hep/pyhf'
+      env:
+        PUBLISH_INPUT: ${{ inputs.publish }}
       run: |
-        python -m pip install uv
-        uv pip install --system --upgrade pip
-        uv pip install --system build twine
-        python -m pip list
+        target=""
+        if [ "${GITHUB_EVENT_NAME}" == "release" ]; then
+            target="pypi"
+        elif [ "${GITHUB_EVENT_NAME}" == "push" ] && [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            target="testpypi"
+        elif [ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ] && [ "${PUBLISH_INPUT}" == "true" ]; then
+            target="testpypi"
+        fi
+        echo "target=${target}" >> "$GITHUB_OUTPUT"
 
     - name: Build a sdist and wheel
-      if: github.event_name != 'schedule'
-      run: |
-        python -m build --installer uv .
-
-    - name: Build a sdist and wheel and check for warnings
-      if: github.event_name == 'schedule'
-      run: |
-        PYTHONWARNINGS=error,default::DeprecationWarning python -m build --installer uv .
+      id: baipp
+      uses: hynek/build-and-inspect-python-package@2abe76da66d0a6a4a227101f9348ee855797cfa5 # v3.0.1
+      env:
+        # Weekly check that builds are warning free
+        PYTHONWARNINGS: ${{ github.event_name == 'schedule' && 'error,default::DeprecationWarning' || '' }}
 
     - name: Verify untagged commits have dev versions
       if: "!startsWith(github.ref, 'refs/tags/')"
+      env:
+        DIST_PATH: ${{ steps.baipp.outputs.dist }}
       run: |
         latest_tag=$(git describe --tags)
-        latest_tag_revlist_SHA=$(git rev-list -n 1 ${latest_tag})
+        latest_tag_revlist_SHA=$(git rev-list -n 1 "${latest_tag}")
         main_SHA="$(git rev-parse --verify origin/main)"
-        wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
+        wheel_name=$(find "${DIST_PATH}" -iname "*.whl" -printf "%f\n")
         if [[ "${latest_tag_revlist_SHA}" != "${main_SHA}" ]]; then # don't check main push events coming from tags
           if [[ "${wheel_name}" == *"pyhf-0.1.dev"* || "${wheel_name}" != *"dev"* ]]; then
             echo "python-build incorrectly named built distribution: ${wheel_name}"
             echo "python-build is lacking the history and tags required to determine version number"
-            echo "intentionally erroring with 'return 1' now"
-            return 1
+            echo "intentionally erroring with 'exit 1' now"
+            exit 1
           fi
         else
           echo "Push event to origin/main was triggered by push of tag ${latest_tag}"
@@ -85,45 +94,28 @@ jobs:
 
     - name: Verify tagged commits don't have dev versions
       if: startsWith(github.ref, 'refs/tags')
+      env:
+        DIST_PATH: ${{ steps.baipp.outputs.dist }}
       run: |
-        wheel_name=$(find dist/ -iname "*.whl" -printf "%f\n")
+        wheel_name=$(find "${DIST_PATH}" -iname "*.whl" -printf "%f\n")
         if [[ "${wheel_name}" == *"dev"* ]]; then
           echo "python-build incorrectly named built distribution: ${wheel_name}"
           echo "this is incorrrectly being treated as a dev release"
-          echo "intentionally erroring with 'return 1' now"
-          return 1
+          echo "intentionally erroring with 'exit 1' now"
+          exit 1
         fi
         echo "python-build named built distribution: ${wheel_name}"
 
-    - name: Verify the distribution
-      run: twine check --strict dist/*
-
-    - name: List contents of sdist
-      run: python -m tarfile --list dist/pyhf-*.tar.gz
-
-    - name: List contents of wheel
-      run: python -m zipfile --list dist/pyhf-*.whl
-
     - name: Generate artifact attestation for sdist and wheel
-      # If publishing to TestPyPI or PyPI
-      if: >-
-        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf')
+      if: steps.gate.outputs.target != ''
       uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
       with:
-        subject-path: "dist/pyhf-*"
+        subject-path: "${{ steps.baipp.outputs.dist }}/pyhf-*"
 
-    - name: Upload distribution artifact
-      uses: actions/upload-artifact@v7.0.1
-      with:
-        name: dist-artifact
-        path: dist
-
-  publish:
-    name: Publish Python distribution to (Test)PyPI
-    if: github.event_name != 'pull_request'
+  publish-testpypi:
+    name: Publish Python distribution to TestPyPI
     needs: build
+    if: needs.build.outputs.publish-target == 'testpypi'
     runs-on: ubuntu-latest
     # Mandatory for publishing with a trusted publisher
     # c.f. https://docs.pypi.org/trusted-publishers/using-a-publisher/
@@ -137,45 +129,66 @@ jobs:
     - name: Download distribution artifact
       uses: actions/download-artifact@v8
       with:
-        name: dist-artifact
+        name: Packages
         path: dist
 
     - name: List all files
       run: ls -lh dist
 
     - name: Verify sdist artifact attestation
-      # If publishing to TestPyPI or PyPI
-      if: >-
-        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf')
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh attestation verify dist/pyhf-*.tar.gz --repo ${{ github.repository }}
+        REPOSITORY: ${{ github.repository }}
+      run: gh attestation verify dist/pyhf-*.tar.gz --repo "${REPOSITORY}"
 
     - name: Verify wheel artifact attestation
-      # If publishing to TestPyPI or PyPI
-      if: >-
-        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf')
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh attestation verify dist/pyhf-*.whl --repo ${{ github.repository }}
+        REPOSITORY: ${{ github.repository }}
+      run: gh attestation verify dist/pyhf-*.whl --repo "${REPOSITORY}"
 
     - name: Publish distribution 📦 to Test PyPI
-      # Publish to TestPyPI on tag events of if manually triggered
-      # Compare to 'true' string as booleans get turned into strings in the console
-      if: >-
-        (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.repository == 'scikit-hep/pyhf')
-        || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' && github.repository == 'scikit-hep/pyhf')
       uses: pypa/gh-action-pypi-publish@v1.14.2
       with:
         repository-url: https://test.pypi.org/legacy/
         print-hash: true
 
+  publish-pypi:
+    name: Publish Python distribution to PyPI
+    needs: build
+    if: needs.build.outputs.publish-target == 'pypi'
+    runs-on: ubuntu-latest
+    # Mandatory for publishing with a trusted publisher
+    # c.f. https://docs.pypi.org/trusted-publishers/using-a-publisher/
+    permissions:
+      id-token: write
+    # Restrict to the environment set for the trusted publisher
+    environment:
+      name: publish-package
+
+    steps:
+    - name: Download distribution artifact
+      uses: actions/download-artifact@v8
+      with:
+        name: Packages
+        path: dist
+
+    - name: List all files
+      run: ls -lh dist
+
+    - name: Verify sdist artifact attestation
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
+      run: gh attestation verify dist/pyhf-*.tar.gz --repo "${REPOSITORY}"
+
+    - name: Verify wheel artifact attestation
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
+      run: gh attestation verify dist/pyhf-*.whl --repo "${REPOSITORY}"
+
     - name: Publish distribution 📦 to PyPI
-      if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scikit-hep/pyhf'
       uses: pypa/gh-action-pypi-publish@v1.14.2
       with:
         print-hash: true
