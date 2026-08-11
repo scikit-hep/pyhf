@@ -88,21 +88,15 @@ class PureFunctionModifierBuilder:
         # bindings used as free symbols
         # throw an exception if the substitution is across languages (for future proofing)
         for binding, exp in self.parsed_expressions.items():
-            try:
-                symbols = exp.free_symbols
-            except AttributeError as e:
-                # Check for declaration of multiple expressions to one binding
-                if "'tuple' object has no attribute 'free_symbols'" in repr(e):
-                    msg = f"{bind} declares {len(bind)} names but the expression does not resolve to a matching-length tuple."
-                    raise InvalidExpression(msg) from None
-                raise e from e
+            symbols = exp.free_symbols
             for symb in symbols:
                 if str(symb) in self.parsed_expressions:
-                    if self.languages[binding] != self.languages[str(symb)]:
-                        msg = (
-                            f"{binding} and {symb} must be parsed in the same language."
-                        )
-                        raise InvalidLanguage(msg)
+                    # Future proofing?
+                    # if self.languages[binding] != self.languages[str(symb)]:
+                    #     msg = (
+                    #         f"{binding} and {symb} must be parsed in the same language."
+                    #     )
+                    #     raise InvalidLanguage(msg)
                     exp = exp.subs(symb, self.parsed_expressions[str(symb)])  # noqa: PLW2901
             if self.languages[binding] == "sympy":
                 exp = sympy.simplify(exp)  # noqa: PLW2901
