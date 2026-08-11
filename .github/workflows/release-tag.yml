@@ -1,0 +1,69 @@
+name: Tag release
+
+# No inputs: the version tagged is the one in tbump.toml on the dispatched
+# branch, set by the merged release preparation pull request, so the tag can
+# never disagree with the bumped files.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tag:
+    name: Tag release
+    runs-on: ubuntu-latest
+    if: github.repository == 'scikit-hep/pyhf'
+    # Required reviewers and the allowed branches (main, release/v*) are
+    # enforced through the environment's protection rules
+    environment:
+      name: release-tag
+
+    steps:
+    # Use GitHub PAT to authenticate so the tag push triggers the publishing
+    # and Docker workflows
+    - name: Checkout code
+      uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.ACCESS_TOKEN }}
+
+    - name: Read version from tbump.toml
+      id: version
+      run: |
+        version="$(python3 -c 'import tomllib; print(tomllib.load(open("tbump.toml", "rb"))["version"]["current"])')"
+        echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+    - name: Create annotated tag with changelog
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        if git rev-parse --quiet --verify "refs/tags/v${VERSION}" > /dev/null; then
+            echo "ERROR: tag v${VERSION} already exists. Merge a release preparation pull request first." >&2
+            exit 1
+        fi
+
+        if [[ "${VERSION}" == *rc* ]]; then
+            previous_tag="$(git describe --tags --abbrev=0)"
+        else
+            # Stable releases list the changes since the previous stable
+            # release, spanning any release candidate series
+            previous_tag="$(git tag --list 'v*' --merged HEAD --sort=v:refname | grep --invert-match rc | tail -n 1)"
+        fi
+
+        changes="$(git log --pretty=format:'  - %s' "${previous_tag}"..HEAD \
+            --regexp-ignore-case --extended-regexp \
+            --grep='^[a-z]+(\([a-z0-9._-]+\))?!?:' \
+            --grep='\(backport\):')"
+
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git tag --annotate "v${VERSION}" \
+            --message "$(printf 'pyhf v%s\n\nChanges from %s:\n%s' "${VERSION}" "${previous_tag}" "${changes}")"
+
+        git tag -n99 --list "v${VERSION}"
+
+    - name: Push tag to GitHub
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
+      run: git push origin "v${VERSION}"
