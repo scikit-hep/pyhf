@@ -235,7 +235,7 @@ jobs:
         GITHUB_EVENT_INPUTS_NEW_VERSION: ${{ github.event.inputs.new_version }}
 
     - name: Update the Git tag annotation
-      if: ${{ github.event.inputs.dry_run }} == 'false'  # zizmor: ignore[unsound-condition]
+      if: ${{ github.event.inputs.dry_run  == 'false' }}
       shell: bash
       run: |
         OLD_TAG=${STEPS_SCRIPT_OUTPUTS_OLD_TAG}
