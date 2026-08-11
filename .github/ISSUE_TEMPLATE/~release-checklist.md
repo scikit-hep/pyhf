@@ -23,8 +23,8 @@ about: Checklist for core developers to complete as part of making a release
 
 ## Create Release Tag
 
-* [ ] Run the [Prepare release](https://github.com/scikit-hep/pyhf/actions/workflows/release-prepare.yml) GitHub Actions workflow on the release branch, selecting the SemVer part of the release and if the release is a release candidate.
-* [ ] Review the release preparation pull request the workflow opens: verify the computed version and the diff of the bumped files, and wait for CI to pass.
+* [ ] Run the [Prepare release](https://github.com/scikit-hep/pyhf/actions/workflows/release-prepare.yml) GitHub Actions workflow on the release branch, entering the version of the new release.
+* [ ] Review the release preparation pull request the workflow opens: verify the new version and the diff of the bumped files, and wait for CI to pass.
 * [ ] Merge the release preparation pull request.
 * [ ] Run the [Tag release](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) GitHub Actions workflow on the release branch and approve the `release-tag` environment deployment.
 * [ ] Verify the release tag was pushed to the correct branch and that its annotation summarizes the changes since the previous release.

@@ -198,15 +198,14 @@ workflow through workflow dispatch.
 The maintainer needs to:
 
 * Select the branch to release from (``main`` or a ``release/vX.Y.x`` release branch).
-* Select the semantic versioning (SemVer) part of the release (major, minor, patch).
-* Select if the release is a release candidate or not.
+* Input the version of the release (e.g. ``0.8.0`` or ``0.8.0rc1``).
 
-The workflow computes the next release version from the Git tags reachable from the
+The workflow validates that the version is newer than the current version on the
 selected branch and opens a release preparation pull request that bumps the version
 of all files defined in `tbump.toml
 <https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__ to it.
 The pull request serves as the release dry run: the maintainer should verify the
-computed version and the diff of the bumped files, and let CI validate the changes,
+new version and the diff of the bumped files, and let CI validate the changes,
 before merging.
 
 Tagging a Release
