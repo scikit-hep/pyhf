@@ -1,5 +1,7 @@
 """Purefunc modifier."""
 
+from itertools import pairwise
+
 import jax
 import jax.numpy as jnp
 import sympy
@@ -58,7 +60,12 @@ class PureFunctionModifierBuilder:
 
         free_symbols = set()
 
-        for bind, exp, lang in zip(bindings, expressions, languages, strict=True):
+        for l1, l2 in pairwise([len(bindings), len(expressions), len(languages)]):
+            if l1 != l2:
+                msg = "bingings, expressions, and languages must have the same number of entries"
+                raise InvalidExpression(msg)
+
+        for bind, exp, lang in zip(bindings, expressions, languages):
             if lang != "sympy":
                 msg = f"Parser {lang} is not implemented."
                 raise InvalidLanguage(msg)
