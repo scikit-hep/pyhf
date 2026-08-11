@@ -34,7 +34,9 @@ jobs:
         version="$(python3 -c 'import tomllib; print(tomllib.load(open("tbump.toml", "rb"))["version"]["current"])')"
         echo "version=${version}" >> "$GITHUB_OUTPUT"
 
-    - name: Create annotated tag with changelog
+    # The changes in the release are summarized by the auto-generated GitHub
+    # release notes, configured through .github/release.yml
+    - name: Create annotated tag
       env:
         VERSION: ${{ steps.version.outputs.version }}
       run: |
@@ -43,23 +45,9 @@ jobs:
             exit 1
         fi
 
-        if [[ "${VERSION}" == *rc* ]]; then
-            previous_tag="$(git describe --tags --abbrev=0)"
-        else
-            # Stable releases list the changes since the previous stable
-            # release, spanning any release candidate series
-            previous_tag="$(git tag --list 'v*' --merged HEAD --sort=v:refname | grep --invert-match rc | tail -n 1)"
-        fi
-
-        changes="$(git log --pretty=format:'  - %s' "${previous_tag}"..HEAD \
-            --regexp-ignore-case --extended-regexp \
-            --grep='^[a-z]+(\([a-z0-9._-]+\))?!?:' \
-            --grep='\(backport\):')"
-
         git config --local user.name "github-actions[bot]"
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git tag --annotate "v${VERSION}" \
-            --message "$(printf 'pyhf v%s\n\nChanges from %s:\n%s' "${VERSION}" "${previous_tag}" "${changes}")"
+        git tag --annotate "v${VERSION}" --message "pyhf v${VERSION}"
 
         git tag -n99 --list "v${VERSION}"
 
