@@ -23,20 +23,18 @@ about: Checklist for core developers to complete as part of making a release
 
 ## Create Release Tag
 
-For a video walkthrough consult the [``pyhf`` ``v0.7.1`` release recording](https://youtu.be/ZV20tr3EpTw) on YouTube.
-
-* [ ] Use the [bump version](https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml) GitHub Actions workflow perform a [dry run](https://scikit-hep.org/pyhf/development.html#release-tags) of the bump version to the new release tag.
-* [ ] Check the annotated tag in the dry run workflow logs to make sure it looks correct.
-* [ ] If the dry run passes as expected, run the same workflow with the dry run option set to ``false`` to bump the release tag version and push the new tag back to GitHub.
-* [ ] Verify the release tag was pushed to the correct branch.
-* [ ] Verify the release tag commit has bumped the correct versions.
+* [ ] Run the [Prepare release](https://github.com/scikit-hep/pyhf/actions/workflows/release-prepare.yml) GitHub Actions workflow on the release branch, selecting the SemVer part of the release and if the release is a release candidate.
+* [ ] Review the release preparation pull request the workflow opens: verify the computed version and the diff of the bumped files, and wait for CI to pass.
+* [ ] Merge the release preparation pull request.
+* [ ] Run the [Tag release](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) GitHub Actions workflow on the release branch and approve the `release-tag` environment deployment.
+* [ ] Verify the release tag was pushed to the correct branch and that its annotation summarizes the changes since the previous release.
 * [ ] Watch the CI to verify all tag based jobs finish correctly.
 * [ ] Verify the release for the tag on [TestPyPI][TestPyPI_pyhf] looks correct.
 
 ## After Release Tag Pushed To GitHub
 
 * [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the new release tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
-   - [ ] Before pasting in the release notes copy the changes that the GitHub bot has already queued up and pasted into the tag and place them in the "Changes" section of the release notes. If the release notes are published before these are copied then they will be overwritten and you'll have to add them back in by hand.
+   - [ ] Copy the changes from the release tag's annotation into the "Changes" section of the release notes.
    - [ ] Create a corresponding [announcement GitHub Discussion](https://github.com/scikit-hep/pyhf/discussions/categories/announcements) for the release.
 * [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
 * [ ] Verify Docker images with the correct tags have been deployed to all container image registries.

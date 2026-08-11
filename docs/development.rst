@@ -180,8 +180,7 @@ Publishing
 
 Publishing to TestPyPI_ and PyPI_ is automated through the `PyPA's PyPI publish
 GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
-and the ``pyhf`` `bump version GitHub Actions workflow
-<https://github.com/scikit-hep/pyhf/blob/main/.github/workflows/bump-version.yml>`__.
+and the ``pyhf`` `Prepare release`_ and `Tag release`_ GitHub Actions workflows.
 
 Release Checklist
 ~~~~~~~~~~~~~~~~~
@@ -191,27 +190,51 @@ sure steps aren't missed.
 There is a GitHub Issue template for this that the maintainer in charge of the
 release should step through and update if needed.
 
-Release Tags
-~~~~~~~~~~~~
+Preparing a Release
+~~~~~~~~~~~~~~~~~~~
 
-A release tag can be created by a maintainer by using the `bump version GitHub Actions
-workflow`_ through workflow dispatch.
+A release is prepared by a maintainer running the `Prepare release`_ GitHub Actions
+workflow through workflow dispatch.
 The maintainer needs to:
 
-* Select the semantic versioning (SemVer) type (major, minor, patch) of the release tag.
-* Select if the release tag is a release candidate or not.
-* Input the SemVer version number of the release tag.
-* Select the branch to push the new release tag to.
-* Select if to override the SemVer compatibility of the previous options (default
-  is to run checks).
-* Select if a dry run should be performed (default is to do a dry run to avoid accidental
-  release tags).
+* Select the branch to release from (``main`` or a ``release/vX.Y.x`` release branch).
+* Select the semantic versioning (SemVer) part of the release (major, minor, patch).
+* Select if the release is a release candidate or not.
 
-The maintainer **should do a dry run first to make sure everything looks reasonable**.
-Once they have done that, they can run the `bump version GitHub Actions workflow`_ which
-will produce a new tag, bump the version of all files defined in `tbump.toml
-<https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__, and then commit and
-push these changes and the tag back to the ``main`` branch.
+The workflow computes the next release version from the Git tags reachable from the
+selected branch and opens a release preparation pull request that bumps the version
+of all files defined in `tbump.toml
+<https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__ to it.
+The pull request serves as the release dry run: the maintainer should verify the
+computed version and the diff of the bumped files, and let CI validate the changes,
+before merging.
+
+Tagging a Release
+~~~~~~~~~~~~~~~~~
+
+After the release preparation pull request has been merged, a maintainer runs the
+`Tag release`_ GitHub Actions workflow through workflow dispatch on the release
+branch.
+The workflow requires approval through the ``release-tag`` GitHub Actions
+environment, and then creates an annotated tag for the version defined in
+``tbump.toml`` — with an annotation summarizing the changes since the previous
+release — and pushes the tag to the release branch.
+
+If the release workflows are not available on the release branch (e.g. historic
+release branches) a maintainer can perform the same steps locally by bumping the
+version of the files
+
+.. code-block:: console
+
+    tbump --non-interactive --only-patch X.Y.Z
+
+and, after the pull request with these changes has been merged into the release
+branch, creating and pushing the release tag
+
+.. code-block:: console
+
+    git tag --annotate vX.Y.Z --message "pyhf vX.Y.Z"
+    git push origin vX.Y.Z
 
 Deployment
 ~~~~~~~~~~
@@ -272,6 +295,7 @@ The ``.zenodo.json`` file has the version number automatically updated through
 ``tbump``, though its additional metadata should be checked periodically by
 the dev team (probably every release).
 
-.. _bump version GitHub Actions workflow: https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml
+.. _Prepare release: https://github.com/scikit-hep/pyhf/actions/workflows/release-prepare.yml
+.. _Tag release: https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml
 .. _PyPI: https://pypi.org/project/pyhf/
 .. _TestPyPI: https://test.pypi.org/project/pyhf/
