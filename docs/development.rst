@@ -198,7 +198,7 @@ workflow through workflow dispatch.
 The maintainer needs to:
 
 * Select the branch to release from (``main`` or a ``release/vX.Y.x`` release branch).
-* Input the version of the release (e.g. ``0.8.0`` or ``0.8.0rc1``).
+* Input the version of the release (e.g. ``1.2.3`` or ``1.2.3rc1``).
 
 The workflow validates that the version is newer than the current version on the
 selected branch and opens a release preparation pull request that bumps the version
@@ -238,7 +238,7 @@ Release Branches
 ~~~~~~~~~~~~~~~~
 
 Each minor release series has a corresponding release branch, named
-``release/vX.Y.x`` (e.g. ``release/v0.8.x``), so that patch releases for the
+``release/vX.Y.x`` (e.g. ``release/v1.2.x``), so that patch releases for the
 series can be made after development on ``main`` has moved on to the next
 release series.
 After a minor or major release has been tagged, a maintainer can create the
