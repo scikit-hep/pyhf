@@ -27,14 +27,13 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Review the release preparation pull request the workflow opens: verify the new version and the diff of the bumped files, and wait for CI to pass.
 * [ ] Merge the release preparation pull request.
 * [ ] Run the [Tag release](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) GitHub Actions workflow on the release branch and approve the `release-tag` environment deployment.
-* [ ] Verify the release tag was pushed to the correct branch and that its annotation summarizes the changes since the previous release.
+* [ ] Verify the release tag was pushed to the correct branch.
 * [ ] Watch the CI to verify all tag based jobs finish correctly.
 * [ ] Verify the release for the tag on [TestPyPI][TestPyPI_pyhf] looks correct.
 
 ## After Release Tag Pushed To GitHub
 
 * [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the new release tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
-   - [ ] Copy the changes from the release tag's annotation into the "Changes" section of the release notes.
    - [ ] Create a corresponding [announcement GitHub Discussion](https://github.com/scikit-hep/pyhf/discussions/categories/announcements) for the release.
 * [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
 * [ ] Verify Docker images with the correct tags have been deployed to all container image registries.

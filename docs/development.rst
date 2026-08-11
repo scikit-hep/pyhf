@@ -216,8 +216,7 @@ After the release preparation pull request has been merged, a maintainer runs th
 branch.
 The workflow requires approval through the ``release-tag`` GitHub Actions
 environment, and then creates an annotated tag for the version defined in
-``tbump.toml`` — with an annotation summarizing the changes since the previous
-release — and pushes the tag to the release branch.
+``tbump.toml`` and pushes the tag to the release branch.
 
 If the release workflows are not available on the release branch (e.g. historic
 release branches) a maintainer can perform the same steps locally by bumping the
@@ -252,9 +251,12 @@ release branch from the release tag and push it to the repository
     git push origin release/vX.Y.x
 
 Creating the release branch from the release tag makes the tag reachable from
-the branch, which the release workflows require to validate the version of a
-patch release against the release series and to summarize the changes since the
-previous release in the tag annotation.
+the branch, which ``hatch-vcs`` requires to correctly derive the release series
+versions for the distributions built from the branch (e.g. dev versions for
+untagged commits).
+As the ``tbump.toml`` on the release branch records the latest release of its
+release series, the version validation of a patch release prepared from the
+branch is automatically scoped to the release series.
 
 Patch releases follow the same release procedure as all other releases, with
 the ``release/vX.Y.x`` branch selected when running the `Prepare release`_ and
