@@ -1,7 +1,5 @@
 """Purefunc modifier."""
 
-from itertools import pairwise
-
 import jax
 import jax.numpy as jnp
 import sympy
@@ -60,7 +58,8 @@ class PureFunctionModifierBuilder:
 
         free_symbols = set()
 
-        for l1, l2 in pairwise([len(bindings), len(expressions), len(languages)]):
+        lengths = [len(bindings), len(expressions), len(languages)]
+        for l1, l2 in zip(lengths[:-1], lengths[1:]):
             if l1 != l2:
                 msg = "bingings, expressions, and languages must have the same number of entries"
                 raise InvalidExpression(msg)
