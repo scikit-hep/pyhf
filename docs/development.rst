@@ -235,6 +235,32 @@ branch, creating and pushing the release tag
     git tag --annotate vX.Y.Z --message "pyhf vX.Y.Z"
     git push origin vX.Y.Z
 
+Release Branches
+~~~~~~~~~~~~~~~~
+
+Each minor release series has a corresponding release branch, named
+``release/vX.Y.x`` (e.g. ``release/v0.8.x``), so that patch releases for the
+series can be made after development on ``main`` has moved on to the next
+release series.
+After a minor or major release has been tagged, a maintainer can create the
+release branch from the release tag and push it to the repository
+
+.. code-block:: console
+
+    git fetch origin
+    git branch release/vX.Y.x vX.Y.0
+    git push origin release/vX.Y.x
+
+Creating the release branch from the release tag makes the tag reachable from
+the branch, which the release workflows require to validate the version of a
+patch release against the release series and to summarize the changes since the
+previous release in the tag annotation.
+
+Patch releases follow the same release procedure as all other releases, with
+the ``release/vX.Y.x`` branch selected when running the `Prepare release`_ and
+`Tag release`_ workflows, and with the changes for the patch release landing on
+the release branch as backports of pull requests merged into ``main``.
+
 Deployment
 ~~~~~~~~~~
 
