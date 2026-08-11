@@ -1,5 +1,11 @@
 name: Semantic Pull Request
 
+# SECURITY: pull_request_target is required by amannn/action-semantic-pull-request
+# so the check works on PRs from forks and uses this workflow definition from the
+# default branch (PR authors can't alter the check). It runs with an elevated
+# GITHUB_TOKEN, which is safe here ONLY because this workflow never checks out or
+# executes anything from the PR and token permissions are restricted below.
+# c.f. https://github.blog/changelog/2026-06-18-safer-pull_request_target-defaults-for-github-actions-checkout/
 on:
   pull_request_target:
     types:
@@ -11,20 +17,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.number }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   main:
 
     permissions:
-      pull-requests: read  # for amannn/action-semantic-pull-request to analyze PRs
-      statuses: write  # for amannn/action-semantic-pull-request to mark status of analyzed PR
+      pull-requests: read  # for amannn/action-semantic-pull-request to read PR titles
     name: Validate PR title
     runs-on: ubuntu-latest
 
     steps:
       - name: Check PR title matches Conventional Commits spec
-        uses: amannn/action-semantic-pull-request@v6
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
