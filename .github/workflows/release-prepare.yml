@@ -18,6 +18,14 @@ jobs:
     if: github.repository == 'scikit-hep/pyhf'
 
     steps:
+    - name: Check branch is intended for release
+      run: |
+        if [[ "${GITHUB_REF}" != "refs/heads/main" && "${GITHUB_REF}" != refs/heads/release/v* ]]; then
+            echo "ERROR: ${GITHUB_REF} is not intended for release." >&2
+            echo "       Releases are made only from main or release/vX.Y.x branches." >&2
+            exit 1
+        fi
+
     # The workflow dispatch ref selects the branch to release from.
     # Use GitHub PAT to authenticate so CI triggers on the pull request.
     - name: Checkout code
