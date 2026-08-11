@@ -22,16 +22,17 @@ and install all necessary packages for development
 
     python -m pip install --upgrade --editable . --group dev
 
-Then setup the Git `pre-commit <https://pre-commit.com/>`__ hooks by running
+Then setup the Git pre-commit hooks with `prek <https://github.com/j178/prek>`__
+by running
 
 .. code-block:: console
 
-    pre-commit install
+    prek install
 
 inside of the virtual environment.
 `pre-commit.ci <https://pre-commit.ci/>`__ keeps the pre-commit hooks updated
-through time, so pre-commit will automatically update itself when you run it
-locally after the hooks were updated.
+through time, so the hooks will automatically be updated when you run ``prek``
+locally after the hook revisions were updated.
 
 It is then suggested that you use ``nox`` to actually run all development operations
 in "sessions" defined in ``noxfile.py``.
@@ -44,12 +45,12 @@ To list all of the available sessions run
 Linting
 -------
 
-Linting and code formatting is handled by ``pre-commit``.
-To run the linting either run ``pre-commit``
+Linting and code formatting is handled by ``prek``.
+To run the linting either run ``prek``
 
 .. code-block:: console
 
-    pre-commit run --all-files
+    prek run --all-files
 
 or use ``nox``
 

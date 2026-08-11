@@ -17,10 +17,10 @@ DIR = Path(__file__).parent.resolve()
 @nox.session(reuse_venv=True)
 def lint(session):
     """
-    Lint with pre-commit.
+    Lint with prek.
     """
-    session.install("--upgrade", "pre-commit")
-    session.run("pre-commit", "run", "--all-files", *session.posargs)
+    session.install("--upgrade", "prek")
+    session.run("prek", "run", "--all-files", *session.posargs)
 
 
 @nox.session(python=ALL_PYTHONS, reuse_venv=True)
