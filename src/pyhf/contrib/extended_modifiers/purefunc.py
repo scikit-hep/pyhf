@@ -58,12 +58,6 @@ class PureFunctionModifierBuilder:
 
         free_symbols = set()
 
-        lengths = [len(bindings), len(expressions), len(languages)]
-        for l1, l2 in zip(lengths[:-1], lengths[1:]):
-            if l1 != l2:
-                msg = "bingings, expressions, and languages must have the same number of entries"
-                raise InvalidExpression(msg)
-
         for bind, exp, lang in zip(bindings, expressions, languages):
             if lang != "sympy":
                 msg = f"Parser {lang} is not implemented."
