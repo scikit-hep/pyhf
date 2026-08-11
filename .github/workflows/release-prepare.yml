@@ -1,0 +1,78 @@
+name: Prepare release
+
+on:
+  workflow_dispatch:
+    inputs:
+      part:
+        description: 'Semver part of the release (major | minor | patch)'
+        required: true
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+      release_candidate:
+        type: boolean
+        description: 'Release candidate'
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Open release preparation pull request
+    runs-on: ubuntu-latest
+    if: github.repository == 'scikit-hep/pyhf'
+
+    steps:
+    # The workflow dispatch ref selects the branch to release from
+    - name: Checkout code
+      uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.14'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install uv
+        uv pip install --system packaging tbump
+        python -m pip list
+
+    - name: Compute next version
+      id: version
+      env:
+        PART: ${{ inputs.part }}
+        RELEASE_CANDIDATE: ${{ inputs.release_candidate }}
+      run: |
+        version="$(python .github/scripts/next_version.py --part "${PART}" --rc "${RELEASE_CANDIDATE}")"
+        echo "version=${version}" >> "$GITHUB_OUTPUT"
+        echo "## Computed next version: ${version}" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Bump version in files
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
+      run: tbump --non-interactive --only-patch "${VERSION}"
+
+    # Use GitHub PAT to authenticate so CI triggers on the pull request
+    - name: Open release preparation pull request
+      uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+      with:
+        token: ${{ secrets.ACCESS_TOKEN }}
+        commit-message: 'chore: Bump version to v${{ steps.version.outputs.version }}'
+        title: 'chore: Bump version to v${{ steps.version.outputs.version }}'
+        branch: bump-version/v${{ steps.version.outputs.version }}
+        base: ${{ github.ref_name }}
+        delete-branch: true
+        body: |
+          Bump version from the latest release to `v${{ steps.version.outputs.version }}` in all files managed by `tbump.toml`.
+
+          Reviewing this pull request is the release "dry run":
+          * [ ] Verify the computed version is the intended release version.
+          * [ ] Verify there is a release notes file for the release under `docs/release-notes`.
+          * [ ] After merging, run the [Tag release workflow](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) on this branch to create the release tag.
