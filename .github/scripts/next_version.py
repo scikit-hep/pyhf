@@ -4,7 +4,6 @@ import argparse
 import subprocess
 from pathlib import Path
 
-import tomllib
 from packaging.version import Version
 
 
@@ -41,6 +40,10 @@ def next_version(part, release_candidate, latest, latest_stable):
 
 
 def main():
+    # tomllib requires Python >= 3.11, which the workflows running this
+    # script provide, but the tests importing next_version() might not
+    import tomllib
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--part", choices=["major", "minor", "patch"], required=True)
     parser.add_argument(
