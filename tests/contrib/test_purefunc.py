@@ -25,7 +25,7 @@ def test_missing_bindings(datadir, modifier_set):
             modifier_set=modifier_set,
             poi_name="kappa",
             validate=True,
-            schema="defs.json",
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
         )
 
 
@@ -39,7 +39,7 @@ def test_backend(datadir, modifier_set):
             modifier_set=modifier_set,
             poi_name="kappa",
             validate=True,
-            schema="defs.json",
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
         )
 
 
@@ -53,7 +53,7 @@ def test_single_func(datadir, modifier_set):
         modifier_set=modifier_set,
         poi_name="kappa",
         validate=True,
-        schema="defs.json",
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
     )
 
     assert model.config.suggested_init() == pytest.approx([1.5])
@@ -64,7 +64,7 @@ def test_single_func(datadir, modifier_set):
     assert pytest.approx(np.sqrt(2), rel=1e-3) == inferred[0]
 
 
-def test_multi_channel(datadir, modifier_set):
+def test_multi_channel_batched(datadir, modifier_set):
     with datadir.joinpath("two_channels.json").open() as spec_file:
         spec = json.load(spec_file)
     pyhf.set_backend("jax")
@@ -72,24 +72,22 @@ def test_multi_channel(datadir, modifier_set):
     model = pyhf.Model(
         spec,
         modifier_set=modifier_set,
+        batch_size=2,
         poi_name="alpha",
-        validate=False,
-        schema="defs.json",
+        validate=True,
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
     )
     assert len(model.config.parameters) == 2
     bounds = np.array(model.config.suggested_bounds())
     alpha_idx = model.config.par_slice("alpha")
     kappa_idx = model.config.par_slice("kappa")
 
-    pars = np.array(model.config.suggested_init())
-    pars[alpha_idx] = 2
-    pars[kappa_idx] = 5
-    pars = jnp.array(pars)
+    pars = jnp.array([[2, 5], [5, 2]])
 
     assert np.all(np.isclose(bounds[alpha_idx], [[0, 6.0]]))
     assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
 
-    observation = [5, 9, 9]
+    observation = np.reshape([[5, 9, 9], [2, 27, 27]], (2, 3))
 
     assert model.expected_actualdata(pars) == pytest.approx(observation, rel=1e-3)
 
@@ -110,7 +108,7 @@ def test_language(datadir, modifier_set):
             modifier_set=modifier_set,
             poi_name="kappa",
             validate=True,
-            schema="defs.json",
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
         )
 
 
@@ -123,7 +121,7 @@ def test_backward_bindings(datadir, modifier_set):
         modifier_set=modifier_set,
         poi_name="kappa",
         validate=True,
-        schema="defs.json",
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
     )
 
     assert set(model.config.parameters) == {"kappa", "theta"}
@@ -139,7 +137,7 @@ def test_circular_bindings(datadir, modifier_set):
             modifier_set=modifier_set,
             poi_name="kappa",
             validate=True,
-            schema="defs.json",
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
         )
 
 
@@ -153,7 +151,7 @@ def test_single_binding_tuple_expr(datadir, modifier_set):
             modifier_set=modifier_set,
             poi_name="kappa",
             validate=True,
-            schema="defs.json",
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
         )
 
 
@@ -167,7 +165,7 @@ def test_tuple_binding_single_expr(datadir, modifier_set):
             modifier_set=modifier_set,
             poi_name="kappa",
             validate=True,
-            schema="defs.json",
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
         )
 
 
@@ -181,7 +179,7 @@ def test_no_purefunc(datadir, modifier_set):
         modifier_set=modifier_set,
         poi_name="mu",
         validate=True,
-        schema="defs.json",
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
     )
 
     assert np.all(
