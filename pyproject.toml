@@ -116,7 +116,7 @@ docs = [
 dev = [
     "pyhf[all]",
     "tbump>=6.7.0",
-    "pre-commit",
+    "prek",
     "nox",
     "sphinx-autobuild>=2025.8.25",
     { include-group = "test" },
@@ -437,14 +437,14 @@ default-environment = "docs"
 
 [tool.pixi.feature.dev.dependencies]
 tbump = ">=6.7.0"
-pre-commit = ">=4.5.1"
+prek = ">=0.4.13"
 nox = ">=2025.11.12"
 # docs environment should contain only required dependencies for deploying docs
 sphinx-autobuild = ">=2025.8.25"
 
 [tool.pixi.feature.dev.tasks.lint]
-description = "Run pre-commit"
-cmd = "pre-commit run --all-files"
+description = "Run prek"
+cmd = "prek run --all-files"
 
 [tool.pixi.feature.dev.tasks.watch-docs]
 description = "Build the pyhf documentation and auto-reload on changes"

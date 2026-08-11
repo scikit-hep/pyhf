@@ -58,10 +58,10 @@ You can install the development environment (which includes a number of extra) l
 python -m pip install --upgrade --editable . --group dev
 ```
 
-To make the PR process much smoother we also strongly recommend that you setup the Git pre-commit hook for [Ruff](https://github.com/astral-sh/ruff) by running
+To make the PR process much smoother we also strongly recommend that you setup the Git pre-commit hook for [Ruff](https://github.com/astral-sh/ruff) with [prek](https://github.com/j178/prek) by running
 
 ```console
-pre-commit install
+prek install
 ```
 
 This will run `ruff` over your code each time you attempt to make a commit and warn you if there is an error, canceling the commit.
