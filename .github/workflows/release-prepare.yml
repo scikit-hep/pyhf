@@ -43,25 +43,7 @@ jobs:
       env:
         VERSION: ${{ inputs.new_version }}
       run: |
-        python - <<'EOF'
-        import os
-        import tomllib
-        from pathlib import Path
-
-        from packaging.version import Version
-
-        new_version = os.environ["VERSION"]
-        with Path("tbump.toml").open("rb") as manifest:
-            current_version = tomllib.load(manifest)["version"]["current"]
-        if Version(new_version) <= Version(current_version):
-            error_message = (
-                f"ERROR: {new_version} is not newer than the current version"
-                f" {current_version}."
-                " Is this the correct branch for this release?"
-            )
-            raise SystemExit(error_message)
-        print(f"Bumping version: {current_version} -> {new_version}")
-        EOF
+        python .github/workflows/validate-version.py "${VERSION}"
         echo "## Bumping version to ${VERSION}" >> "$GITHUB_STEP_SUMMARY"
 
     - name: Bump version in files
@@ -90,7 +72,7 @@ jobs:
         Reviewing this pull request is the release "dry run":
         * [ ] Verify the new version is the intended release version.
         * [ ] Verify there is a release notes file for the release under docs/release-notes.
-        * [ ] After merging, run the [Tag release workflow](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) on this branch to create the release tag.
+        * [ ] After merging, run the [Tag release workflow](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) on the ${BASE_BRANCH} branch to create the release tag.
         EOF
 
         gh pr create \
