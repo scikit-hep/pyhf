@@ -191,6 +191,8 @@ class PureFunctionModifierBuilder:
 
 
 class PureFunctionModifierApplicator:
+    """Applicator class for purefunc modifier"""
+
     op_code = "multiplication"
     name = "purefunc"
 
