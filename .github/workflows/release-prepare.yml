@@ -37,13 +37,21 @@ jobs:
         uv pip install --system packaging tbump
         python -m pip list
 
-    # tbump validates the version format against its regex, and the review of
-    # the release preparation pull request validates the release version
-    - name: Validate version is newer than the current version
+    # The review of the release preparation pull request validates the
+    # release version
+    - name: Validate version
       env:
         VERSION: ${{ inputs.new_version }}
       run: |
         python .github/workflows/validate-version.py "${VERSION}"
+
+        # Catch versions already released from another release series branch
+        # (fetch-depth: 0 fetches all tags, including release branch tags)
+        if git rev-parse --quiet --verify "refs/tags/v${VERSION}" > /dev/null; then
+            echo "ERROR: tag v${VERSION} already exists." >&2
+            exit 1
+        fi
+
         echo "## Bumping version to ${VERSION}" >> "$GITHUB_STEP_SUMMARY"
 
     - name: Bump version in files
