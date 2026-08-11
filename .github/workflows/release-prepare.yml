@@ -72,7 +72,10 @@ jobs:
 
         git switch --create "${branch}"
         git commit --all --message "chore: Bump version to v${VERSION}"
-        git push --set-upstream origin "${branch}"
+        # The release preparation branch is owned by this workflow, so
+        # replace any leftover branch from a closed release preparation
+        # pull request for the same version
+        git push --force --set-upstream origin "${branch}"
 
         cat > "${RUNNER_TEMP}/pull_request_body.md" <<EOF
         Bump version from the latest release to v${VERSION} in all files managed by tbump.toml.
