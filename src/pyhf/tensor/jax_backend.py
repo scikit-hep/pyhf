@@ -276,6 +276,20 @@ class jax_backend:
 
         return jnp.zeros(shape, dtype=dtype)
 
+    def empty(self, shape, dtype="float"):
+        try:
+            dtype = self.dtypemap[dtype]
+        except KeyError:
+            log.exception(
+                "Invalid dtype: dtype must be one of %s.", list(self.dtypemap)
+            )
+            raise
+
+        return jnp.empty(shape, dtype=dtype)
+
+    def arange(self, start, stop=None, step=None):
+        return jnp.arange(start, stop, step, dtype=self.dtypemap["int"])
+
     def power(self, tensor_in_1, tensor_in_2):
         return jnp.power(tensor_in_1, tensor_in_2)
 

@@ -281,6 +281,25 @@ class numpy_backend(Generic[T]):
 
         return np.zeros(shape, dtype=dtype_obj)
 
+    def empty(self, shape: Shape, dtype: FloatIntOrBool = "float") -> ArrayLike:
+        try:
+            dtype_obj = self.dtypemap[dtype]
+        except KeyError:
+            log.exception(
+                "Invalid dtype: dtype must be one of %s.", list(self.dtypemap)
+            )
+            raise
+
+        return np.empty(shape, dtype=dtype_obj)
+
+    def arange(
+        self,
+        start: int,
+        stop: int | None = None,
+        step: int | None = None,
+    ) -> ArrayLike:
+        return np.arange(start, stop, step, dtype=self.dtypemap["int"])
+
     def power(self, tensor_in_1: Tensor[T], tensor_in_2: Tensor[T]) -> ArrayLike:
         return np.power(tensor_in_1, tensor_in_2)
 
