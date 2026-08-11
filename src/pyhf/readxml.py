@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import logging
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, MutableMapping, MutableSequence, Sequence
@@ -266,6 +265,17 @@ def process_sample(
                 "data": None,
             }
             modifiers.append(modifier_shapefactor)
+        elif modtag.tag == "StatError":
+            # Reachable only when Activate is missing or not "True".
+            # HistFactorySchema.dtd declares Activate as #REQUIRED, so warn
+            # specifically: silently dropping the modifier would understate
+            # the MC statistical uncertainty in the resulting model.
+            log.warning(
+                "StatError modifier of sample %s in channel %s is not activated (Activate=%s) and will be ignored",
+                sample.attrib.get("Name", "n/a"),
+                channel_name,
+                modtag.attrib.get("Activate"),
+            )
         else:
             log.warning("not considering modifier tag %s", modtag)
 
@@ -537,8 +547,13 @@ def parse(
 
 
 def clear_filecache() -> None:
-    global __FILECACHE__
-    for file_handle, _ in __FILECACHE__.values():
-        with contextlib.suppress(Exception):
+    """Close all cached file handles and empty the file cache."""
+    # Clear in place so external references to the cache don't retain
+    # closed file handles.
+    for file_path, (file_handle, _) in __FILECACHE__.items():
+        # per-handle try so one failing close doesn't leak the remaining handles
+        try:
             file_handle.close()
-    __FILECACHE__ = {}
+        except OSError:  # noqa: PERF203
+            log.warning("could not close file handle for %s", file_path)
+    __FILECACHE__.clear()
