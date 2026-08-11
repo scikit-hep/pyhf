@@ -67,9 +67,14 @@ jobs:
     - name: Build a sdist and wheel
       id: baipp
       uses: hynek/build-and-inspect-python-package@2abe76da66d0a6a4a227101f9348ee855797cfa5 # v3.0.1
+
+    # Scoped to a dedicated build so that warnings from other tools that
+    # build-and-inspect-python-package runs don't error the check
+    - name: Build a sdist and wheel and check for warnings
+      if: github.event_name == 'schedule'
       env:
-        # Weekly check that builds are warning free
-        PYTHONWARNINGS: ${{ github.event_name == 'schedule' && 'error,default::DeprecationWarning' || '' }}
+        PYTHONWARNINGS: 'error,default::DeprecationWarning'
+      run: uvx --from 'build[uv]' pyproject-build --installer uv --outdir "${RUNNER_TEMP}/warnings-check-dist" .
 
     - name: Verify untagged commits have dev versions
       if: "!startsWith(github.ref, 'refs/tags/')"
