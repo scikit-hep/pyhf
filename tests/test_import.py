@@ -337,6 +337,28 @@ def test_import_filecache(mocker):
     assert_equal_dictionary(parsed_xml, parsed_xml2)
 
 
+def test_clear_filecache_closes_handles(mocker, caplog):
+    failing_handle = mocker.MagicMock()
+    failing_handle.close.side_effect = OSError("close failed")
+    ok_handle = mocker.MagicMock()
+
+    filecache = pyhf.readxml.__FILECACHE__
+    filecache["failing.root"] = (failing_handle, {"hist"})
+    filecache["ok.root"] = (ok_handle, {"hist"})
+
+    with caplog.at_level(logging.WARNING, "pyhf.readxml"):
+        pyhf.readxml.clear_filecache()
+
+    # a failing close does not stop the remaining handles from being closed
+    failing_handle.close.assert_called_once()
+    ok_handle.close.assert_called_once()
+    assert "could not close file handle for failing.root" in caplog.text
+
+    # the cache is emptied in place, so pre-existing references see the reset
+    assert pyhf.readxml.__FILECACHE__ == {}
+    assert filecache == {}
+
+
 def test_import_shapesys():
     parsed_xml = pyhf.readxml.parse(
         "validation/xmlimport_input3/config/examples/example_ShapeSys.xml",
@@ -462,6 +484,34 @@ def test_process_modifiers(mocker, caplog):
     assert {"name": "staterror_myChannel", "type": "staterror", "data": _err} in result[
         "modifiers"
     ]
+
+
+def test_process_sample_staterror_inactive(mocker, caplog):
+    sample = ET.Element(
+        "Sample", Name="testSample", HistoPath="", HistoName="testSample"
+    )
+    # HistFactorySchema.dtd declares Activate as #REQUIRED, but readxml does
+    # not DTD-validate, so a missing attribute must be handled gracefully
+    staterror_missing_activate = ET.Element("StatError")
+    staterror_deactivated = ET.Element("StatError", Activate="False")
+
+    sample.append(staterror_missing_activate)
+    sample.append(staterror_deactivated)
+
+    mocker.patch("pyhf.readxml.import_root_histogram", return_value=([0.0], [1.0]))
+    with caplog.at_level(logging.WARNING, "pyhf.readxml"):
+        result = pyhf.readxml.process_sample(sample, "", "", "", "myChannel")
+
+    assert result["modifiers"] == []
+    assert "not considering modifier tag" not in caplog.text
+    assert (
+        "StatError modifier of sample testSample in channel myChannel"
+        " is not activated (Activate=None) and will be ignored" in caplog.text
+    )
+    assert (
+        "StatError modifier of sample testSample in channel myChannel"
+        " is not activated (Activate=False) and will be ignored" in caplog.text
+    )
 
 
 def test_import_validation_exception(mocker, caplog):
