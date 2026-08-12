@@ -22,7 +22,10 @@ on:
         default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Include the event name so that the release event run of a tag can not
+  # cancel the tag push event run mid-upload to TestPyPI (both runs share
+  # the same refs/tags/vX.Y.Z ref)
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
