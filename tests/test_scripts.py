@@ -57,12 +57,9 @@ def test_utils_environment(script_runner):
     ret = script_runner.run(shlex.split("pyhf utils environment"))
     assert ret.success
     assert ret.stderr == ""
-    assert "* os version:" in ret.stdout
-    assert "* kernel version:" in ret.stdout
-    assert "* python version:" in ret.stdout
     assert f"* pyhf version: {pyhf.__version__}" in ret.stdout
-    assert "* numpy version:" in ret.stdout
-    assert "* scipy version:" in ret.stdout
+    # Exact match ensures no extra trailing newline from click.echo
+    assert ret.stdout == pyhf.utils.environment_info()
 
 
 def test_utils_environment_output_file(tmp_path, script_runner):
@@ -73,9 +70,8 @@ def test_utils_environment_output_file(tmp_path, script_runner):
     assert ret.success
     assert ret.stderr == ""
     assert ret.stdout == ""
-    contents = outfile.read_text(encoding="utf-8")
-    assert "* pyhf version:" in contents
-    assert "* numpy version:" in contents
+    # File output identical to terminal output
+    assert outfile.read_text(encoding="utf-8") == pyhf.utils.environment_info()
 
 
 # see test_import.py for the same (detailed) test

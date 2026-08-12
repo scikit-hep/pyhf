@@ -4,10 +4,10 @@ import logging
 
 import click
 
-from pyhf import __version__
-from pyhf.cli import complete, infer, patchset, rootio, spec, utils
+from pyhf import __version__, utils
+from pyhf.cli import complete, infer, patchset, rootio, spec
+from pyhf.cli import utils as utils_cli
 from pyhf.contrib import cli as contrib
-from pyhf.utils import citation
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 def _print_citation(ctx, param, value):  # noqa: ARG001
     if not value or ctx.resilient_parsing:
         return
-    click.echo(citation())
+    click.echo(utils.citation())
     ctx.exit()
 
 
@@ -54,7 +54,7 @@ pyhf.add_command(infer.cls)
 
 pyhf.add_command(patchset.cli)
 
-pyhf.add_command(utils.cli)
+pyhf.add_command(utils_cli.cli)
 
 pyhf.add_command(complete.cli)
 
