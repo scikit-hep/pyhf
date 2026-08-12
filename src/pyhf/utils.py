@@ -157,7 +157,7 @@ def environment_info():
     if sys.platform == "linux":
         try:
             # platform.freedesktop_os_release added in Python 3.10
-            # Remove when Python 3.9 support dropped
+            # FIXME: Remove when Python 3.9 support dropped
             from platform import freedesktop_os_release
         except ImportError:
             # c.f. https://docs.python.org/3/library/platform.html#platform.freedesktop_os_release
