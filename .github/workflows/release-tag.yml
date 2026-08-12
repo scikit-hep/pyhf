@@ -20,6 +20,17 @@ jobs:
       name: release-tag
 
     steps:
+    # Fail closed in code as well, as the release-tag environment's
+    # protection rules live in the repository settings and GitHub
+    # auto-creates a referenced environment without protection rules
+    - name: Check branch is intended for release
+      run: |
+        if [[ "${GITHUB_REF}" != "refs/heads/main" && "${GITHUB_REF}" != refs/heads/release/v* ]]; then
+            echo "ERROR: ${GITHUB_REF} is not intended for release." >&2
+            echo "       Releases are made only from main or release/vX.Y.x branches." >&2
+            exit 1
+        fi
+
     # Use GitHub PAT to authenticate so the tag push triggers the publishing
     # and Docker workflows
     - name: Checkout code
