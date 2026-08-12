@@ -15,13 +15,17 @@ def main():
     )
     args = parser.parse_args()
 
-    # Same version format that the tbump.toml regex enforces, checked here to
-    # fail with a clear error before tbump runs (packaging.version.Version
-    # would otherwise accept versions tbump rejects, e.g. a leading "v")
-    if not re.fullmatch(r"\d+\.\d+\.\d+(rc\d+)?", args.version):
+    with Path("tbump.toml").open("rb") as manifest:
+        version_config = tomllib.load(manifest)["version"]
+
+    # Validate with the tbump.toml version regex, which tbump compiles in
+    # verbose mode, to fail with a clear error here before tbump runs
+    # (packaging.version.Version would otherwise accept versions tbump
+    # rejects, e.g. a leading "v")
+    if not re.fullmatch(version_config["regex"], args.version, flags=re.VERBOSE):
         error_message = (
-            f"ERROR: {args.version} does not match the release version format"
-            " X.Y.Z or X.Y.ZrcN (with no leading v)."
+            f"ERROR: {args.version} does not match the tbump.toml release"
+            " version format X.Y.Z or X.Y.ZrcN (with no leading v)."
         )
         raise SystemExit(error_message)
 
@@ -34,8 +38,7 @@ def main():
         )
         raise SystemExit(error_message)
 
-    with Path("tbump.toml").open("rb") as manifest:
-        current_version = tomllib.load(manifest)["version"]["current"]
+    current_version = version_config["current"]
     if Version(args.version) <= Version(current_version):
         error_message = (
             f"ERROR: {args.version} is not newer than the current version"
