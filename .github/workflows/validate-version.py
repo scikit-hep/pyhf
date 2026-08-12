@@ -25,6 +25,15 @@ def main():
         )
         raise SystemExit(error_message)
 
+    # packaging normalizes versions (e.g. 0.8.00 to 0.8.0), so require the
+    # canonical form to keep the released version identical everywhere
+    if args.version != str(Version(args.version)):
+        error_message = (
+            f"ERROR: {args.version} is not the canonical form"
+            f" {Version(args.version)} of the version."
+        )
+        raise SystemExit(error_message)
+
     with Path("tbump.toml").open("rb") as manifest:
         current_version = tomllib.load(manifest)["version"]["current"]
     if Version(args.version) <= Version(current_version):
