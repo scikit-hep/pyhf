@@ -27,7 +27,7 @@ jobs:
       run: |
         if [[ "${GITHUB_REF}" != "refs/heads/main" && "${GITHUB_REF}" != refs/heads/release/v* ]]; then
             echo "ERROR: ${GITHUB_REF} is not intended for release." >&2
-            echo "       Releases are made only from main or release/vX.Y.x branches." >&2
+            echo "       Releases are made only from 'main' or 'release/vX.Y.x' branches." >&2
             exit 1
         fi
 
