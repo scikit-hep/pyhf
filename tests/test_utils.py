@@ -1,4 +1,5 @@
 import importlib.metadata
+import io
 import pathlib
 import platform
 import sys
@@ -89,6 +90,19 @@ def test_environment_info_linux(monkeypatch):
     assert "* os version: Ubuntu 22.04.2 LTS (Jammy Jellyfish)" in info
 
 
+def test_environment_info_linux_no_version(monkeypatch):
+    # VERSION is optional in the os-release spec (e.g. rolling releases)
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(
+        platform,
+        "freedesktop_os_release",
+        lambda: {"NAME": "Arch Linux", "ID": "arch", "PRETTY_NAME": "Arch Linux"},
+        raising=False,
+    )
+    info = pyhf.utils.environment_info()
+    assert "* os version: Arch Linux" in info
+
+
 def test_environment_info_linux_oserror(monkeypatch):
     monkeypatch.setattr(sys, "platform", "linux")
 
@@ -103,18 +117,47 @@ def test_environment_info_linux_oserror(monkeypatch):
 
 
 def test_environment_info_linux_fallback_no_os_release_file(monkeypatch):
-    # Simulate Python 3.9 (no platform.freedesktop_os_release) with no /etc/os-release
+    # Simulate Python 3.9 (no platform.freedesktop_os_release) with no os-release file
     monkeypatch.setattr(sys, "platform", "linux")
     monkeypatch.delattr(platform, "freedesktop_os_release", raising=False)
 
-    original_exists = pathlib.Path.exists
-    monkeypatch.setattr(
-        pathlib.Path,
-        "exists",
-        lambda self: False if "os-release" in str(self) else original_exists(self),
-    )
+    original_open = pathlib.Path.open
+
+    def mock_open(self, *args, **kwargs):
+        if "os-release" in str(self):
+            raise FileNotFoundError(str(self))
+        return original_open(self, *args, **kwargs)
+
+    monkeypatch.setattr(pathlib.Path, "open", mock_open)
     info = pyhf.utils.environment_info()
     assert "* os version: Cannot be determined" in info
+
+
+def test_environment_info_linux_fallback_parses_os_release(monkeypatch):
+    # Simulate Python 3.9 with an os-release file exercising what the spec
+    # permits: comment lines, quoted values, values containing "=", no VERSION
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.delattr(platform, "freedesktop_os_release", raising=False)
+
+    os_release_content = (
+        "# This file is part of systemd\n"
+        'NAME="Arch Linux"\n'
+        'PRETTY_NAME="Arch Linux"\n'
+        "ID=arch\n"
+        'BUG_REPORT_URL="https://bugs.example.org/?product=arch"\n'
+        "\n"
+    )
+
+    original_open = pathlib.Path.open
+
+    def mock_open(self, *args, **kwargs):
+        if "os-release" in str(self):
+            return io.StringIO(os_release_content)
+        return original_open(self, *args, **kwargs)
+
+    monkeypatch.setattr(pathlib.Path, "open", mock_open)
+    info = pyhf.utils.environment_info()
+    assert "* os version: Arch Linux" in info
 
 
 def test_environment_info_darwin(monkeypatch):

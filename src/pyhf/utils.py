@@ -9,7 +9,9 @@ from importlib import resources
 import click
 import yaml
 
-from pyhf import __version__
+# Import from pyhf._version instead of pyhf to avoid a circular import, as
+# pyhf.utils is imported while pyhf.__init__ is still executing
+from pyhf._version import version as __version__
 
 __all__ = [
     "EqDelimStringParamType",
@@ -162,24 +164,36 @@ def environment_info():
             from pathlib import Path
 
             def freedesktop_os_release():
-                os_release_path = Path("/etc") / "os-release"
-                if os_release_path.exists():
-                    with os_release_path.open(encoding="utf8") as read_file:
-                        os_release_file = read_file.read()
-                    os_release_list = os_release_file.split("\n")
-                    # Remove all trailing lines
-                    os_release_list = list(filter(("").__ne__, os_release_list))
-                    return {
-                        token.split("=")[0]: token.split("=")[1].replace('"', "")
-                        for token in os_release_list
-                    }
+                # Values may contain "=" and files may contain comment lines
+                # c.f. https://www.freedesktop.org/software/systemd/man/os-release.html
+                for os_release_path in (
+                    Path("/etc/os-release"),
+                    Path("/usr/lib/os-release"),
+                ):
+                    try:
+                        with os_release_path.open(encoding="utf8") as read_file:
+                            return {
+                                key: value.strip("\"'")
+                                for key, _, value in (
+                                    line.strip().partition("=")
+                                    for line in read_file
+                                    if "=" in line and not line.lstrip().startswith("#")
+                                )
+                            }
+                    except OSError:  # noqa: PERF203
+                        continue
                 raise OSError
 
         try:
             os_release = freedesktop_os_release()
-            os_version = f"{os_release['NAME']} {os_release['VERSION']}"
         except OSError:
-            os_version = "Cannot be determined"
+            pass
+        else:
+            if "NAME" in os_release and "VERSION" in os_release:
+                os_version = f"{os_release['NAME']} {os_release['VERSION']}"
+            else:
+                # VERSION is optional in the os-release spec (e.g. rolling releases)
+                os_version = os_release.get("PRETTY_NAME", "Cannot be determined")
     elif sys.platform == "darwin":
         os_version = f"macOS {platform.mac_ver()[0]}"
 
@@ -188,12 +202,12 @@ def environment_info():
         f"* kernel version: {platform.system()} {platform.release()} {platform.machine()}",
         f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler()}]",
         f"* pyhf version: {__version__}",
-        f"* numpy version: {importlib.metadata.version('numpy')}",
-        f"* scipy version: {importlib.metadata.version('scipy')}",
     ]
 
-    # Optional backends — show "not installed" if absent
-    for package in ("iminuit", "jax", "jaxlib"):
+    # Guard all lookups as optional backends may be absent and even core
+    # dependencies could be installed in a strange way that they are importable
+    # without dist-info metadata. Show "not installed" instead of raising.
+    for package in ("numpy", "scipy", "iminuit", "jax", "jaxlib"):
         try:
             version = importlib.metadata.version(package)
         except importlib.metadata.PackageNotFoundError:
