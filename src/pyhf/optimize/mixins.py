@@ -20,10 +20,16 @@ def _minuit_at_limit_flags(
     minuit: Any, npars: int, fixed_idx: Sequence[int]
 ) -> list[bool]:
     """
-    Replicate iminuit's per-parameter at-limit determination: a free bounded
-    parameter is at a limit when it is within half its uncertainty of a bound
-    (cf. :class:`iminuit.util.FMin`, which aggregates the same criterion into
-    ``has_parameters_at_limit`` but does not expose it per parameter).
+    Apply iminuit's at-limit criterion to each parameter: a free bounded
+    parameter is at a limit when it is within half its uncertainty of a bound.
+
+    iminuit computes this internally but does not currently expose it per
+    parameter --- only the OR-aggregated result is public, as
+    :attr:`iminuit.util.FMin.has_parameters_at_limit` (as of iminuit v2.32.0,
+    cf. ``iminuit/util.py`` in :class:`iminuit.util.FMin`) --- so the same
+    criterion is re-evaluated here from the public per-parameter data in
+    ``minuit.params``. If iminuit gains a per-parameter API for this (e.g.
+    ``Param.at_limit``), this function can be replaced by it.
 
     Returns:
         :obj:`list` of :obj:`bool`: flags aligned with the full set of model parameters
