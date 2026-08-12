@@ -1,4 +1,5 @@
 import itertools
+import logging
 from unittest.mock import PropertyMock, patch
 
 import iminuit
@@ -608,33 +609,197 @@ def test_minuit_all_fixed_params():
         ([3.0], [(3.0, 10.0)], True),
         # exactly at upper bound
         ([10.0], [(3.0, 10.0)], True),
+        # near lower bound, within tolerance (minuit stops near, not at, bounds)
+        ([3.0 + 1e-7 * 7.0], [(3.0, 10.0)], True),
         # interior — no warning
         ([5.0], [(3.0, 10.0)], False),
+        # near lower bound but outside tolerance — no warning
+        ([3.01], [(3.0, 10.0)], False),
     ],
-    ids=["lower_bound", "upper_bound", "no_bound"],
+    ids=[
+        "lower_bound",
+        "upper_bound",
+        "near_bound_within_tolerance",
+        "interior",
+        "near_bound_outside_tolerance",
+    ],
 )
 def test_parameter_at_bounds_warning(caplog, fitted_x, par_bounds, expect_warning):
     # Regression test for https://github.com/scikit-hep/pyhf/issues/2525
     # Test _internal_postprocess directly with controlled fit results so the
     # check is independent of optimizer-specific floating-point behaviour.
-    import logging
-
-    from scipy.optimize import OptimizeResult
-
-    from pyhf.optimize.mixins import OptimizerMixin
-
-    def stitch_pars(x, _stitch_with=None):
-        return x
-
     mixin = OptimizerMixin()
     result = OptimizeResult(x=np.array(fitted_x), fun=0.0, success=True)
 
     with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
-        mixin._internal_postprocess(result, stitch_pars, par_bounds=par_bounds)
+        mixin._internal_postprocess(
+            result, _make_stitch_pars(), par_bounds=par_bounds, par_names=["mu"]
+        )
 
-    warning_records = [r for r in caplog.records if "is at a bound" in r.message]
+    warning_records = [
+        record for record in caplog.records if "is at a bound" in record.message
+    ]
     if expect_warning:
         assert len(warning_records) == 1
-        assert "bounds" in warning_records[0].message
+        message = warning_records[0].message
+        assert "'mu' (index 0)" in message
+        assert f"value={fitted_x[0]:g}" in message
+        assert "bounds=(3, 10)" in message
     else:
         assert len(warning_records) == 0
+
+
+def test_parameter_at_bounds_warning_fixed_parameter(caplog):
+    # A parameter held constant at a bound is deliberate (e.g. a POI fixed at
+    # zero for a discovery fit) and must not warn.
+    mixin = OptimizerMixin()
+    result = OptimizeResult(x=np.array([0.0, 5.0]), fun=0.0, success=True)
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(
+            result,
+            _make_stitch_pars(),
+            par_bounds=[(0.0, 10.0), (3.0, 10.0)],
+            fixed_idx=[0],
+        )
+
+    assert not [
+        record for record in caplog.records if "is at a bound" in record.message
+    ]
+
+
+def test_parameter_at_bounds_warning_nonterminal_fixed_parameter(caplog):
+    # With do_stitch=True fitresult.x holds only the free parameters; the
+    # warning must still compare against the correct full-model bounds and
+    # report the model index, not the free-vector index.
+    tv = _TensorViewer([[0], [1]])
+    stitch_pars = _make_stitch_pars(tv, fixed_values=[2.0])
+
+    mixin = OptimizerMixin()
+    # the free parameter (model index 1) is exactly at its lower bound
+    result = OptimizeResult(x=np.array([3.0]), fun=0.0, success=True)
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(
+            result,
+            stitch_pars,
+            par_bounds=[(2.0, 10.0), (3.0, 10.0)],
+            fixed_idx=[0],
+            par_names=["fixed_par", "free_par"],
+        )
+
+    warning_records = [
+        record for record in caplog.records if "is at a bound" in record.message
+    ]
+    assert len(warning_records) == 1
+    message = warning_records[0].message
+    # the fixed parameter (model index 0, held at its lower bound) is skipped
+    assert "'free_par' (index 1)" in message
+    assert "fixed_par" not in message
+    assert "bounds=(3, 10)" in message
+
+
+@pytest.mark.parametrize("optimizer", ["scipy", "minuit"])
+def test_parameter_at_bounds_warning_end_to_end(caplog, optimizer):
+    # Model from https://github.com/scikit-hep/pyhf/issues/2525: the best-fit
+    # mu is below the lower bound, so the fit rails at the bound. minuit stops
+    # near but not exactly at the bound, which the tolerance must catch.
+    pyhf.set_backend("numpy", optimizer)
+    spec = {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": [3.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {"name": "background", "data": [5.0], "modifiers": []},
+                ],
+            }
+        ]
+    }
+    model = pyhf.Model(spec)
+    data = [5.0] + model.config.auxdata
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        pyhf.infer.mle.fit(data, model, init_pars=[5.0], par_bounds=[(3.0, 10.0)])
+
+    warning_records = [
+        record for record in caplog.records if "is at a bound" in record.message
+    ]
+    assert len(warning_records) == 1
+    message = warning_records[0].message
+    assert "'mu' (index 0)" in message
+    assert "bounds=(3, 10)" in message
+
+
+def test_no_parameter_at_bounds_warning_fixed_poi(caplog):
+    # A POI deliberately fixed at its lower bound (as in discovery fits, where
+    # generate_asimov_data runs fixed_poi_fit(0.0, ...)) must not warn.
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[5.0], bkg=[10.0], bkg_uncertainty=[3.5]
+    )
+    data = [10.0] + model.config.auxdata
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        pyhf.infer.mle.fixed_poi_fit(0.0, data, model)
+
+    assert not [
+        record for record in caplog.records if "is at a bound" in record.message
+    ]
+
+
+def test_minimize_par_bounds_none(caplog):
+    # Direct optimizer API use with unbounded parameters worked before the
+    # at-bound check was added and must keep working.
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[5.0], bkg=[10.0], bkg_uncertainty=[3.5]
+    )
+    data = [12.0] + model.config.auxdata
+
+    optimizer = pyhf.optimize.scipy_optimizer()
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        result = optimizer.minimize(
+            pyhf.infer.mle.twice_nll,
+            data,
+            model,
+            model.config.suggested_init(),
+            None,
+        )
+
+    assert result is not None
+    assert not [
+        record for record in caplog.records if "is at a bound" in record.message
+    ]
+
+
+def test_parameter_at_bounds_warning_open_bound(caplog):
+    # scipy accepts one-sided (None) bounds through the direct optimizer API;
+    # the warning must handle and report them without breaking log formatting.
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[5.0], bkg=[10.0], bkg_uncertainty=[3.5]
+    )
+    # best-fit mu is negative, so the fit rails at the lower bound of 0
+    data = [7.0] + model.config.auxdata
+
+    optimizer = pyhf.optimize.scipy_optimizer()
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        optimizer.minimize(
+            pyhf.infer.mle.twice_nll,
+            data,
+            model,
+            model.config.suggested_init(),
+            [(0.0, None), (1e-10, 10.0)],
+        )
+
+    warning_records = [
+        record for record in caplog.records if "is at a bound" in record.message
+    ]
+    assert len(warning_records) == 1
+    message = warning_records[0].message
+    assert "'mu' (index 0)" in message
+    assert "bounds=(0, None)" in message

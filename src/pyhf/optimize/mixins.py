@@ -10,6 +10,57 @@ from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
+# Relative tolerance (w.r.t. the bound range) for deciding that a fitted
+# parameter is at a bound. Optimizers stop near but not exactly at bounds:
+# iminuit's sin-transformed limits land within O(1e-7) of the bound range and
+# scipy's SLSQP rails within O(1e-14), so exact comparison would miss them.
+_AT_BOUND_RTOL = 1e-6
+
+
+def _at_bound_warning_messages(fitted_pars, par_bounds, fixed_idx, par_names):
+    """
+    Build warning messages for free fitted parameters that are at a bound.
+
+    Args:
+        fitted_pars (:obj:`list` of :obj:`float`): the full set of fitted model parameters
+        par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): bounds for the full set of
+            model parameters. A bound of ``None`` is treated as unbounded on that side.
+        fixed_idx (:obj:`sequence` of :obj:`int`): indices of parameters held constant in
+            the fit, which are skipped (a parameter fixed at a bound is deliberate)
+        par_names (:obj:`list` of :obj:`str` or :obj:`None`): names of the full set of
+            model parameters, used to identify parameters. If ``None``, parameters are
+            identified by index only.
+
+    Returns:
+        :obj:`list` of :obj:`str`: one message per parameter at a bound
+    """
+    messages = []
+    for par_index, (fitted_par, (lower, upper)) in enumerate(
+        zip(fitted_pars, par_bounds)
+    ):
+        if par_index in fixed_idx or (lower is None and upper is None):
+            continue
+        if lower is not None and upper is not None:
+            tolerance = _AT_BOUND_RTOL * (upper - lower)
+        else:
+            one_sided_bound = lower if lower is not None else upper
+            tolerance = _AT_BOUND_RTOL * max(1.0, abs(one_sided_bound))
+        if any(
+            bound is not None and abs(fitted_par - bound) <= tolerance
+            for bound in (lower, upper)
+        ):
+            par_label = (
+                f"'{par_names[par_index]}' (index {par_index})"
+                if par_names is not None
+                else f"at index {par_index}"
+            )
+            lower_str = "None" if lower is None else f"{lower:g}"
+            upper_str = "None" if upper is None else f"{upper:g}"
+            messages.append(
+                f"fit result for parameter {par_label} is at a bound: value={fitted_par:g}, bounds=({lower_str}, {upper_str})"
+            )
+    return messages
+
 
 class OptimizerMixin:
     """Mixin Class to build optimizers."""
@@ -69,7 +120,14 @@ class OptimizerMixin:
         return result
 
     def _internal_postprocess(
-        self, fitresult, stitch_pars, /, par_bounds, *, return_uncertainties=False
+        self,
+        fitresult,
+        stitch_pars,
+        *,
+        par_bounds=None,
+        fixed_idx=(),
+        par_names=None,
+        return_uncertainties=False,
     ):
         """
         Post-process the fit result.
@@ -77,9 +135,16 @@ class OptimizerMixin:
         Args:
             fitresult (scipy.optimize.OptimizeResult): Fit result from :func:`_internal_minimize`
             stitch_pars (:obj:`func`): callable that stitches fixed parameters into the unfixed parameters
-            par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the model parameters
-                are allowed to reach in the fit.
+            par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the full set of
+                model parameters are allowed to reach in the fit.
                 The shape should be ``(n, 2)`` for ``n`` model parameters.
+                If ``None`` (the default), the check warning about fitted parameters at their
+                bounds is skipped.
+            fixed_idx (:obj:`sequence` of :obj:`int`): The indices of the model parameters held
+                constant in the fit, which are excluded from the at-bound check.
+            par_names (:obj:`list` of :obj:`str`): The names of the full set of model parameters,
+                used to identify parameters in the at-bound warning. If ``None``, parameters are
+                identified by index only.
             return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off (``False``).
 
         Returns:
@@ -87,23 +152,20 @@ class OptimizerMixin:
         """
         tensorlib, _ = get_backend()
 
-        # fitresult.x and par_bounds both cover only the free parameters
-        # (fixed params are stripped by shim() before optimization and
-        # stitched back in below), so they always align correctly.
-        for par_index, (fitted_par, (lower, upper)) in enumerate(
-            zip(fitresult.x, par_bounds)
-        ):
-            if fitted_par in (lower, upper):
-                log.warning(
-                    "fit result for parameter at index %d is at a bound: value=%g, bounds=(%g, %g)",
-                    par_index,
-                    fitted_par,
-                    lower,
-                    upper,
-                )
-
         # stitch in missing parameters (e.g. fixed parameters)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
+
+        if par_bounds is not None:
+            # fitted_pars covers the full set of model parameters, so it aligns
+            # with par_bounds whether or not fixed parameters were stripped from
+            # fitresult.x for the minimization (do_stitch)
+            at_bound_messages = _at_bound_warning_messages(
+                tensorlib.tolist(fitted_pars), par_bounds, fixed_idx, par_names
+            )
+            if at_bound_messages:
+                # a single warning per fit to avoid excessively logging in
+                # pseudoexperiment studies
+                log.warning("\n".join(at_bound_messages))
 
         # check if uncertainties were provided (and stitch just in case)
         uncertainties = getattr(fitresult, "unc", None)
@@ -211,6 +273,10 @@ class OptimizerMixin:
         except AttributeError:
             par_names = None
 
+        # keep the full set of parameter names for the at-bound check in
+        # postprocessing, before fixed parameters are stripped below
+        all_par_names = list(par_names) if par_names else None
+
         # need to remove parameters that are fixed in the fit
         if par_names and do_stitch and fixed_vals:
             for index, _ in fixed_vals:
@@ -224,6 +290,8 @@ class OptimizerMixin:
             result,
             stitch_pars,
             par_bounds=par_bounds,
+            fixed_idx=[index for index, _ in fixed_vals or []],
+            par_names=all_par_names,
             return_uncertainties=return_uncertainties,
         )
 
