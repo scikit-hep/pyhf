@@ -94,8 +94,15 @@ jobs:
         * [ ] After merging, run the [Tag release workflow](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) on the ${BASE_BRANCH} branch to create the release tag.
         EOF
 
-        gh pr create \
-            --base "${BASE_BRANCH}" \
-            --head "${branch}" \
-            --title "chore: Bump version to v${VERSION}" \
-            --body-file "${RUNNER_TEMP}/pull_request_body.md"
+        # A rerun's force push has already updated any open release
+        # preparation pull request for this version, so only create one
+        # if none exists
+        if [ "$(gh pr list --head "${branch}" --state open --json number --jq 'length')" -eq 0 ]; then
+            gh pr create \
+                --base "${BASE_BRANCH}" \
+                --head "${branch}" \
+                --title "chore: Bump version to v${VERSION}" \
+                --body-file "${RUNNER_TEMP}/pull_request_body.md"
+        else
+            echo "The open release preparation pull request for ${branch} was updated by the force push."
+        fi
