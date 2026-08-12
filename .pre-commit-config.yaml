@@ -87,7 +87,5 @@ repos:
 - repo: https://github.com/zizmorcore/zizmor-pre-commit
   rev: v1.29.0
   hooks:
+      # use default 'regular' persona
     - id: zizmor
-      files: "^\\.github"
-      exclude: "^\\.github/(zizmor.yml)"
-      args: [--persona=regular]
