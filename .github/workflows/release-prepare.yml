@@ -34,24 +34,13 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.ACCESS_TOKEN }}
 
-    - name: Set up Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: '3.14'
-
-    - name: Install Python dependencies
-      run: |
-        python -m pip install uv
-        uv pip install --system packaging tbump
-        python -m pip list
-
     # The review of the release preparation pull request validates the
     # release version
     - name: Validate version
       env:
         VERSION: ${{ inputs.new_version }}
       run: |
-        python .github/workflows/validate-version.py "${VERSION}"
+        uv run --no-project .github/workflows/validate-version.py "${VERSION}"
 
         # Catch versions already released from another release series branch
         # (fetch-depth: 0 fetches all tags, including release branch tags)
@@ -65,7 +54,7 @@ jobs:
     - name: Bump version in files
       env:
         VERSION: ${{ inputs.new_version }}
-      run: tbump --non-interactive --only-patch "${VERSION}"
+      run: uvx tbump --non-interactive --only-patch "${VERSION}"
 
     - name: Open release preparation pull request
       env:
