@@ -84,19 +84,17 @@ jobs:
       env:
         DIST_PATH: ${{ steps.baipp.outputs.dist }}
       run: |
-        latest_tag=$(git describe --tags)
-        latest_tag_revlist_SHA=$(git rev-list -n 1 "${latest_tag}")
-        main_SHA="$(git rev-parse --verify origin/main)"
         wheel_name=$(find "${DIST_PATH}" -iname "*.whl" -printf "%f\n")
-        if [[ "${latest_tag_revlist_SHA}" != "${main_SHA}" ]]; then # don't check main push events coming from tags
-          if [[ "${wheel_name}" == *"pyhf-0.1.dev"* || "${wheel_name}" != *"dev"* ]]; then
+        # A branch HEAD exactly at a release tag correctly builds a non-dev
+        # version (e.g. a push to main of a tagged release commit, or a
+        # dispatch on a release branch directly after its release)
+        if release_tag="$(git describe --tags --exact-match 2> /dev/null)"; then
+            echo "HEAD is at release tag ${release_tag}, so a non-dev version is expected"
+        elif [[ "${wheel_name}" == *"pyhf-0.1.dev"* || "${wheel_name}" != *"dev"* ]]; then
             echo "python-build incorrectly named built distribution: ${wheel_name}"
             echo "python-build is lacking the history and tags required to determine version number"
             echo "intentionally erroring with 'exit 1' now"
             exit 1
-          fi
-        else
-          echo "Push event to origin/main was triggered by push of tag ${latest_tag}"
         fi
         echo "python-build named built distribution: ${wheel_name}"
 
