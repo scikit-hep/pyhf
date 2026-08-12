@@ -208,6 +208,15 @@ The pull request serves as the release dry run: the maintainer should verify the
 new version and the diff of the bumped files, and let CI validate the changes,
 before merging.
 
+.. note::
+
+  The version validation is relative to the version recorded in ``tbump.toml``,
+  which merging a release preparation pull request updates.
+  If a release is abandoned after its release preparation pull request has been
+  merged, but before the release tag has been created, revert the release
+  preparation pull request to be able to prepare a release with a lower version
+  (e.g. a release candidate of the abandoned release).
+
 Tagging a Release
 ~~~~~~~~~~~~~~~~~
 
@@ -217,6 +226,13 @@ branch.
 The workflow requires approval through the ``release-tag`` GitHub Actions
 environment, and then creates an annotated tag for the version defined in
 ``tbump.toml`` and pushes the tag to the release branch.
+
+The ``release-tag`` `GitHub Actions environment
+<https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments>`__
+must be configured in the repository settings with the maintainers as required
+reviewers and with the deployment branches restricted to ``main`` and
+``release/v*``, as GitHub creates a referenced environment without any
+protection rules.
 
 If the release workflows are not available on the release branch (e.g. historic
 release branches) a maintainer can perform the same steps locally by bumping the
