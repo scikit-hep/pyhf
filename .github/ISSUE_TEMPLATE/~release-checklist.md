@@ -50,7 +50,7 @@ about: Checklist for core developers to complete as part of making a release
 
 * [ ] Verify that the release is installable from both [PyPI](https://pypi.org/project/pyhf/) and [Conda-forge](https://github.com/conda-forge/pyhf-feedstock).
 * [ ] Send the drafted [``pyhf-announcements``](https://groups.google.com/group/pyhf-announcements/) email out from the ``pyhf-announcements`` account email.
-* [ ] Tweet the release out on both personal and team Twitter accounts.
+* [ ] Share the release on both personal and team social media accounts.
 * [ ] Forward port the release notes and the `tbump.toml` version information from the release branch to the default branch.
    - c.f. PR https://github.com/scikit-hep/pyhf/pull/2217 and PR https://github.com/scikit-hep/pyhf/pull/2218 as examples from `pyhf` `v0.7.2`.
 * [ ] Announce the release on the [Scikit-HEP community Gitter](https://gitter.im/Scikit-HEP/community).
