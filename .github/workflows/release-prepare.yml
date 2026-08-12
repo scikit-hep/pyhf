@@ -8,6 +8,13 @@ on:
         required: true
         type: string
 
+concurrency:
+  # Serialize runs preparing the same release version, as concurrent runs
+  # (e.g. dispatched on different branches) force push the same
+  # bump-version/vX.Y.Z branch
+  group: ${{ github.workflow }}-${{ inputs.new_version }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
