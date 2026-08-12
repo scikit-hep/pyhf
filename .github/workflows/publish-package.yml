@@ -47,10 +47,6 @@ jobs:
         fetch-depth: 0
         persist-credentials: false
 
-    # The single definition of when the built distribution gets published:
-    # a Git tag push deploys to TestPyPI for verification in advance of the
-    # release, a GitHub release publication deploys to PyPI, and a manual
-    # workflow dispatch can deploy a dev release snapshot to TestPyPI
     - name: Determine publish target
       id: gate
       if: github.repository == 'scikit-hep/pyhf'
@@ -58,10 +54,13 @@ jobs:
         PUBLISH_INPUT: ${{ inputs.publish }}
       run: |
         target=""
+        # A GitHub release publication deploys to PyPI
         if [ "${GITHUB_EVENT_NAME}" == "release" ]; then
             target="pypi"
+        # A pushed Git tag deploys to TestPyPI for verification in advance of the release
         elif [ "${GITHUB_EVENT_NAME}" == "push" ] && [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
             target="testpypi"
+        # A manual workflow dispatch deploys a dev release to TestPyPI
         elif [ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ] && [ "${PUBLISH_INPUT}" == "true" ]; then
             target="testpypi"
         fi
