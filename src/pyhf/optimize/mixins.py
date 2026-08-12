@@ -1,6 +1,9 @@
 """Helper Classes for use of automatic differentiation."""
 
+from __future__ import annotations
+
 import logging
+from collections.abc import Sequence
 
 import numpy as np
 
@@ -10,14 +13,14 @@ from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
 
-# Relative tolerance (w.r.t. the bound range) for deciding that a fitted
-# parameter is at a bound. Optimizers stop near but not exactly at bounds:
-# iminuit's sin-transformed limits land within O(1e-7) of the bound range and
-# scipy's SLSQP rails within O(1e-14), so exact comparison would miss them.
-_AT_BOUND_RTOL = 1e-6
 
-
-def _at_bound_warning_messages(fitted_pars, par_bounds, fixed_idx, par_names):
+def _at_bound_warning_messages(
+    fitted_pars: Sequence[float],
+    par_bounds: Sequence[Sequence[float | None]],
+    fixed_idx: Sequence[int],
+    par_names: Sequence[str] | None,
+    rtol: float = 1e-6,
+) -> list[str]:
     """
     Build warning messages for free fitted parameters that are at a bound.
 
@@ -30,21 +33,30 @@ def _at_bound_warning_messages(fitted_pars, par_bounds, fixed_idx, par_names):
         par_names (:obj:`list` of :obj:`str` or :obj:`None`): names of the full set of
             model parameters, used to identify parameters. If ``None``, parameters are
             identified by index only.
+        rtol (:obj:`float`): relative tolerance (w.r.t. the bound range) for deciding
+            that a fitted parameter is at a bound. Optimizers stop near but not exactly
+            at bounds --- iminuit's sin-transformed limits land within O(1e-7) of the
+            bound range and scipy's SLSQP rails within O(1e-14) --- so exact comparison
+            would miss them. Default is ``1e-6``.
 
     Returns:
         :obj:`list` of :obj:`str`: one message per parameter at a bound
     """
-    messages = []
+    messages: list[str] = []
     for par_index, (fitted_par, (lower, upper)) in enumerate(
         zip(fitted_pars, par_bounds)
     ):
-        if par_index in fixed_idx or (lower is None and upper is None):
+        if par_index in fixed_idx:
             continue
         if lower is not None and upper is not None:
-            tolerance = _AT_BOUND_RTOL * (upper - lower)
+            tolerance = rtol * (upper - lower)
+        elif lower is not None:
+            tolerance = rtol * max(1.0, abs(lower))
+        elif upper is not None:
+            tolerance = rtol * max(1.0, abs(upper))
         else:
-            one_sided_bound = lower if lower is not None else upper
-            tolerance = _AT_BOUND_RTOL * max(1.0, abs(one_sided_bound))
+            # unbounded on both sides — nothing to be at
+            continue
         if any(
             bound is not None and abs(fitted_par - bound) <= tolerance
             for bound in (lower, upper)
