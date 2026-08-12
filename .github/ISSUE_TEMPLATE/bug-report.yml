@@ -32,34 +32,22 @@ body:
   attributes:
     label: OS / Environment
     description: >-
-      Provide information on your operating system.
-      Something like the output of `cat /etc/os-release` on Linux or
+      Provide information on your operating system and Python environment.
+      If you have pyhf installed, paste the output of `pyhf utils environment`.
+      Otherwise, something like the output of `cat /etc/os-release` on Linux or
       `system_profiler -detailLevel mini SPSoftwareDataType` on macOS.
     render: console
     placeholder: |
-      # Linux
-      $ cat /etc/os-release
-      NAME="Ubuntu"
-      VERSION="20.04.2 LTS (Focal Fossa)"
-      ID=ubuntu
-      ID_LIKE=debian
-      PRETTY_NAME="Ubuntu 20.04.2 LTS"
-      VERSION_ID="20.04"
-      HOME_URL="https://www.ubuntu.com/"
-      SUPPORT_URL="https://help.ubuntu.com/"
-      BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-      PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-      VERSION_CODENAME=focal
-      UBUNTU_CODENAME=focal
-
-      # macOS
-      $ system_profiler -detailLevel mini SPSoftwareDataType | head -n 6
-      Software:
-
-          System Software Overview:
-
-            System Version: macOS 10.15.7 (19H1323)
-            Kernel Version: Darwin 19.6.0
+      $ pyhf utils environment
+      * os version: Ubuntu 24.04.4 LTS (Noble Numbat)
+      * kernel version: Linux 6.8.0-79-generic x86_64
+      * python version: CPython 3.14.6 [GCC 14.3.0]
+      * pyhf version: 0.8.0
+      * numpy version: 2.5.2
+      * scipy version: 1.18.0
+      * iminuit version: 2.32.0
+      * jax version: not installed
+      * jaxlib version: not installed
   validations:
     required: true
 

@@ -252,6 +252,7 @@ def test_utils_public_api():
         "EqDelimStringParamType",
         "citation",
         "digest",
+        "environment_info",
         "options_from_eqdelimstring",
     ]
 

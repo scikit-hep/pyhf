@@ -53,6 +53,27 @@ def test_citation(script_runner, flag):
     assert elapsed < 1.0
 
 
+def test_utils_environment(script_runner):
+    ret = script_runner.run(shlex.split("pyhf utils environment"))
+    assert ret.success
+    assert ret.stderr == ""
+    assert f"* pyhf version: {pyhf.__version__}" in ret.stdout
+    # Exact match ensures no extra trailing newline from click.echo
+    assert ret.stdout == pyhf.utils.environment_info()
+
+
+def test_utils_environment_output_file(tmp_path, script_runner):
+    outfile = tmp_path / "environment.md"
+    ret = script_runner.run(
+        shlex.split(f"pyhf utils environment --output-file {outfile}")
+    )
+    assert ret.success
+    assert ret.stderr == ""
+    assert ret.stdout == ""
+    # File output identical to terminal output
+    assert outfile.read_text(encoding="utf-8") == pyhf.utils.environment_info()
+
+
 # see test_import.py for the same (detailed) test
 def test_import_prepHistFactory(tmp_path, script_runner):
     temp = tmp_path.joinpath("parsed_output.json")

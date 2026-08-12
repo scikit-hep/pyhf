@@ -6,6 +6,7 @@ import click
 
 from pyhf import __version__, utils
 from pyhf.cli import complete, infer, patchset, rootio, spec
+from pyhf.cli import utils as utils_cli
 from pyhf.contrib import cli as contrib
 
 logging.basicConfig()
@@ -52,6 +53,8 @@ pyhf.add_command(infer.fit)
 pyhf.add_command(infer.cls)
 
 pyhf.add_command(patchset.cli)
+
+pyhf.add_command(utils_cli.cli)
 
 pyhf.add_command(complete.cli)
 

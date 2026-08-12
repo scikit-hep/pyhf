@@ -1,15 +1,23 @@
 import hashlib
+import importlib.metadata
 import json
+import platform
+import sys
 from gettext import gettext
 from importlib import resources
 
 import click
 import yaml
 
+# Import from pyhf._version instead of pyhf to avoid a circular import, as
+# pyhf.utils is imported while pyhf.__init__ is still executing
+from pyhf._version import version as __version__
+
 __all__ = [
     "EqDelimStringParamType",
     "citation",
     "digest",
+    "environment_info",
     "options_from_eqdelimstring",
 ]
 
@@ -117,3 +125,98 @@ def citation(oneline=False):
     if oneline:
         data = "".join(data.splitlines())
     return data
+
+
+def environment_info():
+    """
+    Produce OS / environment information useful for filing a bug report.
+
+    The output is formatted as a Markdown bullet list for easy copy-paste
+    into GitHub issues.
+
+    Example:
+
+        >>> import pyhf
+        >>> print(pyhf.utils.environment_info())  # doctest: +ELLIPSIS
+        * os version: ...
+        * kernel version: ...
+        * python version: ...
+        * pyhf version: ...
+        * numpy version: ...
+        * scipy version: ...
+        * iminuit version: ...
+        * jax version: ...
+        * jaxlib version: ...
+
+    Returns:
+        :obj:`str`: The operating system and environment information
+        for the host machine.
+    """
+
+    os_version = "Cannot be determined"
+    if sys.platform == "linux":
+        try:
+            # platform.freedesktop_os_release added in Python 3.10
+            # FIXME: Remove when Python 3.9 support dropped
+            from platform import freedesktop_os_release
+        except ImportError:
+            # c.f. https://docs.python.org/3/library/platform.html#platform.freedesktop_os_release
+            from pathlib import Path
+
+            def freedesktop_os_release():
+                # Values may contain "=" and files may contain comment lines
+                # c.f. https://www.freedesktop.org/software/systemd/man/os-release.html
+                for os_release_path in (
+                    Path("/etc/os-release"),
+                    Path("/usr/lib/os-release"),
+                ):
+                    try:
+                        with os_release_path.open(encoding="utf8") as read_file:
+                            return {
+                                key: value.strip("\"'")
+                                for key, _, value in (
+                                    line.strip().partition("=")
+                                    for line in read_file
+                                    if "=" in line and not line.lstrip().startswith("#")
+                                )
+                            }
+                    except OSError:  # noqa: PERF203
+                        continue
+                raise OSError
+
+        try:
+            os_release = freedesktop_os_release()
+        # ValueError covers UnicodeDecodeError from a non-UTF-8 os-release file
+        except (OSError, ValueError):
+            pass
+        else:
+            # VERSION is optional in the os-release spec (e.g. rolling releases)
+            os_version = " ".join(
+                part
+                for part in (
+                    os_release.get("NAME"),
+                    os_release.get("VERSION", os_release.get("VERSION_ID")),
+                )
+                if part
+            ) or os_release.get("PRETTY_NAME", "Cannot be determined")
+    elif sys.platform == "darwin":
+        os_version = f"macOS {platform.mac_ver()[0]}"
+
+    lines = [
+        f"* os version: {os_version}",
+        f"* kernel version: {platform.system()} {platform.release()} {platform.machine()}",
+        f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler().strip()}]",
+        f"* pyhf version: {__version__}",
+    ]
+
+    # Guard all lookups as optional backends may be absent and even core
+    # dependencies could be installed in a strange way that they are importable
+    # without dist-info metadata. Show "not installed" instead of raising.
+    for package in ("numpy", "scipy", "iminuit", "jax", "jaxlib"):
+        try:
+            version = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            version = "not installed"
+        lines.append(f"* {package} version: {version}")
+
+    return "\n".join(lines) + "\n"
