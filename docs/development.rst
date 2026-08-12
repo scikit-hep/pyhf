@@ -204,9 +204,9 @@ The workflow validates that the version is newer than the current version on the
 selected branch and opens a release preparation pull request that bumps the version
 of all files defined in `tbump.toml
 <https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__ to it.
-The pull request serves as the release dry run: the maintainer should verify the
-new version and the diff of the bumped files, and let CI validate the changes,
-before merging.
+The pull request serves as the release dry run.
+The maintainer should verify the new version and the diff of the bumped files and let
+the CI validate the changes before merging.
 
 .. note::
 
