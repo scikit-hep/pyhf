@@ -43,12 +43,12 @@ about: Checklist for core developers to complete as part of making a release
 * [ ] Verify there is a new [Zenodo DOI](https://doi.org/10.5281/zenodo.1169739) minted for the release.
    - [ ] Verify that the new release archive metadata on Zenodo matches is being picked up as expected from [`CITATION.cff`](https://github.com/scikit-hep/pyhf/blob/main/CITATION.cff).
 * [ ] Verify that a Binder has properly built for the new release.
-* [ ] Watch for a GitHub notification that there is an automatic PR to the [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock). This may take multiple hours to happen. If there are any changes needed to the Conda-forge release make them **from a personal account** and not from an organization account to have workflows properly trigger.
-   - [ ] Verify the requirements in the [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock) recipe `meta.yaml` match those in `pyproject.toml`.
+* [ ] Watch for a GitHub notification that there is an automatic PR to the [conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock). This may take multiple hours to happen. If there are any changes needed to the conda-forge release make them **from a personal account** and not from an organization account to have workflows properly trigger.
+   - [ ] Verify the requirements in the [conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock) recipe `meta.yaml` match those in `pyproject.toml`.
 
 ## After Release
 
-* [ ] Verify that the release is installable from both [PyPI](https://pypi.org/project/pyhf/) and [Conda-forge](https://github.com/conda-forge/pyhf-feedstock).
+* [ ] Verify that the release is installable from both [PyPI](https://pypi.org/project/pyhf/) and [conda-forge](https://github.com/conda-forge/pyhf-feedstock).
 * [ ] Send the drafted [``pyhf-announcements``](https://groups.google.com/group/pyhf-announcements/) email out from the ``pyhf-announcements`` account email.
 * [ ] Share the release on both personal and team social media accounts.
 * [ ] Forward port the release notes and the `tbump.toml` version information from the release branch to the default branch.
