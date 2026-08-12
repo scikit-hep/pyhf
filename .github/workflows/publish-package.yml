@@ -152,10 +152,15 @@ jobs:
         REPOSITORY: ${{ github.repository }}
       run: gh attestation verify dist/pyhf-*.whl --repo "${REPOSITORY}"
 
-    - name: Publish distribution to (Test)PyPI
+    - name: Publish distribution to Test PyPI
+      if: needs.build.outputs.publish-target == 'testpypi'
       uses: pypa/gh-action-pypi-publish@v1.14.2
       with:
-        # Both URLs explicit, as an empty string would override the action's
-        # default URL instead of selecting it
-        repository-url: ${{ needs.build.outputs.publish-target == 'testpypi' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
+        repository-url: https://test.pypi.org/legacy/
+        print-hash: true
+
+    - name: Publish distribution to PyPI
+      if: needs.build.outputs.publish-target == 'pypi'
+      uses: pypa/gh-action-pypi-publish@v1.14.2
+      with:
         print-hash: true
