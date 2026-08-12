@@ -135,14 +135,15 @@ def test_environment_info_linux_fallback_no_os_release_file(monkeypatch):
 
 def test_environment_info_linux_fallback_parses_os_release(monkeypatch):
     # Simulate Python 3.9 with an os-release file exercising what the spec
-    # permits: comment lines, quoted values, values containing "=", no VERSION
+    # permits: comment lines, quoted values, values containing "=", and no
+    # NAME/VERSION so the reported value is PRETTY_NAME, whose embedded "="
+    # pins that values are only split on the first "="
     monkeypatch.setattr(sys, "platform", "linux")
     monkeypatch.delattr(platform, "freedesktop_os_release", raising=False)
 
     os_release_content = (
         "# This file is part of systemd\n"
-        'NAME="Arch Linux"\n'
-        'PRETTY_NAME="Arch Linux"\n'
+        'PRETTY_NAME="Arch Linux (build=rolling)"\n'
         "ID=arch\n"
         'BUG_REPORT_URL="https://bugs.example.org/?product=arch"\n'
         "\n"
@@ -157,7 +158,25 @@ def test_environment_info_linux_fallback_parses_os_release(monkeypatch):
 
     monkeypatch.setattr(pathlib.Path, "open", mock_open)
     info = pyhf.utils.environment_info()
-    assert "* os version: Arch Linux" in info
+    assert "* os version: Arch Linux (build=rolling)" in info
+
+
+def test_environment_info_linux_version_id_fallback(monkeypatch):
+    # Distributions like Alpine provide VERSION_ID but no VERSION
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(
+        platform,
+        "freedesktop_os_release",
+        lambda: {
+            "NAME": "Alpine Linux",
+            "ID": "alpine",
+            "VERSION_ID": "3.20.1",
+            "PRETTY_NAME": "Alpine Linux v3.20",
+        },
+        raising=False,
+    )
+    info = pyhf.utils.environment_info()
+    assert "* os version: Alpine Linux 3.20.1" in info
 
 
 def test_environment_info_darwin(monkeypatch):
@@ -186,6 +205,6 @@ def test_environment_info_missing_optional(monkeypatch):
     assert "* iminuit version: not installed" in info
     assert "* jax version: not installed" in info
     assert "* jaxlib version: not installed" in info
-    # Core packages still present
-    assert "* numpy version:" in info
-    assert "* scipy version:" in info
+    # Core packages still report their real versions, not "not installed"
+    assert f"* numpy version: {original_version('numpy')}" in info
+    assert f"* scipy version: {original_version('scipy')}" in info

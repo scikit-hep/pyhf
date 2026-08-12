@@ -186,21 +186,26 @@ def environment_info():
 
         try:
             os_release = freedesktop_os_release()
-        except OSError:
+        # ValueError covers UnicodeDecodeError from a non-UTF-8 os-release file
+        except (OSError, ValueError):
             pass
         else:
-            if "NAME" in os_release and "VERSION" in os_release:
-                os_version = f"{os_release['NAME']} {os_release['VERSION']}"
-            else:
-                # VERSION is optional in the os-release spec (e.g. rolling releases)
-                os_version = os_release.get("PRETTY_NAME", "Cannot be determined")
+            # VERSION is optional in the os-release spec (e.g. rolling releases)
+            os_version = " ".join(
+                part
+                for part in (
+                    os_release.get("NAME"),
+                    os_release.get("VERSION", os_release.get("VERSION_ID")),
+                )
+                if part
+            ) or os_release.get("PRETTY_NAME", "Cannot be determined")
     elif sys.platform == "darwin":
         os_version = f"macOS {platform.mac_ver()[0]}"
 
     lines = [
         f"* os version: {os_version}",
         f"* kernel version: {platform.system()} {platform.release()} {platform.machine()}",
-        f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler()}]",
+        f"* python version: {platform.python_implementation()} {platform.python_version()} [{platform.python_compiler().strip()}]",
         f"* pyhf version: {__version__}",
     ]
 
