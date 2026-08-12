@@ -139,7 +139,7 @@ jobs:
     - name: Download distribution artifact
       uses: actions/download-artifact@v8
       with:
-        name: Packages
+        name: dist-artifact
         path: dist
 
     - name: List all files
