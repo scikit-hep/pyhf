@@ -138,7 +138,8 @@ jobs:
     - name: Download distribution artifact
       uses: actions/download-artifact@v8
       with:
-        name: dist-artifact
+        # artifact name from hynek/build-and-inspect-python-package
+        name: Packages
         path: dist
 
     - name: List all files
