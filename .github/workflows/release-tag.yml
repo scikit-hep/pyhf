@@ -20,9 +20,10 @@ jobs:
       name: release-tag
 
     steps:
-    # Fail closed in code as well, as the release-tag environment's
-    # protection rules live in the repository settings and GitHub
-    # auto-creates a referenced environment without protection rules
+    # Implement restrictions in the workflow as well as GitHub repository
+    # settings, as the release-tag environment's protection rules live in the
+    # repository settings and GitHub auto-creates a referenced environment
+    # without protection rules
     - name: Check branch is intended for release
       run: |
         if [[ "${GITHUB_REF}" != "refs/heads/main" && "${GITHUB_REF}" != refs/heads/release/v* ]]; then
