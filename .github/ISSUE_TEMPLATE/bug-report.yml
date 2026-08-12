@@ -42,7 +42,7 @@ body:
       * os version: Ubuntu 24.04.4 LTS (Noble Numbat)
       * kernel version: Linux 6.8.0-79-generic x86_64
       * python version: CPython 3.14.6 [GCC 14.3.0]
-      * pyhf version: 0.7.6
+      * pyhf version: 0.8.0
       * numpy version: 2.5.2
       * scipy version: 1.18.0
       * iminuit version: 2.32.0

@@ -170,7 +170,7 @@ Troubleshooting
 ---------------
 
 When reporting an issue, include the output of :code:`pyhf utils environment`,
-which summarizes your operating system and the versions of pyhf and its
+which summarizes your operating system and the versions of ``pyhf`` and its
 dependencies in a Markdown-friendly format.
 
 - :code:`import pyhf` causes a :code:`Segmentation fault (core dumped)`
