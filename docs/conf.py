@@ -241,22 +241,30 @@ todo_include_todos = False
 #
 html_theme = "pydata_sphinx_theme"
 
+# Read the Docs serves every version and provides its own version switcher and its own
+# notification for non-default versions, so these docs only need to say something for
+# themselves when they are built somewhere else. That is the GitHub Pages deployment,
+# which is published from the default branch and so is always the development version,
+# and local builds, which are too. The theme's own 'show_version_warning_banner' is not
+# usable here as it is only rendered when a version switcher 'json_url' is configured.
+if os.environ.get("READTHEDOCS") != "True":
+    _announcement = (
+        "This is the documentation for the development version of <code>pyhf</code>. "
+        'For the documentation of a release see <a href="https://pyhf.readthedocs.io/">'
+        "pyhf.readthedocs.io</a>."
+    )
+else:
+    _announcement = ""
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 html_theme_options = {
     "header_links_before_dropdown": 6,
-    "switcher": {
-        # Always fetched from latest so the JSON is always current
-        "json_url": "https://pyhf.readthedocs.io/en/latest/_static/switcher.json",
-        # On RTD this is set to "latest", "stable", or "v0.7.6" etc.
-        # For local builds default to "latest" to avoid a missing-version warning.
-        "version_match": os.environ.get("READTHEDOCS_VERSION", "latest"),
-    },
-    "show_version_warning_banner": True,
-    "navbar_end": ["version-switcher", "navbar-icon-links"],
-    "check_switcher": False,
+    # Rendered into the page by the theme, so this needs no JavaScript or CSS of ours.
+    # c.f. https://pydata-sphinx-theme.readthedocs.io/en/stable/user_guide/announcements.html
+    "announcement": _announcement,
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -286,10 +294,6 @@ html_theme_path = []
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
-
-html_css_files = [
-    "css/custom.css",
-]
 
 html_js_files = [
     (
