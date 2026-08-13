@@ -1,6 +1,13 @@
 Use and Citations
 =================
 
+.. ifconfig:: is_development_build
+
+   .. warning::
+
+      This is a development version and should not be cited. To find the specific
+      version to cite, please go to `ReadTheDocs <https://pyhf.readthedocs.io/>`__.
+
 Citation
 --------
 

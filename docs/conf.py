@@ -37,6 +37,7 @@ def setup(app):
     app.add_css_file(
         "https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css"
     )
+    app.add_config_value("is_development_build", False, "env")
 
 
 # -- General configuration ------------------------------------------------
@@ -250,7 +251,7 @@ html_theme = "pydata_sphinx_theme"
 #
 # The theme's own 'show_version_warning_banner' cannot be used for this, as it is only
 # rendered when a version switcher 'json_url' is configured.
-_is_development_build = (
+is_development_build = (
     os.environ.get("READTHEDOCS") != "True"
     or os.environ.get("READTHEDOCS_VERSION") == "latest"
     or os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
@@ -261,7 +262,7 @@ _announcement = (
     "This is the documentation for the development version of <code>pyhf</code>. "
     'See <a href="https://pyhf.readthedocs.io/">the documentation for the most recent'
     " release</a> instead."
-    if _is_development_build
+    if is_development_build
     else ""
 )
 
