@@ -1014,6 +1014,43 @@ def test_minuit_at_limit_flags_skips_fixed_and_unbounded():
     ]
 
 
+@pytest.mark.parametrize(
+    "make_par_bounds",
+    [
+        lambda: [(0.0, 10.0), (1e-10, 10.0)],
+        lambda: zip([0.0, 1e-10], [10.0, 10.0]),
+        lambda: iter([(0.0, 10.0), (1e-10, 10.0)]),
+    ],
+    ids=["list", "zip", "iterator"],
+)
+def test_parameter_at_bounds_warning_one_shot_par_bounds(caplog, make_par_bounds):
+    # par_bounds is consumed by shim() and the minimizer before postprocessing
+    # sees it, so a one-shot iterable must be materialized in minimize() or the
+    # check silently degrades to the length-mismatch path
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[5.0], bkg=[10.0], bkg_uncertainty=[3.5]
+    )
+    # best-fit mu is negative, so the fit rails at the lower bound of 0
+    data = [7.0] + model.config.auxdata
+
+    optimizer = pyhf.optimize.scipy_optimizer()
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        optimizer.minimize(
+            pyhf.infer.mle.twice_nll,
+            data,
+            model,
+            model.config.suggested_init(),
+            make_par_bounds(),
+        )
+
+    warning_lines = _at_bound_warning_lines(caplog)
+    assert len(warning_lines) == 1
+    assert "'mu' (index 0)" in warning_lines[0]
+    assert not [
+        record for record in caplog.records if "does not match" in record.message
+    ]
+
+
 def test_parameter_at_bounds_warning_par_bounds_length_mismatch(caplog):
     # A par_bounds that does not cover all model parameters cannot be checked
     # meaningfully; the check is skipped with a warning saying so.

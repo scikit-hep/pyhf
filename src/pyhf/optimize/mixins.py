@@ -273,7 +273,6 @@ class OptimizerMixin:
             # fitresult.x for the minimization (do_stitch)
             fitted_pars_list = tensorlib.tolist(fitted_pars)
             npars = len(fitted_pars_list)
-            par_bounds = list(par_bounds)
             if len(par_bounds) != npars:
                 log.warning(
                     "length of par_bounds (%d) does not match the number of model parameters (%d), skipping check for parameters at bounds",
@@ -407,6 +406,11 @@ class OptimizerMixin:
                     np.broadcast_to(par_bounds.ub, len(init_pars)),
                 )
             )
+        elif par_bounds is not None:
+            # materialize before shim() and the minimizer consume it, as a one-shot
+            # iterable (generator, zip, map) would otherwise be exhausted by the time
+            # the at-bound check in _internal_postprocess indexes it
+            par_bounds = list(par_bounds)
 
         minimizer_kwargs, stitch_pars = shim(
             objective,
