@@ -1,0 +1,16 @@
+rules:
+  excessive-permissions:
+    ignore:
+      # OSSF Scorecard's official starter workflow, which recommends
+      # `permissions: read-all` at the workflow level as a documented default;
+      # the analysis job below already scopes its own write permissions down
+      # to only security-events and id-token.
+      - scorecard.yml:22
+
+  dangerous-triggers:
+    ignore:
+      # pull_request_target is required here so amannn/action-semantic-pull-request
+      # can check PR titles on PRs from forks using the workflow definition from
+      # the default branch. The workflow never checks out or executes PR content
+      # and permissions are restricted to pull-requests: read (see in-file comment).
+      - semantic-pr-check.yml:9
