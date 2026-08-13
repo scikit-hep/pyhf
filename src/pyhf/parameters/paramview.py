@@ -87,7 +87,7 @@ class ParamViewer:
     def _precompute(self):
         tensorlib, _ = get_backend()
 
-        self.all_indices = tensorlib.astensor(self._all_indices)
+        self.all_indices = tensorlib.astensor(self._all_indices, dtype="int")
         (
             self.index_selection,
             self.stitched,

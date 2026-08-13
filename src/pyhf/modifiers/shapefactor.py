@@ -173,11 +173,18 @@ class shapefactor_combined:
         # access field is shape (sys, batch, globalbin)
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
-                selection = self.param_viewer.index_selection[s][t]
-                for b, bin_access in enumerate(batch_access):
-                    self._access_field[s, t, b] = (
-                        selection[bin_access] if bin_access < len(selection) else 0
-                    )
+                selection = default_backend.astensor(
+                    self.param_viewer.index_selection[s][t], dtype="int"
+                )
+                in_range = batch_access < len(selection)
+                # clip out-of-range indices so the gather is safe; their
+                # contribution is overwritten with the ``0`` fallback below
+                clipped = default_backend.clip(batch_access, 0, len(selection) - 1)
+                self._access_field[s, t] = default_backend.where(
+                    in_range,
+                    default_backend.gather(selection, clipped),
+                    default_backend.zeros(batch_access.shape, dtype="int"),
+                )
 
         self._precompute()
         events.subscribe("tensorlib_changed")(self._precompute)
