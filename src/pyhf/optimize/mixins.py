@@ -157,11 +157,14 @@ def _at_bound_warning_messages(
         if not (at_lower or at_upper or optimizer_at_limit):
             continue
 
-        if (lower is not None and fitted_par < lower) or (
-            upper is not None and fitted_par > upper
+        if (lower is not None and fitted_par < lower - tolerance) or (
+            upper is not None and fitted_par > upper + tolerance
         ):
-            # Being strictly outside the bounds is worse than being at one.
-            # The minimization returned a point the bounds should have excluded.
+            # Being outside the bounds is worse than being at one: the
+            # minimization returned a point the bounds should have excluded.
+            # Judged against the same tolerance as the at-bound check, so that
+            # the float slop optimizers leave behind is not reported as a
+            # constraint violation.
             messages.append(
                 f"fit result for parameter {_par_label(par_index)} is outside its bounds: value={fitted_par!r}, {bounds_str}"
             )

@@ -639,6 +639,12 @@ NOT_FINITE = "is not finite"
         ([5e-5], [(1e-10, 10.0)], None),
         # outside the lower bound (constraint violation)
         ([2.5], [(3.0, 10.0)], OUTSIDE_BOUNDS),
+        # ... but float slop below a bound is being *at* it, not violating it:
+        # the escalation is judged against the same tolerance as the detection
+        ([-1e-17], [(0.0, 10.0)], AT_BOUND),
+        ([-1e-6], [(0.0, 10.0)], OUTSIDE_BOUNDS),
+        ([10.0 + 1e-8], [(0.0, 10.0)], AT_BOUND),
+        ([10.0 + 1e-6], [(0.0, 10.0)], OUTSIDE_BOUNDS),
         # interior — no warning
         ([5.0], [(3.0, 10.0)], None),
         # near lower bound but outside tolerance — no warning
@@ -677,6 +683,10 @@ NOT_FINITE = "is not finite"
         "near_bound_within_tolerance",
         "small_bound_value_interior",
         "outside_lower_bound",
+        "below_bound_within_tolerance",
+        "below_bound_outside_tolerance",
+        "above_bound_within_tolerance",
+        "above_bound_outside_tolerance",
         "interior",
         "near_bound_outside_tolerance",
         "wide_bounds_interior",
