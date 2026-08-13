@@ -604,12 +604,13 @@ def test_minuit_all_fixed_params():
 
 
 def _at_bound_warning_lines(caplog):
-    # the check emits a single aggregated record per fit with one line per parameter
+    # the check emits a single aggregated record per fit with one line per
+    # parameter, so filter per line (records can mix message types)
     return [
         line
         for record in caplog.records
-        if "is at a bound" in record.message
         for line in record.message.splitlines()
+        if "is at a bound" in line
     ]
 
 
@@ -622,6 +623,8 @@ def _at_bound_warning_lines(caplog):
         ([10.0], [(3.0, 10.0)], True),
         # near lower bound, within tolerance (optimizers stop near, not at, bounds)
         ([3.0 + 1e-9], [(3.0, 10.0)], True),
+        # at minuit's measured rail distance from the bound (up to O(1e-5))
+        ([1.7e-5], [(0.0, 10.0)], True),
         # beyond the lower bound (constraint violation)
         ([2.5], [(3.0, 10.0)], True),
         # interior — no warning
@@ -636,6 +639,8 @@ def _at_bound_warning_lines(caplog):
         ([0.0], [(0.0, np.inf)], True),
         # bounds that pin the parameter are deliberate — no warning
         ([1.0], [(1.0, 1.0)], False),
+        # but pinning bounds do not exonerate a value away from the pin
+        ([5.0], [(1.0, 1.0)], True),
         # inverted bounds are malformed and surfaced rather than silenced
         ([5.0], [(10.0, 3.0)], True),
     ],
@@ -643,13 +648,15 @@ def _at_bound_warning_lines(caplog):
         "lower_bound",
         "upper_bound",
         "near_bound_within_tolerance",
+        "minuit_rail_distance",
         "below_lower_bound",
         "interior",
         "near_bound_outside_tolerance",
         "wide_bounds_interior",
         "unbounded",
         "lower_bound_infinite_upper",
-        "degenerate_bounds",
+        "degenerate_bounds_at_pin",
+        "degenerate_bounds_violated",
         "inverted_bounds",
     ],
 )
@@ -669,7 +676,8 @@ def test_parameter_at_bounds_warning(caplog, fitted_x, par_bounds, expect_warnin
     if expect_warning:
         assert len(warning_lines) == 1
         assert "'mu' (index 0)" in warning_lines[0]
-        assert f"value={fitted_x[0]:g}" in warning_lines[0]
+        # full-precision repr so a near-bound value is distinguishable from the bound
+        assert f"value={fitted_x[0]!r}" in warning_lines[0]
     else:
         assert len(warning_lines) == 0
 
@@ -830,18 +838,20 @@ def test_no_parameter_at_bounds_warning_infinite_bounds(caplog):
     assert not _at_bound_warning_lines(caplog)
 
 
-def test_parameter_at_bounds_warning_scipy_bounds_object(caplog):
-    # A scipy.optimize.Bounds instance is a valid bounds specification for the
-    # scipy optimizer through the direct API and must not break postprocessing.
+@pytest.mark.parametrize("optimizer_name", ["scipy", "minuit"])
+def test_parameter_at_bounds_warning_scipy_bounds_object(caplog, optimizer_name):
+    # A scipy.optimize.Bounds instance is a valid bounds specification through
+    # the direct optimizer API: it is normalized to pairs in minimize() so all
+    # optimizer and do_stitch code paths (and postprocessing) handle it.
+    pyhf.set_backend("numpy", optimizer_name)
     model = pyhf.simplemodels.uncorrelated_background(
         signal=[5.0], bkg=[10.0], bkg_uncertainty=[3.5]
     )
     # best-fit mu is negative, so the fit rails at the lower bound of 0
     data = [7.0] + model.config.auxdata
 
-    optimizer = pyhf.optimize.scipy_optimizer()
     with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
-        result = optimizer.minimize(
+        result = pyhf.optimizer.minimize(
             pyhf.infer.mle.twice_nll,
             data,
             model,
@@ -887,6 +897,11 @@ def test_parameter_at_bounds_warning_short_par_names(caplog):
             par_names=["mu"],
         )
 
+    # both parameters warn as individual lines of a single aggregated record
+    assert (
+        len([record for record in caplog.records if "is at a bound" in record.message])
+        == 1
+    )
     warning_lines = _at_bound_warning_lines(caplog)
     assert len(warning_lines) == 2
     assert "'mu' (index 0)" in warning_lines[0]
@@ -897,11 +912,13 @@ def test_parameter_at_bounds_warning_minuit_at_limit(caplog):
     # minuit's own at-limit determination (within half an uncertainty of a
     # bound, cf. iminuit.util.FMin) must warn even when the fitted value is
     # outside any numerical tolerance, including under do_stitch=True where
-    # the minuit parameters cover only the free parameters.
+    # the minuit parameters cover only the free parameters. As the value is
+    # not numerically at a bound, the message must say which criterion fired.
     tv = _TensorViewer([[0], [1]])
     stitch_pars = _make_stitch_pars(tv, fixed_values=[2.0])
 
     minuit_stub = SimpleNamespace(
+        fmin=SimpleNamespace(has_parameters_at_limit=True),
         params=[
             SimpleNamespace(
                 is_fixed=False,
@@ -913,7 +930,7 @@ def test_parameter_at_bounds_warning_minuit_at_limit(caplog):
                 value=0.5,
                 error=1.5,
             )
-        ]
+        ],
     )
     mixin = OptimizerMixin()
     result = OptimizeResult(
@@ -929,7 +946,60 @@ def test_parameter_at_bounds_warning_minuit_at_limit(caplog):
             par_names=["fixed_par", "free_par"],
         )
 
-    warning_lines = _at_bound_warning_lines(caplog)
+    warning_lines = [
+        line
+        for record in caplog.records
+        for line in record.message.splitlines()
+        if "within half its uncertainty of a bound" in line
+    ]
     assert len(warning_lines) == 1
     assert "'free_par' (index 1)" in warning_lines[0]
     assert "value=0.5" in warning_lines[0]
+    # the value is not numerically at a bound, so no at-bound claim is made
+    assert not _at_bound_warning_lines(caplog)
+
+
+def test_minuit_at_limit_flags_skips_fixed_and_unbounded():
+    # fixed and unbounded parameters cannot be at a limit and must be skipped,
+    # matching iminuit's own aggregation (cf. iminuit.util.FMin)
+    from pyhf.optimize.mixins import _minuit_at_limit_flags
+
+    minuit_stub = SimpleNamespace(
+        params=[
+            SimpleNamespace(is_fixed=True, has_limits=True),
+            SimpleNamespace(is_fixed=False, has_limits=False),
+            SimpleNamespace(
+                is_fixed=False,
+                has_limits=True,
+                has_lower_limit=True,
+                lower_limit=0.0,
+                has_upper_limit=True,
+                upper_limit=10.0,
+                value=0.5,
+                error=1.5,
+            ),
+        ]
+    )
+    assert _minuit_at_limit_flags(minuit_stub, npars=3, fixed_idx=()) == [
+        False,
+        False,
+        True,
+    ]
+
+
+def test_parameter_at_bounds_warning_par_bounds_length_mismatch(caplog):
+    # A par_bounds that does not cover all model parameters cannot be checked
+    # meaningfully; the check is skipped with a warning saying so.
+    mixin = OptimizerMixin()
+    result = OptimizeResult(x=np.array([3.0, 4.0]), fun=0.0, success=True)
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(
+            result, _make_stitch_pars(), par_bounds=[(3.0, 10.0)]
+        )
+
+    assert not _at_bound_warning_lines(caplog)
+    mismatch_records = [
+        record for record in caplog.records if "does not match" in record.message
+    ]
+    assert len(mismatch_records) == 1
