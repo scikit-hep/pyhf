@@ -73,6 +73,8 @@ jobs:
     - name: Install uv
       if: github.event_name == 'schedule'
       uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      with:
+        enable-cache: false
 
     # Scoped to a dedicated build so that warnings from other tools that
     # build-and-inspect-python-package runs don't error the check
