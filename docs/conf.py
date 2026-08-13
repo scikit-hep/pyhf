@@ -271,9 +271,9 @@ _announcement = (
 #
 html_theme_options = {
     "header_links_before_dropdown": 6,
-    # Rendered into the page by the theme, so this needs no JavaScript or CSS of ours.
     # c.f. https://pydata-sphinx-theme.readthedocs.io/en/stable/user_guide/announcements.html
     "announcement": _announcement,
+    "sticky_banners": True,
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
