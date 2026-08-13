@@ -1192,14 +1192,21 @@ def test_no_parameter_at_bounds_warning_when_minuit_reports_no_limits(caplog):
 
 
 @pytest.mark.parametrize(
-    "minuit",
-    [None, SimpleNamespace(), iminuit.Minuit(lambda x: x**2, 0.0)],
+    "make_minuit",
+    [
+        lambda: None,
+        SimpleNamespace,
+        lambda: iminuit.Minuit(lambda x: x**2, 0.0),
+    ],
     ids=["no_fmin_attribute", "empty_namespace", "minuit_before_migrad"],
 )
-def test_parameter_at_bounds_warning_without_minuit_fmin(caplog, minuit):
+def test_parameter_at_bounds_warning_without_minuit_fmin(caplog, make_minuit):
     # the at-limit lookup is a diagnostic, so a result carrying no usable minuit
-    # (iminuit.Minuit.fmin is None until migrad has run) must not raise
+    # (iminuit.Minuit.fmin is None until migrad has run) must not raise.
+    # Built inside the test: constructing a Minuit in the parametrize list makes
+    # it a shared import-time object whose fmin-is-None premise is not guaranteed
     mixin = OptimizerMixin()
+    minuit = make_minuit()
     kwargs = {} if minuit is None else {"minuit": minuit}
     result = OptimizeResult(x=np.array([0.0]), fun=0.0, success=True, **kwargs)
 
