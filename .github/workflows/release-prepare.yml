@@ -51,7 +51,7 @@ jobs:
       env:
         VERSION: ${{ inputs.new_version }}
       run: |
-        uv run --no-project .github/workflows/validate-version.py "${VERSION}"
+        uv run --no-project ci/validate-version.py "${VERSION}"
 
         # Catch versions already released from another release series branch
         # (fetch-depth: 0 fetches all tags, including release branch tags)

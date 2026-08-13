@@ -314,7 +314,7 @@ typing-modules = ["pyhf.typing"]
 flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
-".github/workflows/validate-version.py" = ["T20"]
+"ci/validate-version.py" = ["T20"]
 "docs/jupyterlite/jupyterlite.py" = ["F401", "F704"]
 "**.ipynb" = ["T20"]
 "noxfile.py" = ["T20"]
