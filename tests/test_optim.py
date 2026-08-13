@@ -618,38 +618,58 @@ def _at_bound_warning_lines(caplog):
     return _warning_lines(caplog, "is at a bound")
 
 
+# the three kinds of message the check can emit; expected_kind is the substring
+# that identifies one, or None when the parameter must not be reported at all
+AT_BOUND = "is at a bound"
+OUTSIDE_BOUNDS = "is outside its bounds"
+NOT_FINITE = "is not finite"
+
+
 @pytest.mark.parametrize(
-    ("fitted_x", "par_bounds", "expect_warning"),
+    ("fitted_x", "par_bounds", "expected_kind"),
     [
         # exactly at lower bound
-        ([3.0], [(3.0, 10.0)], True),
+        ([3.0], [(3.0, 10.0)], AT_BOUND),
         # exactly at upper bound
-        ([10.0], [(3.0, 10.0)], True),
+        ([10.0], [(3.0, 10.0)], AT_BOUND),
         # near lower bound, within tolerance (optimizers stop near, not at, bounds)
-        ([3.0 + 1e-9], [(3.0, 10.0)], True),
+        ([3.0 + 1e-9], [(3.0, 10.0)], AT_BOUND),
         # a gamma well above the (1e-10, 10) lower bound pyhf itself uses must
         # not be flagged just because the bound value is small
-        ([5e-5], [(1e-10, 10.0)], False),
+        ([5e-5], [(1e-10, 10.0)], None),
         # outside the lower bound (constraint violation)
-        ([2.5], [(3.0, 10.0)], True),
+        ([2.5], [(3.0, 10.0)], OUTSIDE_BOUNDS),
         # interior — no warning
-        ([5.0], [(3.0, 10.0)], False),
+        ([5.0], [(3.0, 10.0)], None),
         # near lower bound but outside tolerance — no warning
-        ([3.01], [(3.0, 10.0)], False),
+        ([3.01], [(3.0, 10.0)], None),
         # interior with wide bounds — the scaled tolerance stays far away
-        ([0.4], [(0.0, 1e6)], False),
+        ([0.4], [(0.0, 1e6)], None),
         # a narrow bound range must not be swallowed by the tolerance
-        ([0.5], [(0.49995, 0.50005)], False),
+        ([0.5], [(0.49995, 0.50005)], None),
+        # the tolerance scales with the *range*, not with either endpoint alone:
+        # 1e-7 is inside a (0, 10) window but outside a (0, 1) one
+        ([1e-7], [(0.0, 10.0)], AT_BOUND),
+        ([1e-7], [(0.0, 1.0)], None),
+        # ... and the range is what matters even when the near endpoint is small
+        ([1.0 - 5e-8], [(-10.0, 1.0)], AT_BOUND),
+        # ... and it is not floored at 1, or this narrow window would swallow 1e-10
+        ([0.49995 + 1e-10], [(0.49995, 0.50005)], None),
         # non-finite bounds are unbounded — nothing to be at
-        ([0.4], [(-np.inf, np.inf)], False),
+        ([0.4], [(-np.inf, np.inf)], None),
         # at lower bound with an infinite upper bound
-        ([0.0], [(0.0, np.inf)], True),
+        ([0.0], [(0.0, np.inf)], AT_BOUND),
+        # an infinite bound must be unbounded rather than an infinite tolerance
+        # window that swallows every interior value
+        ([5.0], [(0.0, np.inf)], None),
         # bounds that pin the parameter are deliberate — no warning
-        ([1.0], [(1.0, 1.0)], False),
+        ([1.0], [(1.0, 1.0)], None),
         # but pinning bounds do not exonerate a value away from the pin
-        ([5.0], [(1.0, 1.0)], True),
+        ([5.0], [(1.0, 1.0)], OUTSIDE_BOUNDS),
         # inverted bounds are malformed and surfaced rather than silenced
-        ([5.0], [(10.0, 3.0)], True),
+        ([5.0], [(10.0, 3.0)], OUTSIDE_BOUNDS),
+        # a non-finite fit result is surfaced as such, not compared to the bounds
+        ([np.inf], [(3.0, 10.0)], NOT_FINITE),
     ],
     ids=[
         "lower_bound",
@@ -661,14 +681,20 @@ def _at_bound_warning_lines(caplog):
         "near_bound_outside_tolerance",
         "wide_bounds_interior",
         "narrow_bounds_interior",
+        "tolerance_scales_with_range_wide",
+        "tolerance_scales_with_range_narrow",
+        "tolerance_scales_with_range_small_endpoint",
+        "tolerance_not_floored_at_unity",
         "unbounded",
         "lower_bound_infinite_upper",
+        "infinite_upper_interior",
         "degenerate_bounds_at_pin",
         "degenerate_bounds_violated",
         "inverted_bounds",
+        "infinite_value",
     ],
 )
-def test_parameter_at_bounds_warning(caplog, fitted_x, par_bounds, expect_warning):
+def test_parameter_at_bounds_warning(caplog, fitted_x, par_bounds, expected_kind):
     # Regression test for https://github.com/scikit-hep/pyhf/issues/2525
     # Test _internal_postprocess directly with controlled fit results so the
     # check is independent of optimizer-specific floating-point behaviour.
@@ -681,13 +707,16 @@ def test_parameter_at_bounds_warning(caplog, fitted_x, par_bounds, expect_warnin
         )
 
     warning_lines = _warning_lines(caplog)
-    if expect_warning:
+    if expected_kind is None:
+        assert len(warning_lines) == 0
+    else:
         assert len(warning_lines) == 1
+        # assert the message *kind*, not just that something was logged: being
+        # outside a bound is a stronger claim than sitting on one
+        assert expected_kind in warning_lines[0]
         assert "'mu' (index 0)" in warning_lines[0]
         # full-precision repr so a near-bound value is distinguishable from the bound
         assert f"value={fitted_x[0]!r}" in warning_lines[0]
-    else:
-        assert len(warning_lines) == 0
 
 
 def test_parameter_at_bounds_warning_fixed_parameter(caplog):
@@ -847,10 +876,15 @@ def test_no_parameter_at_bounds_warning_infinite_bounds(caplog):
 
 
 @pytest.mark.parametrize("optimizer_name", ["scipy", "minuit"])
-def test_parameter_at_bounds_warning_scipy_bounds_object(caplog, optimizer_name):
+@pytest.mark.parametrize("do_stitch", [False, True])
+def test_parameter_at_bounds_warning_scipy_bounds_object(
+    caplog, optimizer_name, do_stitch
+):
     # A scipy.optimize.Bounds instance is a valid bounds specification through
     # the direct optimizer API: it is normalized to pairs in minimize() so all
-    # optimizer and do_stitch code paths (and postprocessing) handle it.
+    # optimizer and do_stitch code paths (and postprocessing) handle it. shim()
+    # slices par_bounds per parameter under do_stitch, which a Bounds instance
+    # does not support, so the fixed_vals + do_stitch combination is covered too.
     pyhf.set_backend("numpy", optimizer_name)
     model = pyhf.simplemodels.uncorrelated_background(
         signal=[5.0], bkg=[10.0], bkg_uncertainty=[3.5]
@@ -865,6 +899,8 @@ def test_parameter_at_bounds_warning_scipy_bounds_object(caplog, optimizer_name)
             model,
             model.config.suggested_init(),
             Bounds([0.0, 1e-10], [10.0, 10.0]),
+            fixed_vals=[(1, 1.0)],
+            do_stitch=do_stitch,
         )
 
     assert result is not None
@@ -872,6 +908,26 @@ def test_parameter_at_bounds_warning_scipy_bounds_object(caplog, optimizer_name)
     assert len(warning_lines) == 1
     assert "'mu' (index 0)" in warning_lines[0]
     assert "uncorr_bkguncrt" not in warning_lines[0]
+
+
+@pytest.mark.parametrize(
+    "par_bounds", [[(0.0, None)], [(0.0, np.inf)]], ids=["none", "inf"]
+)
+def test_parameter_at_bounds_warning_reports_bounds_as_given(caplog, par_bounds):
+    # An unbounded side is normalized to None for the comparison, but the message
+    # must echo the bound the user supplied so they can match it to their input.
+    mixin = OptimizerMixin()
+    result = OptimizeResult(x=np.array([0.0]), fun=0.0, success=True)
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(
+            result, _make_stitch_pars(), par_bounds=par_bounds, par_names=["mu"]
+        )
+
+    warning_lines = _at_bound_warning_lines(caplog)
+    assert len(warning_lines) == 1
+    expected = "None" if par_bounds[0][1] is None else "inf"
+    assert f"bounds=(0, {expected})" in warning_lines[0]
 
 
 def test_parameter_at_bounds_warning_nan_value(caplog):
@@ -986,32 +1042,116 @@ def test_minuit_at_limit_flags_real_minuit():
     assert any(flags) == minuit.fmin.has_parameters_at_limit
 
 
-def test_minuit_at_limit_flags_skips_fixed_and_unbounded():
-    # fixed and unbounded parameters cannot be at a limit and must be skipped,
-    # matching iminuit's own aggregation (cf. iminuit.util.FMin)
+def _minuit_param_stub(value, error, lower=None, upper=None, is_fixed=False):
+    # stands in for iminuit.util.Param, which cannot be constructed with
+    # arbitrary limits without running a fit
+    return SimpleNamespace(
+        is_fixed=is_fixed,
+        has_limits=not (lower is None and upper is None),
+        has_lower_limit=lower is not None,
+        lower_limit=lower,
+        has_upper_limit=upper is not None,
+        upper_limit=upper,
+        value=value,
+        error=error,
+    )
+
+
+@pytest.mark.parametrize(
+    ("param", "expected"),
+    [
+        # iminuit's criterion is min(value - lower, upper - value) < 0.5 * error,
+        # so with error=1.0 the threshold sits at a distance of 0.5 from a bound
+        (_minuit_param_stub(0.4, 1.0, lower=0.0, upper=10.0), True),
+        (_minuit_param_stub(0.6, 1.0, lower=0.0, upper=10.0), False),
+        # the criterion applies to whichever bound is nearer, not just the lower
+        (_minuit_param_stub(9.7, 1.0, lower=0.0, upper=10.0), True),
+        # a one-sided limit is unbounded on the other side, so a value far from
+        # the limit it does have is not at a limit
+        (_minuit_param_stub(5.0, 1.0, upper=10.0), False),
+        (_minuit_param_stub(5.0, 1.0, lower=0.0), False),
+        # fixed and unbounded parameters cannot be at a limit at all
+        (_minuit_param_stub(0.4, 1.0, lower=0.0, upper=10.0, is_fixed=True), False),
+        (_minuit_param_stub(0.4, 1.0), False),
+    ],
+    ids=[
+        "inside_half_uncertainty",
+        "outside_half_uncertainty",
+        "near_upper_limit",
+        "one_sided_upper_far_away",
+        "one_sided_lower_far_away",
+        "fixed",
+        "unbounded",
+    ],
+)
+def test_minuit_at_limit_flags_criterion(param, expected):
+    # pin iminuit's criterion itself (cf. iminuit.util.FMin), which the message
+    # wording quotes verbatim
+    from pyhf.optimize.mixins import _minuit_at_limit_flags
+
+    minuit_stub = SimpleNamespace(params=[param])
+    assert _minuit_at_limit_flags(minuit_stub, npars=1, fixed_idx=()) == [expected]
+
+
+def test_minuit_at_limit_flags_full_parameter_set_is_not_remapped():
+    # do_stitch=False: minuit sees every model parameter, fixed ones included,
+    # so the flags already align and must not be run through the free-parameter
+    # remap, which would shift them onto the wrong model indices
     from pyhf.optimize.mixins import _minuit_at_limit_flags
 
     minuit_stub = SimpleNamespace(
         params=[
-            SimpleNamespace(is_fixed=True, has_limits=True),
-            SimpleNamespace(is_fixed=False, has_limits=False),
-            SimpleNamespace(
-                is_fixed=False,
-                has_limits=True,
-                has_lower_limit=True,
-                lower_limit=0.0,
-                has_upper_limit=True,
-                upper_limit=10.0,
-                value=0.5,
-                error=1.5,
-            ),
+            _minuit_param_stub(5.0, 1.0, lower=0.0, upper=10.0, is_fixed=True),
+            _minuit_param_stub(5.0, 1.0, lower=0.0, upper=10.0),
+            _minuit_param_stub(0.4, 1.0, lower=0.0, upper=10.0),
         ]
     )
-    assert _minuit_at_limit_flags(minuit_stub, npars=3, fixed_idx=()) == [
+    assert _minuit_at_limit_flags(minuit_stub, npars=3, fixed_idx=[0]) == [
         False,
         False,
         True,
     ]
+
+
+def test_minuit_at_limit_flags_remap_preserves_unflagged_parameters():
+    # do_stitch=True: minuit saw only the free parameters, so flags map back to
+    # model indices --- and a free parameter that is not at a limit must stay
+    # False through the mapping rather than inheriting its neighbour's flag
+    from pyhf.optimize.mixins import _minuit_at_limit_flags
+
+    minuit_stub = SimpleNamespace(
+        params=[
+            _minuit_param_stub(0.4, 1.0, lower=0.0, upper=10.0),  # model index 0
+            _minuit_param_stub(5.0, 1.0, lower=0.0, upper=10.0),  # model index 2
+            _minuit_param_stub(5.0, 1.0, lower=0.0, upper=10.0),  # model index 3
+        ]
+    )
+    assert _minuit_at_limit_flags(minuit_stub, npars=4, fixed_idx=[1]) == [
+        True,
+        False,
+        False,
+        False,
+    ]
+
+
+def test_no_parameter_at_bounds_warning_when_minuit_reports_no_limits(caplog):
+    # the O(1) aggregate gates the per-parameter walk: when iminuit reports no
+    # parameter at a limit, its criterion must not be re-evaluated per parameter
+    minuit_stub = SimpleNamespace(
+        fmin=SimpleNamespace(has_parameters_at_limit=False),
+        params=[_minuit_param_stub(0.4, 1.0, lower=0.0, upper=10.0)],
+    )
+    mixin = OptimizerMixin()
+    result = OptimizeResult(
+        x=np.array([0.4]), fun=0.0, success=True, minuit=minuit_stub
+    )
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(
+            result, _make_stitch_pars(), par_bounds=[(0.0, 10.0)], par_names=["mu"]
+        )
+
+    assert not _warning_lines(caplog)
 
 
 @pytest.mark.parametrize(
