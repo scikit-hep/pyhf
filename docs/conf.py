@@ -241,20 +241,29 @@ todo_include_todos = False
 #
 html_theme = "pydata_sphinx_theme"
 
-# Read the Docs serves every version and provides its own version switcher and its own
-# notification for non-default versions, so these docs only need to say something for
-# themselves when they are built somewhere else. That is the GitHub Pages deployment,
-# which is published from the default branch and so is always the development version,
-# and local builds, which are too. The theme's own 'show_version_warning_banner' is not
-# usable here as it is only rendered when a version switcher 'json_url' is configured.
-if os.environ.get("READTHEDOCS") != "True":
-    _announcement = (
-        "This is the documentation for the development version of <code>pyhf</code>. "
-        'For the documentation of a release see <a href="https://pyhf.readthedocs.io/">'
-        "pyhf.readthedocs.io</a>."
-    )
-else:
-    _announcement = ""
+# Read the Docs provides its own version switcher, so these docs do not need one, but
+# its notification addon renders nothing, so the development version still has to say
+# so for itself. That covers the GitHub Pages deployment and local builds, neither of
+# which is on Read the Docs, along with Read the Docs' own "latest" and its pull
+# request previews, which set READTHEDOCS_VERSION to the pull request number. Builds of
+# "stable" and of a release tag say nothing.
+#
+# The theme's own 'show_version_warning_banner' cannot be used for this, as it is only
+# rendered when a version switcher 'json_url' is configured.
+_is_development_build = (
+    os.environ.get("READTHEDOCS") != "True"
+    or os.environ.get("READTHEDOCS_VERSION") == "latest"
+    or os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
+)
+# The bare URL redirects to the most recent release, so it lands on that release's own
+# versioned URL rather than on an alias.
+_announcement = (
+    "This is the documentation for the development version of <code>pyhf</code>. "
+    'See <a href="https://pyhf.readthedocs.io/">the documentation for the most recent'
+    " release</a> instead."
+    if _is_development_build
+    else ""
+)
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
