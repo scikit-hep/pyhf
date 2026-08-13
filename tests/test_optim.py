@@ -1015,6 +1015,27 @@ def test_minuit_at_limit_flags_skips_fixed_and_unbounded():
 
 
 @pytest.mark.parametrize(
+    "minuit",
+    [None, SimpleNamespace(), iminuit.Minuit(lambda x: x**2, 0.0)],
+    ids=["no_fmin_attribute", "empty_namespace", "minuit_before_migrad"],
+)
+def test_parameter_at_bounds_warning_without_minuit_fmin(caplog, minuit):
+    # the at-limit lookup is a diagnostic, so a result carrying no usable minuit
+    # (iminuit.Minuit.fmin is None until migrad has run) must not raise
+    mixin = OptimizerMixin()
+    kwargs = {} if minuit is None else {"minuit": minuit}
+    result = OptimizeResult(x=np.array([0.0]), fun=0.0, success=True, **kwargs)
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(
+            result, _make_stitch_pars(), par_bounds=[(0.0, 10.0)], par_names=["mu"]
+        )
+
+    # the numeric check still runs and still reports the railed parameter
+    assert len(_at_bound_warning_lines(caplog)) == 1
+
+
+@pytest.mark.parametrize(
     "make_par_bounds",
     [
         lambda: [(0.0, 10.0), (1e-10, 10.0)],

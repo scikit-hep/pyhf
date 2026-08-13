@@ -281,10 +281,13 @@ class OptimizerMixin:
                 )
             else:
                 minuit = getattr(fitresult, "minuit", None)
+                # fmin is None until migrad has run, and a non-iminuit result may
+                # carry no fmin at all, so guard it as defensively as minuit itself
+                fmin = getattr(minuit, "fmin", None)
                 # the O(1) aggregate gates the per-parameter walk
                 at_limit = (
                     _minuit_at_limit_flags(minuit, npars, fixed_idx)
-                    if minuit is not None and minuit.fmin.has_parameters_at_limit
+                    if fmin is not None and fmin.has_parameters_at_limit
                     else None
                 )
                 at_bound_messages = _at_bound_warning_messages(
