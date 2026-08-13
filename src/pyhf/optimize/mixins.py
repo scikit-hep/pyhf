@@ -109,8 +109,6 @@ def _at_bound_warning_messages(
     messages: list[str] = []
     fixed = set(fixed_idx)
     for par_index, (fitted_par, bounds) in enumerate(zip(fitted_pars, par_bounds)):
-        if par_index in fixed:
-            continue
         # a None or non-finite bound is unbounded on that side
         raw_lower, raw_upper = bounds
         lower = (
@@ -124,10 +122,16 @@ def _at_bound_warning_messages(
         upper_str = "None" if raw_upper is None else f"{raw_upper:g}"
         bounds_str = f"bounds=({lower_str}, {upper_str})"
 
+        # checked before the fixed-parameter skip below: a parameter held
+        # constant *at* a bound is deliberate, but one holding a non-finite
+        # value is a symptom (a corrupted fixed_vals, or a non-finite init_pars
+        # entry stitched back in) and must not be swallowed
         if not math.isfinite(fitted_par):
             messages.append(
                 f"fit result for parameter {_par_label(par_index)} is not finite: value={fitted_par!r}, {bounds_str}"
             )
+            continue
+        if par_index in fixed:
             continue
         # scale the tolerance with the bound range so that it stays meaningful
         # for both wide bounds and bounds with small endpoints

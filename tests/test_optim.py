@@ -743,7 +743,9 @@ def test_parameter_at_bounds_warning_fixed_parameter(caplog):
             fixed_idx=[0],
         )
 
-    assert not _at_bound_warning_lines(caplog)
+    # no message of any kind: the fixed parameter is skipped and the free one
+    # sits in the interior
+    assert not _warning_lines(caplog)
 
 
 def test_parameter_at_bounds_warning_nonterminal_fixed_parameter(caplog):
@@ -955,6 +957,31 @@ def test_parameter_at_bounds_warning_nan_value(caplog):
     assert "'mu' (index 0)" in warning_lines[0]
     # the bounds give the reader context for how the value diverged
     assert "bounds=(3, 10)" in warning_lines[0]
+
+
+@pytest.mark.parametrize("value", [np.nan, np.inf, -np.inf], ids=["nan", "inf", "-inf"])
+def test_parameter_at_bounds_warning_non_finite_fixed_parameter(caplog, value):
+    # A parameter held constant *at* a bound is deliberate and stays silent,
+    # but one holding a non-finite value is a symptom and must be surfaced --
+    # the fixed-parameter skip must not swallow it.
+    mixin = OptimizerMixin()
+    result = OptimizeResult(x=np.array([value, 5.0]), fun=0.0, success=True)
+
+    with caplog.at_level(logging.WARNING, logger="pyhf.optimize.mixins"):
+        mixin._internal_postprocess(
+            result,
+            _make_stitch_pars(),
+            par_bounds=[(0.0, 10.0), (0.0, 10.0)],
+            fixed_idx=[0],
+            par_names=["fixed_par", "free_par"],
+        )
+
+    warning_lines = _warning_lines(caplog, NOT_FINITE)
+    assert len(warning_lines) == 1
+    assert "'fixed_par' (index 0)" in warning_lines[0]
+    assert f"value={value!r}" in warning_lines[0]
+    # the free parameter sits in the interior, so nothing else is reported
+    assert not _at_bound_warning_lines(caplog)
 
 
 def test_parameter_at_bounds_warning_short_par_names(caplog):
