@@ -52,7 +52,7 @@ src = ".zenodo.json"
 src = "CITATION.cff"
 
 [[file]]
-src = "docs/lite/jupyterlite.py"
+src = "docs/jupyterlite/jupyterlite.py"
 
 [[field]]
 # the name of the field

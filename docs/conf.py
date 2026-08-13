@@ -27,9 +27,9 @@ sys.path.insert(0, str(Path("./exts").resolve()))
 
 # Convert jupyterlite example to ipynb
 docs_dir = Path(__file__).resolve().parent
-py_percent_as_notebook = jupytext.read(docs_dir / "lite" / "jupyterlite.py")
+py_percent_as_notebook = jupytext.read(docs_dir / "jupyterlite" / "jupyterlite.py")
 jupytext.write(
-    py_percent_as_notebook, docs_dir / "lite" / "jupyterlite.ipynb", fmt="ipynb"
+    py_percent_as_notebook, docs_dir / "jupyterlite" / "jupyterlite.ipynb", fmt="ipynb"
 )
 
 
@@ -188,7 +188,7 @@ autodoc_typehints_format = "fully-qualified"
 exclude_patterns = [
     "_build",
     "JOSS",
-    "lite",
+    "jupyterlite",
     "**.ipynb_checkpoints",
     "examples/experiments/edwardpyhf.ipynb",
     "examples/notebooks/ImpactPlot.ipynb",
@@ -565,4 +565,4 @@ linkcheck_retries = 50
 
 # JupyterLite configuration
 # jupyterlite-sphinx v0.13.0+ expects str
-jupyterlite_dir = str(Path("lite"))
+jupyterlite_dir = str(Path("jupyterlite"))
