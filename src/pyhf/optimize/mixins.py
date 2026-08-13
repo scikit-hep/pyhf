@@ -88,8 +88,12 @@ def _at_bound_warning_messages(
             ``max(1, |bound|)`` if only one side is bounded), so that it stays meaningful
             for both wide bounds and bounds whose endpoints are small --- pyhf's own
             ``shapesys`` and ``staterror`` gammas default to ``(1e-10, 10)``. Optimizers
-            stop near but not exactly at bounds (scipy's SLSQP rails within O(1e-14)),
-            so exact comparison would miss them. Default is ``1e-8``.
+            stop near but not exactly at bounds, so exact comparison would miss them:
+            scipy's SLSQP rails within O(1e-14) on the unconstrained path, but with
+            ``do_stitch=False`` and fixed parameters it minimizes under an equality
+            constraint and can stop O(1e-7) away, which this tolerance may miss (cf. the
+            discussion on https://github.com/scikit-hep/pyhf/pull/2526). Default is
+            ``1e-8``.
 
     Returns:
         :obj:`list` of :obj:`str`: one message per parameter at a bound
