@@ -20,12 +20,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
+        persist-credentials: false
 
     - name: Set up Python
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: '3.14'
 
@@ -63,7 +64,7 @@ jobs:
         jsonschema <(curl -sL "https://citation-file-format.github.io/1.2.0/schema.json") --instance <(cat CITATION.cff | yq)
 
     - name: Check for broken links
-      uses: lycheeverse/lychee-action@v2
+      uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
       with:
         args: docs/
 
@@ -91,7 +92,7 @@ jobs:
         done
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v5
+      uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
       with:
         path: 'docs/_build/html'
 
@@ -102,8 +103,8 @@ jobs:
     # Set permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
     permissions:
       contents: read
-      pages: write
-      id-token: write
+      pages: write  # for actions/deploy-pages to deploy to GitHub Pages
+      id-token: write  # for actions/deploy-pages to verify deployment origin
 
     environment:
       name: github-pages
@@ -113,8 +114,8 @@ jobs:
 
     steps:
     - name: Setup Pages
-      uses: actions/configure-pages@v6
+      uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v5
+      uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

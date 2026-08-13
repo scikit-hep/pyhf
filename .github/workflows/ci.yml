@@ -20,6 +20,7 @@ permissions:
 
 jobs:
   test:
+    name: Test
 
     runs-on: ${{ matrix.os }}
     # On push events run the CI only on main by default, but run on any branch if the commit message contains '[ci all]'
@@ -39,10 +40,12 @@ jobs:
             python-version: '3.13'
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -65,7 +68,7 @@ jobs:
 
     - name: Launch a tmate session if tests fail
       if: failure() && github.event_name == 'workflow_dispatch'
-      uses: mxschmitt/action-tmate@v3
+      uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113 # v3.24
 
     - name: Coverage report for core project
       run: |
@@ -78,7 +81,7 @@ jobs:
         github.event_name != 'schedule' &&
         matrix.os == 'ubuntu-latest' &&
         github.repository == 'scikit-hep/pyhf'
-      uses: codecov/codecov-action@v7
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
       with:
         fail_ci_if_error: true
         files: ./coverage.xml
@@ -96,7 +99,7 @@ jobs:
 
     - name: Report contrib coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.14' && matrix.os == 'ubuntu-latest' && github.repository == 'scikit-hep/pyhf'
-      uses: codecov/codecov-action@v7
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
       with:
         fail_ci_if_error: true
         files: ./coverage.xml
@@ -116,7 +119,7 @@ jobs:
 
     - name: Report doctest coverage with Codecov
       if: github.event_name != 'schedule' && matrix.python-version == '3.14' && matrix.os == 'ubuntu-latest' && github.repository == 'scikit-hep/pyhf'
-      uses: codecov/codecov-action@v7
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
       with:
         fail_ci_if_error: true
         files: doctest-coverage.xml

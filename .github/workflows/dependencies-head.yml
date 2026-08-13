@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   release-candidates:
+    name: Test with release candidate dependencies
 
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
@@ -24,10 +25,12 @@ jobs:
         python-version: ['3.14']
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -46,6 +49,7 @@ jobs:
         pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
   scipy:
+    name: Test with scipy HEAD
 
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
@@ -55,10 +59,12 @@ jobs:
         python-version: ['3.14']
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -76,6 +82,7 @@ jobs:
         pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
   iminuit:
+    name: Test with iminuit HEAD
 
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
@@ -85,9 +92,11 @@ jobs:
         python-version: ['3.14']
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -103,6 +112,7 @@ jobs:
         pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
   uproot5:
+    name: Test with uproot5 HEAD
 
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
@@ -112,9 +122,11 @@ jobs:
         python-version: ['3.14']
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -129,6 +141,7 @@ jobs:
         pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
 
   matplotlib:
+    name: Test with matplotlib nightly
 
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
@@ -138,10 +151,12 @@ jobs:
         python-version: ['3.14']
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -168,6 +183,7 @@ jobs:
         pytest tests/contrib
 
   pytest:
+    name: Test with pytest HEAD
 
     if: github.repository == 'scikit-hep/pyhf'
     runs-on: ${{ matrix.os }}
@@ -177,9 +193,11 @@ jobs:
         python-version: ['3.14']
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies

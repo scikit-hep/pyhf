@@ -5,7 +5,7 @@ ci:
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
     hooks:
     - id: check-added-large-files
     - id: check-case-conflict
@@ -29,27 +29,27 @@ repos:
       exclude: ^validation/|\.dtd$|\.xml$
 
 - repo: https://github.com/pre-commit/pygrep-hooks
-  rev: "v1.10.0"
+  rev: "3a6eb0fadf60b3cccfd80bad9dbb6fae7e47b316"  # frozen: v1.10.0
   hooks:
     - id: rst-backticks
     - id: rst-directive-colons
     - id: rst-inline-touching-normal
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.16.1"
+  rev: "39d9ac5938dadb73df0564a45f163e25ff9fa6e2"  # frozen: v0.16.1
   hooks:
     - id: ruff-check
       args: ["--fix", "--show-fixes"]
     - id: ruff-format
 
 - repo: https://github.com/adamchainz/blacken-docs
-  rev: "1.20.0"
+  rev: "fda77690955e9b63c6687d8806bafd56a526e45f"  # frozen: 1.20.0
   hooks:
     - id: blacken-docs
       additional_dependencies: [black==26.3.1]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.3.0
+    rev: 41e691678310dfd3833f7ab4e180ddb014310356  # frozen: v2.3.0
     # check the oldest and newest supported Pythons
     # except skip python 3.9 for numpy, due to poor typing
     hooks:
@@ -70,16 +70,17 @@ repos:
         args: ["--python-version=3.14"]
 
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.4.3
+    rev: 57b21406f092110c18776e39b0bda50d37c945c8  # frozen: v2.4.3
     hooks:
     - id: codespell
       files: ^.*\.(py|md|rst)$
       args: ["-w", "-L", "hist,gaus"]
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.37.4
+  rev: 6b63472e72e1a91ed8a2f6d483790dfb644fa1d3  # frozen: 0.37.4
   hooks:
     - id: check-readthedocs
       args: ["--verbose"]
     - id: check-github-workflows
       args: ["--verbose"]
+
