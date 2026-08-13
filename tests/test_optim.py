@@ -603,15 +603,19 @@ def test_minuit_all_fixed_params():
     assert result is not None
 
 
-def _at_bound_warning_lines(caplog):
+def _warning_lines(caplog, match="fit result for parameter"):
     # the check emits a single aggregated record per fit with one line per
     # parameter, so filter per line (records can mix message types)
     return [
         line
         for record in caplog.records
         for line in record.message.splitlines()
-        if "is at a bound" in line
+        if match in line
     ]
+
+
+def _at_bound_warning_lines(caplog):
+    return _warning_lines(caplog, "is at a bound")
 
 
 @pytest.mark.parametrize(
@@ -623,16 +627,19 @@ def _at_bound_warning_lines(caplog):
         ([10.0], [(3.0, 10.0)], True),
         # near lower bound, within tolerance (optimizers stop near, not at, bounds)
         ([3.0 + 1e-9], [(3.0, 10.0)], True),
-        # at minuit's measured rail distance from the bound (up to O(1e-5))
-        ([1.7e-5], [(0.0, 10.0)], True),
-        # beyond the lower bound (constraint violation)
+        # a gamma well above the (1e-10, 10) lower bound pyhf itself uses must
+        # not be flagged just because the bound value is small
+        ([5e-5], [(1e-10, 10.0)], False),
+        # outside the lower bound (constraint violation)
         ([2.5], [(3.0, 10.0)], True),
         # interior — no warning
         ([5.0], [(3.0, 10.0)], False),
         # near lower bound but outside tolerance — no warning
         ([3.01], [(3.0, 10.0)], False),
-        # interior with wide bounds — tolerance must not scale with the range
+        # interior with wide bounds — the scaled tolerance stays far away
         ([0.4], [(0.0, 1e6)], False),
+        # a narrow bound range must not be swallowed by the tolerance
+        ([0.5], [(0.49995, 0.50005)], False),
         # non-finite bounds are unbounded — nothing to be at
         ([0.4], [(-np.inf, np.inf)], False),
         # at lower bound with an infinite upper bound
@@ -648,11 +655,12 @@ def _at_bound_warning_lines(caplog):
         "lower_bound",
         "upper_bound",
         "near_bound_within_tolerance",
-        "minuit_rail_distance",
-        "below_lower_bound",
+        "small_bound_value_interior",
+        "outside_lower_bound",
         "interior",
         "near_bound_outside_tolerance",
         "wide_bounds_interior",
+        "narrow_bounds_interior",
         "unbounded",
         "lower_bound_infinite_upper",
         "degenerate_bounds_at_pin",
@@ -672,7 +680,7 @@ def test_parameter_at_bounds_warning(caplog, fitted_x, par_bounds, expect_warnin
             result, _make_stitch_pars(), par_bounds=par_bounds, par_names=["mu"]
         )
 
-    warning_lines = _at_bound_warning_lines(caplog)
+    warning_lines = _warning_lines(caplog)
     if expect_warning:
         assert len(warning_lines) == 1
         assert "'mu' (index 0)" in warning_lines[0]
@@ -876,11 +884,11 @@ def test_parameter_at_bounds_warning_nan_value(caplog):
             result, _make_stitch_pars(), par_bounds=[(3.0, 10.0)], par_names=["mu"]
         )
 
-    warning_records = [
-        record for record in caplog.records if "is not finite" in record.message
-    ]
-    assert len(warning_records) == 1
-    assert "'mu' (index 0)" in warning_records[0].message
+    warning_lines = _warning_lines(caplog, "is not finite")
+    assert len(warning_lines) == 1
+    assert "'mu' (index 0)" in warning_lines[0]
+    # the bounds give the reader context for how the value diverged
+    assert "bounds=(3, 10)" in warning_lines[0]
 
 
 def test_parameter_at_bounds_warning_short_par_names(caplog):
@@ -957,6 +965,25 @@ def test_parameter_at_bounds_warning_minuit_at_limit(caplog):
     assert "value=0.5" in warning_lines[0]
     # the value is not numerically at a bound, so no at-bound claim is made
     assert not _at_bound_warning_lines(caplog)
+
+
+def test_minuit_at_limit_flags_real_minuit():
+    # Drive a real iminuit.Minuit so a change to the Param API this function
+    # depends on is caught here rather than inside every minuit fit. The
+    # aggregate is iminuit's own OR over the same criterion, so the per
+    # parameter flags must agree with it.
+    from pyhf.optimize.mixins import _minuit_at_limit_flags
+
+    minuit = iminuit.Minuit(lambda x, y: (x + 1.0) ** 2 + (y - 5.0) ** 2, 0.5, 5.0)
+    minuit.limits = [(0.0, 10.0), (0.0, 10.0)]
+    minuit.errordef = 1.0
+    minuit.migrad()
+
+    flags = _minuit_at_limit_flags(minuit, npars=2, fixed_idx=())
+    # x is pulled to its lower bound, y sits in the interior
+    assert flags[0]
+    assert not flags[1]
+    assert any(flags) == minuit.fmin.has_parameters_at_limit
 
 
 def test_minuit_at_limit_flags_skips_fixed_and_unbounded():
