@@ -83,3 +83,9 @@ repos:
       args: ["--verbose"]
     - id: check-github-workflows
       args: ["--verbose"]
+
+- repo: https://github.com/zizmorcore/zizmor-pre-commit
+  rev: v1.29.0
+  hooks:
+      # use default 'regular' persona
+    - id: zizmor
