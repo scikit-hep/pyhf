@@ -223,6 +223,7 @@ Utilities
    options_from_eqdelimstring
    digest
    citation
+   environment_info
 
 Contrib
 -------
