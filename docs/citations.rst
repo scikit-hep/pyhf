@@ -1,9 +1,12 @@
 Use and Citations
 =================
 
-.. raw:: html
+.. ifconfig:: is_development_build
 
-   <p id="dev-version"><strong>Warning:</strong> This is a development version and should not be cited. To find the specific version to cite, please go to <a href="https://pyhf.readthedocs.io/">ReadTheDocs</a>.</p>
+   .. warning::
+
+      This is a development version and should not be cited. To find the specific
+      version to cite, please go to `ReadTheDocs <https://pyhf.readthedocs.io/>`__.
 
 Citation
 --------

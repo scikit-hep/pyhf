@@ -16,6 +16,7 @@
 # documentation root, use Path('../relative_path_to_dir').resolve() to make it absolute, like shown here.
 
 import importlib.metadata
+import os
 import sys
 from pathlib import Path
 
@@ -36,6 +37,7 @@ def setup(app):
     app.add_css_file(
         "https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css"
     )
+    app.add_config_value("is_development_build", default=False, rebuild="env")
 
 
 # -- General configuration ------------------------------------------------
@@ -240,11 +242,38 @@ todo_include_todos = False
 #
 html_theme = "pydata_sphinx_theme"
 
+# Read the Docs provides its own version switcher, so these docs do not need one, but
+# its notification addon renders nothing, so the development version still has to say
+# so for itself. That covers the GitHub Pages deployment and local builds, neither of
+# which is on Read the Docs, along with Read the Docs' own "latest" and its pull
+# request previews, which set READTHEDOCS_VERSION to the pull request number. Builds of
+# "stable" and of a release tag say nothing.
+#
+# The theme's own 'show_version_warning_banner' cannot be used for this, as it is only
+# rendered when a version switcher 'json_url' is configured.
+is_development_build = (
+    os.environ.get("READTHEDOCS") != "True"
+    or os.environ.get("READTHEDOCS_VERSION") == "latest"
+    or os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
+)
+
+_announcement = (
+    "This is a development version. The latest stable version is at "
+    '<a href="https://pyhf.readthedocs.io/">pyhf.readthedocs.io</a>.'
+    if is_development_build
+    else ""
+)
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {"header_links_before_dropdown": 6}
+html_theme_options = {
+    "header_links_before_dropdown": 6,
+    # c.f. https://pydata-sphinx-theme.readthedocs.io/en/stable/user_guide/announcements.html
+    "announcement": _announcement,
+    "sticky_banners": True,
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = []
@@ -274,12 +303,7 @@ html_theme_path = []
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
-html_css_files = [
-    "css/custom.css",
-]
-
 html_js_files = [
-    "js/custom.js",
     (
         "https://views.scientific-python.org/js/plausible.js",
         {"data-domain": "pyhf.readthedocs.io", "defer": "defer"},

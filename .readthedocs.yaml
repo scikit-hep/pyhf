@@ -14,6 +14,15 @@ build:
     - curl
     - jq
   jobs:
+    post_checkout:
+      # Read the Docs clones with --depth 50 and without tags, so hatch-vcs cannot find
+      # the release tag and falls back to a "0.1.dev50" version. That is what reaches
+      # the docs as Sphinx's ``version`` and ``release``, so without this the published
+      # documentation for a release reports itself as 0.1.dev50.
+      #
+      # --unshallow errors on an already complete clone, so fall back to fetching the
+      # tags alone rather than ignoring every failure.
+      - git fetch --tags --unshallow || git fetch --tags
     post_create_environment:
       - pip install uv
     post_install:
