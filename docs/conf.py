@@ -37,7 +37,7 @@ def setup(app):
     app.add_css_file(
         "https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.2/gh-fork-ribbon.min.css"
     )
-    app.add_config_value("is_development_build", False, "env")
+    app.add_config_value("is_development_build", default=False, rebuild="env")
 
 
 # -- General configuration ------------------------------------------------
@@ -256,12 +256,10 @@ is_development_build = (
     or os.environ.get("READTHEDOCS_VERSION") == "latest"
     or os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
 )
-# The bare URL redirects to the most recent release, so it lands on that release's own
-# versioned URL rather than on an alias.
+
 _announcement = (
-    "This is the documentation for the development version of <code>pyhf</code>. "
-    'See <a href="https://pyhf.readthedocs.io/">the documentation for the most recent'
-    " release</a> instead."
+    "This is a development version. The latest stable version is at "
+    '<a href="https://pyhf.readthedocs.io/">pyhf.readthedocs.io</a>.'
     if is_development_build
     else ""
 )
