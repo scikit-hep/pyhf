@@ -39,7 +39,6 @@ jobs:
       with:
         fetch-depth: 0
         token: ${{ secrets.ACCESS_TOKEN }}
-        persist-credentials: false
 
     - name: Read version from tbump.toml
       id: version
