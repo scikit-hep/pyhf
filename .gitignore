@@ -9,6 +9,8 @@ docs/config.rst
 docs/gh-pages
 docs/pyhf.*.rst
 docs/_*/
+docs/.jupyterlite.doit.db
+docs/jupyterlite/jupyterlite.ipynb
 *.py[co]
 __pycache__
 *.egg-info

@@ -4,7 +4,7 @@ Try out now with JupyterLite_
 ..
   Comment: Use https://github.com/jupyterlite/jupyterlite-sphinx
 
-.. retrolite:: lite/jupyterlite.ipynb
+.. retrolite:: jupyterlite/jupyterlite.ipynb
    :width: 100%
    :height: 600px
    :prompt: Try pyhf!

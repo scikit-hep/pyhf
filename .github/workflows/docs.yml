@@ -85,6 +85,13 @@ jobs:
         # is not empty
         [ "$(ls -A docs/_build/html/lite)" ]
 
+    - name: Check JupyterLite contents are staged
+      run: |
+        # The JupyterLite app can build fine while its contents are silently
+        # dropped, leaving the docs preview unable to load the notebook.
+        [ -f "docs/_build/html/lite/files/jupyterlite/jupyterlite.ipynb" ]
+        [ -f "docs/_build/html/lite/api/contents/all.json" ]
+
     - name: Fix permissions if needed
       run: |
         chmod -c -R +rX "docs/_build/html/" | while read line; do
