@@ -72,7 +72,9 @@ jobs:
         VERSION: ${{ inputs.new_version }}
         BASE_BRANCH: ${{ github.ref_name }}
       run: |
-        branch="bump-version/v${VERSION}"
+        # Include the base branch in the branch name so that each release
+        # branch has its own release preparation branch and pull request
+        branch="bump-version/${BASE_BRANCH}/v${VERSION}"
 
         git config --local user.name "github-actions[bot]"
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
