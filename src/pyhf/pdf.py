@@ -107,8 +107,11 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
     # 1. setup nominal & modifier builders
     nominal = _nominal_builder(config)
 
+    kwargs_list = dict.fromkeys(modifier_set, ())
+    kwargs_list["purefunc"] = (spec.get("bindings"),)
     modifiers_builders = {
-        key: builder(config) for key, (builder, _) in modifier_set.items()
+        key: builder(config, *kwargs_list[key])
+        for key, (builder, _) in modifier_set.items()
     }
 
     # 2. make a helper that maps channel-name/sample-name to pairs of channel-sample structs
@@ -121,6 +124,9 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 if x["type"] not in modifier_set:
                     msg = f"{x['type']} not among {list(modifier_set)}"
                     raise exceptions.InvalidModifier(msg)
+                if x["type"] == "purefunc" and pyhf.tensorlib.name != "jax":
+                    msg = "For purefunc modifiers the `jax` backend has to be set."
+                    raise exceptions.InvalidWorkspaceOperation(msg)
                 key = f"{x['type']}/{x['name']}"
                 # check if the modifier to be built is allowed to be shared
                 if not modifiers_builders[x["type"]].is_shared and (
@@ -128,7 +134,6 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 ):
                     msg = f"Trying to add paramset {key} on {s['name']} sample in {c['name']} channel but other paramsets exist with the same name."
                     raise exceptions.InvalidModel(msg)
-
                 moddict[key] = x
             helper.setdefault(c["name"], {})[s["name"]] = (s, moddict)
             # add in all keys seen
@@ -148,9 +153,9 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
 
     # 4. finalize nominal & modifier builders
     nominal_rates = nominal.finalize()
-    finalizd_builder_data = {}
+    finalized_builder_data = {}
     for k, (builder, applier) in modifier_set.items():  # noqa: B007
-        finalizd_builder_data[k] = modifiers_builders[k].finalize()
+        finalized_builder_data[k] = modifiers_builders[k].finalize()
 
     # 5. collect parameters from spec and from user.
     # At this point we know all constraints and so forth
@@ -185,7 +190,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 x for x in config.modifiers if x[1] == k
             ],  # filter modifier names for that mtype (x[1])
             pdfconfig=config,
-            builder_data=finalizd_builder_data.get(k),
+            builder_data=finalized_builder_data.get(k),
             batch_size=batch_size,
             **config.modifier_settings.get(k, {}),
         )
@@ -231,6 +236,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         self._poi_index = None
         self._nmaindata = sum(self.channel_nbins.values())
         self._auxdata = []
+        self._transforms = spec.get("bindings")
 
         # these are not documented properties
         self.par_map = {}

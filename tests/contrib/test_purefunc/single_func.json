@@ -1,0 +1,36 @@
+{
+  "channels": [
+    {
+      "name": "c1",
+      "samples": [
+        {
+          "name": "s1",
+          "data": [
+            5.0,
+            1.0
+          ],
+          "modifiers": [
+            {
+              "name": "func1",
+              "type": "purefunc"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "names": ["func1"],
+      "expression": "kappa ** 2",
+      "language": "sympy"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "kappa",
+      "inits": [1.5],
+      "bounds": [[0.0, 12.0]]
+    }
+  ]
+}
