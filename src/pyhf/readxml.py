@@ -215,7 +215,10 @@ def process_sample(
                 "data": {"lo_data": lo, "hi_data": hi},
             }
             modifiers.append(modifier_histosys)
-        elif modtag.tag == "StatError" and modtag.attrib["Activate"] == "True":
+        elif (
+            modtag.tag == "StatError"
+            and modtag.attrib.get("Activate", "False") == "True"
+        ):
             if modtag.attrib.get("HistoName", "") == "":
                 staterr = err
             else:
@@ -262,6 +265,17 @@ def process_sample(
                 "data": None,
             }
             modifiers.append(modifier_shapefactor)
+        elif modtag.tag == "StatError":
+            # Reachable only when Activate is missing or not "True".
+            # HistFactorySchema.dtd declares Activate as #REQUIRED, so warn
+            # specifically: silently dropping the modifier would understate
+            # the MC statistical uncertainty in the resulting model.
+            log.warning(
+                "StatError modifier of sample %s in channel %s is not activated (Activate=%s) and will be ignored",
+                sample.attrib.get("Name", "n/a"),
+                channel_name,
+                modtag.attrib.get("Activate"),
+            )
         else:
             log.warning("not considering modifier tag %s", modtag)
 
@@ -533,5 +547,13 @@ def parse(
 
 
 def clear_filecache() -> None:
-    global __FILECACHE__
-    __FILECACHE__ = {}
+    """Close all cached file handles and empty the file cache."""
+    # Clear in place so external references to the cache don't retain
+    # closed file handles.
+    for file_path, (file_handle, _) in __FILECACHE__.items():
+        # per-handle try so one failing close doesn't leak the remaining handles
+        try:
+            file_handle.close()
+        except OSError:  # noqa: PERF203
+            log.warning("could not close file handle for %s", file_path)
+    __FILECACHE__.clear()
