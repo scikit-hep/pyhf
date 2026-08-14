@@ -227,12 +227,18 @@ The workflow requires approval through the ``release-tag`` GitHub Actions
 environment, and then creates an annotated tag for the version defined in
 ``tbump.toml`` and pushes the tag to the release branch.
 
-The ``release-tag`` `GitHub Actions environment
+The ``release-prepare`` and ``release-tag`` `GitHub Actions environments
 <https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments>`__
 must be configured in the repository settings with the maintainers as required
 reviewers and with the deployment branches restricted to ``main`` and
 ``release/v*``, as GitHub creates a referenced environment without any
 protection rules.
+The ``ACCESS_TOKEN`` secret used to push the release preparation pull request
+and the release tag is stored as an environment secret in both environments,
+not as a repository level secret, so that only workflow runs approved by the
+required reviewers can access it.
+Additionally, every deployment workflow approval is now recorded in the
+environment's deployment history which gives an audit history.
 
 If the release workflows are not available on the release branch (e.g. historic
 release branches) a maintainer can perform the same steps locally by bumping the
