@@ -8,3 +8,10 @@ rules:
   concurrency-limits:
     ignore:
       - copilot-setup-steps.yml
+
+  artipacked:
+    # The release workflows push a branch or tag with the credentials that
+    # actions/checkout persists, so credential persistence is required
+    ignore:
+      - release-prepare.yml
+      - release-tag.yml

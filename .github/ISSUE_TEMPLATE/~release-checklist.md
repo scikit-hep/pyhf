@@ -23,20 +23,17 @@ about: Checklist for core developers to complete as part of making a release
 
 ## Create Release Tag
 
-For a video walkthrough consult the [``pyhf`` ``v0.7.1`` release recording](https://youtu.be/ZV20tr3EpTw) on YouTube.
-
-* [ ] Use the [bump version](https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml) GitHub Actions workflow perform a [dry run](https://scikit-hep.org/pyhf/development.html#release-tags) of the bump version to the new release tag.
-* [ ] Check the annotated tag in the dry run workflow logs to make sure it looks correct.
-* [ ] If the dry run passes as expected, run the same workflow with the dry run option set to ``false`` to bump the release tag version and push the new tag back to GitHub.
+* [ ] Run the [Prepare release](https://github.com/scikit-hep/pyhf/actions/workflows/release-prepare.yml) GitHub Actions workflow on the release branch, entering the version of the new release.
+* [ ] Review the release preparation pull request the workflow opens: verify the new version and the diff of the bumped files, and wait for CI to pass.
+* [ ] Merge the release preparation pull request.
+* [ ] Run the [Tag release](https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml) GitHub Actions workflow on the release branch and approve the `release-tag` environment deployment.
 * [ ] Verify the release tag was pushed to the correct branch.
-* [ ] Verify the release tag commit has bumped the correct versions.
 * [ ] Watch the CI to verify all tag based jobs finish correctly.
 * [ ] Verify the release for the tag on [TestPyPI][TestPyPI_pyhf] looks correct.
 
 ## After Release Tag Pushed To GitHub
 
 * [ ] Create a [GitHub release](https://github.com/scikit-hep/pyhf/releases) from the new release tag and copy the release notes published to the GitHub release page. The creation of the GitHub release triggers all other release related activities.
-   - [ ] Before pasting in the release notes copy the changes that the GitHub bot has already queued up and pasted into the tag and place them in the "Changes" section of the release notes. If the release notes are published before these are copied then they will be overwritten and you'll have to add them back in by hand.
    - [ ] Create a corresponding [announcement GitHub Discussion](https://github.com/scikit-hep/pyhf/discussions/categories/announcements) for the release.
 * [ ] Watch the CI to ensure that the deployment to [PyPI](https://pypi.org/project/pyhf/) is successful.
 * [ ] Verify Docker images with the correct tags have been deployed to all container image registries.
@@ -46,15 +43,15 @@ For a video walkthrough consult the [``pyhf`` ``v0.7.1`` release recording](http
 * [ ] Verify there is a new [Zenodo DOI](https://doi.org/10.5281/zenodo.1169739) minted for the release.
    - [ ] Verify that the new release archive metadata on Zenodo matches is being picked up as expected from [`CITATION.cff`](https://github.com/scikit-hep/pyhf/blob/main/CITATION.cff).
 * [ ] Verify that a Binder has properly built for the new release.
-* [ ] Watch for a GitHub notification that there is an automatic PR to the [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock). This may take multiple hours to happen. If there are any changes needed to the Conda-forge release make them **from a personal account** and not from an organization account to have workflows properly trigger.
-   - [ ] Verify the requirements in the [Conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock) recipe `meta.yaml` match those in `pyproject.toml`.
+* [ ] Watch for a GitHub notification that there is an automatic PR to the [conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock). This may take multiple hours to happen. If there are any changes needed to the conda-forge release make them **from a personal account** and not from an organization account to have workflows properly trigger.
+   - [ ] Verify the requirements in the [conda-forge feedstock](https://github.com/conda-forge/pyhf-feedstock) recipe `meta.yaml` match those in `pyproject.toml`.
 
 ## After Release
 
-* [ ] Verify that the release is installable from both [PyPI](https://pypi.org/project/pyhf/) and [Conda-forge](https://github.com/conda-forge/pyhf-feedstock).
+* [ ] Verify that the release is installable from both [PyPI](https://pypi.org/project/pyhf/) and [conda-forge](https://github.com/conda-forge/pyhf-feedstock).
 * [ ] Send the drafted [``pyhf-announcements``](https://groups.google.com/group/pyhf-announcements/) email out from the ``pyhf-announcements`` account email.
-* [ ] Tweet the release out on both personal and team Twitter accounts.
-* [ ] Forward port the release notes and bumpversion information from the release branch to the default branch.
+* [ ] Share the release on both personal and team social media accounts.
+* [ ] Forward port the release notes and the `tbump.toml` version information from the release branch to the default branch.
    - c.f. PR https://github.com/scikit-hep/pyhf/pull/2217 and PR https://github.com/scikit-hep/pyhf/pull/2218 as examples from `pyhf` `v0.7.2`.
 * [ ] Announce the release on the [Scikit-HEP community Gitter](https://gitter.im/Scikit-HEP/community).
 * [ ] Make a release for the [`pyhf` tutorial](https://github.com/pyhf/pyhf-tutorial/releases) corresponding to the **previous release** number. This release represents the last version of the tutorial that is guaranteed to work with previous release API.

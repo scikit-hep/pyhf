@@ -180,8 +180,7 @@ Publishing
 
 Publishing to TestPyPI_ and PyPI_ is automated through the `PyPA's PyPI publish
 GitHub Action <https://github.com/pypa/gh-action-pypi-publish>`__
-and the ``pyhf`` `bump version GitHub Actions workflow
-<https://github.com/scikit-hep/pyhf/blob/main/.github/workflows/bump-version.yml>`__.
+and the ``pyhf`` `Prepare release`_ and `Tag release`_ GitHub Actions workflows.
 
 Release Checklist
 ~~~~~~~~~~~~~~~~~
@@ -191,27 +190,100 @@ sure steps aren't missed.
 There is a GitHub Issue template for this that the maintainer in charge of the
 release should step through and update if needed.
 
-Release Tags
-~~~~~~~~~~~~
+Preparing a Release
+~~~~~~~~~~~~~~~~~~~
 
-A release tag can be created by a maintainer by using the `bump version GitHub Actions
-workflow`_ through workflow dispatch.
+A release is prepared by a maintainer running the `Prepare release`_ GitHub Actions
+workflow through workflow dispatch.
 The maintainer needs to:
 
-* Select the semantic versioning (SemVer) type (major, minor, patch) of the release tag.
-* Select if the release tag is a release candidate or not.
-* Input the SemVer version number of the release tag.
-* Select the branch to push the new release tag to.
-* Select if to override the SemVer compatibility of the previous options (default
-  is to run checks).
-* Select if a dry run should be performed (default is to do a dry run to avoid accidental
-  release tags).
+* Select the branch to release from (``main`` or a ``release/vX.Y.x`` release branch).
+* Input the version of the release (e.g. ``1.2.3`` or ``1.2.3rc1``).
 
-The maintainer **should do a dry run first to make sure everything looks reasonable**.
-Once they have done that, they can run the `bump version GitHub Actions workflow`_ which
-will produce a new tag, bump the version of all files defined in `tbump.toml
-<https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__, and then commit and
-push these changes and the tag back to the ``main`` branch.
+The workflow validates that the version is newer than the current version on the
+selected branch and opens a release preparation pull request that bumps the version
+of all files defined in `tbump.toml
+<https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__ to it.
+The pull request serves as the release dry run.
+The maintainer should verify the new version and the diff of the bumped files and let
+the CI validate the changes before merging.
+
+.. note::
+
+  The version validation is relative to the version recorded in ``tbump.toml``,
+  which merging a release preparation pull request updates.
+  If a release is abandoned after its release preparation pull request has been
+  merged, but before the release tag has been created, revert the release
+  preparation pull request to be able to prepare a release with a lower version
+  (e.g. a release candidate of the abandoned release).
+
+Tagging a Release
+~~~~~~~~~~~~~~~~~
+
+After the release preparation pull request has been merged, a maintainer runs the
+`Tag release`_ GitHub Actions workflow through workflow dispatch on the release
+branch.
+The workflow requires approval through the ``release-tag`` GitHub Actions
+environment, and then creates an annotated tag for the version defined in
+``tbump.toml`` and pushes the tag to the release branch.
+
+The ``release-prepare`` and ``release-tag`` `GitHub Actions environments
+<https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments>`__
+must be configured in the repository settings with the maintainers as required
+reviewers and with the deployment branches restricted to ``main`` and
+``release/v*``, as GitHub creates a referenced environment without any
+protection rules.
+The ``ACCESS_TOKEN`` secret used to push the release preparation pull request
+and the release tag is stored as an environment secret in both environments,
+not as a repository level secret, so that only workflow runs approved by the
+required reviewers can access it.
+Additionally, every deployment workflow approval is now recorded in the
+environment's deployment history which gives an audit history.
+
+If the release workflows are not available on the release branch (e.g. historic
+release branches) a maintainer can perform the same steps locally by bumping the
+version of the files
+
+.. code-block:: console
+
+    tbump --non-interactive --only-patch X.Y.Z
+
+and, after the pull request with these changes has been merged into the release
+branch, creating and pushing the release tag
+
+.. code-block:: console
+
+    git tag --annotate vX.Y.Z --message "pyhf vX.Y.Z"
+    git push origin vX.Y.Z
+
+Release Branches
+~~~~~~~~~~~~~~~~
+
+Each minor release series has a corresponding release branch, named
+``release/vX.Y.x`` (e.g. ``release/v1.2.x``), so that patch releases for the
+series can be made after development on ``main`` has moved on to the next
+release series.
+After a minor or major release has been tagged, a maintainer can create the
+release branch from the release tag and push it to the repository
+
+.. code-block:: console
+
+    git fetch origin
+    git branch release/vX.Y.x vX.Y.0
+    git push origin release/vX.Y.x
+
+Creating the release branch from the release tag makes the tag reachable from
+the branch, which ``hatch-vcs`` requires to correctly derive the release series
+versions for the distributions built from the branch (e.g. dev versions for
+untagged commits).
+As the ``tbump.toml`` on the release branch records the latest release of its
+release series, the version validation of a patch release prepared from the
+branch is automatically scoped to the release series.
+
+Patch releases follow the same release procedure as all other releases, with
+the ``release/vX.Y.x`` branch selected when running the `Prepare release`_ and
+`Tag release`_ workflows, and with the changes for the patch release landing on
+the release branch as backports of pull requests merged into ``main``.
 
 Deployment
 ~~~~~~~~~~
@@ -272,6 +344,7 @@ The ``.zenodo.json`` file has the version number automatically updated through
 ``tbump``, though its additional metadata should be checked periodically by
 the dev team (probably every release).
 
-.. _bump version GitHub Actions workflow: https://github.com/scikit-hep/pyhf/actions/workflows/bump-version.yml
+.. _Prepare release: https://github.com/scikit-hep/pyhf/actions/workflows/release-prepare.yml
+.. _Tag release: https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml
 .. _PyPI: https://pypi.org/project/pyhf/
 .. _TestPyPI: https://test.pypi.org/project/pyhf/

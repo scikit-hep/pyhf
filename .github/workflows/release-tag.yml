@@ -1,0 +1,69 @@
+name: Tag release
+
+# No inputs: the version tagged is the one in tbump.toml on the dispatched
+# branch, set by the merged release preparation pull request, so the tag can
+# never disagree with the bumped files.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tag:
+    name: Tag release
+    runs-on: ubuntu-latest
+    if: github.repository == 'scikit-hep/pyhf'
+    # Required reviewers and the allowed branches (main, release/v*) are
+    # enforced through the environment's protection rules
+    environment:
+      name: release-tag
+
+    steps:
+    # Implement restrictions in the workflow as well as GitHub repository
+    # settings, as the release-tag environment's protection rules live in the
+    # repository settings and GitHub auto-creates a referenced environment
+    # without protection rules
+    - name: Check branch is intended for release
+      run: |
+        if [[ "${GITHUB_REF}" != "refs/heads/main" && "${GITHUB_REF}" != refs/heads/release/v* ]]; then
+            echo "ERROR: ${GITHUB_REF} is not intended for release." >&2
+            echo "       Releases are made only from 'main' or 'release/vX.Y.x' branches." >&2
+            exit 1
+        fi
+
+    # Use GitHub PAT to authenticate so the tag push triggers the publishing
+    # and Docker workflows
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.ACCESS_TOKEN }}
+
+    - name: Read version from tbump.toml
+      id: version
+      run: |
+        version="$(python3 -c 'import tomllib; print(tomllib.load(open("tbump.toml", "rb"))["version"]["current"])')"
+        echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+    # The changes in the release are summarized by the auto-generated GitHub
+    # release notes, configured through .github/release.yml
+    - name: Create annotated tag
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        if git rev-parse --quiet --verify "refs/tags/v${VERSION}" > /dev/null; then
+            echo "ERROR: tag v${VERSION} already exists. Merge a release preparation pull request first." >&2
+            exit 1
+        fi
+
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git tag --annotate "v${VERSION}" --message "pyhf v${VERSION}"
+
+        git tag -n99 --list "v${VERSION}"
+
+    - name: Push tag to GitHub
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
+      run: git push origin "v${VERSION}"
