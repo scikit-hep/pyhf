@@ -23,6 +23,10 @@ jobs:
     name: Open release preparation pull request
     runs-on: ubuntu-latest
     if: github.repository == 'scikit-hep/pyhf'
+    # Required reviewers, the allowed branches, and access to the ACCESS_TOKEN
+    # environment secret are enforced through the environment's protection rules
+    environment:
+      name: release-prepare
 
     steps:
     - name: Check branch is intended for release
