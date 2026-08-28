@@ -2,7 +2,7 @@ import logging
 
 import pyhf
 from pyhf import events, interpolators
-from pyhf.exceptions import InvalidModifier
+from pyhf.exceptions import InvalidInterpCode, InvalidModifier
 from pyhf.parameters import ParamViewer
 from pyhf.tensor.manager import get_backend
 
@@ -104,7 +104,12 @@ class histosys_combined:
     ):
         self.batch_size = batch_size
         self.interpcode = interpcode
-        assert self.interpcode in ["code0", "code2", "code4p"]
+        if self.interpcode not in ["code0", "code2", "code4p"]:
+            msg = (
+                f"interpcode '{self.interpcode}' is not implemented for histosys."
+                " Choose from: 'code0', 'code2', 'code4p'."
+            )
+            raise InvalidInterpCode(msg)
 
         keys = [f"{mtype}/{m}" for m, mtype in modifiers]
         histosys_mods = [m for m, _ in modifiers]
