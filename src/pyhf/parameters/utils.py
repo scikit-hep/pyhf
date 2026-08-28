@@ -46,17 +46,21 @@ def reduce_paramsets_requirements(paramsets_requirements, paramsets_user_configs
             default_v = combined_paramset[k].pop()
             # get user-defined-config if it exists or set to default config
             v = paramset_user_configs.get(k, default_v)
-            # if v is a tuple, it's not user-configured, so convert to list
-            if v == "undefined":
+            # the modifier does not support configuring attribute k
+            if default_v == "undefined":
+                # the user explicitly tried to configure an unsupported attribute
+                if k in paramset_user_configs:
+                    msg = f"{paramset_name} does not use the {k} attribute."
+                    raise exceptions.InvalidModel(msg)
+                # drop the leftover empty set placeholder for unsupported attributes
+                del combined_paramset[k]
                 continue
+            # if v is a tuple, it's not user-configured, so convert to list
             if isinstance(v, tuple):
                 v = list(v)
             # this implies user-configured, so check that it has the right number of elements
             elif isinstance(v, list) and default_v and len(v) != len(default_v):
                 msg = f"Incorrect number of values ({len(v)}) for {k} were configured by you, expected {len(default_v)}."
-                raise exceptions.InvalidModel(msg)
-            elif v and default_v == "undefined":
-                msg = f"{paramset_name} does not use the {k} attribute."
                 raise exceptions.InvalidModel(msg)
 
             combined_paramset[k] = v
