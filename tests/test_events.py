@@ -1,3 +1,4 @@
+import gc
 from unittest import mock
 
 from pyhf import events
@@ -70,6 +71,24 @@ def test_trigger_noevent():
     noop_m.assert_called_once()
 
     events.noop = noop
+
+
+def test_event_function_weakref():
+    ename = "test"
+
+    def add(a, b):
+        print(a + b)  # noqa: T201
+
+    events.subscribe(ename)(add)
+    assert len(events.trigger(ename)) == 1
+    # plain function should be weakly referenced
+    del add
+    gc.collect()
+    # triggering a dead plain-function callback must not raise
+    events.trigger(ename)()
+    # and the dead callback should be flushed
+    assert len(events.trigger(ename)) == 0
+    del events.__events[ename]
 
 
 def test_subscribe_function(capsys):
