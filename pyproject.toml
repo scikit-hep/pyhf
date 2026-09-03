@@ -45,7 +45,7 @@ dependencies = [
     "click>=8.0.0",  # for console scripts
     "jsonpatch>=1.15",
     "jsonschema>=4.18.0",  # for utils; 4.18.0 for referencing-based ref resolution
-    "referencing>=0.28.4",  # for schema $ref resolution (replaces jsonschema.RefResolver)
+    "referencing",  # for schema $ref resolution, version controlled by jsonschema
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
     # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for excluded v1.16.x versions
     "scipy>=1.7.2,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
@@ -334,7 +334,7 @@ pyhf = { path = ".", editable = true }
 click = ">=8.0.0"
 jsonpatch = ">=1.15"
 jsonschema = ">=4.18.0"
-referencing = ">=0.28.4"
+referencing = "*"
 pyyaml = ">=5.1"
 scipy = ">=1.7.2,!=1.16.0,!=1.16.1,!=1.16.2"
 rich = ">=12.3.0"
