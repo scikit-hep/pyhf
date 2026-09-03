@@ -365,15 +365,19 @@ class jax_backend:
             ...   pyhf.tensorlib.astensor([1]),
             ...   pyhf.tensorlib.astensor([2, 3, 4]),
             ...   pyhf.tensorlib.astensor([5, 6, 7]))
-            [Array([1., 1., 1.], dtype=float64), Array([2., 3., 4.], dtype=float64), Array([5., 6., 7.], dtype=float64)]
+            (Array([1., 1., 1.], dtype=float64), Array([2., 3., 4.], dtype=float64), Array([5., 6., 7.], dtype=float64))
 
         Args:
             args (Array of Tensors): Sequence of arrays
 
         Returns:
-            list of Tensors: The sequence broadcast together.
+            tuple of Tensors: The sequence broadcast together.
         """
-        return jnp.broadcast_arrays(*args)
+        # jax.numpy.broadcast_arrays returns a list for jax < v0.11.1 and a
+        # tuple for jax >= v0.11.1 (c.f. https://github.com/jax-ml/jax/pull/39802).
+        # Normalize to a tuple to match numpy_backend.simple_broadcast
+        # TODO: Drop once pyhf is Python 3.12+ only
+        return tuple(jnp.broadcast_arrays(*args))
 
     def shape(self, tensor):
         return tensor.shape

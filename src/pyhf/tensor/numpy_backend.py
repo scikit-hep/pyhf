@@ -383,7 +383,7 @@ class numpy_backend(Generic[T]):
             args (Array of Tensors): Sequence of arrays
 
         Returns:
-            list of Tensors: The sequence broadcast together.
+            tuple of Tensors: The sequence broadcast together.
         """
         return np.broadcast_arrays(*args)
 
