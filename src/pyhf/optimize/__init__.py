@@ -32,6 +32,20 @@ class _OptimizerRetriever:
                     msg,
                     exc,
                 ) from exc
+        elif name == "optimistix_optimizer":
+            try:
+                from pyhf.optimize.opt_optimistix import optimistix_optimizer
+
+                assert optimistix_optimizer
+                # hide away one level of the module name
+                # pyhf.optimize.optimistix_optimizer.optimistix_optimizer->pyhf.optimize.optimistix_optimizer
+                optimistix_optimizer.__module__ = __name__
+                # for autocomplete and dir() calls
+                self.optimistix_optimizer = optimistix_optimizer
+                return optimistix_optimizer
+            except ImportError as exc:
+                msg = "There was a problem importing optimistix. The optimistix optimizer cannot be used."
+                raise exceptions.ImportBackendError(msg) from exc
         elif name == "__wrapped__":  # doctest
             pass
         return None
