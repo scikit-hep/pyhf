@@ -408,6 +408,40 @@ def test_join_items_right_outer_deep(join_items):
     ]
 
 
+def test_join_items_duplicate_secondary_keys_appended():
+    # secondary items are only matched against the primary items, so a
+    # secondary item whose key value repeats an earlier appended secondary
+    # item is appended again rather than merged
+    left_items = [{"name": "A"}]
+    right_items = [{"name": "B"}, {"name": "B"}]
+    joined = pyhf.workspace._join_items("left outer", left_items, right_items)
+    assert joined == [{"name": "A"}, {"name": "B"}, {"name": "B"}]
+
+
+def test_join_items_duplicate_primary_keys_first_match_deep():
+    # deep merging targets the first primary item with a matching key value
+    left_items = [
+        {"name": "SR", "samples": [{"name": "s1"}]},
+        {"name": "SR", "samples": [{"name": "s2"}]},
+    ]
+    right_items = [{"name": "SR", "samples": [{"name": "s3"}]}]
+    joined = pyhf.workspace._join_items(
+        "left outer", left_items, right_items, deep_merge_key="samples"
+    )
+    assert joined == [
+        {"name": "SR", "samples": [{"name": "s1"}, {"name": "s3"}]},
+        {"name": "SR", "samples": [{"name": "s2"}]},
+    ]
+
+
+def test_join_items_outer_equal_items_not_duplicated():
+    # an outer join appends a secondary item only if no primary item equals it
+    left_items = [{"name": "A", "x": 1}]
+    right_items = [{"name": "A", "x": 1}, {"name": "A", "x": 2}]
+    joined = pyhf.workspace._join_items("outer", left_items, right_items)
+    assert joined == [{"name": "A", "x": 1}, {"name": "A", "x": 2}]
+
+
 @pytest.mark.parametrize("join", ["none", "outer"])
 def test_combine_workspace_same_channels_incompatible_structure(
     workspace_factory, join
