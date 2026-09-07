@@ -1,5 +1,5 @@
 # core
-scipy==1.7.2  # first release with Python 3.10 wheels
+scipy==1.7.2  # c.f. PR #2757
 click==8.0.0  # c.f. PR #1958, #1909
 rich==12.3.0  # c.f. PR #2650
 jsonschema==4.15.0  # c.f. PR #1979
@@ -9,7 +9,7 @@ numpy==1.22.0  # c.f. PR #2652
 # xmlio
 uproot==4.1.1
 # minuit
-iminuit==2.9.0  # first release with Python 3.10 wheels
+iminuit==2.9.0  # c.f. PR #2757
 # jax
 # Use Google Cloud Storage buckets for long term wheel support
 # c.f. https://github.com/google/jax/discussions/7608#discussioncomment-1269342
