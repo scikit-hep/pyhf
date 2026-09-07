@@ -1,0 +1,71 @@
+{
+  "channels": [
+    {
+      "name": "c1",
+      "samples": [
+        {
+          "name": "s1",
+          "data": [
+            5.0,
+            1.0
+          ],
+          "modifiers": [
+            {
+              "name": "func1",
+              "type": "purefunc"
+            }
+          ]
+        },
+        {
+          "name": "s2",
+          "data": [1.0, 5.0],
+          "modifiers": [
+            {
+              "name": "func2",
+              "type": "purefunc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "c2",
+      "samples": [
+        {
+          "name": "s1",
+          "data": [10, 1, 1],
+          "modifiers": [
+            {
+              "name": "func3",
+              "type": "purefunc"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "names": ["func1", "func2"],
+      "expression": "(kappa ** 2 + func3, kappa ** 3 + alpha)",
+      "language": "sympy"
+    },
+    {
+      "names": ["func3"],
+      "expression": "func1 + sqrt(theta)",
+      "language": "sympy"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "kappa",
+      "inits": [1.5],
+      "bounds": [[0.0, 12.0]]
+    },
+    {
+      "name": "theta",
+      "inits": [2.0],
+      "bounds": [[0.0, 20.0]]
+    }
+  ]
+}

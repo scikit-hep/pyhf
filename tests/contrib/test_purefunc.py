@@ -1,0 +1,187 @@
+import json
+
+import jax.numpy as jnp
+import numpy as np
+import pytest
+
+import pyhf
+from pyhf.contrib.extended_modifiers import purefunc
+
+
+@pytest.fixture
+def modifier_set():
+    return purefunc.enable()
+
+
+def test_missing_bindings(datadir, modifier_set):
+
+    with datadir.joinpath("single_func.json").open() as spec_file:
+        spec = json.load(spec_file)
+    del spec["bindings"]
+    pyhf.set_backend("jax")
+    with pytest.raises(pyhf.exceptions.InvalidModel):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
+        )
+
+
+def test_backend(datadir, modifier_set):
+    with datadir.joinpath("single_func.json").open() as spec_file:
+        spec = json.load(spec_file)
+
+    with pytest.raises(pyhf.exceptions.InvalidWorkspaceOperation):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
+        )
+
+
+def test_single_func(datadir, modifier_set):
+    with datadir.joinpath("single_func.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="kappa",
+        validate=True,
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
+    )
+
+    assert model.config.suggested_init() == pytest.approx([1.5])
+    assert model.config.suggested_bounds()[0] == pytest.approx([0.0, 12.0])
+    observation = [10, 2]
+    inferred = pyhf.infer.mle.fit(data=observation, pdf=model)
+
+    assert pytest.approx(np.sqrt(2), rel=1e-3) == inferred[0]
+
+
+def test_multi_channel_batched(datadir, modifier_set):
+    with datadir.joinpath("two_channels.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        batch_size=2,
+        poi_name="alpha",
+        validate=True,
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
+    )
+    assert len(model.config.parameters) == 2
+    bounds = np.array(model.config.suggested_bounds())
+    alpha_idx = model.config.par_slice("alpha")
+    kappa_idx = model.config.par_slice("kappa")
+
+    pars = jnp.array([[2, 5], [5, 2]])
+
+    assert np.all(np.isclose(bounds[alpha_idx], [[0, 6.0]]))
+    assert np.all(np.isclose(bounds[kappa_idx], [[0.0, 10.0]]))
+
+    observation = np.reshape([[5, 9, 9], [2, 27, 27]], (2, 3))
+
+    assert model.expected_actualdata(pars) == pytest.approx(observation, rel=1e-3)
+
+    inferred = pyhf.infer.mle.fit(observation, model)
+    assert inferred[alpha_idx] == pytest.approx(2.0, rel=1e-3)
+    assert inferred[kappa_idx] == pytest.approx(5.0, rel=1e-3)
+
+
+def test_language(datadir, modifier_set):
+    with datadir.joinpath("single_func.json").open() as spec_file:
+        spec = json.load(spec_file)
+    spec["bindings"][0]["language"] = "not_sympy"
+    pyhf.set_backend("jax")
+
+    with pytest.raises(purefunc.InvalidLanguage):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
+        )
+
+
+def test_backward_bindings(datadir, modifier_set):
+    with datadir.joinpath("backward_binding.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="kappa",
+        validate=True,
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
+    )
+
+    assert set(model.config.parameters) == {"kappa", "theta"}
+
+
+def test_circular_bindings(datadir, modifier_set):
+    with datadir.joinpath("circular_binding.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    with pytest.raises(purefunc.InvalidExpression):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
+        )
+
+
+def test_single_binding_tuple_expr(datadir, modifier_set):
+    with datadir.joinpath("single_binding_tuple_expr.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    with pytest.raises(purefunc.InvalidExpression):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
+        )
+
+
+def test_tuple_binding_single_expr(datadir, modifier_set):
+    with datadir.joinpath("tuple_binding_single_expr.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+    with pytest.raises(purefunc.InvalidExpression):
+        pyhf.Model(
+            spec,
+            modifier_set=modifier_set,
+            poi_name="kappa",
+            validate=True,
+            schema="../../contrib/extended_modifiers/defs_purefunc.json",
+        )
+
+
+def test_no_purefunc(datadir, modifier_set):
+    with datadir.joinpath("no_purefunc.json").open() as spec_file:
+        spec = json.load(spec_file)
+    pyhf.set_backend("jax")
+
+    model = pyhf.Model(
+        spec,
+        modifier_set=modifier_set,
+        poi_name="mu",
+        validate=True,
+        schema="../../contrib/extended_modifiers/defs_purefunc.json",
+    )
+
+    assert np.all(
+        np.isclose(model.expected_data([1.0, 1.0, 1.0]), [55.0, 70.0, 100.0, 25.0])
+    )
