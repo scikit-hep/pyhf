@@ -13,7 +13,7 @@ authors:
 - family-names: "Stark"
   given-names: "Giordon"
   orcid: "https://orcid.org/0000-0001-6616-3433"
-  affiliation: "SCIPP, University of California, Santa Cruz"
+  affiliation: "EFI, University of Chicago"
 title: "pyhf: v0.7.6"
 version: 0.7.6
 doi: 10.5281/zenodo.1169739
