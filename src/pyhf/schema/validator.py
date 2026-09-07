@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import numbers
 from collections.abc import Mapping
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin
 
 import jsonschema
-import referencing.exceptions
 from referencing import Registry, Resource
-from referencing.exceptions import NoSuchResource
+from referencing.exceptions import NoSuchResource, Unresolvable
 from referencing.jsonschema import DRAFT6
 
 import pyhf.exceptions
@@ -44,28 +43,25 @@ def _retrieve_schema(uri: str) -> Resource:
     """
     A ``referencing`` retrieve callback that loads a pyhf schema by its URI.
 
-    :func:`validate` resolves the top-level ``$ref`` of a schema (e.g.
-    ``defs.json``) against the directory of the requested version under
-    :data:`pyhf.schema.variables.SCHEMA_BASE`, so the URIs that reach this
-    callback are the bundled ``$id``\\ s. Stripping the base leaves the path
-    relative to :attr:`pyhf.schema.path`, which is loaded through
-    :func:`pyhf.schema.load_schema` so that referenced schemas are cached in
-    :data:`pyhf.schema.variables.SCHEMA_CACHE` after the first load. Nothing is
-    ever fetched from the network.
+    Only URIs under :data:`pyhf.schema.variables.SCHEMA_BASE` are served, from
+    the path relative to :attr:`pyhf.schema.path` through
+    :func:`pyhf.schema.load_schema` (so they are cached). Nothing is ever
+    fetched from the network.
 
     Raises:
-        ~referencing.exceptions.NoSuchResource: if ``uri`` is an absolute URI
-         that is not under :data:`pyhf.schema.variables.SCHEMA_BASE`, as
-         nothing under :attr:`pyhf.schema.path` can satisfy it.
+        ~referencing.exceptions.NoSuchResource: if ``uri`` is not under
+         :data:`pyhf.schema.variables.SCHEMA_BASE`.
         ~pyhf.exceptions.SchemaNotFound: if the schema is not found under
          :attr:`pyhf.schema.path`. ``referencing`` surfaces this as
          :class:`~referencing.exceptions.Unresolvable` with the cause chain
          intact.
     """
-    parts = urlsplit(uri.removeprefix(variables.SCHEMA_BASE))
-    if parts.scheme or parts.netloc:
+    if not uri.startswith(variables.SCHEMA_BASE):
         raise NoSuchResource(ref=uri)
-    return Resource.from_contents(load_schema(parts.path), default_specification=DRAFT6)
+    return Resource.from_contents(
+        load_schema(uri.removeprefix(variables.SCHEMA_BASE)),
+        default_specification=DRAFT6,
+    )
 
 
 def validate(
@@ -117,19 +113,16 @@ def validate(
         Validator = jsonschema.validators.extend(Validator, type_checker=type_checker)
 
     # Every pyhf schema is a bare draft-06 ``$ref`` shell (e.g. ``model.json``
-    # points at ``defs.json#/definitions/model``). Under draft-06 a sibling
-    # ``$ref`` suppresses ``$id`` (c.f. referencing.jsonschema._legacy_id), so
-    # jsonschema cannot infer the base URI of the root schema and the relative
-    # ``defs.json`` reference fails to resolve. Enter validation through the
-    # absolute form of that reference instead, anchored at the on-disk directory
-    # of the requested version rather than at the schema's own ``$id``: as with
-    # the RefResolver base_uri this replaces, a stale or copy-pasted ``$id`` then
-    # cannot redirect ``defs.json`` to another version. ``_retrieve_schema``
-    # loads it from ``pyhf.schema.path``. Draft-06 ignores the siblings of
-    # ``$ref``, so this is equivalent to validating against the schema itself.
-    # (Referencing the document by its ``$id`` would instead make jsonschema
-    # re-select the stock Draft6Validator from the document's ``$schema`` and
-    # drop the tensor-aware type checker, c.f. jsonschema.validators.validator_for.)
+    # points at ``defs.json#/definitions/model``), and draft-06 ignores the
+    # siblings of ``$ref`` including ``$id`` (c.f. referencing.jsonschema._legacy_id),
+    # so jsonschema cannot infer a base URI for the relative ``defs.json``. Enter
+    # validation through the absolute form of that reference instead, anchored at
+    # the directory of the requested version as the RefResolver base_uri was, so
+    # that a stale or copy-pasted ``$id`` cannot redirect ``defs.json`` to another
+    # version. (Referencing the document by its ``$id`` would instead make
+    # jsonschema re-select the stock Draft6Validator from the document's
+    # ``$schema`` and drop the tensor-aware type checker, c.f.
+    # jsonschema.validators.validator_for.)
     base_uri = f"{variables.SCHEMA_BASE}{version}/"
     root = {"$ref": urljoin(base_uri, schema["$ref"])} if "$ref" in schema else schema
     validator = Validator(
@@ -140,7 +133,7 @@ def validate(
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
         raise pyhf.exceptions.InvalidSpecification(err, schema_name) from err
-    except referencing.exceptions.Unresolvable as err:
+    except Unresolvable as err:
         msg = (
             f"Could not resolve the schema reference {err.ref!r} while validating against "
             f"{schema_name} (version {version}). Referenced schemas must have an $id under "
