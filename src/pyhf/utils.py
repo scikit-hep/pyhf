@@ -156,9 +156,7 @@ def environment_info():
     os_version = "Cannot be determined"
     if sys.platform == "linux":
         try:
-            from platform import freedesktop_os_release
-
-            os_release = freedesktop_os_release()
+            os_release = platform.freedesktop_os_release()
         # ValueError covers UnicodeDecodeError from a non-UTF-8 os-release file
         except (OSError, ValueError):
             pass

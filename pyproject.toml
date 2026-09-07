@@ -296,6 +296,7 @@ extend-select = [
 ]
 ignore = [
   "E402",
+  "B905",    # zip() without explicit strict= (revisit)
   "PLC0415", # imports not at top level (revisit)
   "PLR09",   # Too many X (complexity)
   "PLR2004", # Magic value comparison

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import weakref
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable, TypeVar, cast
+from typing import TypeVar, cast
 
 # See https://mypy.readthedocs.io/en/stable/generics.html#declaring-decorators
 TCallable = TypeVar("TCallable", bound=Callable)

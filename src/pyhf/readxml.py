@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import logging
 import xml.etree.ElementTree as ET
-from collections.abc import Iterable, MutableMapping, MutableSequence, Sequence
+from collections.abc import (
+    Callable,
+    Iterable,
+    MutableMapping,
+    MutableSequence,
+    Sequence,
+)
 from pathlib import Path
 from typing import (
     IO,
-    Callable,
-    Union,
     cast,
 )
 
@@ -45,7 +49,7 @@ from pyhf.typing import (
 
 log = logging.getLogger(__name__)
 
-FileCacheType = MutableMapping[str, tuple[Union[IO[str], IO[bytes]], set[str]]]
+FileCacheType = MutableMapping[str, tuple[IO[str] | IO[bytes], set[str]]]
 MountPathType = Iterable[tuple[Path, Path]]
 ResolverType = Callable[[str], Path]
 

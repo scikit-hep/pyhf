@@ -1,6 +1,4 @@
 import importlib.metadata
-import io
-import pathlib
 import platform
 import sys
 
@@ -114,51 +112,6 @@ def test_environment_info_linux_oserror(monkeypatch):
     )
     info = pyhf.utils.environment_info()
     assert "* os version: Cannot be determined" in info
-
-
-def test_environment_info_linux_fallback_no_os_release_file(monkeypatch):
-    # Simulate Python 3.9 (no platform.freedesktop_os_release) with no os-release file
-    monkeypatch.setattr(sys, "platform", "linux")
-    monkeypatch.delattr(platform, "freedesktop_os_release", raising=False)
-
-    original_open = pathlib.Path.open
-
-    def mock_open(self, *args, **kwargs):
-        if "os-release" in str(self):
-            raise FileNotFoundError(str(self))
-        return original_open(self, *args, **kwargs)
-
-    monkeypatch.setattr(pathlib.Path, "open", mock_open)
-    info = pyhf.utils.environment_info()
-    assert "* os version: Cannot be determined" in info
-
-
-def test_environment_info_linux_fallback_parses_os_release(monkeypatch):
-    # Simulate Python 3.9 with an os-release file exercising what the spec
-    # permits: comment lines, quoted values, values containing "=", and no
-    # NAME/VERSION so the reported value is PRETTY_NAME, whose embedded "="
-    # pins that values are only split on the first "="
-    monkeypatch.setattr(sys, "platform", "linux")
-    monkeypatch.delattr(platform, "freedesktop_os_release", raising=False)
-
-    os_release_content = (
-        "# This file is part of systemd\n"
-        'PRETTY_NAME="Arch Linux (build=rolling)"\n'
-        "ID=arch\n"
-        'BUG_REPORT_URL="https://bugs.example.org/?product=arch"\n'
-        "\n"
-    )
-
-    original_open = pathlib.Path.open
-
-    def mock_open(self, *args, **kwargs):
-        if "os-release" in str(self):
-            return io.StringIO(os_release_content)
-        return original_open(self, *args, **kwargs)
-
-    monkeypatch.setattr(pathlib.Path, "open", mock_open)
-    info = pyhf.utils.environment_info()
-    assert "* os version: Arch Linux (build=rolling)" in info
 
 
 def test_environment_info_linux_version_id_fallback(monkeypatch):
