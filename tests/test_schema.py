@@ -169,21 +169,13 @@ def test_validate_caches_referenced_schema(self_restoring_schema_globals):
         }
 
 
-@pytest.mark.parametrize(
-    "schema_id",
-    [
-        "https://example.com/schemas/1.1.0/model.json",
-        f"{pyhf.schema.variables.SCHEMA_BASE}1.1.0/model.json",
-    ],
-    ids=["foreign_id", "missing_defs"],
-)
 @pytest.mark.usefixtures("self_restoring_schema_globals")
-def test_validate_unresolvable_ref(tmp_path, schema_id):
+def test_validate_unresolvable_ref(tmp_path):
     schema_dir = tmp_path / "1.1.0"
     schema_dir.mkdir()
     schema = {
         "$schema": "http://json-schema.org/draft-06/schema#",
-        "$id": schema_id,
+        "$id": f"{pyhf.schema.variables.SCHEMA_BASE}1.1.0/model.json",
         "$ref": "defs.json#/definitions/model",
     }
     (schema_dir / "model.json").write_text(json.dumps(schema), encoding="utf-8")
@@ -196,6 +188,69 @@ def test_validate_unresolvable_ref(tmp_path, schema_id):
     ):
         pyhf.schema.validate({}, "model.json", version="1.1.0")
     assert isinstance(excinfo.value.__cause__, referencing.exceptions.Unresolvable)
+
+
+@pytest.mark.parametrize(
+    "schema_id",
+    [
+        "1.0.0/model.json",
+        f"{pyhf.schema.variables.SCHEMA_BASE}1.0.0/model.json",
+        "https://example.com/schemas/1.1.0/model.json",
+    ],
+    ids=["stale_relative_id", "stale_bundled_id", "foreign_id"],
+)
+@pytest.mark.usefixtures("self_restoring_schema_globals")
+def test_validate_ref_resolved_against_schema_path_not_id(tmp_path, schema_id):
+    """
+    The top-level $ref of a schema must resolve against the on-disk directory of
+    the requested version, not against the schema's own $id, so that a stale or
+    copy-pasted $id cannot redirect defs.json to another version.
+    c.f. https://github.com/scikit-hep/pyhf/pull/2716#discussion_r3947972735
+    """
+    draft = "http://json-schema.org/draft-06/schema#"
+    schemas = {
+        "1.1.0/model.json": {
+            "$schema": draft,
+            "$id": schema_id,
+            "$ref": "defs.json#/definitions/model",
+        },
+        "1.1.0/defs.json": {
+            "$schema": draft,
+            "$id": "1.1.0/defs.json",
+            "definitions": {
+                "model": {
+                    "type": "object",
+                    "properties": {"must_have_marker": {"type": "string"}},
+                    "required": ["must_have_marker"],
+                    "additionalProperties": False,
+                }
+            },
+        },
+        "1.0.0/defs.json": {
+            "$schema": draft,
+            "$id": "1.0.0/defs.json",
+            "definitions": {
+                "model": {
+                    "type": "object",
+                    "properties": {"must_have_marker": {"type": "string"}},
+                    "additionalProperties": True,
+                }
+            },
+        },
+    }
+    for name, schema in schemas.items():
+        path = tmp_path / name
+        path.parent.mkdir(exist_ok=True)
+        path.write_text(json.dumps(schema), encoding="utf-8")
+
+    with pyhf.schema(tmp_path):
+        pyhf.schema.validate({"must_have_marker": "x"}, "model.json", version="1.1.0")
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            pyhf.schema.validate({}, "model.json", version="1.1.0")
+        assert set(pyhf.schema.variables.SCHEMA_CACHE) == {
+            "1.1.0/model.json",
+            "1.1.0/defs.json",
+        }
 
 
 def test_no_channels():

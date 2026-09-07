@@ -44,13 +44,14 @@ def _retrieve_schema(uri: str) -> Resource:
     """
     A ``referencing`` retrieve callback that loads a pyhf schema by its URI.
 
-    Cross-schema ``$ref``\\ s (e.g. ``defs.json``) are resolved against the
-    referring schema's ``$id``. For the bundled schemas these are absolute URIs
-    under :data:`pyhf.schema.variables.SCHEMA_BASE`; for custom schemas (see
-    :class:`pyhf.schema.Schema`) they are relative paths. Stripping the base
-    leaves the path relative to :attr:`pyhf.schema.path`, which is loaded
-    through :func:`pyhf.schema.load_schema` so that referenced schemas are
-    cached in :data:`pyhf.schema.variables.SCHEMA_CACHE` after the first load.
+    :func:`validate` resolves the top-level ``$ref`` of a schema (e.g.
+    ``defs.json``) against the directory of the requested version under
+    :data:`pyhf.schema.variables.SCHEMA_BASE`, so the URIs that reach this
+    callback are the bundled ``$id``\\ s. Stripping the base leaves the path
+    relative to :attr:`pyhf.schema.path`, which is loaded through
+    :func:`pyhf.schema.load_schema` so that referenced schemas are cached in
+    :data:`pyhf.schema.variables.SCHEMA_CACHE` after the first load. Nothing is
+    ever fetched from the network.
 
     Raises:
         ~referencing.exceptions.NoSuchResource: if ``uri`` is an absolute URI
@@ -120,16 +121,17 @@ def validate(
     # ``$ref`` suppresses ``$id`` (c.f. referencing.jsonschema._legacy_id), so
     # jsonschema cannot infer the base URI of the root schema and the relative
     # ``defs.json`` reference fails to resolve. Enter validation through the
-    # absolute form of that reference instead: the resolver is then anchored at
-    # the referenced schema's URI through the public API, and ``_retrieve_schema``
+    # absolute form of that reference instead, anchored at the on-disk directory
+    # of the requested version rather than at the schema's own ``$id``: as with
+    # the RefResolver base_uri this replaces, a stale or copy-pasted ``$id`` then
+    # cannot redirect ``defs.json`` to another version. ``_retrieve_schema``
     # loads it from ``pyhf.schema.path``. Draft-06 ignores the siblings of
     # ``$ref``, so this is equivalent to validating against the schema itself.
     # (Referencing the document by its ``$id`` would instead make jsonschema
     # re-select the stock Draft6Validator from the document's ``$schema`` and
     # drop the tensor-aware type checker, c.f. jsonschema.validators.validator_for.)
-    root = (
-        {"$ref": urljoin(schema["$id"], schema["$ref"])} if "$ref" in schema else schema
-    )
+    base_uri = f"{variables.SCHEMA_BASE}{version}/"
+    root = {"$ref": urljoin(base_uri, schema["$ref"])} if "$ref" in schema else schema
     validator = Validator(
         root, registry=Registry(retrieve=_retrieve_schema), format_checker=None
     )
