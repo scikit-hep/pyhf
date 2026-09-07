@@ -6,7 +6,6 @@ from typing import (
     Protocol,
     SupportsIndex,
     TypedDict,
-    Union,
 )
 
 __all__ = (
@@ -33,10 +32,10 @@ __all__ = (
 )
 
 
-PathOrStr = Union[str, os.PathLike[str]]
+PathOrStr = str | os.PathLike[str]
 
 Shape = tuple[int, ...]
-ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
+ShapeLike = SupportsIndex | Sequence[SupportsIndex]
 
 
 class ParameterBase(TypedDict, total=False):
@@ -111,9 +110,9 @@ class LumiSys(TypedDict):
     data: None
 
 
-Modifier = Union[
-    NormSys, NormFactor, HistoSys, StatError, ShapeSys, ShapeFactor, LumiSys
-]
+Modifier = (
+    NormSys | NormFactor | HistoSys | StatError | ShapeSys | ShapeFactor | LumiSys
+)
 
 
 class SampleBase(TypedDict, total=False):

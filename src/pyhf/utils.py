@@ -156,36 +156,7 @@ def environment_info():
     os_version = "Cannot be determined"
     if sys.platform == "linux":
         try:
-            # platform.freedesktop_os_release added in Python 3.10
-            # FIXME: Remove when Python 3.9 support dropped
-            from platform import freedesktop_os_release
-        except ImportError:
-            # c.f. https://docs.python.org/3/library/platform.html#platform.freedesktop_os_release
-            from pathlib import Path
-
-            def freedesktop_os_release():
-                # Values may contain "=" and files may contain comment lines
-                # c.f. https://www.freedesktop.org/software/systemd/man/os-release.html
-                for os_release_path in (
-                    Path("/etc/os-release"),
-                    Path("/usr/lib/os-release"),
-                ):
-                    try:
-                        with os_release_path.open(encoding="utf8") as read_file:
-                            return {
-                                key: value.strip("\"'")
-                                for key, _, value in (
-                                    line.strip().partition("=")
-                                    for line in read_file
-                                    if "=" in line and not line.lstrip().startswith("#")
-                                )
-                            }
-                    except OSError:  # noqa: PERF203
-                        continue
-                raise OSError
-
-        try:
-            os_release = freedesktop_os_release()
+            os_release = platform.freedesktop_os_release()
         # ValueError covers UnicodeDecodeError from a non-UTF-8 os-release file
         except (OSError, ValueError):
             pass

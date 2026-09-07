@@ -51,7 +51,6 @@ repos:
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v2.3.0
     # check the oldest and newest supported Pythons
-    # except skip python 3.9 for numpy, due to poor typing
     hooks:
       - id: mypy
         name: mypy with Python 3.10
