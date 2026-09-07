@@ -94,6 +94,13 @@ intersphinx_mapping = get_intersphinx_mapping(
         "jsonpatch",
     }
 )
+# docs.scipy.org is slow and unreliable, so fetch the inventory from the static mirror
+# while keeping link targets pointing at the stable docs.
+# c.f. https://github.com/scipy/docs.scipy.org/issues/102#issuecomment-5547829643
+intersphinx_mapping["scipy"] = (
+    "https://docs.scipy.org/doc/scipy/",
+    "https://static.scipy.org/doc/scipy/objects.inv",
+)
 
 # GitHub repo
 issues_github_path = "scikit-hep/pyhf"
