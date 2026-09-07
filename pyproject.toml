@@ -47,7 +47,7 @@ dependencies = [
     "jsonschema>=4.15.0",  # for utils
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
     # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for excluded v1.16.x versions
-    "scipy>=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
+    "scipy>=1.7.2,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
     "rich>=12.3.0",  # for progress bars
     "numpy>=1.22.0",  # compatible versions controlled through scipy
 ]
@@ -69,7 +69,7 @@ jax = [
     "jaxlib>=0.4.1",  # c.f. PR #2079
 ]
 xmlio = ["uproot>=4.1.1"]  # c.f. PR #1567
-minuit = ["iminuit>=2.7.0"]  # c.f. PR #1895
+minuit = ["iminuit>=2.9.0"]  # first release with Python 3.10 wheels
 contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
@@ -335,7 +335,7 @@ click = ">=8.0.0"
 jsonpatch = ">=1.15"
 jsonschema = ">=4.15.0"
 pyyaml = ">=5.1"
-scipy = ">=1.5.4,!=1.16.0,!=1.16.1,!=1.16.2"
+scipy = ">=1.7.2,!=1.16.0,!=1.16.1,!=1.16.2"
 rich = ">=12.3.0"
 numpy = ">=1.22.0"
 
@@ -360,7 +360,7 @@ matplotlib = ">=3.0.0"
 requests = ">=2.22.0"
 
 [tool.pixi.feature.minuit.dependencies]
-iminuit = ">=2.7.0"
+iminuit = ">=2.9.0"
 
 [tool.pixi.feature.test.dependencies]
 pytest = ">=8.4.0"
