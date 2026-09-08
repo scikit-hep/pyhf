@@ -52,21 +52,20 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
     else:
         primary_items, secondary_items = left_items, right_items
     joined_items = copy.deepcopy(primary_items)
-    # Group the primary items by key value so each lookup below is O(1). Items
-    # sharing a key value keep their order, so ``[0]`` is the item that
-    # ``list.index`` used to find. The groups are deliberately not updated as
-    # secondary items are appended: a secondary item whose key value matches
-    # only an earlier appended secondary item is appended again.
-    key_to_items = collections.defaultdict(list)
+    # Snapshot of the primary items grouped by key value, holding the live
+    # objects in joined_items so the deep merge below updates them in place.
+    # Appended secondary items are not added, matching the pre-existing join
+    # semantics: a secondary item is only ever matched against primary items.
+    key_to_items = {}
     for item in joined_items:
-        key_to_items[item[key]].append(item)
+        key_to_items.setdefault(item[key], []).append(item)
     for secondary_item in secondary_items:
         # items with different key values can never compare equal, so this
-        # group is all the ``outer`` equality check below has to scan
-        matching_items = key_to_items.get(secondary_item[key], [])
+        # bounds the ``outer`` equality scan below
+        same_key_items = key_to_items.get(secondary_item[key], [])
         # first, check for deep merging
-        if matching_items and deep_merge_key is not None:
-            primary_item = matching_items[0]
+        if same_key_items and deep_merge_key is not None:
+            primary_item = same_key_items[0]
             primary_item[deep_merge_key] = _join_items(
                 "left outer",
                 primary_item[deep_merge_key],
@@ -79,8 +78,8 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
         #   - if right outer join and item (by name) is on left and not in right
         elif (
             join == "none"
-            or (join == "outer" and secondary_item not in matching_items)
-            or (join in ["left outer", "right outer"] and not matching_items)
+            or (join == "outer" and secondary_item not in same_key_items)
+            or (join in ["left outer", "right outer"] and not same_key_items)
         ):
             joined_items.append(copy.deepcopy(secondary_item))
     return joined_items
