@@ -243,7 +243,7 @@ pygments_style = "sphinx"
 todo_include_todos = False
 
 
-# -- Options for LLM-friendly output ----------------------------------------
+# Options for LLM-friendly output
 
 # The default is the full README, which is too long for the summary block
 llms_txt_description = (
