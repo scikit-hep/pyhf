@@ -420,6 +420,7 @@ jupyterlite-sphinx = ">=0.13.1"
 jupyterlite-pyodide-kernel = ">=0.0.7"
 jupytext = ">=1.14.0"
 ipython = "!=8.7.0"
+sphinx-llm = ">=1.0.0"
 rsync = ">=3.4.1,<4"
 
 [tool.pixi.feature.docs.tasks.build-docs]
