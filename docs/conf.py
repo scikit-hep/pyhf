@@ -66,7 +66,7 @@ extensions = [
     "sphinx_copybutton",
     "xref",
     "jupyterlite_sphinx",
-    "sphinx_llm.txt",
+    "sphinx_llm.txt",  # extension module sphinx_llm.txt, not a file; generates llms.txt, llms-full.txt, and per-page .md
 ]
 bibtex_bibfiles = [
     "bib/docs.bib",
