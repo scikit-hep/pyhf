@@ -1,7 +1,7 @@
-.. pyhf documentation master file, created by
-   sphinx-quickstart on Fri Feb  9 11:58:49 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root ``toctree`` directive.
+.. meta::
+   :description: pyhf is a pure-Python implementation of the HistFactory
+      statistical model, with support for automatic differentiation and GPU
+      acceleration.
 
 .. toctree::
    :hidden:
