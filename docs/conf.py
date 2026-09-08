@@ -66,6 +66,7 @@ extensions = [
     "sphinx_copybutton",
     "xref",
     "jupyterlite_sphinx",
+    "sphinx_llm.txt",
 ]
 bibtex_bibfiles = [
     "bib/docs.bib",
@@ -240,6 +241,16 @@ pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+
+# Options for LLM-friendly output
+
+# The default is the full README, which is too long for the summary block
+llms_txt_description = (
+    "Documentation for pyhf, a pure-Python implementation of the HistFactory"
+    " statistical model for multi-bin histogram-based analysis, with support"
+    " for automatic differentiation and GPU-accelerated computational backends."
+)
 
 
 # -- Options for HTML output ----------------------------------------------
