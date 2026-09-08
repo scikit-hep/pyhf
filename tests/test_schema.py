@@ -1,11 +1,22 @@
 import importlib
 import json
+import pathlib
 import sys
 
 import pytest
+import referencing.exceptions
 from pytest_socket import socket_disabled  # noqa: F401
 
 import pyhf
+from pyhf.schema.validator import _retrieve_schema
+
+
+def _write_schemas(root, schemas):
+    """Write ``{relative path: schema}`` as JSON files under ``root``."""
+    for name, schema in schemas.items():
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(schema), encoding="utf-8")
 
 
 @pytest.mark.parametrize("version", ["1.0.0"])
@@ -61,7 +72,11 @@ def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
     assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
     with (new_path / "custom.json").open(encoding="utf-8") as spec_file:
         assert pyhf.Workspace(json.load(spec_file))
-    assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
+    # the referenced defs.json is cached alongside the validated schema
+    assert set(pyhf.schema.variables.SCHEMA_CACHE) == {
+        "1.1.0/workspace.json",
+        "1.1.0/defs.json",
+    }
 
 
 def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_globals):
@@ -79,7 +94,10 @@ def test_schema_changeable_context(datadir, monkeypatch, self_restoring_schema_g
         assert len(pyhf.schema.variables.SCHEMA_CACHE) == 0
         with (new_path / "custom.json").open(encoding="utf-8") as spec_file:
             assert pyhf.Workspace(json.load(spec_file))
-        assert len(pyhf.schema.variables.SCHEMA_CACHE) == 1
+        assert set(pyhf.schema.variables.SCHEMA_CACHE) == {
+            "1.1.0/workspace.json",
+            "1.1.0/defs.json",
+        }
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
 
@@ -102,6 +120,113 @@ def test_schema_changeable_context_error(
             raise ZeroDivisionError
     assert old_path == pyhf.schema.path
     assert old_cache == pyhf.schema.variables.SCHEMA_CACHE
+
+
+def test_load_schema_cache_hit(monkeypatch):
+    # defs.json is cached at import, so this must not touch the search path
+    monkeypatch.setattr(
+        pyhf.schema.variables, "schemas", pathlib.Path("/nonexistent"), raising=True
+    )
+    cached = pyhf.schema.variables.SCHEMA_CACHE["1.0.0/defs.json"]
+    assert pyhf.schema.load_schema("1.0.0/defs.json") is cached
+
+
+def test_retrieve_schema_bundled():
+    resource = _retrieve_schema(f"{pyhf.schema.variables.SCHEMA_BASE}1.0.0/defs.json")
+    assert resource.contents is pyhf.schema.load_schema("1.0.0/defs.json")
+
+
+@pytest.mark.parametrize(
+    "uri", ["https://example.com/schemas/defs.json", "//example.com/defs.json"]
+)
+def test_retrieve_schema_foreign_absolute_id(uri):
+    with pytest.raises(referencing.exceptions.NoSuchResource):
+        _retrieve_schema(uri)
+
+
+def test_retrieve_schema_missing():
+    with pytest.raises(pyhf.exceptions.SchemaNotFound, match=r"0\.0\.0/defs\.json"):
+        _retrieve_schema(f"{pyhf.schema.variables.SCHEMA_BASE}0.0.0/defs.json")
+
+
+def test_validate_caches_referenced_schema(self_restoring_schema_globals):
+    old_path, _ = self_restoring_schema_globals
+    spec = pyhf.simplemodels.uncorrelated_background(
+        signal=[10.0], bkg=[20.0], bkg_uncertainty=[5.0]
+    ).spec
+    # same search path, but starting from an empty cache
+    with pyhf.schema(old_path):
+        assert not pyhf.schema.variables.SCHEMA_CACHE
+        pyhf.schema.validate(spec, "model.json")
+        assert set(pyhf.schema.variables.SCHEMA_CACHE) == {
+            "1.0.0/model.json",
+            "1.0.0/defs.json",
+        }
+
+
+@pytest.mark.usefixtures("self_restoring_schema_globals")
+def test_validate_unresolvable_ref(tmp_path):
+    schema = {
+        "$schema": "http://json-schema.org/draft-06/schema#",
+        "$id": f"{pyhf.schema.variables.SCHEMA_BASE}1.1.0/model.json",
+        "$ref": "defs.json#/definitions/model",
+    }
+    _write_schemas(tmp_path, {"1.1.0/model.json": schema})
+
+    with (
+        pyhf.schema(tmp_path),
+        pytest.raises(
+            pyhf.exceptions.SchemaNotFound, match=r"1\.1\.0/defs\.json"
+        ) as excinfo,
+    ):
+        pyhf.schema.validate({}, "model.json", version="1.1.0")
+    assert isinstance(excinfo.value.__cause__, referencing.exceptions.Unresolvable)
+
+
+@pytest.mark.parametrize(
+    "schema_id",
+    ["1.0.0/model.json", "https://example.com/schemas/1.1.0/model.json"],
+    ids=["stale_id", "foreign_id"],
+)
+@pytest.mark.usefixtures("self_restoring_schema_globals")
+def test_validate_ref_resolved_against_schema_path_not_id(tmp_path, schema_id):
+    """
+    The top-level $ref of a schema must resolve against the on-disk directory of
+    the requested version, not against the schema's own $id, so that a stale or
+    copy-pasted $id cannot redirect defs.json to another version.
+    c.f. https://github.com/scikit-hep/pyhf/pull/2716#discussion_r3947972735
+    """
+    schemas = {
+        "1.1.0/model.json": {
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": schema_id,
+            "$ref": "defs.json#/definitions/model",
+        },
+        "1.1.0/defs.json": {
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "1.1.0/defs.json",
+            "definitions": {
+                "model": {
+                    "type": "object",
+                    "properties": {"must_have_marker": {"type": "string"}},
+                    "required": ["must_have_marker"],
+                    "additionalProperties": False,
+                }
+            },
+        },
+        # accepts anything, so resolving against the stale $id would pass {}
+        "1.0.0/defs.json": {
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "1.0.0/defs.json",
+            "definitions": {"model": {}},
+        },
+    }
+    _write_schemas(tmp_path, schemas)
+
+    with pyhf.schema(tmp_path):
+        pyhf.schema.validate({"must_have_marker": "x"}, "model.json", version="1.1.0")
+        with pytest.raises(pyhf.exceptions.InvalidSpecification):
+            pyhf.schema.validate({}, "model.json", version="1.1.0")
 
 
 def test_no_channels():
@@ -607,7 +732,7 @@ def test_patchset_fail(datadir, patchset_file):
 def test_defs_always_cached():
     """
     Schema definitions should always be loaded from the local files and cached at first import.
-    Otherwise pyhf will crash in contexts where the jsonschema.RefResolver cannot lookup the definition by the schema-id
+    Otherwise pyhf will crash in contexts where a referenced schema would have to be fetched by its schema-id
     (e.g. a cluster node without network access).
     """
     modules_to_clear = [name for name in sys.modules if name.split(".")[0] == "pyhf"]

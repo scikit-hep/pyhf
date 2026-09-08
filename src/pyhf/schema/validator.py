@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import numbers
 from collections.abc import Mapping
-from pathlib import Path
+from urllib.parse import urljoin
 
 import jsonschema
+from referencing import Registry, Resource
+from referencing.exceptions import NoSuchResource, Unresolvable
+from referencing.jsonschema import DRAFT6
 
 import pyhf.exceptions
 from pyhf import tensor
@@ -36,6 +39,31 @@ def _is_number_or_tensor_subtype(checker, instance):
     return isinstance(instance, (numbers.Number, *tensor.array_subtypes))
 
 
+def _retrieve_schema(uri: str) -> Resource:
+    """
+    A ``referencing`` retrieve callback that loads a pyhf schema by its URI.
+
+    Only URIs under :data:`pyhf.schema.variables.SCHEMA_BASE` are served, from
+    the path relative to :attr:`pyhf.schema.path` through
+    :func:`pyhf.schema.load_schema` (so they are cached). Nothing is ever
+    fetched from the network.
+
+    Raises:
+        ~referencing.exceptions.NoSuchResource: if ``uri`` is not under
+         :data:`pyhf.schema.variables.SCHEMA_BASE`.
+        ~pyhf.exceptions.SchemaNotFound: if the schema is not found under
+         :attr:`pyhf.schema.path`. ``referencing`` surfaces this as
+         :class:`~referencing.exceptions.Unresolvable` with the cause chain
+         intact.
+    """
+    if not uri.startswith(variables.SCHEMA_BASE):
+        raise NoSuchResource(ref=uri)
+    return Resource.from_contents(
+        load_schema(uri.removeprefix(variables.SCHEMA_BASE)),
+        default_specification=DRAFT6,
+    )
+
+
 def validate(
     spec: Mapping,
     schema_name: str,
@@ -58,6 +86,7 @@ def validate(
 
     Raises:
         ~pyhf.exceptions.InvalidSpecification: if the provided instance does not validate against the schema.
+        ~pyhf.exceptions.SchemaNotFound: if the schema, or a schema it references, cannot be found.
 
     Returns:
         None: if there are no errors with the provided instance.
@@ -73,17 +102,7 @@ def validate(
 
     version = version or variables.SCHEMA_VERSION
 
-    schema = load_schema(str(Path(version).joinpath(schema_name)))
-
-    # note: trailing slash needed for RefResolver to resolve correctly and by
-    # design, pathlib strips trailing slashes. See ref below:
-    # * https://bugs.python.org/issue21039
-    # * https://github.com/python/cpython/issues/65238
-    resolver = jsonschema.RefResolver(
-        base_uri=f"{Path(variables.schemas).joinpath(version).as_uri()}/",
-        referrer=schema_name,
-        store=variables.SCHEMA_CACHE,
-    )
+    schema = load_schema(f"{version}/{schema_name}")
 
     Validator = jsonschema.Draft6Validator
 
@@ -93,9 +112,31 @@ def validate(
         ).redefine("number", _is_number_or_tensor_subtype)
         Validator = jsonschema.validators.extend(Validator, type_checker=type_checker)
 
-    validator = Validator(schema, resolver=resolver, format_checker=None)
+    # Every pyhf schema is a bare draft-06 ``$ref`` shell (e.g. ``model.json``
+    # points at ``defs.json#/definitions/model``), and draft-06 ignores the
+    # siblings of ``$ref`` including ``$id`` (c.f. referencing.jsonschema._legacy_id),
+    # so jsonschema cannot infer a base URI for the relative ``defs.json``. Enter
+    # validation through the absolute form of that reference instead, anchored at
+    # the directory of the requested version as the RefResolver base_uri was, so
+    # that a stale or copy-pasted ``$id`` cannot redirect ``defs.json`` to another
+    # version. (Referencing the document by its ``$id`` would instead make
+    # jsonschema re-select the stock Draft6Validator from the document's
+    # ``$schema`` and drop the tensor-aware type checker, c.f.
+    # jsonschema.validators.validator_for.)
+    base_uri = f"{variables.SCHEMA_BASE}{version}/"
+    root = {"$ref": urljoin(base_uri, schema["$ref"])} if "$ref" in schema else schema
+    validator = Validator(
+        root, registry=Registry(retrieve=_retrieve_schema), format_checker=None
+    )
 
     try:
         return validator.validate(spec)
     except jsonschema.ValidationError as err:
         raise pyhf.exceptions.InvalidSpecification(err, schema_name) from err
+    except Unresolvable as err:
+        msg = (
+            f"Could not resolve the schema reference {err.ref!r} while validating against "
+            f"{schema_name} (version {version}). Referenced schemas must have an $id under "
+            f"{variables.SCHEMA_BASE} or be relative paths under pyhf.schema.path ({variables.schemas})."
+        )
+        raise pyhf.exceptions.SchemaNotFound(msg) from err

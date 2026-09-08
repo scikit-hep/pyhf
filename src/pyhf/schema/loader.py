@@ -1,6 +1,5 @@
 import json
 from importlib import resources
-from pathlib import Path
 
 import pyhf.exceptions
 from pyhf.schema import variables
@@ -31,10 +30,10 @@ def load_schema(schema_id: str):
     Raises:
         ~pyhf.exceptions.SchemaNotFound: if the provided ``schema_id`` cannot be found.
     """
+    # Keyed by the relative path rather than the schema $id, so that custom
+    # schemas under pyhf.schema.path with relative $ids also hit the cache.
     try:
-        return variables.SCHEMA_CACHE[
-            f"{Path(variables.SCHEMA_BASE).joinpath(schema_id)}"
-        ]
+        return variables.SCHEMA_CACHE[schema_id]
     except KeyError:
         pass
 
@@ -45,8 +44,8 @@ def load_schema(schema_id: str):
             raise pyhf.exceptions.SchemaNotFound(msg)
         with path.open(encoding="utf-8") as json_schema:
             schema = json.load(json_schema)
-            variables.SCHEMA_CACHE[schema["$id"]] = schema
-        return variables.SCHEMA_CACHE[schema["$id"]]
+    variables.SCHEMA_CACHE[schema_id] = schema
+    return schema
 
 
 # pre-populate the cache to avoid network access

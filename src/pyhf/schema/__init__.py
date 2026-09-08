@@ -75,6 +75,8 @@ class Schema(sys.modules[__name__].__class__):
         """
         self.orig_path, variables.schemas = variables.schemas, new_path
         self.orig_cache = dict(variables.SCHEMA_CACHE)
+        # The cache is keyed by path relative to the search path, so entries
+        # from the old path (e.g. ``1.0.0/defs.json``) would shadow the new one.
         variables.SCHEMA_CACHE.clear()
         return self
 
