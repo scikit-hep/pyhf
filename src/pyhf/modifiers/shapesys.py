@@ -136,12 +136,12 @@ class shapesys_combined:
     def _reindex_access_field(self, _pdfconfig):
         default_backend = pyhf.default_backend
 
-        shapesys_mask = default_backend.astensor(self._shapesys_mask)
+        shapesys_mask = default_backend.astensor(self._shapesys_mask, dtype="bool")
         for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
                 idx
                 for idx, syst in enumerate(shapesys_mask[syst_index, :, 0])
-                if any(syst)
+                if syst.any()
             ][-1]
 
             for batch_index, batch_access in enumerate(syst_access):
@@ -173,9 +173,9 @@ class shapesys_combined:
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         """
-        tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
+        tensorlib, _ = get_backend()
         flat_pars = pars if self.batch_size is None else tensorlib.reshape(pars, (-1,))
         shapefactors = tensorlib.gather(flat_pars, self.access_field)
         results_shapesys = tensorlib.einsum(

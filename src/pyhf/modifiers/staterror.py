@@ -96,18 +96,13 @@ class staterror_builder:
                 ]
             )
             valid_bins = nomsall > 0
-            # guard the denominator so empty bins do not emit a divide-by-zero
-            # warning (pytest runs with filterwarnings=error); these bins are
-            # zeroed out below anyway
-            safe_nomsall = default_backend.where(
-                valid_bins, nomsall, default_backend.ones(nomsall.shape)
+            # bins with no nominal yield have no relative error; guard the
+            # denominator so the division stays finite before zeroing them
+            safe_nomsall = default_backend.where(valid_bins, nomsall, 1.0)
+            relerrs = default_backend.sum(
+                default_backend.where(valid_bins, uncrts / safe_nomsall, 0.0) ** 2,
+                axis=0,
             )
-            per_sample_relerrs = default_backend.where(
-                valid_bins,
-                default_backend.divide(uncrts, safe_nomsall) ** 2,
-                default_backend.zeros(uncrts.shape),
-            )
-            relerrs = default_backend.sum(per_sample_relerrs, axis=0)
             # here relerrs still has all the bins, while the staterror are usually per-channel
             # so we need to pick out the masks for this modifier to extract the
             # modifier configuration (sigmas, etc..)
@@ -174,12 +169,12 @@ class staterror_combined:
 
     def _reindex_access_field(self, _pdfconfig):
         default_backend = pyhf.default_backend
-        staterror_mask = default_backend.astensor(self._staterror_mask)
+        staterror_mask = default_backend.astensor(self._staterror_mask, dtype="bool")
         for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
                 idx
                 for idx, syst in enumerate(staterror_mask[syst_index, :, 0])
-                if any(syst)
+                if syst.any()
             ][-1]
 
             for batch_index, batch_access in enumerate(syst_access):

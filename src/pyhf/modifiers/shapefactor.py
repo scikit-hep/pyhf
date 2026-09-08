@@ -176,15 +176,11 @@ class shapefactor_combined:
                 selection = default_backend.astensor(
                     self.param_viewer.index_selection[s][t], dtype="int"
                 )
-                in_range = batch_access < len(selection)
-                # clip out-of-range indices so the gather is safe; their
-                # contribution is overwritten with the ``0`` fallback below
-                clipped = default_backend.clip(batch_access, 0, len(selection) - 1)
-                self._access_field[s, t] = default_backend.where(
-                    in_range,
-                    default_backend.gather(selection, clipped),
-                    default_backend.zeros(batch_access.shape, dtype="int"),
-                )
+                # trailing 0 is the dummy index that out-of-range bins clip onto
+                padded = default_backend.concatenate([selection, [0]])
+                self._access_field[s, t] = padded[
+                    default_backend.clip(batch_access, 0, len(selection))
+                ]
 
         self._precompute()
         events.subscribe("tensorlib_changed")(self._precompute)
