@@ -36,7 +36,7 @@ repos:
     - id: rst-inline-touching-normal
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.16.1"
+  rev: "v0.16.6"
   hooks:
     - id: ruff-check
       args: ["--fix", "--show-fixes"]
@@ -49,7 +49,7 @@ repos:
       additional_dependencies: [black==26.3.1]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.3.0
+    rev: v2.3.1
     # check the oldest and newest supported Pythons
     hooks:
       - id: mypy
@@ -76,7 +76,7 @@ repos:
       args: ["-w", "-L", "hist,gaus"]
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.37.4
+  rev: 0.38.0
   hooks:
     - id: check-readthedocs
       args: ["--verbose"]
@@ -84,7 +84,7 @@ repos:
       args: ["--verbose"]
 
 - repo: https://github.com/zizmorcore/zizmor-pre-commit
-  rev: v1.29.0
+  rev: v1.30.0
   hooks:
       # use default 'regular' persona
     - id: zizmor
