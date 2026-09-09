@@ -1,0 +1,267 @@
+|release v0.8.0|_
+=================
+
+This is a minor release from ``v0.7.6`` → ``v0.8.0``.
+
+Important Notes
+---------------
+
+* Please note this release has **API breaking changes** and carefully read these
+  notes while updating your code to the ``v0.8.0`` API.
+* Support for Python 3.7, 3.8, and 3.9 has been dropped and ``pyhf`` now requires
+  Python 3.10 or later.
+  (PRs :pr:`2044`, :pr:`2625`, :pr:`2757`)
+* All backends are now fully compatible and tested with
+  `Python 3.11 <https://peps.python.org/pep-0664/>`_,
+  `Python 3.12 <https://peps.python.org/pep-0693/>`_,
+  `Python 3.13 <https://peps.python.org/pep-0719/>`_, and
+  `Python 3.14 <https://peps.python.org/pep-0745/>`_.
+  (PRs :pr:`2145`, :pr:`2460`, :pr:`2621`, :pr:`2657`)
+* The **TensorFlow and PyTorch backends have been removed**.
+  The supported tensor backends are now NumPy and JAX, and automatic differentiation
+  is provided through the JAX backend.
+  (PRs :pr:`2609`, :pr:`2611`)
+* The default parameter of interest name of ``"mu"`` is no longer assumed when
+  constructing a :class:`pyhf.pdf.Model`.
+  If a model specification is constructed directly a ``poi_name`` must be
+  explicitly given to :class:`pyhf.pdf.Model` to define a parameter of interest.
+  The ``pyhf.simplemodels`` APIs continue to use ``poi_name="mu"`` by default.
+  (PR :pr:`2328`)
+* The ``pyhf.tensorlib.percentile`` API ``interpolation`` argument has been
+  renamed to ``method`` to align with the NumPy and JAX APIs.
+  (PR :pr:`2655`)
+* Schema validation now uses the ``referencing`` library for ``$ref`` resolution
+  in place of the deprecated ``jsonschema.RefResolver``.
+  (PR :pr:`2716`)
+* ``rich`` is used for progress bars in place of ``tqdm``.
+  (PR :pr:`2648`)
+* The build backend has been changed from ``setuptools`` to ``hatchling``.
+  (PR :pr:`2095`)
+* The development extras (``test``, ``docs``, ``develop``, ``complete``) have
+  been replaced by ``test``, ``docs``, and ``dev``
+  `dependency groups <https://packaging.python.org/en/latest/specifications/dependency-groups/>`_
+  and are no longer distributed as part of the ``pyhf`` package metadata.
+  (PRs :pr:`2373`, :pr:`2616`)
+* The minimum required dependencies have been updated to support added features:
+
+   - ``scipy>=1.7.2`` (PRs :pr:`2081`, :pr:`2469`, :pr:`2633`, :pr:`2757`)
+   - ``numpy>=1.22.0`` (PRs :pr:`2041`, :pr:`2652`)
+   - ``jsonschema>=4.18.0`` (PR :pr:`2716`)
+   - ``referencing`` (PR :pr:`2716`)
+   - ``rich>=12.3.0`` (PRs :pr:`2648`, :pr:`2650`)
+
+* The minimum required backend versions have been updated to support added features:
+
+   - JAX backend requires ``jax>=0.4.1``, ``jaxlib>=0.4.1`` (PR :pr:`2079`)
+   - iminuit optimizer requires ``iminuit>=2.9.0`` (PR :pr:`2757`)
+
+* The ``pyhf`` Docker image now runs as a non-root default user (``moby``)
+  with a working directory of ``/home/moby/work/``.
+  (PR :pr:`2243`)
+
+Fixes
+-----
+
+* Correct the mask used in the fast ``code2`` interpolation for the
+  :math:`\alpha < -1` case.
+  (PR :pr:`2668`)
+* Avoid a divide-by-zero in the :math:`\tilde{q}_{\mu}` test statistic in
+  :class:`pyhf.infer.calculators.AsymptoticCalculator` when the tested parameter
+  of interest value is equal to the Asimov parameter of interest value.
+  (PR :pr:`2725`)
+* Raise :class:`pyhf.exceptions.InvalidModel` for model specifications with
+  duplicate channel, sample, or modifier names.
+  (PR :pr:`2396`)
+* Raise :class:`pyhf.exceptions.InvalidPdfParameters` when the parameters passed
+  to :func:`pyhf.pdf.Model.expected_data`, :func:`pyhf.pdf.Model.expected_actualdata`,
+  and :func:`pyhf.pdf.Model.expected_auxdata` do not have the expected shape.
+  (PR :pr:`1461`)
+* Pass the ``level`` kwarg from :func:`pyhf.infer.intervals.upper_limits.upper_limit`
+  through to :func:`pyhf.infer.intervals.upper_limits.toms748_scan`.
+  (PR :pr:`2564`)
+* Support ``return_tail_probs=True`` in :func:`pyhf.infer.intervals.upper_limits.upper_limit`
+  for both the :func:`pyhf.infer.intervals.upper_limits.linear_grid_scan` and
+  :func:`pyhf.infer.intervals.upper_limits.toms748_scan` scan types.
+  (PR :pr:`2684`)
+* Guard the Minuit optimizer against a ``None`` covariance from ``iminuit``
+  when all parameters are fixed.
+  (PR :pr:`2683`)
+* In :func:`pyhf.readxml.parse` close cached file handles in
+  :func:`pyhf.readxml.clear_filecache`, and warn with the sample and channel
+  name when a ``StatError`` modifier is not activated instead of silently
+  dropping it.
+  (PR :pr:`2711`)
+* Properly close files during reads.
+  (PRs :pr:`2730`, :pr:`2737`)
+* In the JAX backend, return the abstract value of a tracer from
+  ``pyhf.tensorlib.tolist`` while tracing to preserve error messages during
+  ``jax.jit``.
+  (PR :pr:`2580`)
+* In the JAX backend, return a :obj:`tuple` from ``pyhf.tensorlib.simple_broadcast``
+  for all supported JAX versions to match the NumPy backend.
+  (PR :pr:`2753`)
+* Use the ``method`` argument of ``jax.numpy.percentile`` to avoid a
+  ``DeprecationWarning`` in ``jax`` ``v0.4.29+``.
+  (PR :pr:`2522`)
+* Use the Python 3.12+ ``tarfile`` data extraction filter in
+  :func:`pyhf.contrib.utils.download`.
+  (PR :pr:`2455`)
+* Test the truth value of ``xml.etree.ElementTree.Element`` objects with
+  ``is not None`` to avoid a Python 3.12+ ``DeprecationWarning``.
+  (PR :pr:`2459`)
+* Use ``shutil.copytree`` over ``setuptools._distutils`` to remove the reliance
+  on ``setuptools`` at runtime.
+  (PR :pr:`2518`)
+* Use ``numpy.prod`` over the deprecated ``numpy.product``.
+  (PR :pr:`2242`)
+
+Features
+--------
+
+Python API
+~~~~~~~~~~
+
+* Support for the JAX ``jax.Array`` unified array type introduced in ``jax``
+  ``v0.4.1`` is added as the JAX backend ``array_type`` and ``array_subtype``.
+  (PR :pr:`2079`)
+
+* The parameter of interest name is no longer assumed to be ``"mu"`` when
+  constructing a :class:`pyhf.pdf.Model` and must be given with the ``poi_name``
+  kwarg.
+  (PR :pr:`2328`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> spec = {
+      ...     "channels": [
+      ...         {
+      ...             "name": "singlechannel",
+      ...             "samples": [
+      ...                 {
+      ...                     "name": "signal",
+      ...                     "data": [12.0, 11.0],
+      ...                     "modifiers": [{"name": "mu", "type": "normfactor", "data": None}],
+      ...                 },
+      ...                 {
+      ...                     "name": "background",
+      ...                     "data": [50.0, 52.0],
+      ...                     "modifiers": [],
+      ...                 },
+      ...             ],
+      ...         }
+      ...     ]
+      ... }
+      >>> model = pyhf.Model(spec, poi_name="mu")
+      >>> model.config.poi_name
+      'mu'
+
+* The ``pyhf.pdf._MainModel.modifications`` and :func:`pyhf.pdf.Model.modifications`
+  APIs are promoted to the public API.
+  (PR :pr:`2339`)
+
+* :func:`pyhf.utils.environment_info` is added to produce information on the
+  host environment and installed ``pyhf`` dependencies for use in bug reports.
+  (PR :pr:`2129`)
+
+  .. code:: pycon
+
+      >>> import pyhf
+      >>> print(pyhf.utils.environment_info())  # doctest: +ELLIPSIS
+      * os version: ...
+      * kernel version: ...
+      * python version: ...
+      * pyhf version: ...
+      * numpy version: ...
+      * scipy version: ...
+      * iminuit version: ...
+      * jax version: ...
+      * jaxlib version: ...
+
+* A ``validate`` kwarg has been added to :func:`pyhf.workspace.Workspace.combine`
+  to allow skipping validation of the combined workspace.
+  (PR :pr:`2385`)
+  This should only be used by expert users who understand the risks.
+
+* ``pyhf.tensorlib.percentile`` now uses the ``method`` argument name in place
+  of ``interpolation`` to align with ``numpy.percentile`` and ``jax.numpy.percentile``.
+  (PR :pr:`2655`)
+
+* Progress bars in :func:`pyhf.readxml.parse` and
+  :func:`pyhf.infer.calculators.ToyCalculator.distributions` are now shown using
+  ``rich`` and provide the name of the process executing, the percentage complete,
+  and the time elapsed.
+  (PR :pr:`2648`)
+
+* :func:`pyhf.workspace.Workspace.combine` now scales linearly instead of
+  quadratically in the number of channels, samples, observations, and measurements
+  being joined.
+  (PR :pr:`2710`)
+
+* Schema ``$ref`` resolution is done through a ``referencing.Registry`` and
+  :func:`pyhf.schema.validate` now raises :class:`pyhf.exceptions.SchemaNotFound`
+  naming the unresolved reference when a ``$ref`` can not be resolved.
+  (PR :pr:`2716`)
+
+CLI API
+~~~~~~~
+
+* The ``pyhf utils environment`` CLI API is added to print information on the
+  host environment and installed ``pyhf`` dependencies for use in bug reports.
+  (PR :pr:`2129`)
+
+  .. code:: console
+
+      pyhf utils environment
+
+* The ``pyhf completions`` CLI API now uses the native shell completion support
+  of ``click`` ``v8.x`` and the ``shellcomplete`` extra is removed.
+  (PR :pr:`2639`)
+
+Removals
+--------
+
+Python API
+~~~~~~~~~~
+
+* The TensorFlow backend, ``pyhf.tensor.tensorflow_backend.tensorflow_backend``,
+  and the TensorFlow optimizer are removed along with the ``tensorflow`` extra.
+  (PR :pr:`2609`)
+
+* The PyTorch backend, ``pyhf.tensor.pytorch_backend.pytorch_backend``, and the
+  PyTorch optimizer are removed along with the ``torch`` extra.
+  (PR :pr:`2611`)
+
+* The ``interpolation`` argument of ``pyhf.tensorlib.percentile`` is removed
+  in favor of ``method``.
+  (PR :pr:`2655`)
+
+* ``tqdm`` is removed as a dependency in favor of ``rich``.
+  (PR :pr:`2648`)
+
+CLI API
+~~~~~~~
+
+* The ``shellcomplete`` extra and the ``click_completion`` dependency are removed
+  in favor of the native shell completion support of ``click`` ``v8.x``.
+  (PR :pr:`2639`)
+
+Contributors
+------------
+
+``v0.8.0`` benefited from contributions from:
+
+* Henry Schreiner
+* Alexander Held
+* Lorenz Gaertner
+* Peter Fackeldey
+* Alok Kumar
+* Julian Kuhlmann
+* Melissa Weber Mendonça
+* Matthias Bussonnier
+* Angus Hollands
+* Ofek Lev
+* Lucas Colley
+
+.. |release v0.8.0| replace:: ``v0.8.0``
+.. _`release v0.8.0`: https://github.com/scikit-hep/pyhf/releases/tag/v0.8.0
