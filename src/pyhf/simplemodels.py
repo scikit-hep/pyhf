@@ -33,7 +33,7 @@ def correlated_background(
     Returns:
         ~pyhf.pdf.Model: The statistical model adhering to the :obj:`model.json` schema.
 
-    .. versionchanged:: 0.8.0 Added ``poi_name`` argument.
+    .. version-changed:: 0.8.0 Added ``poi_name`` argument.
 
     Example:
         >>> import pyhf
@@ -124,7 +124,7 @@ def uncorrelated_background(
     Returns:
         ~pyhf.pdf.Model: The statistical model adhering to the :obj:`model.json` schema
 
-    .. versionchanged:: 0.8.0 Added ``poi_name`` argument.
+    .. version-changed:: 0.8.0 Added ``poi_name`` argument.
     """
     spec = {
         "channels": [
