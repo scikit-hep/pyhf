@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Mapping, Sequence
-from typing import Generic, TypeVar, Union, cast
+from typing import Generic, TypeVar, cast
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
@@ -16,7 +16,7 @@ from pyhf.typing import Literal, Shape
 
 T = TypeVar("T", bound=NBitBase)
 
-Tensor = Union["NDArray[np.number[T]]", "NDArray[np.bool_]"]
+Tensor = NDArray[np.number[T]] | NDArray[np.bool_]
 FloatIntOrBool = Literal["float", "int", "bool"]
 log = logging.getLogger(__name__)
 
