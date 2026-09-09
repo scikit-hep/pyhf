@@ -40,6 +40,7 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
         join (:obj:`str`): The join operation to apply. See ~pyhf.workspace.Workspace for valid join operations.
         left_items (:obj:`list`): A list of dictionaries to join on the left
         right_items (:obj:`list`): A list of dictionaries to join on the right
+        key (:obj:`str`): The dictionary key to join on. Its values must be hashable.
         deep_merge_key (:obj:`str`): A key on which to deeply merge items if set.
 
     Returns:
@@ -51,30 +52,34 @@ def _join_items(join, left_items, right_items, key="name", deep_merge_key=None):
     else:
         primary_items, secondary_items = left_items, right_items
     joined_items = copy.deepcopy(primary_items)
-    keys = [item[key] for item in joined_items]
+    # Snapshot of the primary items grouped by key value, holding the live
+    # objects in joined_items so the deep merge below updates them in place.
+    # Appended secondary items are not added, matching the pre-existing join
+    # semantics: a secondary item is only ever matched against primary items.
+    key_to_items = {}
+    for item in joined_items:
+        key_to_items.setdefault(item[key], []).append(item)
     for secondary_item in secondary_items:
+        # items with different key values can never compare equal, so this
+        # bounds the ``outer`` equality scan below
+        same_key_items = key_to_items.get(secondary_item[key], [])
         # first, check for deep merging
-        if secondary_item[key] in keys and deep_merge_key is not None:
-            _deep_left_items = joined_items[keys.index(secondary_item[key])][
-                deep_merge_key
-            ]
-            _deep_right_items = secondary_item[deep_merge_key]
-            joined_items[keys.index(secondary_item[key])][deep_merge_key] = _join_items(
-                "left outer", _deep_left_items, _deep_right_items
+        if same_key_items and deep_merge_key is not None:
+            primary_item = same_key_items[0]
+            primary_item[deep_merge_key] = _join_items(
+                "left outer",
+                primary_item[deep_merge_key],
+                secondary_item[deep_merge_key],
             )
         # next, move over whole items where possible:
         #   - if no join logic
         #   - if outer join and item on right is not in left
         #   - if left outer join and item (by name) is on right and not in left
         #   - if right outer join and item (by name) is on left and not in right
-        # NB: this will be slow for large numbers of items
         elif (
             join == "none"
-            or (join == "outer" and secondary_item not in primary_items)
-            or (
-                join in ["left outer", "right outer"]
-                and secondary_item[key] not in keys
-            )
+            or (join == "outer" and secondary_item not in same_key_items)
+            or (join in ["left outer", "right outer"] and not same_key_items)
         ):
             joined_items.append(copy.deepcopy(secondary_item))
     return joined_items

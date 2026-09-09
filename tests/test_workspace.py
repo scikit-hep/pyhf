@@ -408,6 +408,41 @@ def test_join_items_right_outer_deep(join_items):
     ]
 
 
+def test_join_items_duplicate_secondary_keys_appended():
+    # secondary items are only ever matched against primary items
+    left_items = [{"name": "A"}]
+    right_items = [{"name": "B"}, {"name": "B"}]
+    joined = pyhf.workspace._join_items(
+        "left outer", left_items, right_items, key="name"
+    )
+    assert joined == [{"name": "A"}, {"name": "B"}, {"name": "B"}]
+
+
+def test_join_items_duplicate_primary_keys_first_match_deep():
+    # Workspace rejects duplicate channel names, but _join_items is generic.
+    # As in the join_items fixture, "deep" holds the nested list of items that
+    # deep_merge_key merges (the "samples" of a channel in a real workspace).
+    left_items = [
+        {"name": "A", "deep": [{"name": "d1"}]},
+        {"name": "A", "deep": [{"name": "d2"}]},
+    ]
+    right_items = [{"name": "A", "deep": [{"name": "d3"}]}]
+    joined = pyhf.workspace._join_items(
+        "left outer", left_items, right_items, key="name", deep_merge_key="deep"
+    )
+    assert joined == [
+        {"name": "A", "deep": [{"name": "d1"}, {"name": "d3"}]},
+        {"name": "A", "deep": [{"name": "d2"}]},
+    ]
+
+
+def test_join_items_outer_equal_items_not_duplicated():
+    left_items = [{"name": "A", "x": 1}]
+    right_items = [{"name": "A", "x": 1}, {"name": "A", "x": 2}]
+    joined = pyhf.workspace._join_items("outer", left_items, right_items, key="name")
+    assert joined == [{"name": "A", "x": 1}, {"name": "A", "x": 2}]
+
+
 @pytest.mark.parametrize("join", ["none", "outer"])
 def test_combine_workspace_same_channels_incompatible_structure(
     workspace_factory, join
