@@ -336,7 +336,7 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy ndarray: The value of the :math:`q`-th percentile of the tensor along the specified axis.
 
-        .. versionadded:: 0.7.0
+        .. version-added:: 0.7.0
         .. version-changed:: 0.8.0
            Argument renamed from *interpolation* to *method* to align with NumPy.
         """
@@ -640,7 +640,7 @@ class numpy_backend(Generic[T]):
         Returns:
             :class:`numpy.ndarray`: The transpose of the input tensor.
 
-        .. versionadded:: 0.7.0
+        .. version-added:: 0.7.0
         """
         # TODO: Casting needed for Python 3.10 mypy but not Python 3.13+?
         return cast("ArrayLike", tensor_in.transpose())

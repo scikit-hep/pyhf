@@ -73,7 +73,7 @@ def toms748_scan(
             - Tensor: The observed upper limit on the POI.
             - Tensor: The expected upper limits on the POI.
 
-    .. versionadded:: 0.7.0
+    .. version-added:: 0.7.0
     """
     # When return_tail_probs=True, hypotest inserts (CLsb, CLb) at index 1,
     # shifting the expected band from index 1 to index 2.
@@ -188,7 +188,7 @@ def linear_grid_scan(
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
 
-    .. versionadded:: 0.7.0
+    .. version-added:: 0.7.0
     """
     # When return_tail_probs=True, hypotest inserts (CLsb, CLb) at index 1,
     # shifting the expected band from index 1 to index 2.
@@ -255,7 +255,7 @@ def upper_limit(
               :class:`~pyhf.infer.hypotest` results at each test POI.
               Only returned when ``return_results`` is ``True``.
 
-    .. versionadded:: 0.7.0
+    .. version-added:: 0.7.0
     """
     if scan is not None:
         return linear_grid_scan(
