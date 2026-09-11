@@ -513,6 +513,21 @@ def test_calculator_distributions_without_teststatistic(test_stat):
         calc.distributions(1.0)
 
 
+@pytest.mark.parametrize("calculator", ["AsymptoticCalculator", "ToyCalculator"])
+def test_calculator_distributions_poi_test_keyword(calculator):
+    # Regression test for PR #2688: ``poi_test`` must stay a public keyword
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+    )
+    data = [51, 48] + model.config.auxdata
+    kwargs = {"ntoys": 10} if calculator == "ToyCalculator" else {}
+    calc = getattr(pyhf.infer.calculators, calculator)(data, model, **kwargs)
+    calc.teststatistic(poi_test=1.0)
+    sig_plus_bkg_dist, bkg_dist = calc.distributions(poi_test=1.0)
+    assert sig_plus_bkg_dist is not None
+    assert bkg_dist is not None
+
+
 @pytest.mark.parametrize(
     ("nsigma", "expected_pval"),
     [
