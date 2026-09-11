@@ -281,7 +281,7 @@ or to install it with ``conda`` run
 
    conda install --channel conda-forge pyhf
 
-The conda-forge package does not provide the additional backends as extras, so install the backend packages (e.g. ``jax`` or ``pytorch``) from conda-forge alongside ``pyhf`` as needed.
+The conda-forge package does not provide the additional backends as extras, so install the backend packages (e.g. ``jax``) from conda-forge alongside ``pyhf`` as needed.
 
 Docker
 ~~~~~~
