@@ -28,7 +28,7 @@ def __dir__():
 @dataclass(frozen=True, slots=True)
 class BrazilBandCollection:
     r"""
-    :obj:`collections.namedtuple` containing the
+    Frozen :func:`~dataclasses.dataclass` containing the
     :class:`matplotlib.artist.Artist` objects of the
     "Brazil Band" and the observed :math:`\mathrm{CL}_{s+b}` and
     :math:`\mathrm{CL}_{b}` --- the components of the
