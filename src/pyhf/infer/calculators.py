@@ -298,7 +298,7 @@ class AsymptoticCalculator:
         self.sqrtqmuA_v = None
         self.fitted_pars = None
 
-    def distributions(self, _poi_test):
+    def distributions(self, poi_test):  # noqa: ARG002
         r"""
         Probability distributions of the test statistic, as defined in
         :math:`\S` 3 of :xref:`arXiv:1007.1727` under the Wald approximation,
