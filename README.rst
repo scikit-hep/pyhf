@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|PyPI version| |Conda-forge version| |Supported Python versions| |DOI| |JOSS DOI|
+|Scikit-HEP| |PyPI version| |Conda-forge version| |Supported Python versions| |DOI| |JOSS DOI|
 
 The HistFactory p.d.f. template
 [`CERN-OPEN-2012-016 <https://cds.cern.ch/record/1456844>`__] is per-se
@@ -241,6 +241,11 @@ A two bin example
 Installation
 ------------
 
+``pyhf`` is distributed on both `PyPI <https://pypi.org/project/pyhf/>`__ and `conda-forge <https://prefix.dev/channels/conda-forge/packages/pyhf>`__.
+
+PyPI
+~~~~
+
 To install ``pyhf`` from PyPI with the NumPy backend run
 
 .. code:: bash
@@ -260,6 +265,20 @@ To uninstall run
 .. code:: bash
 
    python -m pip uninstall pyhf
+
+conda-forge
+~~~~~~~~~~~
+
+To install ``pyhf`` from conda-forge with the NumPy backend run
+
+.. code:: bash
+
+   conda install --channel conda-forge pyhf
+
+The conda-forge package does not provide the additional backends as extras, so install the backend packages (e.g. ``jax`` or ``pytorch``) from conda-forge alongside ``pyhf`` as needed.
+
+Docker
+~~~~~~
 
 Docker images with ``pyhf`` preinstalled are also published to Docker Hub:
 |Docker Hub pyhf| |Docker Hub pyhf CUDA|
@@ -347,7 +366,7 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 
 ``pyhf`` is a `NumFOCUS Affiliated Project <https://numfocus.org/sponsored-projects/affiliated-projects>`__.
 
-|Scikit-HEP| |NSF Award Number IRIS-HEP v1| |NSF Award Number IRIS-HEP v2| |NumFOCUS Affiliated Project|
+|NSF Award Number IRIS-HEP v1| |NSF Award Number IRIS-HEP v2| |NumFOCUS Affiliated Project|
 
 .. |DOI| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg
    :target: https://doi.org/10.5281/zenodo.1169739
