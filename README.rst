@@ -6,7 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|Scikit-HEP| |PyPI version| |Conda-forge version| |Supported Python versions| |DOI| |JOSS DOI|
+|PyPI version| |Conda-forge version| |Supported Python versions| |DOI| |JOSS DOI| |Scikit-HEP|
 
 The HistFactory p.d.f. template
 [`CERN-OPEN-2012-016 <https://cds.cern.ch/record/1456844>`__] is per-se
