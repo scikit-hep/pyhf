@@ -269,7 +269,13 @@ To uninstall run
 conda-forge
 ~~~~~~~~~~~
 
-To install ``pyhf`` from conda-forge with the NumPy backend run
+To add ``pyhf`` from conda-forge with the NumPy backend to a `Pixi <https://pixi.sh/>`__ project run
+
+.. code:: bash
+
+   pixi add pyhf
+
+or to install it with ``conda`` run
 
 .. code:: bash
 
@@ -281,7 +287,7 @@ Docker
 ~~~~~~
 
 Docker images with ``pyhf`` preinstalled are also published to Docker Hub:
-|Docker Hub pyhf| |Docker Hub pyhf CUDA|
+|Docker Hub pyhf|
 
 Documentation
 -------------
@@ -397,5 +403,3 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://pypi.org/project/pyhf/
 .. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.6-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
-.. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
-   :target: https://hub.docker.com/r/pyhf/cuda/tags

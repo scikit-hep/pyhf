@@ -56,6 +56,14 @@ Install latest stable release from `conda-forge <https://prefix.dev/channels/con
 ... with NumPy backend
 ++++++++++++++++++++++
 
+Using `Pixi <https://pixi.sh/>`__
+
+.. code-block:: console
+
+    pixi add pyhf
+
+or using :code:`conda`
+
 .. code-block:: console
 
     conda install --channel conda-forge pyhf
@@ -65,6 +73,12 @@ Install latest stable release from `conda-forge <https://prefix.dev/channels/con
 
 The conda-forge package does not provide the additional backends as extras, so install
 the backend packages from conda-forge alongside :code:`pyhf`. For example, for the JAX backend
+
+.. code-block:: console
+
+    pixi add pyhf jax
+
+or
 
 .. code-block:: console
 
