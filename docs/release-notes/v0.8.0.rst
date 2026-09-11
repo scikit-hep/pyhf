@@ -44,7 +44,8 @@ Important Notes
   (PRs :pr:`2373`, :pr:`2616`)
 * The minimum required dependencies have been updated to support added features:
 
-   - ``scipy>=1.7.2`` (PRs :pr:`2081`, :pr:`2469`, :pr:`2633`, :pr:`2757`)
+   - ``scipy>=1.7.2`` with ``scipy`` ``v1.16.0`` through ``v1.16.2`` excluded
+     (PRs :pr:`2081`, :pr:`2469`, :pr:`2618`, :pr:`2633`, :pr:`2757`)
    - ``numpy>=1.22.0`` (PRs :pr:`2041`, :pr:`2652`)
    - ``jsonschema>=4.18.0`` (PR :pr:`2716`)
    - ``referencing`` (PR :pr:`2716`)
@@ -156,6 +157,11 @@ Python API
       >>> model.config.poi_name
       'mu'
 
+* A ``poi_name`` kwarg is added to :func:`pyhf.simplemodels.uncorrelated_background`
+  and :func:`pyhf.simplemodels.correlated_background` to set the parameter of
+  interest name, which defaults to ``"mu"``.
+  (PR :pr:`2328`)
+
 * The ``pyhf.pdf._MainModel.modifications`` and :func:`pyhf.pdf.Model.modifications`
   APIs are promoted to the public API.
   (PR :pr:`2339`)
@@ -202,6 +208,13 @@ Python API
   :func:`pyhf.schema.validate` now raises :class:`pyhf.exceptions.SchemaNotFound`
   naming the unresolved reference when a ``$ref`` can not be resolved.
   (PR :pr:`2716`)
+
+* :class:`pyhf.contrib.viz.brazil.BrazilBandCollection`, returned by
+  :func:`pyhf.contrib.viz.brazil.plot_results`, is now a frozen
+  :func:`~dataclasses.dataclass` instead of a :obj:`collections.namedtuple`.
+  The artists are still accessed by attribute name, but the collection no
+  longer supports indexing or tuple unpacking.
+  (PRs :pr:`2688`, :pr:`2761`)
 
 CLI API
 ~~~~~~~
