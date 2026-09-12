@@ -6,16 +6,7 @@
 pure-python fitting/limit-setting/interval estimation HistFactory-style
 =======================================================================
 
-|GitHub Project| |DOI| |JOSS DOI| |Scikit-HEP| |NSF Award Number IRIS-HEP v1| |NSF Award Number IRIS-HEP v2| |NumFOCUS Affiliated Project|
-
-|Docs from latest| |Docs from main| |Jupyter Book tutorial| |Binder|
-
-|PyPI version| |Conda-forge version| |Supported Python versions| |Docker Hub pyhf| |Docker Hub pyhf CUDA|
-
-|Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: ruff|
-
-|GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish|
-|GitHub Actions Status: Docker|
+|PyPI version| |Conda-forge version| |Supported Python versions| |DOI| |JOSS DOI| |Scikit-HEP|
 
 The HistFactory p.d.f. template
 [`CERN-OPEN-2012-016 <https://cds.cern.ch/record/1456844>`__] is per-se
@@ -250,6 +241,11 @@ A two bin example
 Installation
 ------------
 
+``pyhf`` is distributed on both `PyPI <https://pypi.org/project/pyhf/>`__ and `conda-forge <https://prefix.dev/channels/conda-forge/packages/pyhf>`__.
+
+PyPI
+~~~~
+
 To install ``pyhf`` from PyPI with the NumPy backend run
 
 .. code:: bash
@@ -270,10 +266,35 @@ To uninstall run
 
    python -m pip uninstall pyhf
 
+conda-forge
+~~~~~~~~~~~
+
+To add ``pyhf`` from conda-forge with the NumPy backend to a `Pixi <https://pixi.sh/>`__ project run
+
+.. code:: bash
+
+   pixi add pyhf
+
+or to install it with ``conda`` run
+
+.. code:: bash
+
+   conda install --channel conda-forge pyhf
+
+The conda-forge package does not provide the additional backends as extras, so install the backend packages (e.g. ``jax``) from conda-forge alongside ``pyhf`` as needed.
+
+Docker
+~~~~~~
+
+Docker images with ``pyhf`` preinstalled are also published to Docker Hub:
+|Docker Hub pyhf|
+
 Documentation
 -------------
 
 For model specification, API reference, examples, and answers to FAQs visit the |pyhf documentation|_.
+
+|Docs from latest| |Docs from main| |Jupyter Book tutorial| |Binder|
 
 .. |pyhf documentation| replace:: ``pyhf`` documentation
 .. _pyhf documentation: https://pyhf.readthedocs.io/
@@ -351,8 +372,8 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
 
 ``pyhf`` is a `NumFOCUS Affiliated Project <https://numfocus.org/sponsored-projects/affiliated-projects>`__.
 
-.. |GitHub Project| image:: https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub
-   :target: https://github.com/scikit-hep/pyhf
+|NSF Award Number IRIS-HEP v1| |NSF Award Number IRIS-HEP v2| |NumFOCUS Affiliated Project|
+
 .. |DOI| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1169739.svg
    :target: https://doi.org/10.5281/zenodo.1169739
 .. |JOSS DOI| image:: https://joss.theoj.org/papers/10.21105/joss.02823/status.svg
@@ -382,24 +403,3 @@ and grant `OAC-1450377 <https://www.nsf.gov/awardsearch/showAward?AWD_ID=1450377
    :target: https://pypi.org/project/pyhf/
 .. |Docker Hub pyhf| image:: https://img.shields.io/badge/pyhf-v0.7.6-blue?logo=Docker
    :target: https://hub.docker.com/r/pyhf/pyhf/tags
-.. |Docker Hub pyhf CUDA| image:: https://img.shields.io/badge/pyhf-CUDA-blue?logo=Docker
-   :target: https://hub.docker.com/r/pyhf/cuda/tags
-
-.. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=main
-   :target: https://codecov.io/gh/scikit-hep/pyhf?branch=main
-.. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
-   :target: https://www.codefactor.io/repository/github/scikit-hep/pyhf
-.. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/main.svg
-  :target: https://results.pre-commit.ci/latest/github/scikit-hep/pyhf/main
-  :alt: pre-commit.ci status
-.. |Code style: ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
-   :target: https://github.com/astral-sh/ruff
-
-.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml?query=branch%3Amain
-.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml?query=branch%3Amain
-.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml?query=branch%3Amain
-.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg
-   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amain

@@ -2,6 +2,13 @@
 Developing
 ==========
 
+Project Status
+--------------
+
+|GitHub Project| |GitHub Actions Status: CI| |GitHub Actions Status: Docs| |GitHub Actions Status: Publish| |GitHub Actions Status: Docker|
+
+|Code Coverage| |CodeFactor| |pre-commit.ci Status| |Code style: ruff|
+
 Developer Environment
 ---------------------
 
@@ -348,3 +355,24 @@ the dev team (probably every release).
 .. _Tag release: https://github.com/scikit-hep/pyhf/actions/workflows/release-tag.yml
 .. _PyPI: https://pypi.org/project/pyhf/
 .. _TestPyPI: https://test.pypi.org/project/pyhf/
+
+.. |GitHub Project| image:: https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub
+   :target: https://github.com/scikit-hep/pyhf
+.. |Code Coverage| image:: https://codecov.io/gh/scikit-hep/pyhf/graph/badge.svg?branch=main
+   :target: https://codecov.io/gh/scikit-hep/pyhf?branch=main
+.. |CodeFactor| image:: https://www.codefactor.io/repository/github/scikit-hep/pyhf/badge
+   :target: https://www.codefactor.io/repository/github/scikit-hep/pyhf
+.. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/scikit-hep/pyhf/main.svg
+  :target: https://results.pre-commit.ci/latest/github/scikit-hep/pyhf/main
+  :alt: pre-commit.ci status
+.. |Code style: ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+   :target: https://github.com/astral-sh/ruff
+
+.. |GitHub Actions Status: CI| image:: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/ci.yml?query=branch%3Amain
+.. |GitHub Actions Status: Docs| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docs.yml?query=branch%3Amain
+.. |GitHub Actions Status: Publish| image:: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/publish-package.yml?query=branch%3Amain
+.. |GitHub Actions Status: Docker| image:: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml/badge.svg
+   :target: https://github.com/scikit-hep/pyhf/actions/workflows/docker.yml?query=branch%3Amain

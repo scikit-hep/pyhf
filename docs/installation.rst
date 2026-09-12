@@ -50,6 +50,41 @@ Install latest stable release from `PyPI <https://pypi.org/project/pyhf/>`__...
     python -m pip install 'pyhf[xmlio]'
 
 
+Install latest stable release from `conda-forge <https://prefix.dev/channels/conda-forge/packages/pyhf>`__...
+-------------------------------------------------------------------------------------------------------------
+
+... with NumPy backend
+++++++++++++++++++++++
+
+Using `Pixi <https://pixi.sh/>`__
+
+.. code-block:: console
+
+    pixi add pyhf
+
+or using :code:`conda`
+
+.. code-block:: console
+
+    conda install --channel conda-forge pyhf
+
+... with additional backends
+++++++++++++++++++++++++++++
+
+The conda-forge package does not provide the additional backends as extras, so install
+the backend packages from conda-forge alongside :code:`pyhf`. For example, for the JAX backend
+
+.. code-block:: console
+
+    pixi add pyhf jax
+
+or
+
+.. code-block:: console
+
+    conda install --channel conda-forge pyhf jax
+
+
 Install latest development version from `GitHub <https://github.com/scikit-hep/pyhf>`__...
 ------------------------------------------------------------------------------------------
 
