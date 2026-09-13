@@ -244,9 +244,6 @@ Python API
   in favor of ``method``.
   (PR :pr:`2655`)
 
-* ``tqdm`` is removed as a dependency in favor of ``rich``.
-  (PR :pr:`2648`)
-
 CLI API
 ~~~~~~~
 
