@@ -11,7 +11,8 @@ Important Notes
 * Support for Python 3.7, 3.8, and 3.9 has been dropped, as they are now all end
   of life, and ``pyhf`` now supports Python 3.10 or later.
   (PRs :pr:`2044`, :pr:`2625`, :pr:`2757`)
-* All backends are now fully compatible and tested with
+* All backends are tested with
+  `Python 3.10 <https://peps.python.org/pep-0619/>`_,
   `Python 3.11 <https://peps.python.org/pep-0664/>`_,
   `Python 3.12 <https://peps.python.org/pep-0693/>`_,
   `Python 3.13 <https://peps.python.org/pep-0719/>`_, and
