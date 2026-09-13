@@ -87,6 +87,29 @@ Fixes
 * Guard the Minuit optimizer against a ``None`` covariance from ``iminuit``
   when all parameters are fixed.
   (PR :pr:`2683`)
+* Correctly handle a Minuit optimizer ``strategy`` of ``0`` or ``None``.
+  A ``strategy`` of ``None`` now resolves to ``0`` when the tensor backend
+  provides gradients and ``1`` otherwise.
+  (PRs :pr:`2277`, :pr:`2278`)
+* Assign the :math:`\pm1\sigma` and :math:`\pm2\sigma` expected
+  :math:`\mathrm{CL}_{s}` band artists to the correct attributes of the
+  collection returned by :func:`pyhf.contrib.viz.brazil.plot_results`.
+  (PR :pr:`2411`)
+* Raise :class:`pyhf.exceptions.InvalidModel` when a multi-component parameter
+  (e.g. from a ``shapefactor``, ``shapesys``, or ``staterror`` modifier) is
+  used as the parameter of interest.
+  (PR :pr:`2197`)
+* Raise :class:`NotImplementedError` with a clear message when
+  :func:`pyhf.readxml.parse` is used on a HistFactory XML workspace without
+  observed data instead of failing inside ``uproot``.
+  (PR :pr:`2109`)
+* Skip callbacks with dead weak references when processing ``pyhf`` events to
+  avoid errors when a subscribed object is garbage collected during a callback.
+  (PR :pr:`2310`)
+* The warnings emitted when the :math:`q_{\mu}` and :math:`\tilde{q}_{\mu}`
+  test statistics are used with a mismatched parameter of interest lower bound
+  now state the ``test_stat`` value to pass to :func:`pyhf.infer.hypotest`.
+  (PR :pr:`2390`)
 * In :func:`pyhf.readxml.parse` close cached file handles in
   :func:`pyhf.readxml.clear_filecache`, and warn with the sample and channel
   name when a ``StatError`` modifier is not activated instead of silently
@@ -267,6 +290,8 @@ Contributors
 * Henry Schreiner
 * Alexander Held
 * Lorenz Gaertner
+* Daniel Werner
+* Jonas Rembser
 * Peter Fackeldey
 * Alok Kumar
 * Julian Kuhlmann
