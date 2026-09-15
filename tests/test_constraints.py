@@ -133,6 +133,62 @@ def test_numpy_pdf_inputs():
 
 
 @pytest.mark.usefixtures("backend")
+def test_constraint_logpdf_no_constraints():
+    # only-normal parsets: the poisson constraint has no terms and must
+    # return a scalar 0.0 without raising (and vice versa for gaussian)
+    config = MockConfig(
+        par_order=["norm1"],
+        par_map={
+            "norm1": {
+                "paramset": constrained_by_normal(
+                    name="norm1",
+                    is_scalar=False,
+                    n_parameters=2,
+                    inits=[0] * 2,
+                    bounds=[[0, 10]] * 2,
+                    auxdata=[0, 0],
+                    sigmas=[1.5, 2.0],
+                    fixed=False,
+                ),
+                "slice": slice(0, 2),
+            },
+        },
+    )
+    auxdata = pyhf.tensorlib.astensor(config.auxdata)
+    pars = pyhf.tensorlib.astensor(config.suggested_init())
+    poisson = poisson_constraint_combined(config)
+    assert poisson.has_pdf() is False
+    result = poisson.logpdf(auxdata, pars)
+    assert pyhf.tensorlib.tolist(result) == 0.0
+
+    # only-poisson parsets: the gaussian constraint has no terms
+    config = MockConfig(
+        par_order=["pois1"],
+        par_map={
+            "pois1": {
+                "paramset": constrained_by_poisson(
+                    name="pois1",
+                    is_scalar=False,
+                    n_parameters=1,
+                    inits=[1.0],
+                    bounds=[[0, 10]],
+                    auxdata=[12],
+                    factors=[12],
+                    fixed=False,
+                ),
+                "slice": slice(0, 1),
+            },
+        },
+    )
+    auxdata = pyhf.tensorlib.astensor(config.auxdata)
+    pars = pyhf.tensorlib.astensor(config.suggested_init())
+    gaussian = gaussian_constraint_combined(config)
+    assert gaussian.has_pdf() is False
+    result = gaussian.logpdf(auxdata, pars)
+    assert pyhf.tensorlib.tolist(result) == 0.0
+
+
+@pytest.mark.usefixtures("backend")
 def test_batched_constraints():
     config = MockConfig(
         par_order=["pois1", "pois2", "norm1", "norm2"],
