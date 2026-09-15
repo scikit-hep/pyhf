@@ -2,7 +2,7 @@ import logging
 
 import pyhf
 from pyhf import events
-from pyhf.exceptions import InvalidModifier
+from pyhf.exceptions import InvalidModel, InvalidModifier
 from pyhf.parameters import ParamViewer
 from pyhf.tensor.manager import get_backend
 
@@ -118,8 +118,14 @@ class staterror_builder:
                 if mask_this_sample.any():
                     if modname not in masks:
                         masks[modname] = mask_this_sample
-                    else:
-                        assert (mask_this_sample == masks[modname]).all()
+                    elif not (mask_this_sample == masks[modname]).all():
+                        _modifier_name = modname.split("/")[1]
+                        msg = (
+                            f"staterror modifier '{_modifier_name}' has inconsistent"
+                            " masks across samples: all samples sharing a staterror"
+                            " modifier must have identical bin masks."
+                        )
+                        raise InvalidModel(msg)
 
             # extract sigmas using this modifiers mask
             sigmas = relerrs[masks[modname]]

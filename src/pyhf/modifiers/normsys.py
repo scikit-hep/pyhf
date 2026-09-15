@@ -1,6 +1,7 @@
 import logging
 
 from pyhf import events, get_backend, interpolators
+from pyhf.exceptions import InvalidInterpCode
 from pyhf.parameters import ParamViewer
 
 log = logging.getLogger(__name__)
@@ -72,7 +73,12 @@ class normsys_combined:
         self, modifiers, pdfconfig, builder_data, interpcode="code1", batch_size=None
     ):
         self.interpcode = interpcode
-        assert self.interpcode in ["code1", "code4"]
+        if self.interpcode not in ["code1", "code4"]:
+            msg = (
+                f"interpcode '{self.interpcode}' is not implemented for normsys."
+                " Choose from: 'code1', 'code4'."
+            )
+            raise InvalidInterpCode(msg)
 
         keys = [f"{mtype}/{m}" for m, mtype in modifiers]
         normsys_mods = [m for m, _ in modifiers]
