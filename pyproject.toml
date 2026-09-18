@@ -74,6 +74,7 @@ minuit = ["iminuit>=2.9.0"]  # c.f. PR #2757
 contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
+    "sympy>=1.11",
 ]
 backends = ["pyhf[jax,minuit]"]
 all = ["pyhf[backends,xmlio,contrib]"]
@@ -360,6 +361,7 @@ jax = ">=0.4.1"
 [tool.pixi.feature.contrib.dependencies]
 matplotlib = ">=3.0.0"
 requests = ">=2.22.0"
+sympy = ">=1.11"
 
 [tool.pixi.feature.minuit.dependencies]
 iminuit = ">=2.9.0"
