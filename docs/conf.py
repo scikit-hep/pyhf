@@ -252,6 +252,11 @@ llms_txt_description = (
     " for automatic differentiation and GPU-accelerated computational backends."
 )
 
+# sphinx-llm v1.1.0+ relays the Markdown sub-build's "unknown node type"
+# warnings to the main build, which fails under -W. These nodes have no
+# Markdown translation and were already silently dropped in v1.0.0.
+llms_txt_suppress_unknown_node_warnings = True
+
 
 # -- Options for HTML output ----------------------------------------------
 
