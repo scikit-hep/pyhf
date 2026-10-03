@@ -154,18 +154,16 @@ def set_backend(
             raise AttributeError(msg)
 
     # need to determine if the tensorlib changed or the optimizer changed for events
-    tensorlib_changed = bool(
-        (new_backend.name != this.state["current"][0].name)
-        | (new_backend.precision != this.state["current"][0].precision)
+    tensorlib_changed = (new_backend.name != this.state["current"][0].name) or (
+        new_backend.precision != this.state["current"][0].precision
     )
     optimizer_changed = bool(this.state["current"][1] != new_optimizer)
     # set new backend
     this.state["current"] = (new_backend, new_optimizer)
     if default:
-        default_tensorlib_changed = bool(
-            (new_backend.name != this.state["default"][0].name)
-            | (new_backend.precision != this.state["default"][0].precision)
-        )
+        default_tensorlib_changed = (
+            new_backend.name != this.state["default"][0].name
+        ) or (new_backend.precision != this.state["default"][0].precision)
         default_optimizer_changed = bool(this.state["default"][1] != new_optimizer)
         # trigger events
         if default_tensorlib_changed:
