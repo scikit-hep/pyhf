@@ -148,9 +148,9 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
 
     # 4. finalize nominal & modifier builders
     nominal_rates = nominal.finalize()
-    finalizd_builder_data = {}
+    finalized_builder_data = {}
     for k, (builder, applier) in modifier_set.items():  # noqa: B007
-        finalizd_builder_data[k] = modifiers_builders[k].finalize()
+        finalized_builder_data[k] = modifiers_builders[k].finalize()
 
     # 5. collect parameters from spec and from user.
     # At this point we know all constraints and so forth
@@ -166,7 +166,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
         user_parameters,
         _required_paramsets,
     )
-    _prameter_objects, _auxdata, _auxdata_order = _create_parameters_from_spec(
+    _parameter_objects, _auxdata, _auxdata_order = _create_parameters_from_spec(
         _required_paramsets
     )
 
@@ -174,7 +174,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
         msg = "No parameters specified for the Model."
         raise exceptions.InvalidModel(msg)
 
-    config.set_parameters(_prameter_objects)
+    config.set_parameters(_parameter_objects)
     config.set_auxinfo(_auxdata, _auxdata_order)
 
     # 6. use finalized modifier data to build reparametrization function for main likelihood part
@@ -185,7 +185,7 @@ def _nominal_and_modifiers_from_spec(modifier_set, config, spec, batch_size):
                 x for x in config.modifiers if x[1] == k
             ],  # filter modifier names for that mtype (x[1])
             pdfconfig=config,
-            builder_data=finalizd_builder_data.get(k),
+            builder_data=finalized_builder_data.get(k),
             batch_size=batch_size,
             **config.modifier_settings.get(k, {}),
         )
@@ -988,11 +988,7 @@ class Model:
                 return tensorlib.reshape(result, (1,))
             return result
         except Exception:
-            log.exception(
-                "Eval failed for data %s pars: %s",
-                tensorlib.tolist(data),
-                tensorlib.tolist(pars),
-            )
+            log.exception("Eval failed for data %r pars: %r", data, pars)
             raise
 
     def pdf(self, pars, data):

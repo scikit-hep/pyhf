@@ -83,6 +83,14 @@ def test_patchset_get_nonexisting_patch(patchset):
     assert "nonexisting_patch" in str(exc_info.value)
 
 
+@pytest.mark.parametrize("key", ["name", "values"])
+def test_patchset_sentinel_keys_raise(patchset, key):
+    # Regression: previously "name" and "values" were pre-seeded in _patches_by_key
+    # causing lookups to return {} instead of raising InvalidPatchLookup.
+    with pytest.raises(pyhf.exceptions.InvalidPatchLookup):
+        patchset[key]
+
+
 def test_patchset_iterable(patchset):
     assert iter(patchset)
     assert list(iter(patchset))
