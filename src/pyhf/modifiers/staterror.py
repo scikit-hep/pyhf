@@ -89,19 +89,18 @@ class staterror_builder:
                 ],
                 axis=0,
             )
-            relerrs = default_backend.sum(
+            uncrts = default_backend.astensor(
                 [
-                    [
-                        (
-                            (modifier_data["data"]["uncrt"][binnr] / nomsall[binnr])
-                            ** 2
-                            if nomsall[binnr] > 0
-                            else 0.0
-                        )
-                        for binnr in range(len(modifier_data["data"]["nom_data"]))
-                    ]
+                    modifier_data["data"]["uncrt"]
                     for modifier_data in self.builder_data[modname].values()
-                ],
+                ]
+            )
+            valid_bins = nomsall > 0
+            # bins with no nominal yield have no relative error; guard the
+            # denominator so the division stays finite before zeroing them
+            safe_nomsall = default_backend.where(valid_bins, nomsall, 1.0)
+            relerrs = default_backend.sum(
+                default_backend.where(valid_bins, uncrts / safe_nomsall, 0.0) ** 2,
                 axis=0,
             )
             # here relerrs still has all the bins, while the staterror are usually per-channel
@@ -170,13 +169,12 @@ class staterror_combined:
 
     def _reindex_access_field(self, _pdfconfig):
         default_backend = pyhf.default_backend
+        staterror_mask = default_backend.astensor(self._staterror_mask, dtype="bool")
         for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
                 idx
-                for idx, syst in enumerate(
-                    default_backend.astensor(self._staterror_mask)[syst_index, :, 0]
-                )
-                if any(syst)
+                for idx, syst in enumerate(staterror_mask[syst_index, :, 0])
+                if syst.any()
             ][-1]
 
             for batch_index, batch_access in enumerate(syst_access):
