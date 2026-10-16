@@ -1,0 +1,3 @@
+# Zenodo has intermittent TLS stalls and handshake failures that make the docs link check flaky in CI.
+^https://doi\.org/10\.5281/zenodo\.
+^https://zenodo\.org/
