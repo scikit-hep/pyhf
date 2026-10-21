@@ -173,11 +173,14 @@ class shapefactor_combined:
         # access field is shape (sys, batch, globalbin)
         for s, syst_access in enumerate(self._access_field):
             for t, batch_access in enumerate(syst_access):
-                selection = self.param_viewer.index_selection[s][t]
-                for b, bin_access in enumerate(batch_access):
-                    self._access_field[s, t, b] = (
-                        selection[bin_access] if bin_access < len(selection) else 0
-                    )
+                selection = default_backend.astensor(
+                    self.param_viewer.index_selection[s][t], dtype="int"
+                )
+                # trailing 0 is the dummy index that out-of-range bins clip onto
+                padded = default_backend.concatenate([selection, [0]])
+                self._access_field[s, t] = padded[
+                    default_backend.clip(batch_access, 0, len(selection))
+                ]
 
         self._precompute()
         events.subscribe("tensorlib_changed")(self._precompute)
