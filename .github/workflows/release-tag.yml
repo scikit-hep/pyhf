@@ -1,8 +1,8 @@
 name: Tag release
 
-# No inputs: the version tagged is the one in tbump.toml on the dispatched
-# branch, set by the merged release preparation pull request, so the tag can
-# never disagree with the bumped files.
+# No inputs: the version tagged is the [tool.tbump] version in pyproject.toml on
+# the dispatched branch, set by the merged release preparation pull request, so
+# the tag can never disagree with the bumped files.
 on:
   workflow_dispatch:
 
@@ -40,10 +40,10 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.ACCESS_TOKEN }}
 
-    - name: Read version from tbump.toml
+    - name: Read version from pyproject.toml
       id: version
       run: |
-        version="$(python3 -c 'import tomllib; print(tomllib.load(open("tbump.toml", "rb"))["version"]["current"])')"
+        version="$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["tool"]["tbump"]["version"]["current"])')"
         echo "version=${version}" >> "$GITHUB_OUTPUT"
 
     # The changes in the release are summarized by the auto-generated GitHub

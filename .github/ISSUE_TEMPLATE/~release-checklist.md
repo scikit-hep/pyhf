@@ -56,7 +56,7 @@ The "release branch" is `main` for a minor or major release and the `release/vX.
 * [ ] Verify that the release is installable from both [PyPI](https://pypi.org/project/pyhf/) and [conda-forge](https://github.com/conda-forge/pyhf-feedstock).
 * [ ] Send the drafted [``pyhf-announcements``](https://groups.google.com/group/pyhf-announcements/) email out from the ``pyhf-announcements`` account email.
 * [ ] Share the release on both personal and team social media accounts.
-* [ ] For a patch release, forward port the release notes and the `tbump.toml` version information from the release branch to the default branch.
+* [ ] For a patch release, forward port the release notes and the `[tool.tbump]` version information in `pyproject.toml` from the release branch to the default branch.
    - c.f. PR https://github.com/scikit-hep/pyhf/pull/2217 and PR https://github.com/scikit-hep/pyhf/pull/2218 as examples from `pyhf` `v0.7.2`.
 * [ ] Make a release for the [`pyhf` tutorial](https://github.com/pyhf/pyhf-tutorial/releases) corresponding to the **previous release** number. This release represents the last version of the tutorial that is guaranteed to work with previous release API.
 * [ ] Update the [tutorial](https://github.com/pyhf/pyhf-tutorial) to use the new release number and API.
