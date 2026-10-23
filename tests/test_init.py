@@ -1,4 +1,5 @@
 import contextlib
+import importlib
 import sys
 
 import pytest
@@ -61,6 +62,7 @@ def test_missing_backends(param):
 @pytest.mark.usefixtures("isolate_modules")
 def test_missing_optimizer(param):
     backend_name, module_name, import_name, expectation = param
+    importlib.import_module(backend_name)
 
     # hide
     CACHE_BACKEND, sys.modules[backend_name] = sys.modules[backend_name], None

@@ -8,9 +8,6 @@ from typing import Generic, TypeVar, cast
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NBitBase, NDArray
-from scipy import special
-from scipy.special import gammaln, xlogy
-from scipy.stats import norm, poisson
 
 from pyhf.typing import Literal, Shape
 
@@ -26,6 +23,8 @@ class _BasicPoisson(Generic[T]):
         self.rate = rate
 
     def sample(self, sample_shape: Shape) -> ArrayLike:
+        from scipy.stats import poisson
+
         return cast(
             "ArrayLike", poisson(self.rate).rvs(size=sample_shape + self.rate.shape)
         )
@@ -41,6 +40,8 @@ class _BasicNormal(Generic[T]):
         self.scale = scale
 
     def sample(self, sample_shape: Shape) -> ArrayLike:
+        from scipy.stats import norm
+
         return cast(
             "ArrayLike",
             norm(self.loc, self.scale).rvs(size=sample_shape + self.loc.shape),
@@ -125,6 +126,8 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy ndarray: The values of the error function at the given points.
         """
+        from scipy import special
+
         return cast("ArrayLike", special.erf(tensor_in))
 
     def erfinv(self, tensor_in: Tensor[T]) -> ArrayLike:
@@ -145,6 +148,8 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy ndarray: The values of the inverse of the error function at the given points.
         """
+        from scipy import special
+
         return cast("ArrayLike", special.erfinv(tensor_in))
 
     def tile(self, tensor_in: Tensor[T], repeats: int | Sequence[int]) -> ArrayLike:
@@ -432,6 +437,8 @@ class numpy_backend(Generic[T]):
         return cast("ArrayLike", np.einsum(subscripts, *operands))
 
     def poisson_logpdf(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
+        from scipy.special import gammaln, xlogy
+
         return cast("ArrayLike", xlogy(n, lam) - lam - gammaln(n + 1.0))
 
     def poisson(self, n: Tensor[T], lam: Tensor[T]) -> ArrayLike:
@@ -474,6 +481,8 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy float: Value of the continuous approximation to Poisson(n|lam)
         """
+        from scipy.special import gammaln, xlogy
+
         _n = np.asarray(n)
         _lam = np.asarray(lam)
         return cast("ArrayLike", np.exp(xlogy(_n, _lam) - _lam - gammaln(_n + 1)))
@@ -517,6 +526,8 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy float: Value of Normal(x|mu, sigma)
         """
+        from scipy.stats import norm
+
         return cast("ArrayLike", norm.pdf(x, loc=mu, scale=sigma))
 
     def normal_cdf(
@@ -543,6 +554,8 @@ class numpy_backend(Generic[T]):
         Returns:
             NumPy float: The CDF
         """
+        from scipy.stats import norm
+
         return cast("ArrayLike", norm.cdf(x, loc=mu, scale=sigma))
 
     def poisson_dist(self, rate: Tensor[T]) -> _BasicPoisson[T]:
