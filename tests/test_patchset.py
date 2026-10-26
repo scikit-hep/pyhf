@@ -21,7 +21,7 @@ def patchset(datadir, request):
 @pytest.fixture
 def patch():
     return pyhf.patchset.Patch(
-        {"metadata": {"name": "test", "values": [1.0, 2.0, 3.0]}, "patch": {}}
+        {"metadata": {"name": "test", "values": [1.0, 2.0, 3.0]}, "patch": []}
     )
 
 
