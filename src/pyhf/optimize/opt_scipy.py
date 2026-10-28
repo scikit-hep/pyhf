@@ -1,7 +1,5 @@
 """SciPy Optimizer Class."""
 
-import scipy
-
 from pyhf import exceptions
 from pyhf.optimize.mixins import OptimizerMixin
 
@@ -41,6 +39,8 @@ class scipy_optimizer(OptimizerMixin):
         do_grad=False,  # noqa: ARG002
         par_names=None,  # noqa: ARG002
     ):
+        import scipy.optimize
+
         return scipy.optimize.minimize
 
     def _minimize(
