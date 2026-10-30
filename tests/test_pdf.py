@@ -670,6 +670,27 @@ def test_override_paramset_defaults():
     assert pdf.config.param_set("bkg_norm").suggested_init == [99, 99]
 
 
+@pytest.mark.parametrize("custom_bounds", [False, True])
+def test_suggested_bounds_are_tuples(custom_bounds):
+    model = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+    )
+    if custom_bounds:
+        spec = dict(model.spec)
+        spec["parameters"] = [{"name": "mu", "bounds": [[-2.0, 8.0]]}]
+        model = pyhf.Model(spec)
+    bounds = model.config.suggested_bounds()
+    assert all(isinstance(bound, tuple) for bound in bounds)
+    assert bounds == [
+        (-2.0, 8.0) if custom_bounds else (0, 10),
+        (1e-10, 10.0),
+        (1e-10, 10.0),
+    ]
+    # The return value can be modified without changing subsequent suggestions.
+    bounds[0] = (1.0, 2.0)
+    assert model.config.suggested_bounds()[0] != (1.0, 2.0)
+
+
 def test_override_paramsets_incorrect_num_parameters():
     with Path("validation/data/2bin_histosys_example2.json").open(
         encoding="utf-8"
