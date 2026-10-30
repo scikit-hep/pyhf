@@ -82,7 +82,7 @@ all = ["pyhf[backends,xmlio,contrib]"]
 [dependency-groups]
 test = [
     "scikit-hep-testdata>=0.4.11",
-    "pytest>=8.4.0",
+    "pytest>=8.4.0,<9.2",  # pytest-benchmark#321
     "coverage[toml]>=6.0.0",
     "pytest-mock",
     "requests-mock>=1.9.0",
@@ -365,7 +365,7 @@ requests = ">=2.22.0"
 iminuit = ">=2.9.0"
 
 [tool.pixi.feature.test.dependencies]
-pytest = ">=8.4.0"
+pytest = ">=8.4.0,<9.2"  # pytest-benchmark#321
 scikit-hep-testdata = ">=0.4.11"
 coverage = ">=6.0.0"
 pytest-mock = "*"
