@@ -91,7 +91,7 @@ jobs:
         git push --force --set-upstream origin "${branch}"
 
         cat > "${RUNNER_TEMP}/pull_request_body.md" <<EOF
-        Bump version from the latest release to v${VERSION} in all files managed by tbump.toml.
+        Bump version from the latest release to v${VERSION} in all files managed by tbump (configured in pyproject.toml).
 
         Reviewing this pull request is the release "dry run":
         * [ ] Verify the new version is the intended release version.
