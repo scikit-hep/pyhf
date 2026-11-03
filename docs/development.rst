@@ -209,15 +209,16 @@ The maintainer needs to:
 
 The workflow validates that the version is newer than the current version on the
 selected branch and opens a release preparation pull request that bumps the version
-of all files defined in `tbump.toml
-<https://github.com/scikit-hep/pyhf/blob/main/tbump.toml>`__ to it.
+of all files defined in the ``[tool.tbump]`` table of `pyproject.toml
+<https://github.com/scikit-hep/pyhf/blob/main/pyproject.toml>`__ to it.
 The pull request serves as the release dry run.
 The maintainer should verify the new version and the diff of the bumped files and let
 the CI validate the changes before merging.
 
 .. note::
 
-  The version validation is relative to the version recorded in ``tbump.toml``,
+  The version validation is relative to the version recorded in the
+  ``[tool.tbump]`` table of ``pyproject.toml``,
   which merging a release preparation pull request updates.
   If a release is abandoned after its release preparation pull request has been
   merged, but before the release tag has been created, revert the release
@@ -231,8 +232,9 @@ After the release preparation pull request has been merged, a maintainer runs th
 `Tag release`_ GitHub Actions workflow through workflow dispatch on the release
 branch.
 The workflow requires approval through the ``release-tag`` GitHub Actions
-environment, and then creates an annotated tag for the version defined in
-``tbump.toml`` and pushes the tag to the release branch.
+environment, and then creates an annotated tag for the version defined in the
+``[tool.tbump]`` table of ``pyproject.toml`` and pushes the tag to the release
+branch.
 
 The ``release-prepare`` and ``release-tag`` `GitHub Actions environments
 <https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments>`__
@@ -283,9 +285,10 @@ Creating the release branch from the release tag makes the tag reachable from
 the branch, which ``hatch-vcs`` requires to correctly derive the release series
 versions for the distributions built from the branch (e.g. dev versions for
 untagged commits).
-As the ``tbump.toml`` on the release branch records the latest release of its
-release series, the version validation of a patch release prepared from the
-branch is automatically scoped to the release series.
+As the ``[tool.tbump]`` table of ``pyproject.toml`` on the release branch
+records the latest release of its release series, the version validation of a
+patch release prepared from the branch is automatically scoped to the release
+series.
 
 Patch releases follow the same release procedure as all other releases, with
 the ``release/vX.Y.x`` branch selected when running the `Prepare release`_ and

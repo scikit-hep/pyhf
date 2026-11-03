@@ -19,16 +19,16 @@ def main():
     )
     args = parser.parse_args()
 
-    with Path("tbump.toml").open("rb") as manifest:
-        version_config = tomllib.load(manifest)["version"]
+    with Path("pyproject.toml").open("rb") as manifest:
+        version_config = tomllib.load(manifest)["tool"]["tbump"]["version"]
 
-    # Validate with the tbump.toml version regex, which tbump compiles in
+    # Validate with the tbump version regex, which tbump compiles in
     # verbose mode, to fail with a clear error here before tbump runs
     # (packaging.version.Version would otherwise accept versions tbump
     # rejects, e.g. a leading "v")
     if not re.fullmatch(version_config["regex"], args.version, flags=re.VERBOSE):
         error_message = (
-            f"ERROR: {args.version} does not match the tbump.toml release"
+            f"ERROR: {args.version} does not match the tbump release"
             " version format X.Y.Z or X.Y.ZrcN (with no leading v)."
         )
         raise SystemExit(error_message)
