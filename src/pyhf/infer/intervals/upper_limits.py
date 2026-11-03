@@ -1,7 +1,6 @@
 """Interval estimation"""
 
 import numpy as np
-from scipy.optimize import toms748
 
 from pyhf import get_backend
 from pyhf.infer import hypotest
@@ -75,6 +74,8 @@ def toms748_scan(
 
     .. version-added:: 0.7.0
     """
+    from scipy.optimize import toms748
+
     # When return_tail_probs=True, hypotest inserts (CLsb, CLb) at index 1,
     # shifting the expected band from index 1 to index 2.
     _exp_idx = 2 if hypotest_kwargs.get("return_tail_probs", False) else 1

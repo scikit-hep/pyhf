@@ -1,6 +1,7 @@
 import json
 import logging
 import shlex
+import subprocess
 import sys
 import tarfile
 import time
@@ -35,6 +36,20 @@ def test_version(script_runner):
     assert ret.stderr == ""
     # make sure it took less than a second
     assert elapsed < 1.0
+
+
+def test_cli_import_does_not_load_scipy():
+    # Shell completions import pyhf.cli, so keep the slow SciPy imports lazy
+    code = (
+        "import sys; import pyhf.cli; "
+        "print([m for m in ('scipy.optimize', 'scipy.special', 'scipy.stats') "
+        "if m in sys.modules])"
+    )
+    ret = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True, check=False
+    )
+    assert ret.returncode == 0, ret.stderr
+    assert ret.stdout.strip() == "[]"
 
 
 @pytest.mark.parametrize("flag", ["--cite", "--citation"])
