@@ -1,0 +1,33 @@
+name: dev-tools
+
+on:
+  pull_request:
+
+jobs:
+  test:
+
+    name: Check dev-tools
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install --ignore-installed -U -q --no-cache-dir -e .
+        python -m pip list
+    - name: Lint with shellcheck
+      run: |
+        shellcheck dev_tools/*.sh
+    - name: Install dev-tools
+      run: |
+        bash dev_tools/install-devtools.sh
+        ls -lhtra "$(dirname $(command -v doctest-on))"
+    - name: Test doctest-on
+      run: |
+        doctest-on src/pyhf/infer/test_statistics.py
+        doctest-on pyhf.infer.test_statistics
