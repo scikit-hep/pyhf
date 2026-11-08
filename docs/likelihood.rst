@@ -185,7 +185,13 @@ factor :math:`\kappa(\alpha)` constructed as the interpolation between
 downward ("lo") and upward ("hi") as well as the nominal setting, i.e.
 :math:`\kappa(-1) = \kappa_{\alpha=-1}`, :math:`\kappa(0) = 1` and
 :math:`\kappa(+1) = \kappa_{\alpha=+1}`. In the modifier definition we record
-:math:`\kappa_{\alpha=+1}` and :math:`\kappa_{\alpha=-1}` as floats.
+:math:`\kappa_{\alpha=+1}` and :math:`\kappa_{\alpha=-1}` as floats. These
+values are relative multiplicative scale factors applied to the nominal sample
+rates, not absolute event counts. For example, ``hi: 1.1`` increases each nominal
+rate by 10% at :math:`\alpha=+1`, while ``lo: 0.9`` decreases it by 10% at
+:math:`\alpha=-1`. If the nominal rates are ``[10, 20]``, the corresponding
+rates at those endpoints are ``[11, 22]`` and ``[9, 18]``. For more details on
+how modifiers affect sample rates, see :ref:`tab:modifiers_and_constraints`.
 An example of a normalisation uncertainty modifier with scale factors recorded
 for the up/down variations of an :math:`n`-bin channel is shown below:
 
