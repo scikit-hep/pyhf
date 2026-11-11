@@ -135,7 +135,7 @@ class gaussian_constraint_combined:
             return (
                 tensorlib.zeros(self.batch_size)
                 if self.batch_size is not None
-                else tensorlib.astensor(0.0)[0]
+                else tensorlib.astensor(0.0)
             )
         normal_data = tensorlib.gather(auxdata, self.normal_data)
         return pdf.log_prob(normal_data)
@@ -148,7 +148,6 @@ class poisson_constraint_combined:
         self.batch_size = batch_size
         # iterate over all constraints order doesn't matter....
 
-        self.par_indices = list(range(pdfconfig.npars))
         self.data_indices = list(range(len(pdfconfig.auxdata)))
         self.parsets = [pdfconfig.param_set(cname) for cname in pdfconfig.auxdata_order]
 
@@ -256,7 +255,7 @@ class poisson_constraint_combined:
             return (
                 tensorlib.zeros(self.batch_size)
                 if self.batch_size is not None
-                else tensorlib.astensor(0.0)[0]
+                else tensorlib.astensor(0.0)
             )
         poisson_data = tensorlib.gather(auxdata, self.poisson_data)
         return pdf.log_prob(poisson_data)
