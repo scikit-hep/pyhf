@@ -48,7 +48,7 @@ def self_restoring_schema_globals():
     old_path = pyhf.schema.path
     old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
     yield old_path, old_cache
-    pyhf.schema(old_path)
+    pyhf.schema.variables.schemas = old_path
     pyhf.schema.variables.SCHEMA_CACHE = old_cache
 
 
