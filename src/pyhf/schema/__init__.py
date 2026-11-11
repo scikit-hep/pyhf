@@ -81,7 +81,10 @@ class Schema(sys.modules[__name__].__class__):
         return self
 
     def __enter__(self):
-        pass
+        """Save the pending restoration state for this active context."""
+        if not hasattr(self, "_context_stack"):
+            self._context_stack = []
+        self._context_stack.append((self.orig_path, self.orig_cache))
 
     def __exit__(self, *args, **kwargs):
         """
@@ -90,8 +93,7 @@ class Schema(sys.modules[__name__].__class__):
         Returns:
             None
         """
-        variables.schemas = self.orig_path
-        variables.SCHEMA_CACHE = self.orig_cache
+        variables.schemas, variables.SCHEMA_CACHE = self._context_stack.pop()
 
     @property
     def path(self):
