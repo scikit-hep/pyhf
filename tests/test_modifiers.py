@@ -247,3 +247,86 @@ def test_issue1720_greedy_staterror(datadir, inits):
     expected_staterror = model_staterror.expected_actualdata(inits)
 
     assert expected_staterror == expected_shapesys
+
+
+def _minimal_spec_with_histosys():
+    return {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": [5.0, 10.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": [50.0, 60.0],
+                        "modifiers": [
+                            {
+                                "name": "bkg_norm",
+                                "type": "histosys",
+                                "data": {
+                                    "lo_data": [45.0, 55.0],
+                                    "hi_data": [55.0, 65.0],
+                                },
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+
+
+def _minimal_spec_with_normsys():
+    return {
+        "channels": [
+            {
+                "name": "singlechannel",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": [5.0, 10.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None}
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": [50.0, 60.0],
+                        "modifiers": [
+                            {
+                                "name": "bkg_norm",
+                                "type": "normsys",
+                                "data": {"lo": 0.9, "hi": 1.1},
+                            }
+                        ],
+                    },
+                ],
+            }
+        ]
+    }
+
+
+@pytest.mark.parametrize("bad_code", ["code1", "code4", "code3", "bad"])
+def test_histosys_invalid_interpcode(bad_code):
+    spec = _minimal_spec_with_histosys()
+    with pytest.raises(pyhf.exceptions.InvalidInterpCode):
+        pyhf.Model(
+            spec,
+            modifier_settings={"histosys": {"interpcode": bad_code}},
+        )
+
+
+@pytest.mark.parametrize("bad_code", ["code0", "code2", "code4p", "bad"])
+def test_normsys_invalid_interpcode(bad_code):
+    spec = _minimal_spec_with_normsys()
+    with pytest.raises(pyhf.exceptions.InvalidInterpCode):
+        pyhf.Model(
+            spec,
+            modifier_settings={"normsys": {"interpcode": bad_code}},
+        )
