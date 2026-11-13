@@ -812,24 +812,26 @@ class Workspace(_ChannelSummaryMixin, dict):
         """
         workspace = copy.deepcopy({"channels": model.spec["channels"]})
         workspace["version"] = schema.version
+        # keep settings like lumi auxdata and sigmas from the original parameter configs
+        user_configs = {p["name"]: p for p in model.spec.get("parameters", [])}
+        parameters = []
+        for parset_name, parset_spec in model.config.par_map.items():
+            paramset = parset_spec["paramset"]
+            parameter = {
+                **user_configs.get(parset_name, {}),
+                "bounds": [list(x) for x in paramset.suggested_bounds],
+                "inits": paramset.suggested_init,
+                "name": parset_name,
+            }
+            # per-bin fixed values (e.g. zero-yield staterror bins) are derived
+            # from the sample data and can't be stored as a single bool
+            if len(set(paramset.suggested_fixed)) == 1:
+                parameter["fixed"] = paramset.suggested_fixed_as_bool
+            parameters.append(parameter)
         workspace["measurements"] = [
             {
                 "name": name,
-                "config": {
-                    "poi": model.config.poi_name,
-                    "parameters": [
-                        {
-                            "bounds": [
-                                list(x)
-                                for x in parset_spec["paramset"].suggested_bounds
-                            ],
-                            "inits": parset_spec["paramset"].suggested_init,
-                            "fixed": parset_spec["paramset"].suggested_fixed_as_bool,
-                            "name": parset_name,
-                        }
-                        for parset_name, parset_spec in model.config.par_map.items()
-                    ],
-                },
+                "config": {"poi": model.config.poi_name, "parameters": parameters},
             }
         ]
         workspace["observations"] = [
