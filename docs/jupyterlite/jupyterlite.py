@@ -17,10 +17,8 @@
 # To get going try copying and pasting the "Hello World" example below!
 
 # %%
-import piplite
-
 # Install pyhf in the browser
-await piplite.install(["pyhf==0.7.6", "matplotlib>=3.0.0"])  # noqa: PLE1142
+# %pip install -q "pyhf==0.7.6" "matplotlib>=3.0.0"
 # %matplotlib inline
 import pyhf
 
