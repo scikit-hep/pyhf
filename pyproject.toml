@@ -316,7 +316,7 @@ flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "ci/validate-version.py" = ["T20"]
-"docs/jupyterlite/jupyterlite.py" = ["F401", "F704"]
+"docs/jupyterlite/jupyterlite.py" = ["F401"]
 "**.ipynb" = ["T20"]
 "noxfile.py" = ["T20"]
 "tests/**" = ["NPY002"]
