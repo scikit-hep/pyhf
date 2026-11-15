@@ -18,7 +18,7 @@
 
 # %%
 # Install pyhf in the browser
-# %pip install -q "pyhf==0.7.6" "matplotlib>=3.0.0"
+# %pip install -q "pyhf==0.8.0" "matplotlib>=3.0.0"
 # %matplotlib inline
 import pyhf
 
