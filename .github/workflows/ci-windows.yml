@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -49,3 +49,13 @@ jobs:
       run: |
         coverage report
         coverage xml
+        coverage html
+
+    - name: Upload coverage reports as workflow artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: coverage-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: |
+          coverage.xml
+          htmlcov/
+        retention-days: 14

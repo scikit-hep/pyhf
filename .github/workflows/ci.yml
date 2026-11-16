@@ -37,9 +37,6 @@ jobs:
         include:
           - os: macos-latest
             python-version: '3.15'
-          # Intel runner
-          - os: macos-15-intel
-            python-version: '3.13'
 
     steps:
     - uses: actions/checkout@v7
