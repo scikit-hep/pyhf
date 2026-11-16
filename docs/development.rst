@@ -107,6 +107,17 @@ contrib module, or notebooks, and so instead to test the core codebase a develop
 
     nox --session tests --python 3.15
 
+Validation tests
+^^^^^^^^^^^^^^^^
+
+``tests/test_validation.py`` compares ``pyhf`` hypothesis test results with
+reference results from ROOT/HistFactory for a set of model configurations.
+Each configuration is defined by fixtures that a parametrized ``setup``
+fixture looks up by name, so a failing test's traceback doesn't show which
+fixture holds its data. The docstring at the top of
+``tests/test_validation.py`` walks through how the fixtures fit together, how
+to go from a failing test ID to its fixtures, and how to add a configuration.
+
 Contrib module matplotlib image tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
