@@ -48,8 +48,129 @@ def self_restoring_schema_globals():
     old_path = pyhf.schema.path
     old_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
     yield old_path, old_cache
-    pyhf.schema(old_path)
+    pyhf.schema.variables.schemas = old_path
     pyhf.schema.variables.SCHEMA_CACHE = old_cache
+
+
+@pytest.fixture
+def schema_context_roots(tmp_path):
+    """Create distinct schema values to expose stale cache entries."""
+    roots = [tmp_path / label for label in ["A", "B", "C"]]
+    for root in roots:
+        _write_schemas(
+            root,
+            {"probe.json": {"$id": "probe.json", "type": "string", "const": root.name}},
+        )
+    return roots
+
+
+def _assert_schema_state(path, cache):
+    """Check the restored path and identities of cached schema objects."""
+    assert pyhf.schema.path == path
+    assert pyhf.schema.variables.SCHEMA_CACHE.keys() == cache.keys()
+    for key, value in cache.items():
+        assert pyhf.schema.variables.SCHEMA_CACHE[key] is value
+
+
+@pytest.mark.parametrize("raise_inner", [False, True])
+def test_schema_nested_context_restores(
+    schema_context_roots, self_restoring_schema_globals, raise_inner
+):
+    """Restore the original state after normal or exceptional nested exits."""
+    old_path, old_cache = self_restoring_schema_globals
+    outer_path, inner_path, _ = schema_context_roots
+    error = RuntimeError("nested schema sentinel")
+
+    def visit():
+        with pyhf.schema(outer_path) as outer:
+            assert outer is None
+            outer_schema = pyhf.schema.load_schema("probe.json")
+            outer_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
+            with pyhf.schema(inner_path) as inner:
+                assert inner is None
+                inner_schema = pyhf.schema.load_schema("probe.json")
+                assert inner_schema["const"] == "B"
+                assert inner_schema is not outer_schema
+                if raise_inner:
+                    raise error
+            _assert_schema_state(outer_path, outer_cache)
+            assert pyhf.schema.load_schema("probe.json") is outer_schema
+
+    if raise_inner:
+        with pytest.raises(RuntimeError, match="nested schema sentinel") as caught:
+            visit()
+        assert caught.value is error
+    else:
+        visit()
+    _assert_schema_state(old_path, old_cache)
+
+
+def test_schema_nested_context_catches_inner_error(
+    schema_context_roots, self_restoring_schema_globals
+):
+    old_path, old_cache = self_restoring_schema_globals
+    outer_path, inner_path, _ = schema_context_roots
+    error = RuntimeError("caught inner sentinel")
+
+    def fail_inner():
+        with pyhf.schema(inner_path):
+            assert pyhf.schema.load_schema("probe.json")["const"] == "B"
+            raise error
+
+    with pyhf.schema(outer_path):
+        outer_schema = pyhf.schema.load_schema("probe.json")
+        outer_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
+        with pytest.raises(RuntimeError, match="caught inner sentinel"):
+            fail_inner()
+        _assert_schema_state(outer_path, outer_cache)
+        assert pyhf.schema.load_schema("probe.json") is outer_schema
+    _assert_schema_state(old_path, old_cache)
+
+
+def test_schema_nested_context_three_levels(
+    schema_context_roots, self_restoring_schema_globals
+):
+    old_path, old_cache = self_restoring_schema_globals
+    outer_path, middle_path, inner_path = schema_context_roots
+    with pyhf.schema(outer_path):
+        assert pyhf.schema.load_schema("probe.json")["const"] == "A"
+        outer_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
+        with pyhf.schema(middle_path):
+            assert pyhf.schema.load_schema("probe.json")["const"] == "B"
+            middle_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
+            with pyhf.schema(inner_path):
+                assert pyhf.schema.load_schema("probe.json")["const"] == "C"
+            _assert_schema_state(middle_path, middle_cache)
+        _assert_schema_state(outer_path, outer_cache)
+    _assert_schema_state(old_path, old_cache)
+
+
+def test_schema_setter_inside_context(
+    schema_context_roots, self_restoring_schema_globals
+):
+    old_path, old_cache = self_restoring_schema_globals
+    outer_path, setter_path, _ = schema_context_roots
+    with pyhf.schema(outer_path):
+        pyhf.schema.load_schema("probe.json")
+        assert pyhf.schema(setter_path) is pyhf.schema
+        assert not pyhf.schema.variables.SCHEMA_CACHE
+        assert pyhf.schema.load_schema("probe.json")["const"] == "B"
+    _assert_schema_state(old_path, old_cache)
+
+
+@pytest.mark.usefixtures("self_restoring_schema_globals")
+def test_schema_setter_and_consecutive_contexts(schema_context_roots):
+    """Restore a setter-selected path and cache after each separate context."""
+    setter_path, first_path, second_path = schema_context_roots
+    assert pyhf.schema(setter_path) is pyhf.schema
+    setter_schema = pyhf.schema.load_schema("probe.json")
+    setter_cache = dict(pyhf.schema.variables.SCHEMA_CACHE)
+    for path in [first_path, second_path]:
+        with pyhf.schema(path):
+            assert not pyhf.schema.variables.SCHEMA_CACHE
+            assert pyhf.schema.load_schema("probe.json")["const"] == path.name
+        _assert_schema_state(setter_path, setter_cache)
+        assert pyhf.schema.load_schema("probe.json") is setter_schema
 
 
 def test_schema_changeable(datadir, monkeypatch, self_restoring_schema_globals):
