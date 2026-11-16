@@ -1,3 +1,89 @@
+"""
+Validation tests: pyhf results compared with reference results.
+
+Most of this file serves ``test_validation``, which builds a model for each of
+several configurations, runs ``pyhf.infer.hypotest``, and compares the observed
+and expected CLs values with reference values from ROOT/HistFactory (the ROOT
+scripts are in ``validation/``, for example ``validation/run_single.py``). The
+tests at the bottom of the file (``test_import_roundtrip``,
+``test_shapesys_nuisparfilter_validation``, ``test_optimizer_stitching`` and
+``test_optimizer_grad``) are self-contained and don't use the fixtures below.
+
+Run the tests from the top level of the repository, because the ``source_*``
+fixtures open their files with paths relative to it.
+
+How a configuration is defined
+------------------------------
+
+Each configuration has a name, ``<name>``, and three module-scoped fixtures
+named after it:
+
+* ``source_<name>``: the input data (bin contents and uncertainties), loaded
+  from a JSON file in ``validation/data/``.
+* ``spec_<name>``: the pyhf model specification built from that source.
+* ``expected_result_<name>``: the reference CLs values, as
+  ``{"exp": [...], "obs": ...}``, where ``exp`` holds the five expected CLs
+  values (the -2 to +2 sigma band) and ``obs`` the observed CLs value.
+
+Configurations can share fixtures. ``1bin_shapesys_q0_toys`` reuses the source
+and spec of ``1bin_shapesys_q0`` through two module-level aliases,
+``source_1bin_shapesys_q0_toys`` and ``spec_1bin_shapesys_q0_toys``, and has
+only its own ``expected_result_1bin_shapesys_q0_toys``.
+
+How the fixtures are wired together
+-----------------------------------
+
+The ``setup`` fixture is parametrized with one tuple per test case::
+
+    (name, config_counts, mu, test_stat, tolerance, calctype)
+
+* ``name``: the ``<name>`` above. ``setup`` looks up the three fixtures by
+  string, with ``request.getfixturevalue(f"source_{_name}")`` and the same for
+  ``spec_`` and ``expected_result_``.
+* ``config_counts``: sizes ``test_validation`` checks before the fit:
+  ``init_pars`` and ``par_bounds`` are the lengths of
+  ``pdf.config.suggested_init()`` and ``pdf.config.suggested_bounds()``, and
+  the optional ``auxdata`` is the length of ``pdf.config.auxdata``.
+* ``mu``: the signal strength tested, passed to ``hypotest`` as ``mu_test``.
+* ``test_stat``: the test statistic, ``"q"`` or ``"q0"``.
+* ``tolerance``: the relative tolerance for comparing CLs values.
+* ``calctype``: ``"asymptotics"`` or ``"toybased"``.
+
+Because the three fixtures are looked up by string, pytest doesn't list them
+in ``--setup-plan``, and a failure traceback shows only ``test_validation`` and
+``validate_hypotest``, not the fixture that holds the reference values.
+
+Finding the fixtures for a failing test
+---------------------------------------
+
+Test IDs come from the ``ids`` list passed to ``setup``'s fixture decorator,
+and they aren't always ``<name>``: ``1bin_shapesys_q0_mu1_toys`` is the case
+named ``1bin_shapesys_q0_toys``. For a failing test such as
+``test_validation[2bin_2channel_couplednorm_mu1]``:
+
+1. Find the ID in ``ids``. The tuple at the same position in ``params`` is the
+   case that ran, and its first entry is the name,
+   ``"2bin_2channel_couplednorm"``.
+2. The case's data is in ``source_2bin_2channel_couplednorm``,
+   ``spec_2bin_2channel_couplednorm`` and
+   ``expected_result_2bin_2channel_couplednorm``. Search the file for
+   ``def expected_result_2bin_2channel_couplednorm`` to find the reference
+   values the failing assert in ``validate_hypotest`` compared against.
+
+To run that one case::
+
+    pytest tests/test_validation.py -k 2bin_2channel_couplednorm_mu1
+
+Adding a configuration
+----------------------
+
+1. Add its input data as a JSON file in ``validation/data/``.
+2. Add ``source_<name>``, ``spec_<name>`` and ``expected_result_<name>``
+   fixtures, following the existing ones.
+3. Add a tuple for it to ``setup``'s ``params``, and its test ID to ``ids`` at
+   the same position.
+"""
+
 import json
 from pathlib import Path
 
