@@ -99,13 +99,12 @@ class normfactor_combined:
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
+        normfactors = self.param_viewer.get(pars)
         if self.batch_size is None:
-            normfactors = self.param_viewer.get(pars)
             results_normfactor = tensorlib.einsum(
                 "msab,m->msab", self.normfactor_mask, normfactors
             )
         else:
-            normfactors = self.param_viewer.get(pars)
             results_normfactor = tensorlib.einsum(
                 "msab,ma->msab", self.normfactor_mask, normfactors
             )
