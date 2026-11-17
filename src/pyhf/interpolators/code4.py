@@ -11,6 +11,64 @@ from pyhf.tensor.manager import get_backend
 log = logging.getLogger(__name__)
 
 
+def _a_inverse(alpha0):
+    """Return the inverse of the rank-6 boundary-condition matrix as a nested list.
+
+    The matrix inverts ``A x = b`` for the polynomial coefficients (see
+    :class:`_slow_code4` for the derivation). It depends only on ``alpha0``.
+    """
+    return [
+        [
+            15.0 / (16 * alpha0),
+            -15.0 / (16 * alpha0),
+            -7.0 / 16.0,
+            -7.0 / 16.0,
+            1.0 / 16 * alpha0,
+            -1.0 / 16.0 * alpha0,
+        ],
+        [
+            3.0 / (2 * math.pow(alpha0, 2)),
+            3.0 / (2 * math.pow(alpha0, 2)),
+            -9.0 / (16 * alpha0),
+            9.0 / (16 * alpha0),
+            1.0 / 16,
+            1.0 / 16,
+        ],
+        [
+            -5.0 / (8 * math.pow(alpha0, 3)),
+            5.0 / (8 * math.pow(alpha0, 3)),
+            5.0 / (8 * math.pow(alpha0, 2)),
+            5.0 / (8 * math.pow(alpha0, 2)),
+            -1.0 / (8 * alpha0),
+            1.0 / (8 * alpha0),
+        ],
+        [
+            3.0 / (-2 * math.pow(alpha0, 4)),
+            3.0 / (-2 * math.pow(alpha0, 4)),
+            -7.0 / (-8 * math.pow(alpha0, 3)),
+            7.0 / (-8 * math.pow(alpha0, 3)),
+            -1.0 / (8 * math.pow(alpha0, 2)),
+            -1.0 / (8 * math.pow(alpha0, 2)),
+        ],
+        [
+            3.0 / (16 * math.pow(alpha0, 5)),
+            -3.0 / (16 * math.pow(alpha0, 5)),
+            -3.0 / (16 * math.pow(alpha0, 4)),
+            -3.0 / (16 * math.pow(alpha0, 4)),
+            1.0 / (16 * math.pow(alpha0, 3)),
+            -1.0 / (16 * math.pow(alpha0, 3)),
+        ],
+        [
+            1.0 / (2 * math.pow(alpha0, 6)),
+            1.0 / (2 * math.pow(alpha0, 6)),
+            -5.0 / (16 * math.pow(alpha0, 5)),
+            5.0 / (16 * math.pow(alpha0, 5)),
+            1.0 / (16 * math.pow(alpha0, 4)),
+            1.0 / (16 * math.pow(alpha0, 4)),
+        ],
+    ]
+
+
 class code4:
     r"""
     The polynomial interpolation and exponential extrapolation strategy.
@@ -60,58 +118,7 @@ class code4:
         deltas_up_alpha0 = default_backend.power(self._deltas_up, self._alpha0)
         deltas_dn_alpha0 = default_backend.power(self._deltas_dn, self._alpha0)
         # x = A^{-1} b
-        A_inverse = default_backend.astensor(
-            [
-                [
-                    15.0 / (16 * alpha0),
-                    -15.0 / (16 * alpha0),
-                    -7.0 / 16.0,
-                    -7.0 / 16.0,
-                    1.0 / 16 * alpha0,
-                    -1.0 / 16.0 * alpha0,
-                ],
-                [
-                    3.0 / (2 * math.pow(alpha0, 2)),
-                    3.0 / (2 * math.pow(alpha0, 2)),
-                    -9.0 / (16 * alpha0),
-                    9.0 / (16 * alpha0),
-                    1.0 / 16,
-                    1.0 / 16,
-                ],
-                [
-                    -5.0 / (8 * math.pow(alpha0, 3)),
-                    5.0 / (8 * math.pow(alpha0, 3)),
-                    5.0 / (8 * math.pow(alpha0, 2)),
-                    5.0 / (8 * math.pow(alpha0, 2)),
-                    -1.0 / (8 * alpha0),
-                    1.0 / (8 * alpha0),
-                ],
-                [
-                    3.0 / (-2 * math.pow(alpha0, 4)),
-                    3.0 / (-2 * math.pow(alpha0, 4)),
-                    -7.0 / (-8 * math.pow(alpha0, 3)),
-                    7.0 / (-8 * math.pow(alpha0, 3)),
-                    -1.0 / (8 * math.pow(alpha0, 2)),
-                    -1.0 / (8 * math.pow(alpha0, 2)),
-                ],
-                [
-                    3.0 / (16 * math.pow(alpha0, 5)),
-                    -3.0 / (16 * math.pow(alpha0, 5)),
-                    -3.0 / (16 * math.pow(alpha0, 4)),
-                    -3.0 / (16 * math.pow(alpha0, 4)),
-                    1.0 / (16 * math.pow(alpha0, 3)),
-                    -1.0 / (16 * math.pow(alpha0, 3)),
-                ],
-                [
-                    1.0 / (2 * math.pow(alpha0, 6)),
-                    1.0 / (2 * math.pow(alpha0, 6)),
-                    -5.0 / (16 * math.pow(alpha0, 5)),
-                    5.0 / (16 * math.pow(alpha0, 5)),
-                    1.0 / (16 * math.pow(alpha0, 4)),
-                    1.0 / (16 * math.pow(alpha0, 4)),
-                ],
-            ]
-        )
+        A_inverse = default_backend.astensor(_a_inverse(alpha0))
         b = default_backend.stack(
             [
                 deltas_up_alpha0 - self._broadcast_helper,
@@ -132,13 +139,9 @@ class code4:
         if subscribe:
             events.subscribe("tensorlib_changed")(self._precompute)
 
-    def _precompute(self):
+    def _precompute_alphaset_dependent(self):
+        # terms that depend on the alphasets_shape, recomputed when it changes
         tensorlib, _ = get_backend()
-        self.deltas_up = tensorlib.astensor(self._deltas_up)
-        self.deltas_dn = tensorlib.astensor(self._deltas_dn)
-        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
-        self.alpha0 = tensorlib.astensor(self._alpha0)
-        self.coefficients = tensorlib.astensor(self._coefficients)
         self.bases_up = tensorlib.einsum(
             "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
         )
@@ -151,23 +154,20 @@ class code4:
             "sa,shb->shab", self.mask_on, self.broadcast_helper
         )
 
+    def _precompute(self):
+        tensorlib, _ = get_backend()
+        self.deltas_up = tensorlib.astensor(self._deltas_up)
+        self.deltas_dn = tensorlib.astensor(self._deltas_dn)
+        self.broadcast_helper = tensorlib.astensor(self._broadcast_helper)
+        self.alpha0 = tensorlib.astensor(self._alpha0)
+        self.coefficients = tensorlib.astensor(self._coefficients)
+        self._precompute_alphaset_dependent()
+
     def _precompute_alphasets(self, alphasets_shape):
         if alphasets_shape == self.alphasets_shape:
             return
-        tensorlib, _ = get_backend()
         self.alphasets_shape = alphasets_shape
-        self.bases_up = tensorlib.einsum(
-            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_up
-        )
-        self.bases_dn = tensorlib.einsum(
-            "sa,shb->shab", tensorlib.ones(self.alphasets_shape), self.deltas_dn
-        )
-        self.mask_on = tensorlib.ones(self.alphasets_shape)
-        self.mask_off = tensorlib.zeros(self.alphasets_shape)
-        self.ones = tensorlib.einsum(
-            "sa,shb->shab", self.mask_on, self.broadcast_helper
-        )
-        return
+        self._precompute_alphaset_dependent()
 
     def __call__(self, alphasets):
         """Compute Interpolated Values."""
@@ -296,59 +296,9 @@ class _slow_code4:
                 math.pow(math.log(delta_up), 2) * delta_up_alpha0,
                 math.pow(math.log(delta_down), 2) * delta_down_alpha0,
             ]
-            A_inverse = [
-                [
-                    15.0 / (16 * self.alpha0),
-                    -15.0 / (16 * self.alpha0),
-                    -7.0 / 16.0,
-                    -7.0 / 16.0,
-                    1.0 / 16 * self.alpha0,
-                    -1.0 / 16.0 * self.alpha0,
-                ],
-                [
-                    3.0 / (2 * math.pow(self.alpha0, 2)),
-                    3.0 / (2 * math.pow(self.alpha0, 2)),
-                    -9.0 / (16 * self.alpha0),
-                    9.0 / (16 * self.alpha0),
-                    1.0 / 16,
-                    1.0 / 16,
-                ],
-                [
-                    -5.0 / (8 * math.pow(self.alpha0, 3)),
-                    5.0 / (8 * math.pow(self.alpha0, 3)),
-                    5.0 / (8 * math.pow(self.alpha0, 2)),
-                    5.0 / (8 * math.pow(self.alpha0, 2)),
-                    -1.0 / (8 * self.alpha0),
-                    1.0 / (8 * self.alpha0),
-                ],
-                [
-                    3.0 / (-2 * math.pow(self.alpha0, 4)),
-                    3.0 / (-2 * math.pow(self.alpha0, 4)),
-                    -7.0 / (-8 * math.pow(self.alpha0, 3)),
-                    7.0 / (-8 * math.pow(self.alpha0, 3)),
-                    -1.0 / (8 * math.pow(self.alpha0, 2)),
-                    -1.0 / (8 * math.pow(self.alpha0, 2)),
-                ],
-                [
-                    3.0 / (16 * math.pow(self.alpha0, 5)),
-                    -3.0 / (16 * math.pow(self.alpha0, 5)),
-                    -3.0 / (16 * math.pow(self.alpha0, 4)),
-                    -3.0 / (16 * math.pow(self.alpha0, 4)),
-                    1.0 / (16 * math.pow(self.alpha0, 3)),
-                    -1.0 / (16 * math.pow(self.alpha0, 3)),
-                ],
-                [
-                    1.0 / (2 * math.pow(self.alpha0, 6)),
-                    1.0 / (2 * math.pow(self.alpha0, 6)),
-                    -5.0 / (16 * math.pow(self.alpha0, 5)),
-                    5.0 / (16 * math.pow(self.alpha0, 5)),
-                    1.0 / (16 * math.pow(self.alpha0, 4)),
-                    1.0 / (16 * math.pow(self.alpha0, 4)),
-                ],
-            ]
-
             coefficients = [
-                sum(A_i * b_j for A_i, b_j in zip(A_row, b)) for A_row in A_inverse
+                sum(A_i * b_j for A_i, b_j in zip(A_row, b))
+                for A_row in self._A_inverse
             ]
             delta = 1
             for i in range(1, 7):
@@ -360,6 +310,8 @@ class _slow_code4:
     def __init__(self, histogramssets, alpha0=1, subscribe=True):  # noqa: ARG002
         self._histogramssets = histogramssets
         self.alpha0 = alpha0
+        # alpha0 is fixed, so the inverse matrix can be built once
+        self._A_inverse = _a_inverse(alpha0)
 
     def __call__(self, alphasets):
         tensorlib, _ = get_backend()
