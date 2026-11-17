@@ -1,14 +1,188 @@
 """Helper Classes for use of automatic differentiation."""
 
+from __future__ import annotations
+
 import logging
+import math
+from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
+import scipy.optimize
 
 from pyhf import exceptions
 from pyhf.optimize.common import shim
 from pyhf.tensor.manager import get_backend
 
 log = logging.getLogger(__name__)
+
+
+def _minuit_at_limit_flags(
+    minuit: Any, npars: int, fixed_idx: Sequence[int]
+) -> list[bool]:
+    """
+    Apply iminuit's at-limit criterion to each parameter: a free bounded
+    parameter is at a limit when it is within half its uncertainty of a bound.
+
+    iminuit computes this internally but does not currently expose it per
+    parameter --- only the OR-aggregated result is public, as
+    :attr:`iminuit.util.FMin.has_parameters_at_limit` (as of iminuit v2.32.0,
+    cf. ``iminuit/util.py`` in :class:`iminuit.util.FMin`) --- so the same
+    criterion is re-evaluated here from the public per-parameter data in
+    ``minuit.params``. If iminuit gains a per-parameter API for this (e.g.
+    ``Param.at_limit``), this function can be replaced by it.
+
+    Returns:
+        :obj:`list` of :obj:`bool`: flags aligned with the full set of model parameters
+    """
+    minimizer_flags = []
+    for param in minuit.params:
+        if param.is_fixed or not param.has_limits:
+            minimizer_flags.append(False)
+            continue
+        lower = param.lower_limit if param.has_lower_limit else -np.inf
+        upper = param.upper_limit if param.has_upper_limit else np.inf
+        minimizer_flags.append(
+            min(param.value - lower, upper - param.value) < 0.5 * param.error
+        )
+    if len(minimizer_flags) == npars:
+        return minimizer_flags
+    # do_stitch=True: minuit saw only the free parameters, so map the flags
+    # back to model parameter indices
+    fixed = set(fixed_idx)
+    variable_idx = [index for index in range(npars) if index not in fixed]
+    flags = [False] * npars
+    for model_index, minimizer_flag in zip(variable_idx, minimizer_flags):
+        flags[model_index] = minimizer_flag
+    return flags
+
+
+def _at_bound_warning_messages(
+    fitted_pars: Sequence[float],
+    par_bounds: Sequence[Sequence[float | None]],
+    fixed_idx: Sequence[int],
+    par_names: Sequence[str] | None,
+    at_limit: Sequence[bool] | None = None,
+    rtol: float = 1e-8,
+) -> list[str]:
+    """
+    Build warning messages for free fitted parameters that are at a bound.
+
+    Args:
+        fitted_pars (:obj:`list` of :obj:`float`): the full set of fitted model parameters
+        par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): bounds for the full set of
+            model parameters. A bound that is ``None`` or non-finite (e.g. ``inf``) is
+            treated as unbounded on that side.
+        fixed_idx (:obj:`sequence` of :obj:`int`): indices of parameters held constant in
+            the fit, which are skipped (a parameter fixed at a bound is deliberate)
+        par_names (:obj:`list` of :obj:`str` or :obj:`None`): names of the full set of
+            model parameters, used to identify parameters. If ``None``, parameters are
+            identified by index only.
+        at_limit (:obj:`list` of :obj:`bool` or :obj:`None`): optional per-parameter
+            at-limit flags from the optimizer's own determination (see
+            :func:`_minuit_at_limit_flags`). Parameters flagged here but not caught
+            by the tolerance check are reported with the optimizer's criterion
+            spelled out, as they need not be numerically at a bound.
+        rtol (:obj:`float`): relative tolerance for deciding that a fitted parameter is
+            at a bound. The tolerance scales with the bound range (or with
+            ``max(1, |bound|)`` if only one side is bounded), so that it stays meaningful
+            for both wide bounds and bounds whose endpoints are small --- pyhf's own
+            ``shapesys`` and ``staterror`` gammas default to ``(1e-10, 10)``. Optimizers
+            stop near but not exactly at bounds, so exact comparison would miss them:
+            scipy's SLSQP rails within O(1e-14) on the unconstrained path, but with
+            ``do_stitch=False`` and fixed parameters it minimizes under an equality
+            constraint and can stop O(1e-7) away, which this tolerance may miss (cf. the
+            discussion on https://github.com/scikit-hep/pyhf/pull/2526). Default is
+            ``1e-8``.
+
+    Returns:
+        :obj:`list` of :obj:`str`: one message per parameter at a bound
+    """
+
+    def _par_label(par_index: int) -> str:
+        return (
+            f"'{par_names[par_index]}' (index {par_index})"
+            if par_names is not None and par_index < len(par_names)
+            else f"at index {par_index}"
+        )
+
+    messages: list[str] = []
+    fixed = set(fixed_idx)
+    for par_index, (fitted_par, bounds) in enumerate(zip(fitted_pars, par_bounds)):
+        # a None or non-finite bound is unbounded on that side
+        raw_lower, raw_upper = bounds
+        lower = (
+            raw_lower if raw_lower is not None and math.isfinite(raw_lower) else None
+        )
+        upper = (
+            raw_upper if raw_upper is not None and math.isfinite(raw_upper) else None
+        )
+        # display the bounds as provided, not as normalized
+        lower_str = "None" if raw_lower is None else f"{raw_lower:g}"
+        upper_str = "None" if raw_upper is None else f"{raw_upper:g}"
+        bounds_str = f"bounds=({lower_str}, {upper_str})"
+
+        # checked before the fixed-parameter skip below: a parameter held
+        # constant *at* a bound is deliberate, but one holding a non-finite
+        # value is a symptom (a corrupted fixed_vals, or a non-finite init_pars
+        # entry stitched back in) and must not be swallowed
+        if not math.isfinite(fitted_par):
+            messages.append(
+                f"fit result for parameter {_par_label(par_index)} is not finite: value={fitted_par!r}, {bounds_str}"
+            )
+            continue
+        if par_index in fixed:
+            continue
+        # scale the tolerance with the bound range so that it stays meaningful
+        # for both wide bounds and bounds with small endpoints
+        if lower is not None and upper is not None:
+            tolerance = rtol * abs(upper - lower)
+        else:
+            one_sided = lower if lower is not None else upper
+            tolerance = (
+                rtol * max(1.0, abs(one_sided)) if one_sided is not None else None
+            )
+        if (
+            lower is not None
+            and lower == upper
+            and abs(fitted_par - lower) <= tolerance
+        ):
+            # bounds that pin the parameter to a single value are deliberate,
+            # like the fixed parameters skipped above, but only exonerate
+            # the parameter if it actually sits at the pinned value
+            continue
+        at_lower = lower is not None and fitted_par <= lower + tolerance
+        at_upper = upper is not None and fitted_par >= upper - tolerance
+        optimizer_at_limit = (
+            at_limit is not None
+            and par_index < len(at_limit)
+            and bool(at_limit[par_index])
+        )
+        if not (at_lower or at_upper or optimizer_at_limit):
+            continue
+
+        if (lower is not None and fitted_par < lower - tolerance) or (
+            upper is not None and fitted_par > upper + tolerance
+        ):
+            # Being outside the bounds is worse than being at one: the
+            # minimization returned a point the bounds should have excluded.
+            # Judged against the same tolerance as the at-bound check, so that
+            # the float slop optimizers leave behind is not reported as a
+            # constraint violation.
+            messages.append(
+                f"fit result for parameter {_par_label(par_index)} is outside its bounds: value={fitted_par!r}, {bounds_str}"
+            )
+        elif at_lower or at_upper:
+            messages.append(
+                f"fit result for parameter {_par_label(par_index)} is at a bound: value={fitted_par!r}, {bounds_str}"
+            )
+        else:
+            # flagged only by the optimizer's own statistical criterion, so
+            # the value need not be numerically at a bound
+            messages.append(
+                f"fit result for parameter {_par_label(par_index)} is within half its uncertainty of a bound (iminuit at-limit criterion): value={fitted_par!r}, {bounds_str}"
+            )
+    return messages
 
 
 class OptimizerMixin:
@@ -68,9 +242,33 @@ class OptimizerMixin:
             raise exceptions.FailedMinimization(result) from exc
         return result
 
-    def _internal_postprocess(self, fitresult, stitch_pars, return_uncertainties=False):
+    def _internal_postprocess(
+        self,
+        fitresult,
+        stitch_pars,
+        *,
+        par_bounds=None,
+        fixed_idx=(),
+        par_names=None,
+        return_uncertainties=False,
+    ):
         """
         Post-process the fit result.
+
+        Args:
+            fitresult (scipy.optimize.OptimizeResult): Fit result from :func:`_internal_minimize`
+            stitch_pars (:obj:`func`): callable that stitches fixed parameters into the unfixed parameters
+            par_bounds (:obj:`list` of :obj:`list`/:obj:`tuple`): The extrema of values the full set of
+                model parameters are allowed to reach in the fit.
+                The shape should be ``(n, 2)`` for ``n`` model parameters.
+                If ``None`` (the default), the check warning about fitted parameters at their
+                bounds is skipped.
+            fixed_idx (:obj:`sequence` of :obj:`int`): The indices of the model parameters held
+                constant in the fit, which are excluded from the at-bound check.
+            par_names (:obj:`list` of :obj:`str`): The names of the full set of model parameters,
+                used to identify parameters in the at-bound warning. If ``None``, parameters are
+                identified by index only.
+            return_uncertainties (:obj:`bool`): Return uncertainties on the fitted parameters. Default is off (``False``).
 
         Returns:
             fitresult (scipy.optimize.OptimizeResult): A modified version of the fit result.
@@ -79,6 +277,41 @@ class OptimizerMixin:
 
         # stitch in missing parameters (e.g. fixed parameters)
         fitted_pars = stitch_pars(tensorlib.astensor(fitresult.x))
+
+        if par_bounds is not None and log.isEnabledFor(logging.WARNING):
+            # fitted_pars covers the full set of model parameters, so it aligns
+            # with par_bounds whether or not fixed parameters were stripped from
+            # fitresult.x for the minimization (do_stitch)
+            fitted_pars_list = tensorlib.tolist(fitted_pars)
+            npars = len(fitted_pars_list)
+            if len(par_bounds) != npars:
+                log.warning(
+                    "length of par_bounds (%d) does not match the number of model parameters (%d), skipping check for parameters at bounds",
+                    len(par_bounds),
+                    npars,
+                )
+            else:
+                minuit = getattr(fitresult, "minuit", None)
+                # fmin is None until migrad has run, and a non-iminuit result may
+                # carry no fmin at all, so guard it as defensively as minuit itself
+                fmin = getattr(minuit, "fmin", None)
+                # the O(1) aggregate gates the per-parameter walk
+                at_limit = (
+                    _minuit_at_limit_flags(minuit, npars, fixed_idx)
+                    if fmin is not None and fmin.has_parameters_at_limit
+                    else None
+                )
+                at_bound_messages = _at_bound_warning_messages(
+                    fitted_pars_list,
+                    par_bounds,
+                    fixed_idx,
+                    par_names,
+                    at_limit=at_limit,
+                )
+                if at_bound_messages:
+                    # a single warning per fit to avoid excessively logging in
+                    # pseudoexperiment studies
+                    log.warning("\n".join(at_bound_messages))
 
         # check if uncertainties were provided (and stitch just in case)
         uncertainties = getattr(fitresult, "unc", None)
@@ -140,6 +373,13 @@ class OptimizerMixin:
         """
         Find parameters that minimize the objective.
 
+        When ``par_bounds`` is provided, a ``WARNING`` log message is emitted for
+        any free fitted parameter that is at (or outside) a bound, as such
+        parameters can indicate problems with the fit. With the minuit optimizer
+        parameters that iminuit reports as being at a limit --- within half their
+        uncertainty of a bound, which need not be numerically at it --- are
+        reported as well, under distinct wording.
+
         Args:
             objective (:obj:`func`): objective function
             data (:obj:`list`): observed data
@@ -169,6 +409,23 @@ class OptimizerMixin:
         tensorlib, _ = get_backend()
         do_grad = tensorlib.default_do_grad if do_grad is None else do_grad
 
+        if isinstance(par_bounds, scipy.optimize.Bounds):
+            # scipy accepts a Bounds instance, so can use the optimizer
+            # API. Normalize to pairs (lb/ub broadcast to the number of
+            # parameters) so the stitching and postprocessing paths, which
+            # index bounds per parameter, do not choke on it
+            par_bounds = list(
+                zip(
+                    np.broadcast_to(par_bounds.lb, len(init_pars)),
+                    np.broadcast_to(par_bounds.ub, len(init_pars)),
+                )
+            )
+        elif par_bounds is not None:
+            # materialize before shim() and the minimizer consume it, as a one-shot
+            # iterable (generator, zip, map) would otherwise be exhausted by the time
+            # the at-bound check in _internal_postprocess indexes it
+            par_bounds = list(par_bounds)
+
         minimizer_kwargs, stitch_pars = shim(
             objective,
             data,
@@ -186,17 +443,26 @@ class OptimizerMixin:
         except AttributeError:
             par_names = None
 
-        # need to remove parameters that are fixed in the fit
+        # the minimizer only sees the free parameters when stitching, so
+        # remove the names of parameters that are fixed in the fit (without
+        # mutating par_names, which is needed in full in postprocessing)
+        minimizer_par_names = par_names
         if par_names and do_stitch and fixed_vals:
-            for index, _ in fixed_vals:
-                par_names[index] = None
-            par_names = [name for name in par_names if name]
+            fixed = {index for index, _ in fixed_vals}
+            minimizer_par_names = [
+                name for index, name in enumerate(par_names) if index not in fixed
+            ]
 
         result = self._internal_minimize(
-            **minimizer_kwargs, options=kwargs, par_names=par_names
+            **minimizer_kwargs, options=kwargs, par_names=minimizer_par_names
         )
         result = self._internal_postprocess(
-            result, stitch_pars, return_uncertainties=return_uncertainties
+            result,
+            stitch_pars,
+            par_bounds=par_bounds,
+            fixed_idx=[index for index, _ in fixed_vals or []],
+            par_names=par_names,
+            return_uncertainties=return_uncertainties,
         )
 
         _returns = [result.x]
