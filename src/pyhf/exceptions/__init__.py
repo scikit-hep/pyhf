@@ -20,6 +20,7 @@ __all__ = [
     "InvalidTestStatistic",
     "InvalidWorkspaceOperation",
     "PatchSetVerificationError",
+    "TooManyFailedToys",
     "UnspecifiedPOI",
     "Unsupported",
 ]
@@ -176,6 +177,29 @@ class FailedMinimization(Exception):
             result, "message", "Unknown failure. See fit result for more details."
         )
         super().__init__(message)
+
+
+class TooManyFailedToys(FailedMinimization):
+    """
+    TooManyFailedToys is raised when the toy fits of a hypothesis fail more often than
+    the ``failure_threshold`` of :class:`~pyhf.infer.calculators.ToyCalculator` allows,
+    or when no toy fit of a hypothesis succeeds.
+
+    It subclasses :class:`FailedMinimization` so that existing handlers for failed fits
+    also catch it, and ``result`` is the fit result of the toy that triggered it.
+    """
+
+    def __init__(self, result, hypothesis, n_failed, n_run, ntoys, failure_threshold):
+        super().__init__(result)
+        # Replace the fit message set by FailedMinimization with one describing the
+        # toy loop. The fit message is kept on the chained FailedMinimization.
+        message = (
+            f"{hypothesis}: {n_failed} of the {n_run} toys run failed"
+            f" (ntoys={ntoys}, failure_threshold={failure_threshold})."
+            " At most failure_threshold * ntoys toys may fail, and at least one toy"
+            " must succeed."
+        )
+        self.args = (message,)
 
 
 # Deprecated APIs

@@ -25,7 +25,7 @@ from rich.progress import (
 )
 
 from pyhf import get_backend
-from pyhf.exceptions import FailedMinimization
+from pyhf.exceptions import FailedMinimization, TooManyFailedToys
 from pyhf.infer import utils
 from pyhf.infer.mle import fixed_poi_fit
 
@@ -720,8 +720,11 @@ class ToyResult:
     <pyhf.infer.calculators.ToyCalculator.distributions>`.
     """
 
-    successful: list[float]
-    """Test statistic values for toys where the fit succeeded."""
+    successful: list[Tensor]
+    """
+    Test statistic values for toys where the fit succeeded, as returned by the
+    test statistic function (0-d tensors of the active backend).
+    """
     failed: list[tuple[int, Tensor, FailedMinimization]]
     """
     Entries for each toy that raised :py:exc:`~pyhf.exceptions.FailedMinimization`.
@@ -769,18 +772,32 @@ class ToyCalculator:
                 :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
             track_progress (:obj:`bool`): Whether to display the progress bar or not (outputs to `stderr`).
-            failure_threshold (:obj:`float` or None): The maximum fraction of toys allowed to
-                fail before raising :py:exc:`~pyhf.exceptions.FailedMinimization`.
-                ``None`` (default) means any failure raises immediately.
-                A value of ``0.1`` allows up to 10% of toys to fail.
+            failure_threshold (:obj:`float` or None): The maximum fraction of ``ntoys``
+                allowed to fail before raising :py:exc:`~pyhf.exceptions.TooManyFailedToys`.
+                Must be ``None`` or within ``[0.0, 1.0]``, otherwise :py:exc:`ValueError`
+                is raised.
+                ``None`` (default) means any failure raises
+                :py:exc:`~pyhf.exceptions.FailedMinimization` immediately.
+                A value of ``0.1`` with ``ntoys=100`` allows up to 10 of the signal-like
+                toys and, separately, up to 10 of the background-like toys to fail.
+                A number of failures exactly equal to the allowance is accepted, and the
+                toy loop stops as soon as the allowance is exceeded.
+                ``0.0`` tolerates no failures, and ``1.0`` tolerates any number of
+                failures, but at least one toy per hypothesis must succeed.
                 Failures and their details are always stored in
-                :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`.
+                :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`,
+                also when :py:meth:`~pyhf.infer.calculators.ToyCalculator.distributions`
+                raises, in which case it holds only the hypotheses whose toys were run.
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
 
         """
+        if failure_threshold is not None and not 0.0 <= failure_threshold <= 1.0:
+            msg = f"failure_threshold must be None or in [0.0, 1.0], got {failure_threshold!r}"
+            raise ValueError(msg)
         self.failure_threshold = failure_threshold
+        self.toy_results: dict[str, ToyResult] | None = None
         self.ntoys = ntoys
         self.data = data
         self.pdf = pdf
@@ -791,10 +808,20 @@ class ToyCalculator:
         self.track_progress = track_progress
 
     def _collect_toy_teststats(
-        self, samples, poi_test, teststat_func, progress, task, label
+        self, samples, poi_test, teststat_func, progress, task, label, key
     ):
         """
         Run the test statistic over toy samples, collecting diagnostics.
+
+        The :class:`~pyhf.infer.calculators.ToyResult` is stored in
+        :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`
+        under ``key`` before the first toy is run and is filled as the toys are
+        processed, so the diagnostics are kept even if this method raises.
+
+        With a ``failure_threshold``, the number of failed toys is compared against
+        the fraction ``failure_threshold`` of ``ntoys``. A number of failures exactly
+        equal to the allowance is accepted, and the loop stops as soon as the
+        allowance is exceeded. At least one toy must succeed.
 
         Args:
             samples: Pseudo-data samples to iterate over.
@@ -803,13 +830,21 @@ class ToyCalculator:
             progress: Rich :py:class:`Progress` instance for the progress bar.
             task: Rich task ID to advance per toy.
             label (:obj:`str`): Human-readable label for log messages (e.g. ``"Signal-like"``).
+            key (:obj:`str`): The key in ``toy_results`` to store the diagnostics under
+              (``"sig_plus_bkg"`` or ``"bkg_only"``).
+
+        Raises:
+            ~pyhf.exceptions.FailedMinimization: If a toy fails and ``failure_threshold``
+              is ``None``.
+            ~pyhf.exceptions.TooManyFailedToys: If the fraction of failed toys exceeds
+              ``failure_threshold``, or if no toy succeeded.
 
         Returns:
             ~pyhf.infer.calculators.ToyResult: Diagnostics including successful test
             statistic values and details of any failed toys.
         """
-        successful = []
-        failed = []
+        toy_result = ToyResult(successful=[], failed=[])
+        self.toy_results[key] = toy_result
 
         for idx, sample in enumerate(samples):
             try:
@@ -821,27 +856,47 @@ class ToyCalculator:
                     self.par_bounds,
                     self.fixed_params,
                 )
-                successful.append(value)
+                toy_result.successful.append(value)
             except FailedMinimization as exc:
+                toy_result.failed.append((idx, sample, exc))
                 if self.failure_threshold is None:
                     raise
-                failed.append((idx, sample, exc))
-                n_done = len(successful) + len(failed)
-                if len(failed) / n_done > self.failure_threshold:
-                    raise FailedMinimization(exc.result) from exc
+                # Compare fractions rather than len(failed) > threshold * ntoys:
+                # 29 / 100 is the same double as the literal 0.29, so a count exactly
+                # at the threshold is accepted, whereas 0.29 * 100 evaluates to
+                # 28.999999999999996 and would wrongly reject it.
+                if len(toy_result.failed) / self.ntoys > self.failure_threshold:
+                    raise TooManyFailedToys(
+                        exc.result,
+                        label,
+                        len(toy_result.failed),
+                        idx + 1,
+                        self.ntoys,
+                        self.failure_threshold,
+                    ) from exc
             progress.advance(task, 1)
 
-        if failed:
-            n_total = len(successful) + len(failed)
+        if toy_result.failed and not toy_result.successful:
+            last_exc = toy_result.failed[-1][2]
+            raise TooManyFailedToys(
+                last_exc.result,
+                label,
+                len(toy_result.failed),
+                len(toy_result.failed),
+                self.ntoys,
+                self.failure_threshold,
+            ) from last_exc
+
+        if toy_result.failed:
             log.warning(
                 "%s: %d/%d toys failed (%.1f%%)",
                 label,
-                len(failed),
-                n_total,
-                100 * len(failed) / n_total,
+                len(toy_result.failed),
+                self.ntoys,
+                100 * len(toy_result.failed) / self.ntoys,
             )
 
-        return ToyResult(successful=successful, failed=failed)
+        return toy_result
 
     def distributions(self, poi_test, track_progress=None):
         """
@@ -918,6 +973,10 @@ class ToyCalculator:
             track_progress if track_progress is not None else self.track_progress
         )
 
+        # Filled by _collect_toy_teststats as the toys run, so that the diagnostics
+        # of a loop are kept if it raises
+        self.toy_results = {}
+
         console = Console(stderr=True)
         with Progress(
             SpinnerColumn(),
@@ -937,6 +996,7 @@ class ToyCalculator:
                 progress,
                 signal_task,
                 "Signal-like",
+                "sig_plus_bkg",
             )
 
             bkg_task = progress.add_task(
@@ -949,12 +1009,8 @@ class ToyCalculator:
                 progress,
                 bkg_task,
                 "Background-like",
+                "bkg_only",
             )
-
-        self.toy_results = {
-            "sig_plus_bkg": signal_result,
-            "bkg_only": bkg_result,
-        }
 
         s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_result.successful))
         b_only = EmpiricalDistribution(tensorlib.astensor(bkg_result.successful))

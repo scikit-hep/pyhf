@@ -98,6 +98,7 @@ def test_contrib_exceptions_public_api():
         "InvalidTestStatistic",
         "InvalidWorkspaceOperation",
         "PatchSetVerificationError",
+        "TooManyFailedToys",
         "UnspecifiedPOI",
         "Unsupported",
     ]
