@@ -1,3 +1,4 @@
+import logging
 import types
 import warnings
 
@@ -653,7 +654,38 @@ def test_toy_calculator(hypotest_args):
     )
 
 
-def test_toy_calculator_toy_results_no_failures(hypotest_args):
+@pytest.fixture
+def failing_toys(monkeypatch):
+    """
+    Make the qtilde test statistic raise FailedMinimization on the given 0-indexed
+    call indices. ToyCalculator.distributions calls it once per toy, signal-like
+    toys first, so with ntoys=10 the calls 0-9 are the signal-like toys and the
+    calls 10-19 the background-like toys.
+    """
+    original_func = pyhf.infer.test_statistics.qmu_tilde
+
+    def inject(fail_on):
+        state = types.SimpleNamespace(
+            n_calls=0,
+            fake_result=types.SimpleNamespace(
+                success=False, message="simulated failure"
+            ),
+        )
+
+        def patched_teststat(*args, **kwargs):
+            idx = state.n_calls
+            state.n_calls += 1
+            if idx in fail_on:
+                raise pyhf.exceptions.FailedMinimization(state.fake_result)
+            return original_func(*args, **kwargs)
+
+        monkeypatch.setattr(pyhf.infer.utils, "qmu_tilde", patched_teststat)
+        return state
+
+    return inject
+
+
+def test_toy_calculator_toy_results_no_failures(hypotest_args, caplog):
     """
     Check that toy_results is populated after distributions() and reflects
     all-successful toys when no failures occur.
@@ -663,9 +695,11 @@ def test_toy_calculator_toy_results_no_failures(hypotest_args):
     calc = pyhf.infer.calculators.ToyCalculator(
         data, model, ntoys=10, track_progress=False
     )
-    calc.distributions(mu_test)
+    assert calc.toy_results is None
 
-    assert hasattr(calc, "toy_results")
+    with caplog.at_level(logging.DEBUG, logger="pyhf.infer.calculators"):
+        calc.distributions(mu_test)
+
     assert set(calc.toy_results) == {"sig_plus_bkg", "bkg_only"}
 
     sig_result = calc.toy_results["sig_plus_bkg"]
@@ -679,187 +713,445 @@ def test_toy_calculator_toy_results_no_failures(hypotest_args):
     assert len(bkg_result.successful) == 10
     assert len(bkg_result.failed) == 0
 
+    assert not [r for r in caplog.records if r.name == "pyhf.infer.calculators"]
 
-def test_toy_calculator_default_raises_on_failure(hypotest_args, monkeypatch):
+
+def test_toy_calculator_default_raises_on_failure(hypotest_args, failing_toys):
     """
-    With failure_threshold=None (default), any FailedMinimization propagates immediately.
+    With failure_threshold=None (default), any FailedMinimization propagates
+    immediately, and the failed toy is still recorded in toy_results.
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
     calc = pyhf.infer.calculators.ToyCalculator(
         data, model, ntoys=10, track_progress=False
     )
+    state = failing_toys({2})
 
-    original_func = pyhf.infer.test_statistics.qmu_tilde
-    call_count = [0]
-
-    def failing_teststat(*args, **kwargs):
-        call_count[0] += 1
-        if call_count[0] == 3:
-            # Simulate a failed fit result
-            fake_result = types.SimpleNamespace(
-                success=False, message="simulated failure"
-            )
-            raise pyhf.exceptions.FailedMinimization(fake_result)
-        return original_func(*args, **kwargs)
-
-    monkeypatch.setattr(pyhf.infer.utils, "qmu_tilde", failing_teststat)
-
-    with pytest.raises(pyhf.exceptions.FailedMinimization):
+    with pytest.raises(pyhf.exceptions.FailedMinimization) as excinfo:
         calc.distributions(mu_test)
 
+    # The default behaviour re-raises the original exception unchanged
+    assert type(excinfo.value) is pyhf.exceptions.FailedMinimization
+    assert excinfo.value.result is state.fake_result
+    assert state.n_calls == 3
 
-def test_toy_calculator_failure_threshold_allows_failures(hypotest_args, monkeypatch):
+    assert set(calc.toy_results) == {"sig_plus_bkg"}
+    sig_result = calc.toy_results["sig_plus_bkg"]
+    assert [toy_idx for toy_idx, _, _ in sig_result.failed] == [2]
+    assert len(sig_result.successful) == 2
+
+
+def test_toy_calculator_failure_threshold_allows_failures(hypotest_args, failing_toys):
     """
-    With failure_threshold set, toys that fail are recorded in toy_results
-    and distributions() completes as long as the failure fraction stays below threshold.
+    With failure_threshold set, toys that fail are recorded in toy_results and
+    distributions() completes with the test statistics of the successful toys.
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
-    ntoys = 10
-    # Allow up to 50% failures — we'll inject 2 out of 10 (20%)
     calc = pyhf.infer.calculators.ToyCalculator(
-        data, model, ntoys=ntoys, track_progress=False, failure_threshold=0.5
+        data, model, ntoys=10, track_progress=False, failure_threshold=0.5
     )
-
-    original_func = pyhf.infer.test_statistics.qmu_tilde
-    fail_on = {2, 5}  # inject failures on calls 2 and 5 (0-indexed)
-    call_count = [0]
-
-    def patched_teststat(*args, **kwargs):
-        idx = call_count[0]
-        call_count[0] += 1
-        if idx in fail_on:
-            fake_result = types.SimpleNamespace(
-                success=False, message="simulated failure"
-            )
-            raise pyhf.exceptions.FailedMinimization(fake_result)
-        return original_func(*args, **kwargs)
-
-    monkeypatch.setattr(pyhf.infer.utils, "qmu_tilde", patched_teststat)
+    state = failing_toys({2, 5})
 
     sig_dist, bkg_dist = calc.distributions(mu_test)
 
-    # signal loop runs ntoys calls (indices 0-9), bkg loop runs ntoys more (10-19)
     sig_result = calc.toy_results["sig_plus_bkg"]
     bkg_result = calc.toy_results["bkg_only"]
 
-    # call index 2 lands in signal, call index 5 also in signal
     assert len(sig_result.failed) == 2
     assert len(sig_result.successful) == 8
     assert len(bkg_result.failed) == 0
     assert len(bkg_result.successful) == 10
 
     # Each failed entry is (toy_index, sample, exception)
-    for toy_idx, _sample, exc in sig_result.failed:
-        assert isinstance(toy_idx, int)
+    assert [toy_idx for toy_idx, _, _ in sig_result.failed] == [2, 5]
+    for _, sample, exc in sig_result.failed:
+        assert len(sample) == len(data)
         assert isinstance(exc, pyhf.exceptions.FailedMinimization)
-        assert exc.result.success is False
+        assert exc.result is state.fake_result
 
-    # EmpiricalDistribution built from successful values only
-    assert len(sig_dist.samples) == 8
-    assert len(bkg_dist.samples) == 10
+    # The values of test_toy_calculator without the failed toys 2 and 5
+    assert sig_dist.samples.tolist() == pytest.approx(
+        [
+            0.0,
+            0.017350013494649374,
+            0.2338008822475217,
+            0.020328779776718875,
+            0.04408274703718007,
+            0.0,
+            0.03977591672014569,
+            0.0,
+        ],
+        1e-07,
+    )
+    assert bkg_dist.samples.tolist() == pytest.approx(
+        [
+            5.642956861215396,
+            0.37581364290284114,
+            4.875367689039649,
+            3.4299006094989295,
+            1.0161021805475343,
+            0.03345317321810626,
+            0.21984803001140563,
+            1.274869119189077,
+            9.368264062021098,
+            3.0716486684082156,
+        ],
+        1e-07,
+    )
 
 
-def test_toy_calculator_failure_threshold_exceeded_raises(hypotest_args, monkeypatch):
+def test_toy_calculator_background_like_failures(hypotest_args, failing_toys):
     """
-    With failure_threshold set, exceeding the allowed failure fraction raises FailedMinimization.
+    Failures in the background-like loop are recorded under "bkg_only" with toy
+    indices relative to that loop, and the signal-like toys are unaffected.
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
-    # Allow only 10% failures; we'll exceed that
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, ntoys=10, track_progress=False, failure_threshold=0.2
+    )
+    failing_toys({10, 13})
+
+    sig_dist, bkg_dist = calc.distributions(mu_test)
+
+    sig_result = calc.toy_results["sig_plus_bkg"]
+    bkg_result = calc.toy_results["bkg_only"]
+
+    assert len(sig_result.failed) == 0
+    assert len(sig_result.successful) == 10
+    assert [toy_idx for toy_idx, _, _ in bkg_result.failed] == [0, 3]
+    assert len(bkg_result.successful) == 8
+
+    assert sig_dist.samples.tolist() == pytest.approx(
+        [
+            0.0,
+            0.017350013494649374,
+            0.0,
+            0.2338008822475217,
+            0.020328779776718875,
+            0.8911134903562186,
+            0.04408274703718007,
+            0.0,
+            0.03977591672014569,
+            0.0,
+        ],
+        1e-07,
+    )
+    # The values of test_toy_calculator without the failed toys 0 and 3
+    assert bkg_dist.samples.tolist() == pytest.approx(
+        [
+            0.37581364290284114,
+            4.875367689039649,
+            1.0161021805475343,
+            0.03345317321810626,
+            0.21984803001140563,
+            1.274869119189077,
+            9.368264062021098,
+            3.0716486684082156,
+        ],
+        1e-07,
+    )
+
+
+def test_toy_calculator_failure_threshold_per_hypothesis(hypotest_args, failing_toys):
+    """
+    The failure_threshold is applied to the signal-like and background-like toys
+    separately, so one failure in each loop is allowed with failure_threshold=0.1.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
     calc = pyhf.infer.calculators.ToyCalculator(
         data, model, ntoys=10, track_progress=False, failure_threshold=0.1
     )
+    failing_toys({4, 13})
 
-    original_func = pyhf.infer.test_statistics.qmu_tilde
-    call_count = [0]
+    sig_dist, bkg_dist = calc.distributions(mu_test)
 
-    def always_fails(*args, **kwargs):
-        call_count[0] += 1
-        if call_count[0] >= 2:
-            fake_result = types.SimpleNamespace(
-                success=False, message="simulated failure"
-            )
-            raise pyhf.exceptions.FailedMinimization(fake_result)
-        return original_func(*args, **kwargs)
+    assert [idx for idx, _, _ in calc.toy_results["sig_plus_bkg"].failed] == [4]
+    assert [idx for idx, _, _ in calc.toy_results["bkg_only"].failed] == [3]
+    assert len(sig_dist.samples) == 9
+    assert len(bkg_dist.samples) == 9
 
-    monkeypatch.setattr(pyhf.infer.utils, "qmu_tilde", always_fails)
 
-    with pytest.raises(pyhf.exceptions.FailedMinimization):
+def test_toy_calculator_failure_on_first_toy_allowed(hypotest_args, failing_toys):
+    """
+    The failure_threshold is a fraction of ntoys, not of the toys run so far, so a
+    failure on the very first toy is within failure_threshold=0.1 for ntoys=10.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, ntoys=10, track_progress=False, failure_threshold=0.1
+    )
+    failing_toys({0})
+
+    sig_dist, _ = calc.distributions(mu_test)
+
+    sig_result = calc.toy_results["sig_plus_bkg"]
+    assert [toy_idx for toy_idx, _, _ in sig_result.failed] == [0]
+    assert len(sig_result.successful) == 9
+    assert len(sig_dist.samples) == 9
+
+
+@pytest.mark.parametrize(
+    ("failure_threshold", "n_failures"),
+    [(0.1, 1), (0.2, 2), (0.3, 3)],
+    ids=["0.1-1", "0.2-2", "0.3-3"],
+)
+def test_toy_calculator_failure_threshold_boundary_allowed(
+    hypotest_args, failing_toys, failure_threshold, n_failures
+):
+    """
+    A number of failures exactly equal to failure_threshold * ntoys is allowed.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data,
+        model,
+        ntoys=10,
+        track_progress=False,
+        failure_threshold=failure_threshold,
+    )
+    failing_toys(set(range(n_failures)))
+
+    sig_dist, _ = calc.distributions(mu_test)
+
+    assert len(calc.toy_results["sig_plus_bkg"].failed) == n_failures
+    assert len(sig_dist.samples) == 10 - n_failures
+
+
+@pytest.mark.parametrize(
+    ("failure_threshold", "n_failures"),
+    [(0.0, 1), (0.1, 2), (0.2, 3)],
+    ids=["0.0-1", "0.1-2", "0.2-3"],
+)
+def test_toy_calculator_failure_threshold_boundary_exceeded(
+    hypotest_args, failing_toys, failure_threshold, n_failures
+):
+    """
+    One failure more than failure_threshold * ntoys raises TooManyFailedToys as
+    soon as it happens, without running the remaining toys.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data,
+        model,
+        ntoys=10,
+        track_progress=False,
+        failure_threshold=failure_threshold,
+    )
+    state = failing_toys(set(range(n_failures)))
+
+    with pytest.raises(pyhf.exceptions.TooManyFailedToys):
         calc.distributions(mu_test)
 
+    assert state.n_calls == n_failures
 
-def test_toy_calculator_failure_warning_logged(hypotest_args, monkeypatch, caplog):
-    """
-    When toys fail within the threshold, a warning is logged with the failure count.
-    """
-    import logging
 
+def test_toy_calculator_failure_threshold_exceeded_raises(hypotest_args, failing_toys):
+    """
+    Exceeding the allowed failure fraction raises TooManyFailedToys, chained from
+    the triggering FailedMinimization, and keeps the diagnostics of the toys run.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, ntoys=10, track_progress=False, failure_threshold=0.1
+    )
+    state = failing_toys({3, 6})
+
+    with pytest.raises(
+        pyhf.exceptions.TooManyFailedToys,
+        match=r"^Signal-like: 2 of the 7 toys run failed \(ntoys=10, failure_threshold=0\.1\)\.",
+    ) as excinfo:
+        calc.distributions(mu_test)
+
+    # Existing handlers for FailedMinimization keep catching it
+    assert isinstance(excinfo.value, pyhf.exceptions.FailedMinimization)
+    assert excinfo.value.result is state.fake_result
+    assert isinstance(excinfo.value.__cause__, pyhf.exceptions.FailedMinimization)
+    assert excinfo.value.__cause__.result is state.fake_result
+    assert state.n_calls == 7
+
+    assert set(calc.toy_results) == {"sig_plus_bkg"}
+    sig_result = calc.toy_results["sig_plus_bkg"]
+    assert [toy_idx for toy_idx, _, _ in sig_result.failed] == [3, 6]
+    assert len(sig_result.successful) == 5
+
+
+def test_toy_calculator_all_toys_failed_raises(hypotest_args, failing_toys):
+    """
+    Even with failure_threshold=1.0, at least one toy per hypothesis has to succeed,
+    instead of building an empty distribution with a NaN p-value.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, ntoys=10, track_progress=False, failure_threshold=1.0
+    )
+    state = failing_toys(set(range(10)))
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        with pytest.raises(
+            pyhf.exceptions.TooManyFailedToys,
+            match=r"^Signal-like: 10 of the 10 toys run failed \(ntoys=10, failure_threshold=1\.0\)\.",
+        ) as excinfo:
+            calc.distributions(mu_test)
+
+    assert excinfo.value.__cause__ is calc.toy_results["sig_plus_bkg"].failed[-1][2]
+    assert len(calc.toy_results["sig_plus_bkg"].failed) == 10
+    assert len(calc.toy_results["sig_plus_bkg"].successful) == 0
+    assert state.n_calls == 10
+
+
+def test_toy_calculator_single_successful_toy(hypotest_args, failing_toys):
+    """
+    With failure_threshold=1.0, a single successful toy is enough to build the
+    distribution.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, ntoys=10, track_progress=False, failure_threshold=1.0
+    )
+    failing_toys(set(range(10)) - {3})
+
+    sig_dist, bkg_dist = calc.distributions(mu_test)
+
+    # Toy 3 of test_toy_calculator
+    assert sig_dist.samples.tolist() == pytest.approx([0.2338008822475217], 1e-07)
+    assert len(bkg_dist.samples) == 10
+
+
+@pytest.mark.parametrize("failure_threshold", [-0.1, 1.1, float("nan")])
+def test_toy_calculator_invalid_failure_threshold(hypotest_args, failure_threshold):
+    """
+    A failure_threshold outside of [0.0, 1.0] is rejected.
+    """
+    _, data, model = hypotest_args
+    with pytest.raises(ValueError, match="failure_threshold"):
+        pyhf.infer.calculators.ToyCalculator(
+            data, model, failure_threshold=failure_threshold
+        )
+
+
+@pytest.mark.parametrize("failure_threshold", [None, 0.0, 0.5, 1.0])
+def test_toy_calculator_valid_failure_threshold(hypotest_args, failure_threshold):
+    """
+    None and any failure_threshold within [0.0, 1.0] are accepted.
+    """
+    _, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, failure_threshold=failure_threshold
+    )
+    assert calc.failure_threshold == failure_threshold
+
+
+def test_toy_calculator_toy_results_replaced(hypotest_args, failing_toys):
+    """
+    Calling distributions() again replaces the toy_results of the previous call.
+    """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
     calc = pyhf.infer.calculators.ToyCalculator(
         data, model, ntoys=10, track_progress=False, failure_threshold=0.5
     )
+    # Only the first call to distributions() has a failed toy
+    failing_toys({2})
 
-    original_func = pyhf.infer.test_statistics.qmu_tilde
-    call_count = [0]
+    calc.distributions(mu_test)
+    assert len(calc.toy_results["sig_plus_bkg"].failed) == 1
 
-    def one_failure(*args, **kwargs):
-        idx = call_count[0]
-        call_count[0] += 1
-        if idx == 1:
-            fake_result = types.SimpleNamespace(
-                success=False, message="simulated failure"
-            )
-            raise pyhf.exceptions.FailedMinimization(fake_result)
-        return original_func(*args, **kwargs)
+    calc.distributions(mu_test)
+    assert len(calc.toy_results["sig_plus_bkg"].failed) == 0
+    assert len(calc.toy_results["sig_plus_bkg"].successful) == 10
+    assert len(calc.toy_results["bkg_only"].successful) == 10
 
-    monkeypatch.setattr(pyhf.infer.utils, "qmu_tilde", one_failure)
+
+def test_toy_calculator_failure_warning_logged(hypotest_args, failing_toys, caplog):
+    """
+    When toys fail within the threshold, a warning is logged with the failure count.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, ntoys=10, track_progress=False, failure_threshold=0.5
+    )
+    failing_toys({1})
 
     with caplog.at_level(logging.WARNING, logger="pyhf.infer.calculators"):
         calc.distributions(mu_test)
 
-    assert any(
-        "Signal-like" in r.message and "failed" in r.message for r in caplog.records
-    )
+    records = [
+        (r.name, r.levelno, r.getMessage())
+        for r in caplog.records
+        if r.name == "pyhf.infer.calculators"
+    ]
+    assert records == [
+        (
+            "pyhf.infer.calculators",
+            logging.WARNING,
+            "Signal-like: 1/10 toys failed (10.0%)",
+        )
+    ]
 
 
-def test_toy_calculator_failure_threshold_via_hypotest(hypotest_args, monkeypatch):
+def test_toy_calculator_failure_threshold_via_hypotest(hypotest_args, failing_toys):
     """
-    failure_threshold is forwarded through hypotest() kwargs to ToyCalculator.
+    failure_threshold is forwarded through hypotest() kwargs to ToyCalculator, and
+    the diagnostics are available from the returned calculator.
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
+    # hypotest() calls teststatistic() first (call 0), so call 1 is the first
+    # signal-like toy
+    failing_toys({1})
 
-    original_func = pyhf.infer.test_statistics.qmu_tilde
-    call_count = [0]
-
-    def one_failure(*args, **kwargs):
-        idx = call_count[0]
-        call_count[0] += 1
-        # hypotest() calls teststatistic() first (call 0), then the toy loops start.
-        # Fail on call 5 so at least 4 signal toys succeed first, keeping the
-        # failure fraction at 1/5 = 20% well below failure_threshold=0.5.
-        if idx == 5:
-            fake_result = types.SimpleNamespace(
-                success=False, message="simulated failure"
-            )
-            raise pyhf.exceptions.FailedMinimization(fake_result)
-        return original_func(*args, **kwargs)
-
-    monkeypatch.setattr(pyhf.infer.utils, "qmu_tilde", one_failure)
-
-    # Should not raise — failure_threshold=0.5 allows up to 50% failures
-    pyhf.infer.hypotest(
+    CLs, calc = pyhf.infer.hypotest(
         mu_test,
         data,
         model,
         ntoys=10,
         track_progress=False,
         calctype="toybased",
-        failure_threshold=0.5,
+        failure_threshold=0.1,
+        return_calculator=True,
     )
+
+    assert [idx for idx, _, _ in calc.toy_results["sig_plus_bkg"].failed] == [0]
+    assert len(calc.toy_results["bkg_only"].failed) == 0
+    assert np.isfinite(CLs)
+
+
+@pytest.mark.usefixtures("backend")
+def test_toy_calculator_failures_backends(failing_toys):
+    """
+    Check that failed toys are handled across all backends.
+    """
+    pdf = pyhf.simplemodels.uncorrelated_background(
+        signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+    )
+    data = [51, 48] + pdf.config.auxdata
+    mu_test = 1.0
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, pdf, ntoys=10, track_progress=False, failure_threshold=0.5
+    )
+    failing_toys({0, 10})
+
+    sig_dist, bkg_dist = calc.distributions(mu_test)
+
+    assert len(calc.toy_results["sig_plus_bkg"].failed) == 1
+    assert len(calc.toy_results["sig_plus_bkg"].successful) == 9
+    assert len(calc.toy_results["bkg_only"].failed) == 1
+    assert len(calc.toy_results["bkg_only"].successful) == 9
+    assert len(sig_dist.samples) == 9
+    assert len(bkg_dist.samples) == 9
+    assert np.isfinite(sig_dist.pvalue(calc.teststatistic(mu_test)))
 
 
 def test_fixed_poi(hypotest_args):
