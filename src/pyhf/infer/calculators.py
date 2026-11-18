@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from rich.console import Console
 from rich.progress import (
@@ -24,8 +25,12 @@ from rich.progress import (
 )
 
 from pyhf import get_backend
+from pyhf.exceptions import FailedMinimization, TooManyFailedToys
 from pyhf.infer import utils
 from pyhf.infer.mle import fixed_poi_fit
+
+if TYPE_CHECKING:
+    from pyhf.typing import Tensor
 
 log = logging.getLogger(__name__)
 
@@ -34,6 +39,7 @@ __all__ = [
     "AsymptoticTestStatDistribution",
     "EmpiricalDistribution",
     "ToyCalculator",
+    "ToyResult",
     "generate_asimov_data",
 ]
 
@@ -225,12 +231,11 @@ class HypoTestFitResults:
     :py:meth:`AsymptoticCalculator.teststatistic <pyhf.infer.calculators.AsymptoticCalculator.teststatistic>`
     """
 
-    # ignore "F821 undefined name 'Tensor'" so as to avoid typing.Any
-    asimov_pars: Tensor  # noqa: F821
-    free_fit_to_data: Tensor  # noqa: F821
-    free_fit_to_asimov: Tensor  # noqa: F821
-    fixed_poi_fit_to_data: Tensor  # noqa: F821
-    fixed_poi_fit_to_asimov: Tensor  # noqa: F821
+    asimov_pars: Tensor
+    free_fit_to_data: Tensor
+    free_fit_to_asimov: Tensor
+    fixed_poi_fit_to_data: Tensor
+    fixed_poi_fit_to_asimov: Tensor
 
 
 class AsymptoticCalculator:
@@ -699,8 +704,64 @@ class EmpiricalDistribution:
         )
 
 
+@dataclass(frozen=True)
+class ToyResult:
+    """
+    Diagnostics from a single hypothesis toy loop.
+
+    Returned as part of :py:attr:`ToyCalculator.toy_results
+    <pyhf.infer.calculators.ToyCalculator.toy_results>` after calling
+    :py:meth:`ToyCalculator.distributions
+    <pyhf.infer.calculators.ToyCalculator.distributions>`.
+
+    Example:
+
+        >>> import pyhf
+        >>> import numpy.random as random
+        >>> random.seed(0)
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> mu_test = 1.0
+        >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+        ...     data, model, ntoys=100, track_progress=False, failure_threshold=0.05
+        ... )
+        >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
+        >>> list(toy_calculator.toy_results)
+        ['sig_plus_bkg', 'bkg_only']
+        >>> sig_plus_bkg_result = toy_calculator.toy_results["sig_plus_bkg"]
+        >>> len(sig_plus_bkg_result.successful), len(sig_plus_bkg_result.failed)
+        (100, 0)
+    """
+
+    successful: list[Tensor]
+    """
+    Test statistic values for toys where the fit succeeded, as returned by the
+    test statistic function (0-d tensors of the active backend).
+    """
+    failed: list[tuple[int, Tensor, FailedMinimization]]
+    """
+    Entries for each toy that raised :py:exc:`~pyhf.exceptions.FailedMinimization`.
+    Each entry is a ``(toy_index, sample, exception)`` tuple so callers can
+    inspect the pseudo-data and the underlying fit result.
+    """
+
+
 class ToyCalculator:
-    """The Toy-based Calculator."""
+    """
+    The Toy-based Calculator.
+
+    Attributes:
+        toy_results (:obj:`dict` or None): The diagnostics of the toys of the last call
+          of :py:meth:`~pyhf.infer.calculators.ToyCalculator.distributions`.
+          ``None`` until it is called, then a :obj:`dict` with the keys
+          ``"sig_plus_bkg"`` and ``"bkg_only"`` that map to the
+          :class:`~pyhf.infer.calculators.ToyResult` of the signal-like and the
+          background-like toys.
+    """
 
     def __init__(
         self,
@@ -712,9 +773,21 @@ class ToyCalculator:
         test_stat="qtilde",
         ntoys=2000,
         track_progress=True,
+        failure_threshold=None,
     ):
         r"""
         Toy-based Calculator.
+
+        .. warning::
+
+            Failed toys are dropped, so with a ``failure_threshold`` the empirical
+            distributions can be built from fewer than ``ntoys`` toys, and the
+            :math:`p`-values are conditional on the toy fits succeeding.
+            If the failures are correlated with the value of the test statistic,
+            for example if fits fail preferentially for signal-like or extreme
+            pseudo-data, the :math:`p`-values are biased.
+            Keep the fraction of failed toys small and inspect the failed pseudo-data in
+            :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`.
 
         Args:
             data (:obj:`tensor`): The observed data.
@@ -737,11 +810,34 @@ class ToyCalculator:
                 :math:`q_{0}` (:func:`~pyhf.infer.test_statistics.q0`).
             ntoys (:obj:`int`): Number of toys to use (how many times to sample the underlying distributions).
             track_progress (:obj:`bool`): Whether to display the progress bar or not (outputs to `stderr`).
+            failure_threshold (:obj:`float` or None): The maximum fraction of ``ntoys``
+                allowed to fail before raising :py:exc:`~pyhf.exceptions.TooManyFailedToys`.
+                Must be ``None`` or within ``[0.0, 1.0]``, otherwise :py:exc:`ValueError`
+                is raised.
+                ``None`` (default) means any failure raises
+                :py:exc:`~pyhf.exceptions.FailedMinimization` immediately.
+                A value of ``0.1`` with ``ntoys=100`` allows up to 10 of the signal-like
+                toys and, separately, up to 10 of the background-like toys to fail.
+                A number of failures exactly equal to the allowance is accepted, and the
+                toy loop stops as soon as the allowance is exceeded.
+                ``0.0`` tolerates no failures, and ``1.0`` tolerates any number of
+                failures, but at least one toy per hypothesis must succeed.
+                Failures and their details are always stored in
+                :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`,
+                also when :py:meth:`~pyhf.infer.calculators.ToyCalculator.distributions`
+                raises, in which case it holds only the hypotheses whose toys were run.
+                When using :func:`~pyhf.infer.hypotest`, pass ``return_calculator=True``
+                and read ``toy_results`` from the returned calculator.
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
 
         """
+        if failure_threshold is not None and not 0.0 <= failure_threshold <= 1.0:
+            msg = f"failure_threshold must be None or in [0.0, 1.0], got {failure_threshold!r}"
+            raise ValueError(msg)
+        self.failure_threshold = failure_threshold
+        self.toy_results: dict[str, ToyResult] | None = None
         self.ntoys = ntoys
         self.data = data
         self.pdf = pdf
@@ -750,6 +846,99 @@ class ToyCalculator:
         self.fixed_params = fixed_params or pdf.config.suggested_fixed()
         self.test_stat = test_stat
         self.track_progress = track_progress
+
+    def _collect_toy_teststats(
+        self, samples, poi_test, teststat_func, progress, show_progress, label, key
+    ):
+        """
+        Run the test statistic over toy samples, collecting diagnostics.
+
+        The :class:`~pyhf.infer.calculators.ToyResult` is stored in ``toy_results``
+        under ``key`` before the first toy is run, so it is kept if this method
+        raises. See ``failure_threshold`` of
+        :class:`~pyhf.infer.calculators.ToyCalculator` for the failure rules.
+
+        Args:
+            samples: Pseudo-data samples to iterate over.
+            poi_test: POI value passed through to the test statistic function.
+            teststat_func: The test statistic function to call per toy.
+            progress: Rich :py:class:`Progress` instance for the progress bar.
+            show_progress (:obj:`bool`): Whether the progress bar task is visible.
+            label (:obj:`str`): Human-readable label for the progress bar and messages
+              (e.g. ``"Signal-like"``).
+            key (:obj:`str`): The key in ``toy_results`` to store the diagnostics under
+              (``"sig_plus_bkg"`` or ``"bkg_only"``).
+
+        Raises:
+            ~pyhf.exceptions.FailedMinimization: If a toy fails and ``failure_threshold``
+              is ``None``.
+            ~pyhf.exceptions.TooManyFailedToys: If the fraction of failed toys exceeds
+              ``failure_threshold``, or if no toy succeeded.
+
+        Returns:
+            ~pyhf.infer.calculators.ToyResult: Diagnostics including successful test
+            statistic values and details of any failed toys.
+        """
+        task = progress.add_task(
+            f"[cyan]{label}", total=self.ntoys, visible=show_progress
+        )
+        toy_result = ToyResult(successful=[], failed=[])
+        self.toy_results[key] = toy_result
+
+        for idx, sample in enumerate(samples):
+            try:
+                value = teststat_func(
+                    poi_test,
+                    sample,
+                    self.pdf,
+                    self.init_pars,
+                    self.par_bounds,
+                    self.fixed_params,
+                )
+                toy_result.successful.append(value)
+            except FailedMinimization as exc:
+                toy_result.failed.append((idx, sample, exc))
+                if self.failure_threshold is None:
+                    raise
+                # Compare fractions rather than len(failed) > threshold * ntoys:
+                # 29 / 100 is the same double as the literal 0.29, so a count exactly
+                # at the threshold is accepted, whereas 0.29 * 100 evaluates to
+                # 28.999999999999996 and would wrongly reject it.
+                if len(toy_result.failed) / self.ntoys > self.failure_threshold:
+                    raise TooManyFailedToys(
+                        exc.result,
+                        label,
+                        len(toy_result.failed),
+                        idx + 1,
+                        self.ntoys,
+                        self.failure_threshold,
+                    ) from exc
+            progress.advance(task, 1)
+
+        n_failed = len(toy_result.failed)
+        # Only reachable with failure_threshold=1.0, as the loop raises before all
+        # toys can fail for any lower threshold
+        if n_failed and not toy_result.successful:
+            last_exc = toy_result.failed[-1][2]
+            raise TooManyFailedToys(
+                last_exc.result,
+                label,
+                n_failed,
+                n_failed,
+                self.ntoys,
+                self.failure_threshold,
+            ) from last_exc
+
+        if n_failed:
+            log.warning(
+                "%s: %d/%d toys failed (%.1f%%)",
+                label,
+                n_failed,
+                self.ntoys,
+                100 * n_failed / self.ntoys,
+            )
+
+        return toy_result
 
     def distributions(self, poi_test, track_progress=None):
         """
@@ -763,6 +952,10 @@ class ToyCalculator:
 
         .. _LHC Higgs search combination procedure: https://inspirehep.net/literature/1196797
         .. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
+
+        Toy failures are tracked in
+        :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`
+        (see ``failure_threshold`` of :class:`~pyhf.infer.calculators.ToyCalculator`).
 
         Example:
 
@@ -791,6 +984,9 @@ class ToyCalculator:
             Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.
 
         """
+        # Reset before the preparation fits, so that a call that raises never keeps
+        # the diagnostics of a previous call
+        self.toy_results = {}
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
@@ -831,42 +1027,27 @@ class ToyCalculator:
             TimeElapsedColumn(),
             console=console,
         ) as progress:
-            signal_task = progress.add_task(
-                "[cyan]Signal-like", total=self.ntoys, visible=show_progress
+            signal_result = self._collect_toy_teststats(
+                signal_sample,
+                poi_test,
+                teststat_func,
+                progress,
+                show_progress,
+                "Signal-like",
+                "sig_plus_bkg",
             )
-            signal_teststat = []
-            for sample in signal_sample:
-                signal_teststat.append(
-                    teststat_func(
-                        poi_test,
-                        sample,
-                        self.pdf,
-                        self.init_pars,
-                        self.par_bounds,
-                        self.fixed_params,
-                    )
-                )
-                progress.advance(signal_task, 1)
-
-            bkg_task = progress.add_task(
-                "[cyan]Background-like", total=self.ntoys, visible=show_progress
+            bkg_result = self._collect_toy_teststats(
+                bkg_sample,
+                poi_test,
+                teststat_func,
+                progress,
+                show_progress,
+                "Background-like",
+                "bkg_only",
             )
-            bkg_teststat = []
-            for sample in bkg_sample:
-                bkg_teststat.append(
-                    teststat_func(
-                        poi_test,
-                        sample,
-                        self.pdf,
-                        self.init_pars,
-                        self.par_bounds,
-                        self.fixed_params,
-                    )
-                )
-                progress.advance(bkg_task, 1)
 
-        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_teststat))
-        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_teststat))
+        s_plus_b = EmpiricalDistribution(tensorlib.astensor(signal_result.successful))
+        b_only = EmpiricalDistribution(tensorlib.astensor(bkg_result.successful))
         return s_plus_b, b_only
 
     def pvalues(self, teststat, sig_plus_bkg_distribution, bkg_only_distribution):
