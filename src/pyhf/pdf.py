@@ -786,6 +786,7 @@ class Model:
 
         if "bindings" in spec:
             from pyhf.contrib.extended_modifiers import purefunc
+
             modifier_set = purefunc.enable(modifier_set)
 
         self.batch_size = batch_size

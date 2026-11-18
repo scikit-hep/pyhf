@@ -192,7 +192,9 @@ class PureFunctionModifierBuilder:
         _list_of_symbols = self.builder_data["global"]["symbol_names"]
         list_of_symbols = []
         for symbol in _list_of_symbols:
-            bindings_for_symbol = self.builder_data["global"]["parameter_bindings_dict"][sympy.simplify(symbol)]
+            bindings_for_symbol = self.builder_data["global"][
+                "parameter_bindings_dict"
+            ][sympy.simplify(symbol)]
             if not any([binding in used_bindings for binding in bindings_for_symbol]):
                 print(f"unused symbol {symbol}")
                 del self.required_parsets[symbol]
@@ -295,7 +297,7 @@ class PureFunctionModifierApplicator:
 from pyhf.modifiers import histfactory_set
 
 
-def enable(modifier_set = None):
+def enable(modifier_set=None):
     """
     Inserts purefunc in modifier set and provides schema
 
