@@ -267,7 +267,7 @@ class PureFunctionModifierApplicator:
 from pyhf.modifiers import histfactory_set
 
 
-def enable():
+def enable(modifier_set = None):
     """
     Inserts purefunc in modifier set and provides schema
 
@@ -277,8 +277,9 @@ def enable():
         to validate workspaces and models against.
     """
 
-    modifier_set = {}
-    modifier_set.update(**histfactory_set)
+    if modifier_set is None:
+        modifier_set = {}
+        modifier_set.update(**histfactory_set)
 
     modifier_set.update(
         **{

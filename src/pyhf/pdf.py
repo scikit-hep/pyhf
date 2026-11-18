@@ -784,6 +784,10 @@ class Model:
         """
         modifier_set = modifier_set or histfactory_set
 
+        if "bindings" in spec:
+            from pyhf.contrib.extended_modifiers import purefunc
+            modifier_set = purefunc.enable(modifier_set)
+
         self.batch_size = batch_size
         # deep-copy "spec" as it may be modified by config
         self.spec = copy.deepcopy(spec)
