@@ -30,12 +30,7 @@ from pyhf.infer import utils
 from pyhf.infer.mle import fixed_poi_fit
 
 if TYPE_CHECKING:
-    from jax import Array as JaxArray
-
-    from pyhf.tensor.numpy_backend import Tensor as NumPyTensor
-
-    # A tensor of any of the supported backends
-    Tensor = NumPyTensor | JaxArray
+    from pyhf.typing import Tensor
 
 log = logging.getLogger(__name__)
 
@@ -853,28 +848,24 @@ class ToyCalculator:
         self.track_progress = track_progress
 
     def _collect_toy_teststats(
-        self, samples, poi_test, teststat_func, progress, task, label, key
+        self, samples, poi_test, teststat_func, progress, show_progress, label, key
     ):
         """
         Run the test statistic over toy samples, collecting diagnostics.
 
-        The :class:`~pyhf.infer.calculators.ToyResult` is stored in
-        :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`
-        under ``key`` before the first toy is run and is filled as the toys are
-        processed, so the diagnostics are kept even if this method raises.
-
-        With a ``failure_threshold``, the number of failed toys is compared against
-        the fraction ``failure_threshold`` of ``ntoys``. A number of failures exactly
-        equal to the allowance is accepted, and the loop stops as soon as the
-        allowance is exceeded. At least one toy must succeed.
+        The :class:`~pyhf.infer.calculators.ToyResult` is stored in ``toy_results``
+        under ``key`` before the first toy is run, so it is kept if this method
+        raises. See ``failure_threshold`` of
+        :class:`~pyhf.infer.calculators.ToyCalculator` for the failure rules.
 
         Args:
             samples: Pseudo-data samples to iterate over.
             poi_test: POI value passed through to the test statistic function.
             teststat_func: The test statistic function to call per toy.
             progress: Rich :py:class:`Progress` instance for the progress bar.
-            task: Rich task ID to advance per toy.
-            label (:obj:`str`): Human-readable label for log messages (e.g. ``"Signal-like"``).
+            show_progress (:obj:`bool`): Whether the progress bar task is visible.
+            label (:obj:`str`): Human-readable label for the progress bar and messages
+              (e.g. ``"Signal-like"``).
             key (:obj:`str`): The key in ``toy_results`` to store the diagnostics under
               (``"sig_plus_bkg"`` or ``"bkg_only"``).
 
@@ -888,6 +879,9 @@ class ToyCalculator:
             ~pyhf.infer.calculators.ToyResult: Diagnostics including successful test
             statistic values and details of any failed toys.
         """
+        task = progress.add_task(
+            f"[cyan]{label}", total=self.ntoys, visible=show_progress
+        )
         toy_result = ToyResult(successful=[], failed=[])
         self.toy_results[key] = toy_result
 
@@ -921,24 +915,27 @@ class ToyCalculator:
                     ) from exc
             progress.advance(task, 1)
 
-        if toy_result.failed and not toy_result.successful:
+        n_failed = len(toy_result.failed)
+        # Only reachable with failure_threshold=1.0, as the loop raises before all
+        # toys can fail for any lower threshold
+        if n_failed and not toy_result.successful:
             last_exc = toy_result.failed[-1][2]
             raise TooManyFailedToys(
                 last_exc.result,
                 label,
-                len(toy_result.failed),
-                len(toy_result.failed),
+                n_failed,
+                n_failed,
                 self.ntoys,
                 self.failure_threshold,
             ) from last_exc
 
-        if toy_result.failed:
+        if n_failed:
             log.warning(
                 "%s: %d/%d toys failed (%.1f%%)",
                 label,
-                len(toy_result.failed),
+                n_failed,
                 self.ntoys,
-                100 * len(toy_result.failed) / self.ntoys,
+                100 * n_failed / self.ntoys,
             )
 
         return toy_result
@@ -957,10 +954,8 @@ class ToyCalculator:
         .. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
 
         Toy failures are tracked in
-        :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`,
-        also if this method raises.
-        Set ``failure_threshold`` on the calculator to allow a fraction of toys to fail
-        without aborting.
+        :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`
+        (see ``failure_threshold`` of :class:`~pyhf.infer.calculators.ToyCalculator`).
 
         Example:
 
@@ -1020,8 +1015,6 @@ class ToyCalculator:
             track_progress if track_progress is not None else self.track_progress
         )
 
-        # Filled by _collect_toy_teststats as the toys run, so that the diagnostics
-        # of a loop are kept if it raises
         self.toy_results = {}
 
         console = Console(stderr=True)
@@ -1033,28 +1026,21 @@ class ToyCalculator:
             TimeElapsedColumn(),
             console=console,
         ) as progress:
-            signal_task = progress.add_task(
-                "[cyan]Signal-like", total=self.ntoys, visible=show_progress
-            )
             signal_result = self._collect_toy_teststats(
                 signal_sample,
                 poi_test,
                 teststat_func,
                 progress,
-                signal_task,
+                show_progress,
                 "Signal-like",
                 "sig_plus_bkg",
-            )
-
-            bkg_task = progress.add_task(
-                "[cyan]Background-like", total=self.ntoys, visible=show_progress
             )
             bkg_result = self._collect_toy_teststats(
                 bkg_sample,
                 poi_test,
                 teststat_func,
                 progress,
-                bkg_task,
+                show_progress,
                 "Background-like",
                 "bkg_only",
             )

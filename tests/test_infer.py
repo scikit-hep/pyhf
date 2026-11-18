@@ -869,30 +869,10 @@ def test_toy_calculator_failure_threshold_per_hypothesis(hypotest_args, failing_
 
     sig_dist, bkg_dist = calc.distributions(mu_test)
 
-    assert [idx for idx, _, _ in calc.toy_results["sig_plus_bkg"].failed] == [4]
-    assert [idx for idx, _, _ in calc.toy_results["bkg_only"].failed] == [3]
+    assert [toy_idx for toy_idx, _, _ in calc.toy_results["sig_plus_bkg"].failed] == [4]
+    assert [toy_idx for toy_idx, _, _ in calc.toy_results["bkg_only"].failed] == [3]
     assert len(sig_dist.samples) == 9
     assert len(bkg_dist.samples) == 9
-
-
-def test_toy_calculator_failure_on_first_toy_allowed(hypotest_args, failing_toys):
-    """
-    The failure_threshold is a fraction of ntoys, not of the toys run so far, so a
-    failure on the very first toy is within failure_threshold=0.1 for ntoys=10.
-    """
-    np.random.seed(0)
-    mu_test, data, model = hypotest_args
-    calc = pyhf.infer.calculators.ToyCalculator(
-        data, model, ntoys=10, track_progress=False, failure_threshold=0.1
-    )
-    failing_toys({0})
-
-    sig_dist, _ = calc.distributions(mu_test)
-
-    sig_result = calc.toy_results["sig_plus_bkg"]
-    assert [toy_idx for toy_idx, _, _ in sig_result.failed] == [0]
-    assert len(sig_result.successful) == 9
-    assert len(sig_dist.samples) == 9
 
 
 @pytest.mark.parametrize(
@@ -904,7 +884,9 @@ def test_toy_calculator_failure_threshold_boundary_allowed(
     hypotest_args, failing_toys, failure_threshold, n_failures
 ):
     """
-    A number of failures exactly equal to failure_threshold * ntoys is allowed.
+    A number of failures exactly equal to failure_threshold * ntoys is allowed. The
+    threshold is a fraction of ntoys, not of the toys run so far, so failures on the
+    very first toys are allowed as well.
     """
     np.random.seed(0)
     mu_test, data, model = hypotest_args
@@ -919,7 +901,9 @@ def test_toy_calculator_failure_threshold_boundary_allowed(
 
     sig_dist, _ = calc.distributions(mu_test)
 
-    assert len(calc.toy_results["sig_plus_bkg"].failed) == n_failures
+    sig_result = calc.toy_results["sig_plus_bkg"]
+    assert [toy_idx for toy_idx, _, _ in sig_result.failed] == list(range(n_failures))
+    assert len(sig_result.successful) == 10 - n_failures
     assert len(sig_dist.samples) == 10 - n_failures
 
 
@@ -1123,7 +1107,7 @@ def test_toy_calculator_failure_threshold_via_hypotest(hypotest_args, failing_to
         return_calculator=True,
     )
 
-    assert [idx for idx, _, _ in calc.toy_results["sig_plus_bkg"].failed] == [0]
+    assert [toy_idx for toy_idx, _, _ in calc.toy_results["sig_plus_bkg"].failed] == [0]
     assert len(calc.toy_results["bkg_only"].failed) == 0
     assert np.isfinite(CLs)
 

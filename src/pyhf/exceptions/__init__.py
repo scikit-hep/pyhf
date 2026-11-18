@@ -171,11 +171,12 @@ class FailedMinimization(Exception):
     FailedMinimization is raised when a minimization did not succeed.
     """
 
-    def __init__(self, result):
+    def __init__(self, result, message=None):
         self.result = result
-        message = getattr(
-            result, "message", "Unknown failure. See fit result for more details."
-        )
+        if message is None:
+            message = getattr(
+                result, "message", "Unknown failure. See fit result for more details."
+            )
         super().__init__(message)
 
 
@@ -190,16 +191,14 @@ class TooManyFailedToys(FailedMinimization):
     """
 
     def __init__(self, result, hypothesis, n_failed, n_run, ntoys, failure_threshold):
-        super().__init__(result)
-        # Replace the fit message set by FailedMinimization with one describing the
-        # toy loop. The fit message is kept on the chained FailedMinimization.
+        # The fit message of result is kept on the chained FailedMinimization
         message = (
             f"{hypothesis}: {n_failed} of the {n_run} toys run failed"
             f" (ntoys={ntoys}, failure_threshold={failure_threshold})."
             " At most failure_threshold * ntoys toys may fail, and at least one toy"
             " must succeed."
         )
-        self.args = (message,)
+        super().__init__(result, message)
 
 
 # Deprecated APIs
