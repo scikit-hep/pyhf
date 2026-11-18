@@ -4,7 +4,7 @@ from pathlib import Path
 
 import nox
 
-ALL_PYTHONS = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+ALL_PYTHONS = ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
 # Default sessions to run if no session handles are passed
 nox.options.sessions = ["lint", "tests-3.15"]
