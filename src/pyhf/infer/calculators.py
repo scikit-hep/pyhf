@@ -984,6 +984,9 @@ class ToyCalculator:
             Tuple (~pyhf.infer.calculators.EmpiricalDistribution): The distributions under the hypotheses.
 
         """
+        # Reset before the preparation fits, so that a call that raises never keeps
+        # the diagnostics of a previous call
+        self.toy_results = {}
         tensorlib, _ = get_backend()
         sample_shape = (self.ntoys,)
 
@@ -1014,8 +1017,6 @@ class ToyCalculator:
         show_progress = (
             track_progress if track_progress is not None else self.track_progress
         )
-
-        self.toy_results = {}
 
         console = Console(stderr=True)
         with Progress(

@@ -1057,6 +1057,36 @@ def test_toy_calculator_toy_results_replaced(hypotest_args, failing_toys):
     assert len(calc.toy_results["bkg_only"].successful) == 10
 
 
+def test_toy_calculator_toy_results_reset_on_failed_preparation_fit(
+    hypotest_args, failing_toys, monkeypatch
+):
+    """
+    If a later call to distributions() raises in a preparation fit, before any toy
+    is run, toy_results does not keep the diagnostics of the previous call.
+    """
+    np.random.seed(0)
+    mu_test, data, model = hypotest_args
+    calc = pyhf.infer.calculators.ToyCalculator(
+        data, model, ntoys=10, track_progress=False, failure_threshold=0.5
+    )
+    failing_toys({2})
+
+    calc.distributions(mu_test)
+    assert len(calc.toy_results["sig_plus_bkg"].failed) == 1
+
+    fake_result = types.SimpleNamespace(success=False, message="simulated failure")
+
+    def failing_fixed_poi_fit(*_args, **_kwargs):
+        raise pyhf.exceptions.FailedMinimization(fake_result)
+
+    monkeypatch.setattr(pyhf.infer.calculators, "fixed_poi_fit", failing_fixed_poi_fit)
+
+    with pytest.raises(pyhf.exceptions.FailedMinimization):
+        calc.distributions(mu_test)
+
+    assert calc.toy_results == {}
+
+
 def test_toy_calculator_failure_warning_logged(hypotest_args, failing_toys, caplog):
     """
     When toys fail within the threshold, a warning is logged with the failure count.
