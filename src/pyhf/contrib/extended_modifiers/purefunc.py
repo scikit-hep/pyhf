@@ -37,6 +37,7 @@ class PureFunctionModifierBuilder:
         self.required_parsets = {}
         self.builder_data = {"local": {}, "global": {}}
         self.builder_data["global"]["symbol_names"] = []
+        self.builder_data["global"]["used_bindings"] = set()
         self.parsed_expressions = {}
         self.languages = {}
         self.parse_expressions()
@@ -57,8 +58,10 @@ class PureFunctionModifierBuilder:
             languages.append(trafo["language"])
 
         free_symbols = set()
+        free_symbols_dict = {}
 
         for bind, exp, lang in zip(bindings, expressions, languages):
+            # parses 'bindings' of the model/workspace spec
             if lang != "sympy":
                 msg = f"Parser {lang} is not implemented."
                 raise InvalidLanguage(msg)
@@ -109,9 +112,21 @@ class PureFunctionModifierBuilder:
             if str(symbol) in self.parsed_expressions:
                 msg = f"{symbol} remains unresolved, you should investigate the expressions."
                 raise InvalidExpression(msg)
+        # this dict may contain symbols from unused expressions, these are filtered in `finalize`
+        parameter_bindings_dict = {}
+        for binding, exp in self.parsed_expressions.items():
+            # walk through pairs of binding, expression again
+            # update dictionary of free symbols with the bindings they are used in
+            symbols = exp.free_symbols
+            for symb in symbols:
+                bound_to = parameter_bindings_dict.get(symb, set())
+                bound_to.update((binding,))
+                parameter_bindings_dict[symb] = bound_to
+
         list_of_symbols = sorted([str(x) for x in free_symbols])
         self.required_parsets = self.require_symbols_as_scalars(list_of_symbols)
         self.builder_data["global"]["symbol_names"] = list_of_symbols
+        self.builder_data["global"]["parameter_bindings_dict"] = parameter_bindings_dict
 
     def collect(self, thismod, nom):
         """Creates mask encoding whether to apply this modifier."""
@@ -158,6 +173,7 @@ class PureFunctionModifierBuilder:
         self.builder_data["local"][key][sample]["data"]["mask"] += moddata["mask"]
         if thismod is not None:
             binding = thismod.get("name", None)
+            self.builder_data["global"]["used_bindings"].update((binding,))
             expr = self.parsed_expressions.get(binding)
             if expr is None:
                 msg = f"{binding} is used as purefunc modifier but not declared."
@@ -171,7 +187,19 @@ class PureFunctionModifierBuilder:
     def finalize(self):
         """Create sympy expressions for modifier functions"""
 
-        list_of_symbols = self.builder_data["global"]["symbol_names"]
+        # extract used bindings and filter out parameters that are declared in a binding but not use as a modifier
+        used_bindings = self.builder_data["global"]["used_bindings"]
+        _list_of_symbols = self.builder_data["global"]["symbol_names"]
+        list_of_symbols = []
+        for symbol in _list_of_symbols:
+            bindings_for_symbol = self.builder_data["global"]["parameter_bindings_dict"][sympy.simplify(symbol)]
+            if not any([binding in used_bindings for binding in bindings_for_symbol]):
+                print(f"unused symbol {symbol}")
+                del self.required_parsets[symbol]
+            else:
+                list_of_symbols.append(symbol)
+        self.builder_data["global"]["symbol_names"] = list_of_symbols
+
         for _modname, modspec in self.builder_data["local"].items():  # noqa: PERF102
             for _sample, samplespec in modspec.items():  # noqa: PERF102
                 for _channel, channelspec in samplespec["channels"].items():  # noqa: PERF102
