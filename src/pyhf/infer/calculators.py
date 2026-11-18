@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from rich.console import Console
 from rich.progress import (
@@ -27,7 +28,14 @@ from pyhf import get_backend
 from pyhf.exceptions import FailedMinimization
 from pyhf.infer import utils
 from pyhf.infer.mle import fixed_poi_fit
-from pyhf.tensor.numpy_backend import Tensor
+
+if TYPE_CHECKING:
+    from jax import Array as JaxArray
+
+    from pyhf.tensor.numpy_backend import Tensor as NumPyTensor
+
+    # A tensor of any of the supported backends
+    Tensor = NumPyTensor | JaxArray
 
 log = logging.getLogger(__name__)
 
