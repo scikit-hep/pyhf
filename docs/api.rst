@@ -143,6 +143,7 @@ Calculators
    calculators.AsymptoticTestStatDistribution
    calculators.EmpiricalDistribution
    calculators.AsymptoticCalculator
+   calculators.ToyResult
    calculators.ToyCalculator
    utils.create_calculator
 
@@ -210,6 +211,8 @@ Various exceptions, apart from standard python exceptions, that are raised from 
    InvalidOptimizer
    InvalidPdfParameters
    InvalidPdfData
+   FailedMinimization
+   TooManyFailedToys
 
 Utilities
 ---------

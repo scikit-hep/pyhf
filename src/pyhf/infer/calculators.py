@@ -718,6 +718,28 @@ class ToyResult:
     <pyhf.infer.calculators.ToyCalculator.toy_results>` after calling
     :py:meth:`ToyCalculator.distributions
     <pyhf.infer.calculators.ToyCalculator.distributions>`.
+
+    Example:
+
+        >>> import pyhf
+        >>> import numpy.random as random
+        >>> random.seed(0)
+        >>> pyhf.set_backend("numpy")
+        >>> model = pyhf.simplemodels.uncorrelated_background(
+        ...     signal=[12.0, 11.0], bkg=[50.0, 52.0], bkg_uncertainty=[3.0, 7.0]
+        ... )
+        >>> observations = [51, 48]
+        >>> data = observations + model.config.auxdata
+        >>> mu_test = 1.0
+        >>> toy_calculator = pyhf.infer.calculators.ToyCalculator(
+        ...     data, model, ntoys=100, track_progress=False, failure_threshold=0.05
+        ... )
+        >>> sig_plus_bkg_dist, bkg_dist = toy_calculator.distributions(mu_test)
+        >>> list(toy_calculator.toy_results)
+        ['sig_plus_bkg', 'bkg_only']
+        >>> sig_plus_bkg_result = toy_calculator.toy_results["sig_plus_bkg"]
+        >>> len(sig_plus_bkg_result.successful), len(sig_plus_bkg_result.failed)
+        (100, 0)
     """
 
     successful: list[Tensor]
@@ -734,7 +756,17 @@ class ToyResult:
 
 
 class ToyCalculator:
-    """The Toy-based Calculator."""
+    """
+    The Toy-based Calculator.
+
+    Attributes:
+        toy_results (:obj:`dict` or None): The diagnostics of the toys of the last call
+          of :py:meth:`~pyhf.infer.calculators.ToyCalculator.distributions`.
+          ``None`` until it is called, then a :obj:`dict` with the keys
+          ``"sig_plus_bkg"`` and ``"bkg_only"`` that map to the
+          :class:`~pyhf.infer.calculators.ToyResult` of the signal-like and the
+          background-like toys.
+    """
 
     def __init__(
         self,
@@ -750,6 +782,17 @@ class ToyCalculator:
     ):
         r"""
         Toy-based Calculator.
+
+        .. warning::
+
+            Failed toys are dropped, so with a ``failure_threshold`` the empirical
+            distributions can be built from fewer than ``ntoys`` toys, and the
+            :math:`p`-values are conditional on the toy fits succeeding.
+            If the failures are correlated with the value of the test statistic,
+            for example if fits fail preferentially for signal-like or extreme
+            pseudo-data, the :math:`p`-values are biased.
+            Keep the fraction of failed toys small and inspect the failed pseudo-data in
+            :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`.
 
         Args:
             data (:obj:`tensor`): The observed data.
@@ -788,6 +831,8 @@ class ToyCalculator:
                 :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`,
                 also when :py:meth:`~pyhf.infer.calculators.ToyCalculator.distributions`
                 raises, in which case it holds only the hypotheses whose toys were run.
+                When using :func:`~pyhf.infer.hypotest`, pass ``return_calculator=True``
+                and read ``toy_results`` from the returned calculator.
 
         Returns:
             ~pyhf.infer.calculators.ToyCalculator: The calculator for toy-based quantities.
@@ -911,7 +956,9 @@ class ToyCalculator:
         .. _LHC Higgs search combination procedure: https://inspirehep.net/literature/1196797
         .. |LHC Higgs search combination procedure| replace:: *Procedure for the LHC Higgs boson search combination in Summer 2011*
 
-        Toy failures are tracked in :py:attr:`toy_results` after this method returns.
+        Toy failures are tracked in
+        :py:attr:`toy_results <pyhf.infer.calculators.ToyCalculator.toy_results>`,
+        also if this method raises.
         Set ``failure_threshold`` on the calculator to allow a fraction of toys to fail
         without aborting.
 
