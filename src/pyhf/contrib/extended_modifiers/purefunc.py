@@ -246,50 +246,93 @@ class PureFunctionModifierApplicator:
         self.create_jax_eval()
 
     def create_jax_eval(self):
-        """Create jax function to evaluate purefunc expression"""
+        """Create jax function to evaluate purefunc expression
+
+        Every modifier key binds exactly one expression, which is the same in
+        every sample/channel it is applied to. Instead of evaluating one
+        lambdified function per (modifier, sample, channel) and assembling the
+        result from ``nmods * nsamples * nchannels`` temporary arrays, each
+        distinct expression is evaluated once (with common subexpressions
+        shared between all expressions) and broadcast into the output through
+        a precomputed boolean mask.
+        """
+
+        local = self.builder_data["local"]
+
+        # one sympy expression per modifier key (None if it is never applied)
+        exprs = []
+        for key in self.keys:
+            parsed = {
+                channelspec["parsed"]
+                for samplespec in local[key].values()
+                for channelspec in samplespec["channels"].values()
+                if channelspec["parsed"] is not None
+            }
+            if len(parsed) > 1:
+                msg = f"{key} is bound to more than one expression: {parsed}"
+                raise InvalidExpression(msg)
+            exprs.append(parsed.pop() if parsed else None)
+
+        # deduplicate: modifiers sharing an expression are evaluated once
+        unique_exprs = list(dict.fromkeys(e for e in exprs if e is not None))
+        # index into [*unique_values, 1.0]; unused modifiers map onto the 1.0
+        expr_index = jnp.asarray(
+            [
+                unique_exprs.index(e) if e is not None else len(unique_exprs)
+                for e in exprs
+            ],
+            dtype=int,
+        )
+
+        # single function returning all expressions, with CSE across them
+        symbols = [sympy.Symbol(x) for x in self.inputs]
+        jaxfunc = sympy.lambdify(symbols, unique_exprs, "jax", cse=True)
+
+        # mask[m, s, 0, b]: does modifier m act on bin b of sample s
+        # (masks are concatenated over channels in pdfconfig.channels order)
+        mask = jnp.asarray(
+            [
+                [[local[key][s]["data"]["mask"]] for s in self.pdfconfig.samples]
+                for key in self.keys
+            ],
+            dtype=bool,
+        )
 
         def eval_func(pars):
-            return jnp.array(
+            # pars: (n_inputs,) or (n_inputs, batch)
+            batch_shape = pars.shape[1:]
+            values = jnp.stack(
                 [
-                    [
-                        jnp.concatenate(
-                            [
-                                self.builder_data["local"][m][s]["channels"][c][
-                                    "jaxfunc"
-                                ](*pars)
-                                * jnp.ones(self.pdfconfig.channel_nbins[c])
-                                for c in self.pdfconfig.channels
-                            ]
-                        )
-                        for s in self.pdfconfig.samples
-                    ]
-                    for m in self.keys
+                    jnp.broadcast_to(jnp.asarray(v, dtype=pars.dtype), batch_shape)
+                    for v in jaxfunc(*pars)
                 ]
+                + [jnp.ones(batch_shape, dtype=pars.dtype)]
             )
+            # (n_mods,) or (n_mods, batch) -> (n_mods, 1, 1|batch, 1)
+            per_mod = values[expr_index].reshape(len(self.keys), 1, -1, 1)
+            return jnp.where(mask, per_mod, jnp.ones((), dtype=pars.dtype))
 
-        self.jaxeval = eval_func
+        self.jaxeval = jax.jit(eval_func)
 
     def apply_nonbatched(self, pars):
         """Return evaluation function for non batched analyses"""
-
-        return jnp.expand_dims(self.jaxeval(pars), 2)
+        # output shape: (n_mods, n_samples, 1, n_bins)
+        return self.jaxeval(pars)
 
     def apply_batched(self, pars):
         """Return evaluation for batched analyses"""
-        return jax.vmap(self.jaxeval, in_axes=(1,), out_axes=2)(pars)
+        # pars: (n_inputs, batch) -> output shape: (n_mods, n_samples, batch, n_bins)
+        return self.jaxeval(pars)
 
     def apply(self, pars):
         """Apply modifier"""
 
         if not self.param_viewer.index_selection:
             return None
+        par_selection = self.param_viewer.get(pars)
         if self.batch_size is None:
-            par_selection = self.param_viewer.get(pars)
-            results_purefunc = self.apply_nonbatched(par_selection)
-        else:
-            par_selection = self.param_viewer.get(pars)
-            results_purefunc = self.apply_batched(par_selection)
-        return results_purefunc
+            return self.apply_nonbatched(par_selection)
+        return self.apply_batched(par_selection)
 
 
 from pyhf.modifiers import histfactory_set
