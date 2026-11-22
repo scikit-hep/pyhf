@@ -8,6 +8,7 @@ import referencing.exceptions
 from pytest_socket import socket_disabled  # noqa: F401
 
 import pyhf
+from pyhf.schema import loader
 from pyhf.schema.validator import _retrieve_schema
 
 
@@ -131,9 +132,58 @@ def test_load_schema_cache_hit(monkeypatch):
     assert pyhf.schema.load_schema("1.0.0/defs.json") is cached
 
 
-def test_retrieve_schema_bundled():
+@pytest.mark.usefixtures("self_restoring_schema_globals")
+def test_load_schema_cache_miss_then_hit(mocker):
+    """A first load is a miss; a second load returns the same object without I/O.
+
+    c.f. https://github.com/scikit-hep/pyhf/issues/2749
+    """
+    schema_id = "1.0.0/model.json"
+    cache = pyhf.schema.variables.SCHEMA_CACHE
+    # Earlier tests may have loaded this schema; force a miss for this check.
+    cache.pop(schema_id, None)
+    assert schema_id not in cache
+
+    json_load = mocker.spy(loader.json, "load")
+    first = pyhf.schema.load_schema(schema_id)
+    assert cache[schema_id] is first
+    assert json_load.call_count == 1
+
+    collapsed = f"{pathlib.Path(pyhf.schema.variables.SCHEMA_BASE).joinpath(schema_id)}"
+    canonical = f"{pyhf.schema.variables.SCHEMA_BASE}{schema_id}"
+    assert collapsed != canonical
+    assert collapsed not in cache
+    assert first["$id"] == canonical
+
+    second = pyhf.schema.load_schema(schema_id)
+    assert second is first
+    assert json_load.call_count == 1
+
+
+def test_load_schema_cache_hit_by_schema_id():
+    """load_schema($id) must return the same object as load_schema(relative path)."""
+    relative = "1.0.0/defs.json"
+    cached = pyhf.schema.variables.SCHEMA_CACHE[relative]
+    by_id = pyhf.schema.load_schema(cached["$id"])
+    assert by_id is cached
+    assert by_id is pyhf.schema.load_schema(relative)
+
+
+@pytest.mark.usefixtures("self_restoring_schema_globals")
+def test_load_schema_cache_hit_custom_relative_id(tmp_path):
+    _write_schemas(tmp_path, {"probe.json": {"$id": "probe.json", "type": "string"}})
+    with pyhf.schema(tmp_path):
+        first = pyhf.schema.load_schema("probe.json")
+        second = pyhf.schema.load_schema("probe.json")
+        assert first is second
+        assert pyhf.schema.variables.SCHEMA_CACHE["probe.json"] is first
+
+
+def test_retrieve_schema_bundled(mocker):
+    json_load = mocker.spy(loader.json, "load")
     resource = _retrieve_schema(f"{pyhf.schema.variables.SCHEMA_BASE}1.0.0/defs.json")
     assert resource.contents is pyhf.schema.load_schema("1.0.0/defs.json")
+    assert json_load.call_count == 0
 
 
 @pytest.mark.parametrize(

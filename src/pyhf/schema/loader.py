@@ -5,12 +5,31 @@ import pyhf.exceptions
 from pyhf.schema import variables
 
 
+def _schema_cache_key(schema_id: str) -> str:
+    """Return the :data:`~pyhf.schema.variables.SCHEMA_CACHE` key for ``schema_id``.
+
+    Keys are paths relative to :attr:`pyhf.schema.path`. A URI under
+    :data:`~pyhf.schema.variables.SCHEMA_BASE` (typically a schema ``$id``) is
+    reduced to that relative path so both forms share one cache entry.
+
+    Do not build the key with :class:`pathlib.Path`:
+    ``Path(SCHEMA_BASE).joinpath(schema_id)`` collapses ``https://`` to
+    ``https:/`` and never matches the stored ``$id``
+    (https://github.com/scikit-hep/pyhf/issues/2749).
+    """
+    if schema_id.startswith(variables.SCHEMA_BASE):
+        return schema_id.removeprefix(variables.SCHEMA_BASE)
+    return schema_id
+
+
 def load_schema(schema_id: str):
     """
     Get a schema by relative path from cache, or load it into the cache and return.
 
     Args:
-        schema_id (str): Relative path to schema from :attr:`pyhf.schema.path`
+        schema_id (str): Relative path to schema from :attr:`pyhf.schema.path`.
+         A URI under :data:`~pyhf.schema.variables.SCHEMA_BASE` is also accepted
+         and looks up the same cached object.
 
     Example:
         >>> import pyhf
@@ -30,21 +49,22 @@ def load_schema(schema_id: str):
     Raises:
         ~pyhf.exceptions.SchemaNotFound: if the provided ``schema_id`` cannot be found.
     """
-    # Keyed by the relative path rather than the schema $id, so that custom
-    # schemas under pyhf.schema.path with relative $ids also hit the cache.
+    # Keyed by the relative path rather than pathlib(SCHEMA_BASE) or $id, so
+    # that bundled schemas and custom schemas with relative $ids both hit.
+    cache_key = _schema_cache_key(schema_id)
     try:
-        return variables.SCHEMA_CACHE[schema_id]
+        return variables.SCHEMA_CACHE[cache_key]
     except KeyError:
         pass
 
-    ref = variables.schemas.joinpath(schema_id)
+    ref = variables.schemas.joinpath(cache_key)
     with resources.as_file(ref) as path:
         if not path.exists():
             msg = f"The schema {schema_id} was not found. Do you have the right version or the right path? {path}"
             raise pyhf.exceptions.SchemaNotFound(msg)
         with path.open(encoding="utf-8") as json_schema:
             schema = json.load(json_schema)
-    variables.SCHEMA_CACHE[schema_id] = schema
+    variables.SCHEMA_CACHE[cache_key] = schema
     return schema
 
 
