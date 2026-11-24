@@ -98,6 +98,7 @@ def test_contrib_exceptions_public_api():
         "InvalidTestStatistic",
         "InvalidWorkspaceOperation",
         "PatchSetVerificationError",
+        "TooManyFailedToys",
         "UnspecifiedPOI",
         "Unsupported",
     ]
@@ -120,6 +121,7 @@ def test_infer_calculators_public_api():
         "AsymptoticTestStatDistribution",
         "EmpiricalDistribution",
         "ToyCalculator",
+        "ToyResult",
         "generate_asimov_data",
     ]
 
