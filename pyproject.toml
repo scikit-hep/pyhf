@@ -11,7 +11,7 @@ dynamic = ["version"]
 description = "pure-Python HistFactory implementation with tensors and autodiff"
 readme = "README.rst"
 license = "Apache-2.0"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [
     { name = "Lukas Heinrich", email = "lukas.heinrich@cern.ch" },
     { name = "Matthew Feickert", email = "matthew.feickert@cern.ch" },
@@ -32,11 +32,11 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
@@ -48,9 +48,9 @@ dependencies = [
     "referencing",  # for schema $ref resolution, version controlled by jsonschema
     "pyyaml>=5.1",  # for parsing CLI equal-delimited options
     # c.f. https://github.com/scikit-hep/pyhf/issues/2593 for excluded v1.16.x versions
-    "scipy>=1.7.2,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
+    "scipy>=1.9.2,!=1.16.0,!=1.16.1,!=1.16.2",  # requires numpy, which is required by pyhf
     "rich>=12.3.0",  # for progress bars
-    "numpy>=1.22.0",  # compatible versions controlled through scipy
+    "numpy>=1.23.2",  # compatible versions controlled through scipy
 ]
 
 [project.scripts]
@@ -70,7 +70,7 @@ jax = [
     "jaxlib>=0.4.1",  # c.f. PR #2079
 ]
 xmlio = ["uproot>=4.1.1"]  # c.f. PR #1567
-minuit = ["iminuit>=2.9.0"]  # c.f. PR #2757
+minuit = ["iminuit>=2.18.0"]  # c.f. PR #2798
 contrib = [
     "matplotlib>=3.0.0",
     "requests>=2.22.0",
@@ -205,7 +205,7 @@ exclude_also = [
 
 [tool.mypy]
 files = "src"
-python_version = "3.14"
+python_version = "3.15"
 warn_unused_configs = true
 strict = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
@@ -315,7 +315,7 @@ flake8-tidy-imports.ban-relative-imports = "all"
 
 [tool.ruff.lint.per-file-ignores]
 "ci/validate-version.py" = ["T20"]
-"docs/jupyterlite/jupyterlite.py" = ["F401", "F704"]
+"docs/jupyterlite/jupyterlite.py" = ["F401"]
 "**.ipynb" = ["T20"]
 "noxfile.py" = ["T20"]
 "tests/**" = ["NPY002"]
@@ -337,9 +337,9 @@ jsonpatch = ">=1.15"
 jsonschema = ">=4.18.0"
 referencing = "*"
 pyyaml = ">=5.1"
-scipy = ">=1.7.2,!=1.16.0,!=1.16.1,!=1.16.2"
+scipy = ">=1.9.2,!=1.16.0,!=1.16.1,!=1.16.2"
 rich = ">=12.3.0"
-numpy = ">=1.22.0"
+numpy = ">=1.23.2"
 
 [tool.pixi.feature.xmlio.dependencies]
 uproot = ">=4.1.1"
@@ -362,7 +362,7 @@ matplotlib = ">=3.0.0"
 requests = ">=2.22.0"
 
 [tool.pixi.feature.minuit.dependencies]
-iminuit = ">=2.9.0"
+iminuit = ">=2.18.0"
 
 [tool.pixi.feature.test.dependencies]
 pytest = ">=8.4.0"

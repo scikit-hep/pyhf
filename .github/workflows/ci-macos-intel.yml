@@ -1,0 +1,71 @@
+name: CI on x86_64 macOS
+
+on:
+  # Run daily at 1:43 UTC
+  schedule:
+  - cron:  '43 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-15-intel]
+        # jaxlib v0.4.38 is the last release with x86_64 macOS wheels, which
+        # exist only for CPython 3.10-3.13, so Python 3.13 is the newest that
+        # can install.
+        # TODO: Remove this workflow when pyhf drops support for Python 3.13.
+        python-version: ['3.13']
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v7
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install uv
+        uv pip install --system --upgrade ".[all]" --group test
+
+    - name: List installed Python packages
+      run: python -m pip list
+
+    - name: Test with pytest and coverage
+      run: |
+        coverage run --module pytest --ignore tests/contrib --ignore tests/benchmarks --ignore tests/test_notebooks.py
+
+    - name: Coverage report for core project
+      run: coverage report
+
+    - name: Test Contrib module with pytest
+      run: |
+        coverage run --append --module pytest tests/contrib --mpl --mpl-baseline-path tests/contrib/baseline
+
+    - name: Coverage report with contrib
+      run: |
+        coverage report
+        coverage xml
+        coverage html
+
+    - name: Upload coverage reports as workflow artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: coverage-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: |
+          coverage.xml
+          htmlcov/
+        retention-days: 14

@@ -558,6 +558,6 @@ def clear_filecache() -> None:
         # per-handle try so one failing close doesn't leak the remaining handles
         try:
             file_handle.close()
-        except OSError:  # noqa: PERF203
+        except OSError:
             log.warning("could not close file handle for %s", file_path)
     __FILECACHE__.clear()

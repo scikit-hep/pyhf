@@ -53,20 +53,20 @@ repos:
     # check the oldest and newest supported Pythons
     hooks:
       - id: mypy
-        name: mypy with Python 3.10
+        name: mypy with Python 3.11
         files: src
         # NumPy v2.5.0+ is Python 3.12+ and uses PEP 695 'type' statements in
-        # its stubs, which mypy cannot parse under --python-version=3.10
+        # its stubs, which mypy cannot parse under --python-version=3.11
         additional_dependencies:
           ["numpy<2.5.0", "rich", "click", "types-jsonpatch", "types-pyyaml", "types-jsonschema", "importlib_metadata", "packaging"]
-        args: ["--python-version=3.10"]
+        args: ["--python-version=3.11"]
 
       - id: mypy
-        name: mypy with Python 3.14
+        name: mypy with Python 3.15
         files: src
         additional_dependencies:
           ["numpy", "rich", "click", "types-jsonpatch", "types-pyyaml", "types-jsonschema", "importlib_metadata", "packaging"]
-        args: ["--python-version=3.14"]
+        args: ["--python-version=3.15"]
 
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.4.3
