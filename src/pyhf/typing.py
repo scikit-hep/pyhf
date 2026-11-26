@@ -1,12 +1,22 @@
 import os
 from collections.abc import MutableSequence, Sequence
 from typing import (
+    TYPE_CHECKING,
     Any,
     Literal,
     Protocol,
     SupportsIndex,
     TypedDict,
 )
+
+if TYPE_CHECKING:
+    from jax import Array as JaxArray
+
+    from pyhf.tensor.numpy_backend import Tensor as NumPyTensor
+
+    # A tensor of any of the supported backends. Only defined for type checking, as
+    # jax is an optional dependency and pyhf.tensor.numpy_backend imports this module.
+    Tensor = NumPyTensor | JaxArray
 
 __all__ = (
     "Channel",
