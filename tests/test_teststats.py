@@ -122,10 +122,7 @@ def test_unbounded_poi_test_stats(caplog, test_stat):
         main_rate = 6.0 * mu + 9.0 * gamma
         aux_rate = 9.0 * gamma
         return (
-            9.0 * math.log(main_rate)
-            - main_rate
-            + 9.0 * math.log(aux_rate)
-            - aux_rate
+            9.0 * math.log(main_rate) - main_rate + 9.0 * math.log(aux_rate) - aux_rate
         )
 
     gamma_hat_hat = (1.0 + math.sqrt(13.0)) / 6.0
