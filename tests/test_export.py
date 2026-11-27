@@ -7,6 +7,7 @@ import pytest
 import uproot
 
 import pyhf
+import pyhf.readxml
 import pyhf.writexml
 
 
@@ -229,6 +230,35 @@ def test_export_measurement():
     assert "alpha_syst2" in paramsetting.text
     assert "gamma_syst3" in paramsetting.text
     assert "gamma_syst4" in paramsetting.text
+
+
+def test_export_measurement_non_unit_lumi():
+    measurementspec = {
+        "config": {
+            "parameters": [
+                {
+                    "auxdata": [36.1],
+                    "bounds": [[32.3095, 39.8905]],
+                    "inits": [36.1],
+                    "name": "lumi",
+                    "sigmas": [0.7581],
+                }
+            ],
+            "poi": "mu",
+        },
+        "name": "Run2Measurement",
+    }
+    modifiertypes = {"mu": "normfactor", "lumi": "lumi"}
+    m = pyhf.writexml.build_measurement(measurementspec, modifiertypes)
+    assert float(m.attrib["Lumi"]) == pytest.approx(36.1)
+    assert float(m.attrib["LumiRelErr"]) == pytest.approx(0.021)
+
+    combination = ET.Element("Combination")
+    combination.append(m)
+    reimported = pyhf.readxml.process_measurements(combination)[0]
+    lumi_param = reimported["config"]["parameters"][0]
+    assert lumi_param["auxdata"][0] == pytest.approx(36.1)
+    assert lumi_param["sigmas"][0] == pytest.approx(0.7581)
 
 
 @pytest.mark.parametrize(
