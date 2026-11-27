@@ -97,7 +97,7 @@ def build_measurement(measurementspec, modifiertypes):
     # and to additionally extract the luminosity information
     fixed_params = []
     lumi = 1.0
-    lumierr = 0.0
+    lumirelerr = 0.0
     for parameter in config["parameters"]:
         if parameter.get("fixed", False):
             pname = parameter["name"]
@@ -109,14 +109,14 @@ def build_measurement(measurementspec, modifiertypes):
         # we found luminosity, so handle it
         if parameter["name"] == "lumi":
             lumi = parameter["auxdata"][0]
-            lumierr = parameter["sigmas"][0]
+            lumirelerr = parameter["sigmas"][0] / lumi
 
     # define measurement
     meas = ET.Element(
         "Measurement",
         Name=name,
         Lumi=str(lumi),
-        LumiRelErr=str(lumierr),
+        LumiRelErr=str(lumirelerr),
         ExportOnly=str(True),
     )
     poiel = ET.Element("POI")
