@@ -178,6 +178,20 @@ def test_normal():
         tb.normal_logpdf(tb.astensor([0]), tb.astensor([0]), tb.astensor([1]))
     ) == pytest.approx([-0.9189385332046727], 1e-07)
 
+    def _closed_form_normal(x, mu, sigma):
+        return np.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * np.sqrt(2 * np.pi))
+
+    assert tb.tolist(tb.normal(0.5, 0.0, 1.0)) == pytest.approx(
+        _closed_form_normal(0.5, 0.0, 1.0), 1e-07
+    )
+    values = tb.astensor([0.5, 2.0])
+    means = tb.astensor([0.0, 2.3])
+    sigmas = tb.astensor([1.0, 0.8])
+    assert tb.tolist(tb.normal(values, means, sigmas)) == pytest.approx(
+        [_closed_form_normal(0.5, 0.0, 1.0), _closed_form_normal(2.0, 2.3, 0.8)],
+        1e-07,
+    )
+
 
 @pytest.mark.usefixtures("backend")
 def test_zeros():
