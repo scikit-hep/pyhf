@@ -1,4 +1,5 @@
 import logging
+import math
 
 import pytest
 
@@ -89,6 +90,48 @@ def test_tmu_tilde(caplog):
         )
         assert "tmu_tilde test statistic used for fit" in caplog.text
         caplog.clear()
+
+
+@pytest.mark.parametrize(
+    "test_stat",
+    [pyhf.infer.test_statistics.qmu, pyhf.infer.test_statistics.tmu],
+    ids=["qmu", "tmu"],
+)
+def test_unbounded_poi_test_stats(caplog, test_stat):
+    """
+    Check qmu and tmu for a POI with a negative lower bound (no warning path)
+    against the closed-form profile likelihood ratio.
+    """
+    mu = 1.0
+    model = pyhf.simplemodels.uncorrelated_background([6], [9], [3])
+    data = [9] + model.config.auxdata
+    init_pars = model.config.suggested_init()
+    par_bounds = model.config.suggested_bounds()
+    par_bounds[model.config.poi_index] = [-10.0, 10.0]
+    fixed_params = model.config.suggested_fixed()
+
+    with caplog.at_level(logging.WARNING, "pyhf.infer.test_statistics"):
+        result = test_stat(mu, data, model, init_pars, par_bounds, fixed_params)
+        assert "test statistic used for fit" not in caplog.text
+        caplog.clear()
+
+    # Observed n = 9 with background b = 9 and auxiliary data tau = (9 / 3)^2 = 9
+    # give the unconstrained best fit mu_hat = 0, gamma_hat = 1.
+    # For mu = 1 (signal s = 6) the profiled gamma solves 3 gamma^2 - gamma - 1 = 0.
+    def log_likelihood(mu, gamma):
+        main_rate = 6.0 * mu + 9.0 * gamma
+        aux_rate = 9.0 * gamma
+        return (
+            9.0 * math.log(main_rate)
+            - main_rate
+            + 9.0 * math.log(aux_rate)
+            - aux_rate
+        )
+
+    gamma_hat_hat = (1.0 + math.sqrt(13.0)) / 6.0
+    # mu_hat = 0 <= mu so qmu equals tmu
+    expected = 2.0 * (log_likelihood(0.0, 1.0) - log_likelihood(mu, gamma_hat_hat))
+    assert pyhf.tensorlib.tolist(result) == pytest.approx(expected, rel=1e-4)
 
 
 def test_no_poi_test_stats():
