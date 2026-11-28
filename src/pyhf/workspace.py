@@ -439,6 +439,8 @@ class Workspace(_ChannelSummaryMixin, dict):
             "channels": self["channels"],
             "parameters": measurement["config"]["parameters"],
         }
+        if "bindings" in self:
+            modelspec["bindings"] = self["bindings"]
 
         patches = patches or []
         for patch in patches:
