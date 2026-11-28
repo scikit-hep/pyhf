@@ -176,7 +176,7 @@ class PatchSet:
         # list of all patch objects
         self._patches = []
         # look-up table for retrieving patch by name or values
-        self._patches_by_key = {"name": {}, "values": {}}
+        self._patches_by_key = {}
 
         # inflate all patches
         for patchspec in spec["patches"]:
