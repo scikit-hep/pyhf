@@ -318,7 +318,7 @@ class _ModelConfig(_ChannelSummaryMixin):
         Return suggested parameter bounds for the model.
 
         Returns:
-            :obj:`list`: Suggested bounds on model parameters.
+            :obj:`list`: Suggested bounds on model parameters as ``(lower, upper)`` tuples.
 
         Example:
             >>> import pyhf
@@ -330,7 +330,10 @@ class _ModelConfig(_ChannelSummaryMixin):
         """
         bounds = []
         for name in self.par_order:
-            bounds = bounds + self.par_map[name]["paramset"].suggested_bounds
+            bounds.extend(
+                tuple(bound)
+                for bound in self.par_map[name]["paramset"].suggested_bounds
+            )
         return bounds
 
     def par_slice(self, name):
