@@ -45,8 +45,9 @@ def _retrieve_schema(uri: str) -> Resource:
 
     Only URIs under :data:`pyhf.schema.variables.SCHEMA_BASE` are served, from
     the path relative to :attr:`pyhf.schema.path` through
-    :func:`pyhf.schema.load_schema` (so they are cached). Nothing is ever
-    fetched from the network.
+    :func:`pyhf.schema.load_schema` so they share
+    :data:`~pyhf.schema.variables.SCHEMA_CACHE`. Nothing is ever fetched from
+    the network.
 
     Raises:
         ~referencing.exceptions.NoSuchResource: if ``uri`` is not under
@@ -59,7 +60,7 @@ def _retrieve_schema(uri: str) -> Resource:
     if not uri.startswith(variables.SCHEMA_BASE):
         raise NoSuchResource(ref=uri)
     return Resource.from_contents(
-        load_schema(uri.removeprefix(variables.SCHEMA_BASE)),
+        load_schema(uri),
         default_specification=DRAFT6,
     )
 
