@@ -117,19 +117,6 @@ class shapesys_combined:
             [[builder_data[m][s]["data"]["mask"]] for s in pdfconfig.samples]
             for m in keys
         ]
-        self.__shapesys_info = default_backend.astensor(
-            [
-                [
-                    [
-                        builder_data[m][s]["data"]["mask"],
-                        builder_data[m][s]["data"]["nom_data"],
-                        builder_data[m][s]["data"]["uncrt"],
-                    ]
-                    for s in pdfconfig.samples
-                ]
-                for m in keys
-            ]
-        )
         global_concatenated_bin_indices = [
             [[j for c in pdfconfig.channels for j in range(pdfconfig.channel_nbins[c])]]
         ]
@@ -149,13 +136,12 @@ class shapesys_combined:
     def _reindex_access_field(self, _pdfconfig):
         default_backend = pyhf.default_backend
 
+        shapesys_mask = default_backend.astensor(self._shapesys_mask, dtype="bool")
         for syst_index, syst_access in enumerate(self._access_field):
             singular_sample_index = [
                 idx
-                for idx, syst in enumerate(
-                    default_backend.astensor(self._shapesys_mask)[syst_index, :, 0]
-                )
-                if any(syst)
+                for idx, syst in enumerate(shapesys_mask[syst_index, :, 0])
+                if syst.any()
             ][-1]
 
             for batch_index, batch_access in enumerate(syst_access):
@@ -187,7 +173,6 @@ class shapesys_combined:
         Returns:
             modification tensor: Shape (n_modifiers, n_global_samples, n_alphas, n_global_bin)
         """
-        tensorlib, _ = get_backend()
         if not self.param_viewer.index_selection:
             return None
         tensorlib, _ = get_backend()
