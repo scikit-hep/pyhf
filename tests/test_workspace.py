@@ -929,6 +929,75 @@ def test_closure_over_workspace_build(simplemodels_model_data):
     assert pyhf.utils.digest(newworkspace) == pyhf.utils.digest(workspace)
 
 
+def test_closure_over_workspace_build_lumi_and_partially_fixed():
+    """
+    Workspace.build keeps measurement config settings like lumi auxdata/sigmas
+    (Issue #1763) and handles parameters fixed only in some bins.
+    """
+    spec = {
+        "channels": [
+            {
+                "name": "SR",
+                "samples": [
+                    {
+                        "name": "signal",
+                        "data": [5.0, 3.0],
+                        "modifiers": [
+                            {"name": "mu", "type": "normfactor", "data": None},
+                            {"name": "lumi", "type": "lumi", "data": None},
+                        ],
+                    },
+                    {
+                        "name": "background",
+                        "data": [50.0, 0.0],
+                        "modifiers": [
+                            {"name": "lumi", "type": "lumi", "data": None},
+                            {
+                                "name": "staterror_SR",
+                                "type": "staterror",
+                                "data": [3.0, 0.0],
+                            },
+                        ],
+                    },
+                ],
+            }
+        ],
+        "observations": [{"name": "SR", "data": [55.0, 2.0]}],
+        "measurements": [
+            {
+                "name": "meas",
+                "config": {
+                    "poi": "mu",
+                    "parameters": [
+                        {
+                            "name": "lumi",
+                            "auxdata": [1.0],
+                            "sigmas": [0.05],
+                            "bounds": [[0.5, 1.5]],
+                            "inits": [1.0],
+                        }
+                    ],
+                },
+            }
+        ],
+        "version": "1.0.0",
+    }
+    model = pyhf.Workspace(spec).model()
+    assert model.config.param_set("staterror_SR").suggested_fixed == [False, True]
+    data = [55.0, 2.0]
+
+    workspace = pyhf.Workspace.build(model, data)
+    newmodel = workspace.model()
+
+    assert newmodel.config.param_set("lumi").sigmas == [0.05]
+    assert newmodel.config.auxdata == model.config.auxdata
+    assert newmodel.config.suggested_fixed() == model.config.suggested_fixed()
+    pars = model.config.suggested_init()
+    assert newmodel.logpdf(pars, workspace.data(newmodel)) == pytest.approx(
+        model.logpdf(pars, data + model.config.auxdata)
+    )
+
+
 def test_wspace_immutable(simplemodels_model_data):
     model, data = simplemodels_model_data
     workspace = pyhf.Workspace.build(model, data)
